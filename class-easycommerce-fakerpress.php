@@ -10,10 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use EasyCommerceFakerPress\Generators\Product_Generator;
-use EasyCommerceFakerPress\Generators\Customer_Generator;
-use EasyCommerceFakerPress\Generators\Order_Generator;
-use EasyCommerceFakerPress\Generators\Coupon_Generator;
 use EasyCommerceFakerPress\REST\Controllers\Product_REST_Controller;
 use EasyCommerceFakerPress\REST\Controllers\Customer_REST_Controller;
 use EasyCommerceFakerPress\REST\Controllers\Order_REST_Controller;
@@ -47,7 +43,6 @@ class EasyCommerce_FakerPress {
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		add_action( 'wp_ajax_ecfp_generate_data', array( $this, 'handle_ajax_request' ) );
 	}
 
 	public function load_textdomain(): void {
@@ -102,11 +97,9 @@ class EasyCommerce_FakerPress {
 
 		wp_localize_script(
 			'easycommerce-fakerpress-admin',
-			'ecfpAjax',
+			'ecfpApi',
 			array(
-				'url'     => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'ecfp_nonce' ),
-				'restUrl' => rest_url( 'easycommerce-fakerpress/v1/' ),
+				'restUrl'   => rest_url( 'easycommerce-fakerpress/v1/' ),
 				'restNonce' => wp_create_nonce( 'wp_rest' ),
 			)
 		);
@@ -114,43 +107,6 @@ class EasyCommerce_FakerPress {
 		wp_set_script_translations( 'easycommerce-fakerpress-admin', 'easycommerce-fakerpress' );
 	}
 
-	public function handle_ajax_request(): void {
-		check_ajax_referer( 'ecfp_nonce', 'nonce' );
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.', 'easycommerce-fakerpress' ) );
-		}
-
-		$type  = sanitize_text_field( $_POST['type'] ?? '' );
-		$count = absint( $_POST['count'] ?? 0 );
-
-		if ( empty( $type ) || $count <= 0 ) {
-			wp_send_json_error( __( 'Invalid parameters.', 'easycommerce-fakerpress' ) );
-		}
-
-		try {
-			switch ( $type ) {
-				case 'products':
-					$result = $this->generate_products( $count );
-					break;
-				case 'customers':
-					$result = $this->generate_customers( $count );
-					break;
-				case 'orders':
-					$result = $this->generate_orders( $count );
-					break;
-				case 'coupons':
-					$result = $this->generate_coupons( $count );
-					break;
-				default:
-					throw new InvalidArgumentException( __( 'Invalid data type.', 'easycommerce-fakerpress' ) );
-			}
-
-			wp_send_json_success( $result );
-		} catch ( Exception $e ) {
-			wp_send_json_error( $e->getMessage() );
-		}
-	}
 
 
 	/**
@@ -173,25 +129,6 @@ class EasyCommerce_FakerPress {
 		}
 	}
 
-	private function generate_products( int $count ): array {
-		$generator = new Product_Generator();
-		return $generator->generate( $count );
-	}
-
-	private function generate_customers( int $count ): array {
-		$generator = new Customer_Generator();
-		return $generator->generate( $count );
-	}
-
-	private function generate_orders( int $count ): array {
-		$generator = new Order_Generator();
-		return $generator->generate( $count );
-	}
-
-	private function generate_coupons( int $count ): array {
-		$generator = new Coupon_Generator();
-		return $generator->generate( $count );
-	}
 
 	public function activate(): void {
 		if ( ! $this->check_dependencies() ) {
