@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<phpunit
+        bootstrap="tests/php/bootstrap.php"
+        backupGlobals="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        stopOnFailure="false"
+        beStrictAboutTestsThatDoNotTestAnything="true"
+        beStrictAboutOutputDuringTests="true"
+        beStrictAboutTodoAnnotatedTests="true"
+        beStrictAboutChangesToGlobalState="true"
+        verbose="true"
+>
+    <php>
+        <env name="WP_PHPUNIT__TESTS_CONFIG" value="tests/php/phpunit-wp-config.php"/>
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="E_ALL"/>
+    </php>
+    <testsuites>
+        <testsuite name="unit">
+            <directory suffix="Test.php">./tests/php/src</directory>
+            <exclude>./tests/php/phpunit-wp-config.php</exclude>
+            <exclude>./tests/php/bootstrap.php</exclude>
+        </testsuite>
+    </testsuites>
+    <coverage>
+        <include>
+            <directory suffix=".php">./includes</directory>
+            <file>./class-easycommerce-fakerpress.php</file>
+        </include>
+        <exclude>
+            <directory>./vendor</directory>
+            <directory>./node_modules</directory>
+            <directory>./build</directory>
+            <directory>./tests</directory>
+            <file>./easycommerce-fakerpress.php</file>
+        </exclude>
+    </coverage>
+    <logging>
+        <log type="coverage-html" target="tests/coverage/html"/>
+        <log type="coverage-clover" target="tests/coverage/clover.xml"/>
+        <log type="junit" target="tests/coverage/junit.xml"/>
+    </logging>
+</phpunit>

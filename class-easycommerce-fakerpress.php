@@ -1,17 +1,29 @@
 <?php
-
-// Note: EasyCommerce compatibility features may be added here in the future
-
 /**
  * Main Plugin Class
  *
  * @package EasyCommerceFakerPress
+ * @since   1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use EasyCommerceFakerPress\Generators\Product_Generator;
+use EasyCommerceFakerPress\Generators\Customer_Generator;
+use EasyCommerceFakerPress\Generators\Order_Generator;
+use EasyCommerceFakerPress\Generators\Coupon_Generator;
+use EasyCommerceFakerPress\REST\Controllers\Product_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Customer_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Order_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Coupon_REST_Controller;
+
+/**
+ * Main Plugin Class
+ *
+ * @since 1.0.0
+ */
 class EasyCommerce_FakerPress {
 
 	private static ?self $instance = null;
@@ -34,6 +46,7 @@ class EasyCommerce_FakerPress {
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_action( 'wp_ajax_ecfp_generate_data', array( $this, 'handle_ajax_request' ) );
 	}
 
@@ -91,8 +104,10 @@ class EasyCommerce_FakerPress {
 			'easycommerce-fakerpress-admin',
 			'ecfpAjax',
 			array(
-				'url'   => admin_url( 'admin-ajax.php' ),
-				'nonce' => wp_create_nonce( 'ecfp_nonce' ),
+				'url'     => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'ecfp_nonce' ),
+				'restUrl' => rest_url( 'easycommerce-fakerpress/v1/' ),
+				'restNonce' => wp_create_nonce( 'wp_rest' ),
 			)
 		);
 
@@ -137,27 +152,44 @@ class EasyCommerce_FakerPress {
 		}
 	}
 
+
+	/**
+	 * Register REST API routes
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_rest_routes(): void {
+		$controllers = array(
+			new Product_REST_Controller(),
+			new Customer_REST_Controller(),
+			new Order_REST_Controller(),
+			new Coupon_REST_Controller(),
+		);
+
+		foreach ( $controllers as $controller ) {
+			$controller->register_routes();
+		}
+	}
+
 	private function generate_products( int $count ): array {
-		require_once ECFP_PLUGIN_PATH . 'includes/class-product-generator.php';
-		$generator = new ECFP_Product_Generator();
+		$generator = new Product_Generator();
 		return $generator->generate( $count );
 	}
 
 	private function generate_customers( int $count ): array {
-		require_once ECFP_PLUGIN_PATH . 'includes/class-customer-generator.php';
-		$generator = new ECFP_Customer_Generator();
+		$generator = new Customer_Generator();
 		return $generator->generate( $count );
 	}
 
 	private function generate_orders( int $count ): array {
-		require_once ECFP_PLUGIN_PATH . 'includes/class-order-generator.php';
-		$generator = new ECFP_Order_Generator();
+		$generator = new Order_Generator();
 		return $generator->generate( $count );
 	}
 
 	private function generate_coupons( int $count ): array {
-		require_once ECFP_PLUGIN_PATH . 'includes/class-coupon-generator.php';
-		$generator = new ECFP_Coupon_Generator();
+		$generator = new Coupon_Generator();
 		return $generator->generate( $count );
 	}
 

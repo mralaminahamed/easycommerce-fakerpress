@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<ruleset name="EasyCommerce FakerPress Coding Standards">
+    <description>Custom ruleset for EasyCommerce FakerPress plugin</description>
+
+    <!-- Files to check -->
+    <file>.</file>
+
+    <!-- Exclude patterns -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/build/*</exclude-pattern>
+    <exclude-pattern>*/dist/*</exclude-pattern>
+    <exclude-pattern>*/tests/coverage/*</exclude-pattern>
+    <exclude-pattern>*/freemius/*</exclude-pattern>
+    <exclude-pattern>*/dependencies/*</exclude-pattern>
+    <exclude-pattern>*.js</exclude-pattern>
+    <exclude-pattern>*.css</exclude-pattern>
+    <exclude-pattern>*.min.*</exclude-pattern>
+    <exclude-pattern>*/languages/*</exclude-pattern>
+
+    <!-- Arguments -->
+    <arg value="sp"/> <!-- Show sniff and progress -->
+    <arg name="basepath" value="./"/> <!-- Strip the file paths down to the relevant bit -->
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/> <!-- Enables parallel processing when available for faster results -->
+
+    <!-- Rules -->
+    <rule ref="WordPress">
+        <!-- Exclude rules that conflict with our coding style -->
+        <exclude name="WordPress.Files.FileName"/>
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+        <exclude name="Squiz.Commenting.ClassComment.Missing"/>
+        <exclude name="Generic.Commenting.DocComment.MissingShort"/>
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>
+        <exclude name="Squiz.Commenting.VariableComment.Missing"/>
+        <exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+    </rule>
+
+    <!-- WordPress Core rules -->
+    <rule ref="WordPress-Core">
+        <exclude name="WordPress.Files.FileName"/>
+        <exclude name="Generic.Commenting.DocComment"/>
+    </rule>
+
+    <!-- WordPress Extra rules -->
+    <rule ref="WordPress-Extra">
+        <exclude name="WordPress.Files.FileName"/>
+    </rule>
+
+    <!-- WordPress Docs rules -->
+    <rule ref="WordPress-Docs">
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+        <exclude name="Squiz.Commenting.ClassComment.Missing"/>
+        <exclude name="Generic.Commenting.DocComment.MissingShort"/>
+    </rule>
+
+    <!-- PHPCompatibility rules -->
+    <rule ref="PHPCompatibilityWP"/>
+
+    <!-- Set minimum PHP version -->
+    <config name="testVersion" value="7.4-"/>
+
+    <!-- WordPress specific configuration -->
+    <config name="minimum_supported_wp_version" value="5.0"/>
+
+    <!-- Allow for theme specific exceptions -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="easycommerce-fakerpress"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Hook prefix configuration -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="ecfp"/>
+                <element value="easycommerce_fakerpress"/>
+                <element value="EasyCommerce_FakerPress"/>
+                <element value="ECFP"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Database prefix configuration -->
+    <rule ref="WordPress.DB.DirectDatabaseQuery.SchemaChange">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Nonce verification exclusions for tests -->
+    <rule ref="WordPress.Security.NonceVerification.Recommended">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Allow short array syntax -->
+    <rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Custom severity levels -->
+    <rule ref="WordPress.Security.EscapeOutput">
+        <properties>
+            <property name="customAutoEscapedFunctions" type="array">
+                <element value="wp_kses_post"/>
+                <element value="wp_strip_all_tags"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- File length limits -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="150"/>
+        </properties>
+        <!-- Exclude long array definitions and similar -->
+        <exclude-pattern>*/includes/data/*</exclude-pattern>
+    </rule>
+
+    <!-- Complexity limits -->
+    <rule ref="Generic.Metrics.CyclomaticComplexity">
+        <properties>
+            <property name="complexity" value="10"/>
+            <property name="absoluteComplexity" value="15"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.Metrics.NestingLevel">
+        <properties>
+            <property name="nestingLevel" value="5"/>
+            <property name="absoluteNestingLevel" value="8"/>
+        </properties>
+    </rule>
+</ruleset>

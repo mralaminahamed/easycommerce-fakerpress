@@ -15,21 +15,31 @@
         "issues": "https://github.com/mralaminahamed/easycommerce-fakerpress/issues",
         "source": "https://github.com/mralaminahamed/easycommerce-fakerpress"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": ">=7.4",
+        "ext-json": "*",
         "fakerphp/faker": "^1.23"
     },
     "require-dev": {
+        "brain/monkey": "^2.6",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
         "phpstan/phpstan": "^2.1",
         "squizlabs/php_codesniffer": "^3.7",
-        "wp-coding-standards/wpcs": "^3.2",
-        "phpcompatibility/php-compatibility": "^9.3",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "phpunit/phpunit": "^9.6",
+        "wp-phpunit/wp-phpunit": "^6.8",
+        "wp-coding-standards/wpcs": "^3.1",
+        "yoast/phpunit-polyfills": "^4.0",
         "php-stubs/wordpress-stubs": "^6.4",
-        "php-stubs/woocommerce-stubs": "^8.3",
-        "szepeviktor/phpstan-wordpress": "^2.0"
+        "php-stubs/woocommerce-stubs": "^10.0"
     },
     "config": {
+        "platform": {
+            "php": "7.4"
+        },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         },
@@ -44,11 +54,26 @@
             "EasyCommerceFakerPress\\": "includes/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "EasyCommerceFakerPress\\Tests\\": "tests/php/src/"
+        }
+    },
     "scripts": {
-        "phpcs": "phpcs",
-        "phpcbf": "phpcbf",
-        "phpstan": "phpstan analyse",
-        "lint": "phpcs",
-        "fix": "phpcbf"
+        "phpcs": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpcs --standard=phpcs.xml.dist"
+        ],
+        "phpcbf": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpcbf --standard=phpcs.xml.dist"
+        ],
+        "phpstan": "phpstan analyse --memory-limit 2G",
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html=tests/coverage/html",
+        "format": "@phpcbf",
+        "lint": "@phpcs",
+        "analyse": "@phpstan",
+        "fix": "@phpcbf"
     }
 }

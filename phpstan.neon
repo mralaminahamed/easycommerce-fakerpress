@@ -1,0 +1,117 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 8
+    
+    paths:
+        - class-easycommerce-fakerpress.php
+        - includes/
+        - tests/php/src/
+    
+    excludePaths:
+        - vendor/
+        - node_modules/
+        - build/
+        - freemius/
+        - dependencies/
+        - tests/coverage/
+        - languages/
+    
+    # WordPress specific configuration
+    bootstrapFiles:
+        - tests/php/bootstrap.php
+    
+    # Universal object crates
+    universalObjectCratesClasses:
+        - WP_Post
+        - WP_User
+        - WP_Term
+        - WP_Comment
+        - WP_Query
+        - WP_REST_Request
+        - WP_REST_Response
+    
+    # Stub files
+    stubFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+    
+    # WordPress constants
+    dynamicConstantNames:
+        - ABSPATH
+        - WP_DEBUG
+        - WP_DEBUG_LOG
+        - WP_DEBUG_DISPLAY
+        - SCRIPT_DEBUG
+        - WP_CACHE
+        - ECFP_VERSION
+        - ECFP_PLUGIN_FILE
+        - ECFP_PLUGIN_URL
+        - ECFP_PLUGIN_PATH
+    
+    # Ignore errors
+    ignoreErrors:
+        # WordPress functions that may not be defined during static analysis
+        - '#Function wp_[a-zA-Z_]+ not found\.#'
+        - '#Function is_plugin_active not found\.#'
+        - '#Function get_plugin_data not found\.#'
+        - '#Function add_action not found\.#'
+        - '#Function add_filter not found\.#'
+        - '#Function remove_action not found\.#'
+        - '#Function remove_filter not found\.#'
+        - '#Function do_action not found\.#'
+        - '#Function apply_filters not found\.#'
+        - '#Function esc_html not found\.#'
+        - '#Function esc_attr not found\.#'
+        - '#Function esc_url not found\.#'
+        - '#Function sanitize_text_field not found\.#'
+        - '#Function wp_die not found\.#'
+        - '#Function wp_create_nonce not found\.#'
+        - '#Function check_ajax_referer not found\.#'
+        - '#Function current_user_can not found\.#'
+        - '#Function wp_send_json_success not found\.#'
+        - '#Function wp_send_json_error not found\.#'
+        
+        # PHPUnit specific
+        - '#Method [a-zA-Z0-9\\_]+Test::(setUp|tearDown)\(\) should return void but returns [a-zA-Z0-9\\_]+\.#'
+        - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject::[a-zA-Z0-9_]+\(\)\.#'
+        
+        # WordPress globals
+        - '#Undefined variable: \$wpdb\.#'
+        - '#Undefined variable: \$wp_version\.#'
+        - '#Undefined variable: \$wp_rest_server\.#'
+        
+        # Dynamic properties (WordPress objects often have dynamic properties)
+        - '#Access to an undefined property WP_[a-zA-Z_]+::\$[a-zA-Z_]+\.#'
+        - '#Property WP_[a-zA-Z_]+::\$[a-zA-Z_]+ \(mixed\) does not accept [a-zA-Z0-9\\_|]+\.#'
+        
+        # WordPress hooks (actions and filters)
+        - '#Parameter \#1 \$function_to_add of function add_action expects callable\(\): mixed, array given\.#'
+        - '#Parameter \#1 \$function_to_add of function add_filter expects callable, array given\.#'
+        
+        # Test-specific ignores
+        - '#Instantiated class ECFP_[a-zA-Z_]+ not found\.#'
+        - path: tests/
+          message: '#Call to method [a-zA-Z_]+ on an unknown class [a-zA-Z0-9\\_]+\.#'
+    
+    # Check for missing return types
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    
+    # Report unused ignores
+    reportUnmatchedIgnoredErrors: false
+    
+    # Memory limit
+    memoryLimitFile: .phpstan-memory-limit
+    
+    # Parallel processing
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 4
+    
+    # Error format
+    errorFormat: table
+    
+    # Cache
+    tmpDir: .phpstan-cache
