@@ -57,6 +57,11 @@ class Customer_Generator extends Generator {
 			$shipping_address = $this->generate_shipping_address( $first_name, $last_name );
 			$customer_meta    = $this->generate_customer_meta();
 
+			// Check if user with this email already exists
+			if ( email_exists( $email ) ) {
+				return new WP_Error( 'email_exists', 'A user with this email address already exists.' );
+			}
+
 			// Use EasyCommerce Customer model with complete data structure
 			$customer = new Customer();
 			$created  = $customer->create( array(
@@ -73,10 +78,10 @@ class Customer_Generator extends Generator {
 				// Customer meta data
 				'meta'       => array_merge(
 					array(
-						'phone'            => $this->faker->phoneNumber,
+						'phone'            => $billing_address['phone'],
 						'photo'            => '', // Could integrate with media library
 						'billing_address'  => $billing_address,
-						'shipping_address' => $shipping_address,
+						'shipping_address' => ! empty( $shipping_address ) ? $shipping_address : $billing_address,
 					),
 					$customer_meta
 				),
@@ -86,6 +91,9 @@ class Customer_Generator extends Generator {
 				return new WP_Error( 'customer_creation_failed', 'Failed to create customer using EasyCommerce model.' );
 			}
 
+			// Initialize customer statistics based on customer age
+			$this->initialize_customer_history( $customer, $customer_meta );
+
 			return array(
 				'id'             => $customer->get_id(),
 				'name'           => $full_name,
@@ -94,6 +102,9 @@ class Customer_Generator extends Generator {
 				'billing_city'   => $billing_address['city'],
 				'shipping_city'  => ! empty( $shipping_address ) ? $shipping_address['city'] : $billing_address['city'],
 				'customer_since' => $customer_meta['customer_since'],
+				'loyalty_tier'   => $customer_meta['loyalty_tier'],
+				'total_orders'   => $customer_meta['total_orders'],
+				'total_spent'    => '$' . $customer_meta['total_spent'],
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Customer creation failed: ' . $e->getMessage(), 'error' );
@@ -176,49 +187,50 @@ class Customer_Generator extends Generator {
 		$join_date = $this->faker->dateTimeBetween( '-3 years', '-1 month' );
 		$last_login = $this->faker->optional( 0.8 )->dateTimeBetween( $join_date, 'now' );
 		
-		return array(
-			// Customer preferences
-			'customer_preferences' => array(
-				'newsletter'             => $this->faker->boolean( 65 ),
-				'sms_notifications'      => $this->faker->boolean( 35 ),
-				'email_notifications'    => $this->faker->boolean( 80 ),
-				'marketing_opt_in'       => $this->faker->boolean( 55 ),
-				'preferred_language'     => $this->faker->randomElement( array( 'en', 'es', 'fr', 'de', 'it' ) ),
-				'currency'               => 'USD',
-				'timezone'               => $this->faker->timezone,
-				'communication_method'   => $this->faker->randomElement( array( 'email', 'sms', 'both' ) ),
+		// Generate realistic customer history based on how long they've been a customer
+		$customer_age_days = $join_date->diff( new \DateTime() )->days;
+		$customer_history = $this->generate_realistic_customer_history( $customer_age_days );
+		
+		return array_merge(
+			array(
+				// Customer preferences
+				'customer_preferences' => array(
+					'newsletter'             => $this->faker->boolean( 65 ),
+					'sms_notifications'      => $this->faker->boolean( 35 ),
+					'email_notifications'    => $this->faker->boolean( 80 ),
+					'marketing_opt_in'       => $this->faker->boolean( 55 ),
+					'preferred_language'     => $this->faker->randomElement( array( 'en', 'es', 'fr', 'de', 'it' ) ),
+					'currency'               => 'USD',
+					'timezone'               => $this->faker->timezone,
+					'communication_method'   => $this->faker->randomElement( array( 'email', 'sms', 'both' ) ),
+				),
+				
+				// Customer statistics (realistic based on customer age)
+				'customer_since'         => $join_date->format( 'Y-m-d H:i:s' ),
+				'last_login'             => $last_login ? $last_login->format( 'Y-m-d H:i:s' ) : null,
+				
+				// Loyalty and engagement
+				'referral_code'          => strtoupper( $this->faker->lexify( '????' ) . $this->faker->numerify( '##' ) ),
+				'referred_by'            => $this->faker->optional( 0.15 )->randomNumber( 4 ), // Customer ID who referred
+				
+				// Personal information (optional)
+				'birth_date'             => $this->faker->optional( 0.6 )->date( 'Y-m-d', '-18 years' ),
+				'gender'                 => $this->faker->optional( 0.5 )->randomElement( array( 'male', 'female', 'other', 'prefer_not_to_say' ) ),
+				'occupation'             => $this->faker->optional( 0.4 )->jobTitle,
+				
+				// Marketing and engagement
+				'source'                 => $this->faker->randomElement( array( 'organic', 'google_ads', 'facebook', 'referral', 'email', 'direct' ) ),
+				'utm_campaign'           => $this->faker->optional( 0.3 )->words( 2, true ),
+				'tags'                   => $this->generate_customer_tags(),
+				
+				// Customer service
+				'notes'                  => $this->faker->optional( 0.2 )->paragraph( 2 ),
+				'vip_status'             => $this->faker->boolean( 5 ), // 5% VIP customers
+				'account_status'         => 'active',
+				'email_verified'         => $this->faker->boolean( 85 ),
+				'phone_verified'         => $this->faker->boolean( 60 ),
 			),
-			
-			// Customer statistics (initial values - will be updated by orders)
-			'customer_since'         => $join_date->format( 'Y-m-d H:i:s' ),
-			'total_orders'           => 0,
-			'total_spent'            => '0.00',
-			'average_order_value'    => '0.00',
-			'last_order_date'        => null,
-			'last_login'             => $last_login ? $last_login->format( 'Y-m-d H:i:s' ) : null,
-			
-			// Loyalty and engagement
-			'loyalty_tier'           => 'bronze',
-			'loyalty_points'         => 0,
-			'referral_code'          => strtoupper( $this->faker->lexify( '????' ) . $this->faker->numerify( '##' ) ),
-			'referred_by'            => $this->faker->optional( 0.15 )->randomNumber( 4 ), // Customer ID who referred
-			
-			// Personal information (optional)
-			'birth_date'             => $this->faker->optional( 0.6 )->date( 'Y-m-d', '-18 years' ),
-			'gender'                 => $this->faker->optional( 0.5 )->randomElement( array( 'male', 'female', 'other', 'prefer_not_to_say' ) ),
-			'occupation'             => $this->faker->optional( 0.4 )->jobTitle,
-			
-			// Marketing and engagement
-			'source'                 => $this->faker->randomElement( array( 'organic', 'google_ads', 'facebook', 'referral', 'email', 'direct' ) ),
-			'utm_campaign'           => $this->faker->optional( 0.3 )->words( 2, true ),
-			'tags'                   => $this->generate_customer_tags(),
-			
-			// Customer service
-			'notes'                  => $this->faker->optional( 0.2 )->paragraph( 2 ),
-			'vip_status'             => $this->faker->boolean( 5 ), // 5% VIP customers
-			'account_status'         => 'active',
-			'email_verified'         => $this->faker->boolean( 85 ),
-			'phone_verified'         => $this->faker->boolean( 60 ),
+			$customer_history
 		);
 	}
 
@@ -321,5 +333,117 @@ class Customer_Generator extends Generator {
 		$pattern = $patterns[ $country ] ?? '#####';
 		
 		return $this->faker->bothify( $pattern );
+	}
+
+	/**
+	 * Generate realistic customer history based on customer age
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $customer_age_days Number of days since customer joined.
+	 *
+	 * @return array Customer history data.
+	 */
+	private function generate_realistic_customer_history( int $customer_age_days ): array {
+		// Base probability of having made purchases increases with customer age
+		$purchase_probability = min( 0.9, $customer_age_days / 365 * 0.3 + 0.1 );
+		
+		// Determine if customer has made purchases
+		$has_purchases = $this->faker->boolean( $purchase_probability * 100 );
+		
+		if ( ! $has_purchases ) {
+			return array(
+				'total_orders'        => 0,
+				'total_spent'         => '0.00',
+				'average_order_value' => '0.00',
+				'last_order_date'     => null,
+				'loyalty_tier'        => 'bronze',
+				'loyalty_points'      => 0,
+			);
+		}
+		
+		// Generate realistic purchase history based on customer age
+		$months_active = max( 1, $customer_age_days / 30 );
+		$avg_orders_per_month = $this->faker->randomFloat( 2, 0.1, 2.5 );
+		$total_orders = max( 1, round( $months_active * $avg_orders_per_month ) );
+		
+		// Generate realistic spending patterns
+		$avg_order_value = $this->faker->randomFloat( 2, 25, 350 );
+		$total_spent = $total_orders * $avg_order_value;
+		
+		// Add some variance to make it more realistic
+		$total_spent *= $this->faker->randomFloat( 2, 0.7, 1.4 );
+		
+		// Determine loyalty tier based on total spent
+		$loyalty_tier = $this->determine_loyalty_tier( $total_spent );
+		
+		// Calculate loyalty points (1 point per dollar, with bonuses for higher tiers)
+		$base_points = floor( $total_spent );
+		$tier_multiplier = array(
+			'bronze'   => 1.0,
+			'silver'   => 1.1,
+			'gold'     => 1.25,
+			'platinum' => 1.5,
+		);
+		$loyalty_points = floor( $base_points * $tier_multiplier[ $loyalty_tier ] );
+		
+		// Determine last order date (more recent for active customers)
+		$last_order_days_ago = $this->faker->numberBetween( 1, min( 180, $customer_age_days ) );
+		$last_order_date = $this->faker->dateTimeBetween( "-{$last_order_days_ago} days", 'now' );
+		
+		return array(
+			'total_orders'        => $total_orders,
+			'total_spent'         => number_format( $total_spent, 2, '.', '' ),
+			'average_order_value' => number_format( $total_spent / $total_orders, 2, '.', '' ),
+			'last_order_date'     => $last_order_date->format( 'Y-m-d H:i:s' ),
+			'loyalty_tier'        => $loyalty_tier,
+			'loyalty_points'      => $loyalty_points,
+		);
+	}
+
+	/**
+	 * Determine loyalty tier based on total spent
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param float $total_spent Total amount spent by customer.
+	 *
+	 * @return string Loyalty tier.
+	 */
+	private function determine_loyalty_tier( float $total_spent ): string {
+		if ( $total_spent >= 5000 ) {
+			return 'platinum';
+		} elseif ( $total_spent >= 2000 ) {
+			return 'gold';
+		} elseif ( $total_spent >= 500 ) {
+			return 'silver';
+		}
+		
+		return 'bronze';
+	}
+
+	/**
+	 * Initialize customer statistics in WordPress user meta
+	 * This ensures the customer stats are properly set for existing customer functions
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param Customer $customer      Customer object.
+	 * @param array    $customer_meta Customer metadata.
+	 *
+	 * @return void
+	 */
+	private function initialize_customer_history( Customer $customer, array $customer_meta ): void {
+		// Set core customer statistics that other systems expect
+		$customer->update_meta( 'total_orders', $customer_meta['total_orders'] );
+		$customer->update_meta( 'total_spent', $customer_meta['total_spent'] );
+		$customer->update_meta( 'average_order_value', $customer_meta['average_order_value'] );
+		$customer->update_meta( 'last_order_date', $customer_meta['last_order_date'] );
+		$customer->update_meta( 'loyalty_tier', $customer_meta['loyalty_tier'] );
+		$customer->update_meta( 'loyalty_points', $customer_meta['loyalty_points'] );
+		
+		// Set first and last name in WordPress user meta as well (for compatibility)
+		$customer->update_meta( 'first_name', $customer->get_meta( 'first_name' ) );
+		$customer->update_meta( 'last_name', $customer->get_meta( 'last_name' ) );
 	}
 }

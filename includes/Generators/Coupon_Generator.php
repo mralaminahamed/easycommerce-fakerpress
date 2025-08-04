@@ -10,6 +10,7 @@ namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Coupon;
+use EasyCommerce\Models\Database;
 use Exception;
 use WP_Error;
 
@@ -49,6 +50,11 @@ class Coupon_Generator extends Generator {
 
 			$coupon_data = $this->generate_coupon_data();
 
+			// Check if coupon code already exists
+			if ( $this->coupon_code_exists( $coupon_data['code'] ) ) {
+				return new WP_Error( 'code_exists', 'A coupon with this code already exists.' );
+			}
+
 			// Use EasyCommerce Coupon model with complete data structure
 			$coupon = new Coupon();
 			$created = $coupon->create( array(
@@ -60,14 +66,17 @@ class Coupon_Generator extends Generator {
 				
 				// Optional fields
 				'active'        => $coupon_data['active'],
+				
+				// Coupon rules (handled by EasyCommerce model)
+				'rules'         => $coupon_data['rules'],
 			) );
 
 			if ( ! $created ) {
 				return new WP_Error( 'coupon_creation_failed', 'Failed to create coupon using EasyCommerce model.' );
 			}
 
-			// Add coupon rules after creation
-			$this->add_coupon_rules( $coupon->get_id(), $coupon_data['rules'] );
+			// Reload coupon to get the complete object with rules
+			$coupon = new Coupon( $created );
 
 			return array(
 				'id'             => $coupon->get_id(),
@@ -77,8 +86,12 @@ class Coupon_Generator extends Generator {
 				'amount'         => $coupon_data['amount'],
 				'status'         => $coupon_data['active'] ? 'active' : 'inactive',
 				'usage_limit'    => $this->get_rule_value( $coupon_data['rules'], 'usage_limit' ),
+				'usage_count'    => 0, // New coupons start with 0 usage
 				'valid_from'     => $this->get_rule_value( $coupon_data['rules'], 'start_date' ),
 				'valid_until'    => $this->get_rule_value( $coupon_data['rules'], 'end_date' ),
+				'min_spend'      => $this->get_rule_value( $coupon_data['rules'], 'min_spend' ),
+				'max_spend'      => $this->get_rule_value( $coupon_data['rules'], 'max_spend' ),
+				'rules_count'    => count( $coupon_data['rules'] ),
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Coupon creation failed: ' . $e->getMessage(), 'error' );
@@ -156,12 +169,7 @@ class Coupon_Generator extends Generator {
 		$attempts = 0;
 		do {
 			$code     = $this->generate_coupon_code();
-			$existing = $this->wpdb->get_var(
-				$this->wpdb->prepare(
-					"SELECT id FROM {$this->wpdb->prefix}coupons WHERE code = %s",
-					$code
-				)
-			);
+			$existing = $this->coupon_code_exists( $code );
 			++$attempts;
 		} while ( $existing && $attempts < 10 );
 
@@ -364,6 +372,39 @@ class Coupon_Generator extends Generator {
 			);
 		}
 
+		// First time customer only (8% chance)
+		if ( $this->faker->boolean( 8 ) ) {
+			$rules[] = array(
+				'type'  => 'first_time_customer',
+				'value' => true,
+			);
+		}
+
+		// Minimum quantity requirement (15% chance)
+		if ( $this->faker->boolean( 15 ) ) {
+			$min_quantities = array( 2, 3, 5, 10 );
+			$rules[] = array(
+				'type'  => 'min_quantity',
+				'value' => $this->faker->randomElement( $min_quantities ),
+			);
+		}
+
+		// Stackable with other coupons (5% chance)
+		if ( $this->faker->boolean( 5 ) ) {
+			$rules[] = array(
+				'type'  => 'stackable',
+				'value' => true,
+			);
+		}
+
+		// Apply to sale items (30% chance)
+		if ( $this->faker->boolean( 30 ) ) {
+			$rules[] = array(
+				'type'  => 'apply_to_sale_items',
+				'value' => $this->faker->boolean( 70 ), // 70% allow, 30% exclude sale items
+			);
+		}
+
 		return $rules;
 	}
 
@@ -409,29 +450,19 @@ class Coupon_Generator extends Generator {
 	}
 
 	/**
-	 * Add coupon rules after creation
+	 * Check if coupon code already exists using EasyCommerce model
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int   $coupon_id Coupon ID.
-	 * @param array $rules     Coupon rules.
+	 * @param string $code Coupon code to check.
 	 *
-	 * @return void
+	 * @return bool True if code exists, false otherwise.
 	 */
-	private function add_coupon_rules( int $coupon_id, array $rules ): void {
-		$rules_table = $this->wpdb->prefix . 'coupon_rules';
-
-		foreach ( $rules as $rule ) {
-			$this->wpdb->insert(
-				$rules_table,
-				array(
-					'coupon_id'  => $coupon_id,
-					'rule_type'  => $rule['type'],
-					'rule_value' => is_array( $rule['value'] ) ? serialize( $rule['value'] ) : $rule['value'],
-					'created_at' => current_time( 'mysql' ),
-				)
-			);
-		}
+	private function coupon_code_exists( string $code ): bool {
+		$db = new Database( 'coupons' );
+		$existing = $db->get_row( array( 'code' => $code ) );
+		
+		return ! empty( $existing );
 	}
 
 	/**
