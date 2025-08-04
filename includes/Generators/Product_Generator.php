@@ -107,7 +107,13 @@ class Product_Generator extends Generator {
 	private function generate_gallery_images(): array {
 		$gallery_images = array();
 		for ( $i = 0; $i < $this->faker->numberBetween( 1, 5 ); $i++ ) {
-			$gallery_images[] = $this->faker->imageUrl( 800, 600, 'product' );
+			$gallery_images[] = array(
+				'id'          => $this->faker->unique()->numberBetween( 1000, 9999 ),
+				'url'         => $this->faker->imageUrl( 800, 800, 'product' ),
+				'alt'         => $this->faker->sentence( 6 ),
+				'caption'     => $this->faker->sentence( 10 ),
+				'description' => $this->faker->paragraph( 2 ),
+			);
 		}
 
 		return $gallery_images;
