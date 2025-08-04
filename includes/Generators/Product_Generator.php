@@ -9,6 +9,8 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerce\Models\Product;
+use EasyCommerce\Models\Attribute;
+use EasyCommerce\Models\Attribute_Value;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use Exception;
 use WP_Error;
@@ -51,7 +53,7 @@ class Product_Generator extends Generator {
 			$product_type  = $this->faker->randomElement( array( 'physical', 'digital' ) );
 			$categories    = $this->get_or_create_product_categories();
 			$brands        = $this->get_or_create_product_brands();
-			$attributes    = $this->generate_product_attributes( $product_type );
+			$attributes    = $this->get_or_create_product_attributes( $product_type );
 			$variations    = $this->generate_product_variations( $attributes, $product_type );
 
 			// Use EasyCommerce Product model with complete data structure.
@@ -66,7 +68,7 @@ class Product_Generator extends Generator {
 					'content'     => $this->generate_product_description(),
 					'status'      => $this->faker->randomElement( array( 'publish', 'draft' ) ),
 					'description' => $this->generate_short_description(),
-					'summary'     => $this->faker->sentence( 10 ),
+					'summary'     => $this->faker->sentence( 40 ),
 					'thumbnail'   => 0, // Could integrate with media library later
 
 					// Taxonomy relationships
@@ -192,7 +194,7 @@ class Product_Generator extends Generator {
 	 * @return string Short description.
 	 */
 	private function generate_short_description(): string {
-		return $this->faker->sentence( 15 ) . ' Perfect for ' .
+		return $this->faker->sentence( 120 ) . ' Perfect for ' .
 				$this->faker->randomElement( array( 'professionals', 'students', 'gamers', 'home use', 'office work' ) ) . '.';
 	}
 
