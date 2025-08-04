@@ -20,7 +20,8 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
-        "fakerphp/faker": "^1.23"
+        "fakerphp/faker": "^1.23",
+        "bluemmb/faker-picsum-photos-provider": "^2.0"
     },
     "require-dev": {
         "brain/monkey": "^2.6",

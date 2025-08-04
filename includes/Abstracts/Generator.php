@@ -8,6 +8,7 @@
 
 namespace EasyCommerceFakerPress\Abstracts;
 
+use Bluemmb\Faker\PicsumPhotosProvider;
 use Exception;
 use Faker\Factory;
 use Faker\Generator as FakerGenerator;
@@ -51,8 +52,11 @@ abstract class Generator {
 	public function __construct() {
 		global $wpdb;
 
-		$this->faker = Factory::create();
 		$this->wpdb  = $wpdb;
+		$this->faker = Factory::create( get_locale() );
+
+		// Add image provider for Picsum photos.
+		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
 	}
 
 	/**
