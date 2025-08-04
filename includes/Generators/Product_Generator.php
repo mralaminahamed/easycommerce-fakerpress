@@ -104,6 +104,7 @@ class Product_Generator extends Generator {
 				'variations'  => count( $variations ),
 				'categories'  => count( $categories ),
 				'brands'      => count( $brands ),
+				'attributes'  => count( $attributes ),
 				'price_range' => $this->get_price_range( $variations ),
 			);
 		} catch ( Exception $e ) {
@@ -250,7 +251,7 @@ class Product_Generator extends Generator {
 	}
 
 	/**
-	 * Generate product attributes for variations
+	 * Get or create product attributes using EasyCommerce attribute system
 	 *
 	 * @since 1.0.0
 	 *
@@ -258,24 +259,56 @@ class Product_Generator extends Generator {
 	 *
 	 * @return array Array of product attributes with their possible values.
 	 */
-	private function generate_product_attributes( string $product_type = 'physical' ): array {
+	private function get_or_create_product_attributes( string $product_type = 'physical' ): array {
 		$attributes = array();
 
 		if ( $product_type === 'physical' ) {
 			// Physical product attributes
 			$possible_attributes = array(
-				'color'    => array( 'red', 'blue', 'green', 'black', 'white', 'gray', 'silver', 'gold' ),
-				'size'     => array( 'small', 'medium', 'large', 'extra-large' ),
-				'material' => array( 'plastic', 'metal', 'wood', 'glass', 'ceramic', 'fabric' ),
-				'style'    => array( 'modern', 'classic', 'vintage', 'minimalist', 'premium' ),
+				'color'    => array(
+					'name'   => 'Color',
+					'type'   => 'text',
+					'values' => array( 'red', 'blue', 'green', 'black', 'white', 'gray', 'silver', 'gold' )
+				),
+				'size'     => array(
+					'name'   => 'Size',
+					'type'   => 'text',
+					'values' => array( 'small', 'medium', 'large', 'extra-large' )
+				),
+				'material' => array(
+					'name'   => 'Material',
+					'type'   => 'text',
+					'values' => array( 'plastic', 'metal', 'wood', 'glass', 'ceramic', 'fabric' )
+				),
+				'style'    => array(
+					'name'   => 'Style',
+					'type'   => 'text',
+					'values' => array( 'modern', 'classic', 'vintage', 'minimalist', 'premium' )
+				),
 			);
 		} else {
 			// Digital product attributes
 			$possible_attributes = array(
-				'format'   => array( 'pdf', 'video', 'audio', 'software' ),
-				'license'  => array( 'personal', 'commercial', 'extended' ),
-				'version'  => array( 'basic', 'pro', 'enterprise' ),
-				'platform' => array( 'windows', 'mac', 'linux', 'web', 'mobile' ),
+				'format'   => array(
+					'name'   => 'Format',
+					'type'   => 'text',
+					'values' => array( 'pdf', 'video', 'audio', 'software' )
+				),
+				'license'  => array(
+					'name'   => 'License',
+					'type'   => 'text',
+					'values' => array( 'personal', 'commercial', 'extended' )
+				),
+				'version'  => array(
+					'name'   => 'Version',
+					'type'   => 'text',
+					'values' => array( 'basic', 'pro', 'enterprise' )
+				),
+				'platform' => array(
+					'name'   => 'Platform',
+					'type'   => 'text',
+					'values' => array( 'windows', 'mac', 'linux', 'web', 'mobile' )
+				),
 			);
 		}
 
@@ -285,11 +318,96 @@ class Product_Generator extends Generator {
 			$this->faker->numberBetween( 2, 3 )
 		);
 
-		foreach ( $selected_attributes as $attribute_name ) {
-			$attributes[ $attribute_name ] = $possible_attributes[ $attribute_name ];
+		foreach ( $selected_attributes as $attribute_slug ) {
+			$attribute_info = $possible_attributes[ $attribute_slug ];
+			
+			// Create or get the attribute using EasyCommerce models
+			$attribute_id = $this->get_or_create_attribute( 
+				$attribute_info['name'], 
+				$attribute_info['type'], 
+				$attribute_slug 
+			);
+
+			if ( $attribute_id ) {
+				// Create or get attribute values
+				$attribute_values = array();
+				foreach ( $attribute_info['values'] as $value ) {
+					$value_id = $this->get_or_create_attribute_value( 
+						$attribute_id, 
+						ucfirst( $value ), 
+						$value 
+					);
+					if ( $value_id ) {
+						$attribute_values[] = $value;
+					}
+				}
+
+				if ( ! empty( $attribute_values ) ) {
+					$attributes[ $attribute_slug ] = $attribute_values;
+				}
+			}
 		}
 
 		return $attributes;
+	}
+
+	/**
+	 * Get or create an attribute using EasyCommerce Attribute model
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $name Attribute name.
+	 * @param string $type Attribute type.
+	 * @param string $slug Attribute slug.
+	 *
+	 * @return int|false Attribute ID or false on failure.
+	 */
+	private function get_or_create_attribute( string $name, string $type, string $slug ) {
+		try {
+			$attribute_model = new Attribute();
+			
+			// Check if attribute already exists
+			$existing_attribute = $attribute_model->get_by_slug( $slug );
+			if ( $existing_attribute ) {
+				return $existing_attribute->id;
+			}
+
+			// Create new attribute
+			return $attribute_model->add( $name, $type, $slug );
+		} catch ( Exception $e ) {
+			$this->log( 'Failed to create attribute: ' . $e->getMessage(), 'error' );
+			return false;
+		}
+	}
+
+	/**
+	 * Get or create an attribute value using EasyCommerce Attribute_Value model
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int    $attribute_id Attribute ID.
+	 * @param string $name         Value name.
+	 * @param string $value        Value slug/value.
+	 *
+	 * @return int|false Attribute value ID or false on failure.
+	 */
+	private function get_or_create_attribute_value( int $attribute_id, string $name, string $value ) {
+		try {
+			$value_model = new Attribute_Value();
+			$value_slug  = sanitize_title( $value );
+			
+			// Check if value already exists
+			$existing_value = $value_model->get_by_slug( $value_slug );
+			if ( $existing_value && $existing_value->attribute_id == $attribute_id ) {
+				return $existing_value->id;
+			}
+
+			// Create new attribute value
+			return $value_model->add( $attribute_id, $name, $value, $value_slug );
+		} catch ( Exception $e ) {
+			$this->log( 'Failed to create attribute value: ' . $e->getMessage(), 'error' );
+			return false;
+		}
 	}
 
 	/**
