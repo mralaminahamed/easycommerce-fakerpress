@@ -11,8 +11,11 @@ namespace EasyCommerceFakerPress\Generators;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Order;
 use EasyCommerce\Models\Customer;
+use EasyCommerce\Models\Product_Variation;
+use EasyCommerce\Models\Database;
 use WP_Error;
 use WP_User;
+use Exception;
 
 /**
  * Order Generator Class
@@ -51,8 +54,12 @@ class Order_Generator extends Generator {
 			$customer   = $this->get_random_customer();
 			$variations = $this->get_random_product_variations();
 
-			if ( ! $customer || empty( $variations ) ) {
-				return false;
+			if ( ! $customer ) {
+				return new WP_Error( 'no_customers', 'No customers found for order generation. Please create customers first.' );
+			}
+
+			if ( empty( $variations ) ) {
+				return new WP_Error( 'no_variations', 'No product variations found for order generation. Please create products with variations first.' );
 			}
 
 			// Convert variations to order items format required by EasyCommerce
@@ -70,18 +77,21 @@ class Order_Generator extends Generator {
 				
 				// Optional core fields
 				'status'         => $this->generate_order_status(),
+				'fulfill_status' => $this->generate_fulfillment_status(),
 				'payment_method' => $this->generate_payment_method(),
 				
 				// Order items (required)
 				'items'          => $order_items,
+				
+				// Order metadata
+				'meta'           => $order_meta,
 			) );
 
 			if ( ! $created ) {
 				return new WP_Error( 'order_creation_failed', 'Failed to create order using EasyCommerce model.' );
 			}
 
-			// Add order metadata after creation
-			$this->add_order_metadata( $order->get_id(), $order_meta );
+			// Order metadata is already added during creation via the Order model
 
 			// Update customer statistics
 			$this->update_customer_stats( $customer->ID, $total );
@@ -108,9 +118,10 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return WP_User|null Random customer user object or null if none found.
+	 * @return WP_User|false Random customer user object or false if none found.
 	 */
-	private function get_random_customer(): ?WP_User {
+	private function get_random_customer() {
+		// First try to get users with customer role
 		$customers = get_users(
 			array(
 				'role'    => 'customer',
@@ -120,28 +131,52 @@ class Order_Generator extends Generator {
 			)
 		);
 
-		return ! empty( $customers ) ? $customers[0] : null;
+		if ( ! empty( $customers ) ) {
+			return $customers[0];
+		}
+
+		// If no customers found, get any user except admin
+		$users = get_users(
+			array(
+				'role__not_in' => array( 'administrator' ),
+				'number'       => 1,
+				'orderby'      => 'rand',
+				'fields'       => 'all',
+			)
+		);
+
+		if ( ! empty( $users ) ) {
+			// Assign customer role to this user
+			$user = $users[0];
+			$user->add_role( 'customer' );
+			return $user;
+		}
+
+		return false;
 	}
 
 	/**
-	 * Get random product variations for order items
+	 * Get random product variations for order items using EasyCommerce models
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Array of product variation data from the database.
+	 * @return array Array of Product_Variation objects.
 	 */
 	private function get_random_product_variations(): array {
-		$variations_table = $this->wpdb->prefix . 'product_variations';
-
-		$variations = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SELECT * FROM {$variations_table} WHERE status = 'in_stock' ORDER BY RAND() LIMIT %d",
-				$this->faker->numberBetween( 1, 5 )
-			),
-			ARRAY_A
+		$db = new Database( 'product_variations' );
+		$variations_data = $db->get_rows(
+			array( 'status' => 'in_stock' ),
+			$this->faker->numberBetween( 1, 5 ),
+			0,
+			'RAND()'
 		);
 
-		return $variations ?: array();
+		$variations = array();
+		foreach ( $variations_data as $variation_data ) {
+			$variations[] = new Product_Variation( $variation_data->id );
+		}
+
+		return $variations;
 	}
 
 	/**
@@ -149,7 +184,7 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $variations Product variations array.
+	 * @param array $variations Array of Product_Variation objects.
 	 *
 	 * @return array Order items formatted for EasyCommerce Order model.
 	 */
@@ -157,10 +192,14 @@ class Order_Generator extends Generator {
 		$order_items = array();
 
 		foreach ( $variations as $variation ) {
-			$product_id = $variation['product_id'];
-			$price_id   = $variation['id'];
+			if ( ! $variation->exists() ) {
+				continue;
+			}
+
+			$product_id = $variation->get_product_id();
+			$price_id   = $variation->get_price_id();
 			$quantity   = $this->faker->numberBetween( 1, 3 );
-			$rate       = (float) $variation['price'];
+			$rate       = $variation->get_regular_price();
 
 			if ( ! isset( $order_items[ $product_id ] ) ) {
 				$order_items[ $product_id ] = array();
@@ -169,6 +208,7 @@ class Order_Generator extends Generator {
 			$order_items[ $product_id ][ $price_id ] = array(
 				'quantity' => $quantity,
 				'rate'     => $rate,
+				'price'    => $rate * $quantity, // Total price for this line item
 			);
 		}
 
@@ -189,7 +229,7 @@ class Order_Generator extends Generator {
 
 		foreach ( $order_items as $product_id => $variations ) {
 			foreach ( $variations as $price_id => $item ) {
-				$subtotal += $item['quantity'] * $item['rate'];
+				$subtotal += $item['price']; // Use the pre-calculated price
 			}
 		}
 
@@ -539,23 +579,6 @@ class Order_Generator extends Generator {
 		return $count;
 	}
 
-	/**
-	 * Add order metadata after creation
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int   $order_id   Order ID.
-	 * @param array $order_meta Order metadata.
-	 *
-	 * @return void
-	 */
-	private function add_order_metadata( int $order_id, array $order_meta ): void {
-		// This would use the EasyCommerce Order Meta system
-		// For now, we'll use basic WordPress meta functions
-		foreach ( $order_meta as $key => $value ) {
-			update_post_meta( $order_id, $key, $value );
-		}
-	}
 
 	/**
 	 * Generate fallback address if customer doesn't have one
@@ -583,24 +606,24 @@ class Order_Generator extends Generator {
 	}
 
 	/**
-	 * Get random coupons for order
+	 * Get random coupons for order using EasyCommerce models
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Array of coupon data.
 	 */
 	private function get_random_coupons(): array {
-		$coupons_table = $this->wpdb->prefix . 'coupons';
-
-		$coupons = $this->wpdb->get_results(
-			$this->wpdb->prepare(
-				"SELECT * FROM {$coupons_table} WHERE active = 1 ORDER BY RAND() LIMIT %d",
-				$this->faker->numberBetween( 1, 2 )
-			),
-			ARRAY_A
+		$db = new Database( 'coupons' );
+		$coupons = $db->get_rows(
+			array( 'active' => 1 ),
+			$this->faker->numberBetween( 1, 2 ),
+			0,
+			'RAND()'
 		);
 
-		return $coupons ?: array();
+		return array_map( function( $coupon ) {
+			return (array) $coupon;
+		}, $coupons );
 	}
 
 	/**
