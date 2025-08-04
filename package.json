@@ -1,0 +1,46 @@
+{
+  "name": "easycommerce-fakerpress",
+  "version": "1.0.0",
+  "description": "Generate fake ecommerce data for EasyCommerce plugin",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "dev": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js",
+    "lint:css": "wp-scripts lint-style",
+    "lint": "npm run lint:js && npm run lint:css",
+    "fix:js": "wp-scripts lint-js --fix",
+    "fix:css": "wp-scripts lint-style --fix",
+    "fix": "npm run fix:js && npm run fix:css",
+    "format": "wp-scripts format"
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "ecommerce",
+    "faker",
+    "react"
+  ],
+  "author": "Your Name",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@wordpress/scripts": "^28.0.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.3.5"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "packageManager": "yarn@4.9.2"
+}

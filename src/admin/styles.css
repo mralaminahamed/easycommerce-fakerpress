@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ecfp-container {
+    @apply max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-sm;
+}
+
+.ecfp-tab-button {
+    @apply px-4 py-2 font-medium text-sm border-b-2 transition-colors duration-200;
+}
+
+.ecfp-tab-button.active {
+    @apply text-wp-blue border-wp-blue;
+}
+
+.ecfp-tab-button:not(.active) {
+    @apply text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300;
+}
+
+.ecfp-form-group {
+    @apply mb-4;
+}
+
+.ecfp-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.ecfp-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-wp-blue focus:border-wp-blue;
+}
+
+.ecfp-button {
+    @apply px-4 py-2 bg-wp-blue text-white rounded-md hover:bg-wp-blue-dark focus:outline-none focus:ring-2 focus:ring-wp-blue focus:ring-offset-2 transition-colors duration-200;
+}
+
+.ecfp-button:disabled {
+    @apply bg-gray-400 cursor-not-allowed;
+}
+
+.ecfp-success {
+    @apply bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md;
+}
+
+.ecfp-error {
+    @apply bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md;
+}
+
+.ecfp-loading {
+    @apply inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin;
+}
