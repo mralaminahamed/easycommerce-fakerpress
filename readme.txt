@@ -5,8 +5,8 @@ Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
 Stable tag: 1.0.0
-License: GPL v3 or later
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Generate realistic fake ecommerce data (products, customers, orders, coupons) for testing and development with modern React admin interface.
 
