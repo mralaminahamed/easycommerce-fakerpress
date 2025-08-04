@@ -2236,6 +2236,7 @@ __metadata:
     "@headlessui/react": "npm:^2.2.7"
     "@heroicons/react": "npm:^2.2.0"
     "@playwright/test": "npm:^1.54.2"
+    "@wordpress/api-fetch": "npm:^7.27.0"
     "@wordpress/dom-ready": "npm:^4.27.0"
     "@wordpress/element": "npm:^6.27.0"
     "@wordpress/eslint-plugin": "npm:^22.13.0"
@@ -2253,6 +2254,7 @@ __metadata:
     stylelint: "npm:^16.23.0"
     stylelint-config-prettier-scss: "npm:^1.0.0"
     stylelint-config-recess-order: "npm:^7.1.0"
+    stylelint-config-tailwindcss: "npm:^1.0.0"
     stylelint-order: "npm:^7.0.0"
     stylelint-scss: "npm:^6.12.1"
     tailwindcss: "npm:^3.3.5"
@@ -4379,6 +4381,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/api-fetch@npm:^7.27.0":
+  version: 7.27.0
+  resolution: "@wordpress/api-fetch@npm:7.27.0"
+  dependencies:
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/i18n": "npm:^6.0.0"
+    "@wordpress/url": "npm:^4.27.0"
+  checksum: 10c0/f0ea54ad7f6bb0786049797083fa72549cc840fce30e719609fb3351b4be1c80d3f859f92d87782bb71f72fcb122a632854a96c3cf87dd5d260dbf6ab04e2c66
+  languageName: node
+  linkType: hard
+
 "@wordpress/babel-preset-default@npm:^8.27.0":
   version: 8.27.0
   resolution: "@wordpress/babel-preset-default@npm:8.27.0"
@@ -4673,6 +4686,16 @@ __metadata:
     stylelint: ^16.8.2
     stylelint-scss: ^6.4.0
   checksum: 10c0/371c1b41f3569cb6036f55b4a0bf9291a52e4b8ef2e82e48c6fff83a3aaa7ce4d28fe66c004579d0eb3a0390900639338b5314e80bb5c2c00375de9703f714ee
+  languageName: node
+  linkType: hard
+
+"@wordpress/url@npm:^4.27.0":
+  version: 4.27.0
+  resolution: "@wordpress/url@npm:4.27.0"
+  dependencies:
+    "@babel/runtime": "npm:7.25.7"
+    remove-accents: "npm:^0.5.0"
+  checksum: 10c0/26e2eb6ad63ca20cf0998c54b130e64420a76555561a7a8ea76c1a2c721ac400813441cce05473c6ddc5cb568e8caad6e28209fe35c5e98094a675eb1feb8ec5
   languageName: node
   linkType: hard
 
@@ -13094,6 +13117,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"remove-accents@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "remove-accents@npm:0.5.0"
+  checksum: 10c0/a75321aa1b53d9abe82637115a492770bfe42bb38ed258be748bf6795871202bc8b4badff22013494a7029f5a241057ad8d3f72adf67884dbe15a9e37e87adc4
+  languageName: node
+  linkType: hard
+
 "require-directory@npm:^2.1.1":
   version: 2.1.1
   resolution: "require-directory@npm:2.1.1"
@@ -14325,6 +14355,16 @@ __metadata:
   peerDependencies:
     stylelint: ^16.1.0
   checksum: 10c0/a0a0ecd91f4d193bbe2cc3408228f8a2d8fcb2b2578d77233f86780c9247c796a04e16aad7a91d97cb918e2de34b6a8062bab66ee017c3835d855081d94f4828
+  languageName: node
+  linkType: hard
+
+"stylelint-config-tailwindcss@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "stylelint-config-tailwindcss@npm:1.0.0"
+  peerDependencies:
+    stylelint: ">=13.13.1"
+    tailwindcss: ">=2.2.16"
+  checksum: 10c0/ceb53eb51512a861b9d786614a3c744a87068ee20bd8e183801fb70aea76503e3ac4e0b077c836bda99a188d38960d7aa93f00fdf95789cd50f9fc269070c083
   languageName: node
   linkType: hard
 

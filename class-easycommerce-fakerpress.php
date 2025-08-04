@@ -107,8 +107,6 @@ class EasyCommerce_FakerPress {
 		wp_set_script_translations( 'easycommerce-fakerpress-admin', 'easycommerce-fakerpress' );
 	}
 
-
-
 	/**
 	 * Register REST API routes
 	 *
@@ -128,7 +126,6 @@ class EasyCommerce_FakerPress {
 			$controller->register_routes();
 		}
 	}
-
 
 	public function activate(): void {
 		if ( ! $this->check_dependencies() ) {

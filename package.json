@@ -60,6 +60,7 @@
     "stylelint": "^16.23.0",
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-recess-order": "^7.1.0",
+    "stylelint-config-tailwindcss": "^1.0.0",
     "stylelint-order": "^7.0.0",
     "stylelint-scss": "^6.12.1",
     "tailwindcss": "^3.3.5",
@@ -68,6 +69,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
+    "@wordpress/api-fetch": "^7.27.0",
     "@wordpress/dom-ready": "^4.27.0",
     "@wordpress/element": "^6.27.0",
     "@wordpress/i18n": "^6.0.0"

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
 import GeneratorBase from './GeneratorBase';
 
 export default function CustomerGenerator() {
@@ -12,26 +13,17 @@ export default function CustomerGenerator() {
         setResult(null);
 
         try {
-            const formData = new FormData();
-            formData.append('action', 'ecfp_generate_data');
-            formData.append('type', 'customers');
-            formData.append('count', count);
-            formData.append('nonce', window.ecfpAjax.nonce);
-
-            const response = await fetch(window.ecfpAjax.url, {
+            const data = await apiFetch({
+                path: '/easycommerce-fakerpress/v1/customers/generate',
                 method: 'POST',
-                body: formData,
+                data: {
+                    count: count
+                }
             });
 
-            const data = await response.json();
-
-            if (data.success) {
-                setResult(data.data);
-            } else {
-                setError(data.data || 'An error occurred while generating customers.');
-            }
+            setResult(data);
         } catch (err) {
-            setError('Network error occurred. Please try again.');
+            setError(err.message || 'An error occurred while generating customers.');
         } finally {
             setIsLoading(false);
         }
