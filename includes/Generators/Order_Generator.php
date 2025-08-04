@@ -9,6 +9,7 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
+use EasyCommerce\Models\Order;
 use WP_Error;
 use WP_User;
 
@@ -47,52 +48,34 @@ class Order_Generator extends Generator {
 			return false;
 		}
 
-		// Create order in EasyCommerce orders table.
-		$order_data = array(
-			'customer_id'    => $customer->ID,
-			'total'          => 0, // Will be calculated after adding items.
-			'status'         => $this->faker->randomElement( array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' ) ),
-			'fulfill_status' => $this->faker->randomElement( array( 'unfulfilled', 'fulfilled', 'partially_fulfilled', 'shipped', 'delivered', 'returned' ) ),
-			'payment_method' => $this->faker->randomElement( array( 'stripe', 'paypal', 'bank_transfer', 'cash_on_delivery', 'credit_card' ) ),
-			'created_at'     => $this->faker->dateTimeBetween( '-1 year', 'now' )->format( 'Y-m-d H:i:s' ),
-			'updated_at'     => wp_date( 'Y-m-d H:i:s' ),
-		);
-
-		$orders_table = $this->wpdb->prefix . 'orders';
-		$this->wpdb->insert( $orders_table, $order_data );
-		$order_id = $this->wpdb->insert_id;
-
-		if ( ! $order_id ) {
-			return false;
-		}
+		// Convert variations to order items format
+		$order_items = $this->convert_variations_to_items( $variations );
+		$total       = $this->calculate_order_total( $order_items );
 
 		try {
-			// Add order items and calculate total.
-			$total = $this->add_order_items( $order_id, $variations );
+			$order = new Order();
+			$created = $order->create( array(
+				'customer_id'    => $customer->ID,
+				'total'          => $total,
+				'status'         => $this->faker->randomElement( array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' ) ),
+				'payment_method' => $this->faker->randomElement( array( 'stripe', 'paypal', 'bank_transfer', 'cash_on_delivery', 'credit_card' ) ),
+				'items'          => $order_items,
+			) );
 
-			// Update order total.
-			$this->wpdb->update(
-				$orders_table,
-				array( 'total' => number_format( $total, 2, '.', '' ) ),
-				array( 'id' => $order_id )
-			);
-
-			// Add order metadata.
-			$this->add_order_meta( $order_id, $customer, $total );
+			if ( ! $created ) {
+				return new WP_Error( 'order_creation_failed', 'Failed to create order using EasyCommerce model.' );
+			}
 
 			// Update customer statistics.
 			$this->update_customer_stats( $customer->ID, $total );
 
 			return array(
-				'id'       => $order_id,
+				'id'       => $order->get_id(),
 				'customer' => $customer->display_name,
 				'total'    => number_format( $total, 2 ),
-				'status'   => $order_data['status'],
+				'status'   => $order->get_status(),
 			);
 		} catch ( \Exception $e ) {
-			// Clean up the created order if processing fails.
-			$this->wpdb->delete( $orders_table, array( 'id' => $order_id ) );
-
 			return new WP_Error( 'order_creation_failed', $e->getMessage() );
 		}
 	}
@@ -138,6 +121,62 @@ class Order_Generator extends Generator {
 			),
 			ARRAY_A
 		);
+	}
+
+	/**
+	 * Convert product variations to order items format
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $variations Product variations array.
+	 *
+	 * @return array Order items formatted for EasyCommerce Order model.
+	 */
+	private function convert_variations_to_items( array $variations ): array {
+		$order_items = array();
+
+		foreach ( $variations as $variation ) {
+			$product_id = $variation['product_id'];
+			$price_id   = $variation['id'];
+			$quantity   = $this->faker->numberBetween( 1, 3 );
+			$rate       = (float) $variation['price'];
+
+			if ( ! isset( $order_items[ $product_id ] ) ) {
+				$order_items[ $product_id ] = array();
+			}
+
+			$order_items[ $product_id ][ $price_id ] = array(
+				'quantity' => $quantity,
+				'rate'     => $rate,
+			);
+		}
+
+		return $order_items;
+	}
+
+	/**
+	 * Calculate order total from items
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $order_items Order items array.
+	 *
+	 * @return float Total order amount.
+	 */
+	private function calculate_order_total( array $order_items ): float {
+		$subtotal = 0;
+
+		foreach ( $order_items as $product_id => $variations ) {
+			foreach ( $variations as $price_id => $item ) {
+				$subtotal += $item['quantity'] * $item['rate'];
+			}
+		}
+
+		// Add tax (8%) and shipping
+		$tax_amount    = $subtotal * 0.08;
+		$shipping_cost = $this->faker->randomFloat( 2, 0, 25 );
+
+		return $subtotal + $tax_amount + $shipping_cost;
 	}
 
 	/**

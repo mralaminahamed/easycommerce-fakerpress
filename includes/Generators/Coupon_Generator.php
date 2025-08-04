@@ -9,6 +9,7 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
+use EasyCommerce\Models\Coupon;
 use Exception;
 use WP_Error;
 
@@ -45,41 +46,28 @@ class Coupon_Generator extends Generator {
 		$discount_type = $this->faker->randomElement( array( 'percentage', 'fixed' ) );
 		$amount        = $this->generate_discount_amount( $discount_type );
 
-		// Insert into EasyCommerce coupons table.
-		$coupon_data = array(
-			'status'        => 1, // Active.
-			'name'          => $coupon_name,
-			'code'          => $coupon_code,
-			'discount_type' => $discount_type,
-			'amount'        => $amount,
-			'active'        => 1,
-			'created_at'    => $this->faker->dateTimeBetween( '-6 months', 'now' )->format( 'Y-m-d H:i:s' ),
-			'updated_at'    => wp_date( 'Y-m-d H:i:s' ),
-		);
-
-		$coupons_table = $this->wpdb->prefix . 'coupons';
-		$this->wpdb->insert( $coupons_table, $coupon_data );
-		$coupon_id = $this->wpdb->insert_id;
-
-		if ( ! $coupon_id ) {
-			return false;
-		}
-
 		try {
-			// Add coupon rules.
-			$this->add_coupon_rules( $coupon_id );
+			$coupon = new Coupon();
+			$created = $coupon->create( array(
+				'name'          => $coupon_name,
+				'code'          => $coupon_code,
+				'discount_type' => $discount_type,
+				'amount'        => $amount,
+				'active'        => 1,
+			) );
+
+			if ( ! $created ) {
+				return new WP_Error( 'coupon_creation_failed', 'Failed to create coupon using EasyCommerce model.' );
+			}
 
 			return array(
-				'id'     => $coupon_id,
+				'id'     => $coupon->get_id(),
 				'name'   => $coupon_name,
 				'code'   => $coupon_code,
 				'amount' => $amount,
 				'type'   => $discount_type,
 			);
 		} catch ( Exception $e ) {
-			// Clean up the created coupon if rules insertion fails.
-			$this->wpdb->delete( $coupons_table, array( 'id' => $coupon_id ) );
-
 			return new WP_Error( 'coupon_creation_failed', $e->getMessage() );
 		}
 	}
