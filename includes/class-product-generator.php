@@ -131,7 +131,14 @@ class ECFP_Product_Generator
     private function insertVariationAttributes($variation_id)
     {
         $attributes = $this->getAttributesList();
-        $selected_attributes = $this->faker->randomElements($attributes, $this->faker->numberBetween(1, 3));
+        
+        if (empty($attributes)) {
+            return;
+        }
+        
+        $max_attributes = min(count($attributes), 3);
+        $num_attributes = $this->faker->numberBetween(1, $max_attributes);
+        $selected_attributes = $this->faker->randomElements($attributes, $num_attributes);
 
         foreach ($selected_attributes as $attribute) {
             $attribute_value = $this->getAttributeValueForType($attribute['name']);
@@ -274,7 +281,9 @@ class ECFP_Product_Generator
         }
 
         if (!empty($categories) && !is_wp_error($categories)) {
-            $random_categories = $this->faker->randomElements($categories, $this->faker->numberBetween(1, 3));
+            $max_categories = min(count($categories), 3);
+            $num_categories = $this->faker->numberBetween(1, $max_categories);
+            $random_categories = $this->faker->randomElements($categories, $num_categories);
             $category_ids = array_column($random_categories, 'term_id');
             wp_set_object_terms($product_id, $category_ids, 'product_cat');
         }
