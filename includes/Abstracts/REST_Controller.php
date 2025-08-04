@@ -2,73 +2,40 @@
 /**
  * Abstract REST Controller Class
  *
- * @package EasyCommerceFakerPress\Abstracts
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Abstracts
  */
 
 namespace EasyCommerceFakerPress\Abstracts;
 
-use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use WP_Error;
 
 /**
  * Abstract REST Controller Class
  *
- * Base class for all REST controllers with common functionality
+ * Base class for all REST API controllers with common functionality
+ * for data generation endpoints.
  *
  * @since 1.0.0
  */
 abstract class REST_Controller extends WP_REST_Controller {
+
 	/**
-	 * Endpoint namespace
+	 * REST API namespace
 	 *
+	 * @since 1.0.0
 	 * @var string
 	 */
 	protected $namespace = 'easycommerce-fakerpress/v1';
 
 	/**
-	 * Route base
+	 * Register REST API routes
 	 *
-	 * @var string
-	 */
-	protected $rest_base = '';
-
-	/**
-	 * Generator instance
-	 *
-	 * @var Generator
-	 */
-	protected $generator;
-
-	/**
-	 * Maximum count per request
-	 *
-	 * @var int
-	 */
-	protected $max_count = 100;
-
-	/**
-	 * Default count
-	 *
-	 * @var int
-	 */
-	protected $default_count = 10;
-
-	/**
-	 * Constructor
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
-		$this->rest_base = $this->get_rest_base();
-		$this->generator = $this->get_generator_instance();
-	}
-
-	/**
-	 * Register routes
+	 * Registers the generation endpoint for the specific resource type.
 	 *
 	 * @since 1.0.0
 	 *
@@ -77,310 +44,68 @@ abstract class REST_Controller extends WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->rest_base . '/generate',
+			'/' . $this->get_rest_base() . '/generate',
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'generate_items' ),
-					'permission_callback' => array( $this, 'check_permissions' ),
+					'permission_callback' => array( $this, 'generate_items_permissions_check' ),
 					'args'                => $this->get_generation_params(),
 				),
-				'schema' => array( $this, 'get_item_schema' ),
+				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
 	}
 
 	/**
-	 * Generate items endpoint
+	 * Generate items endpoint callback
 	 *
-	 * @since 1.0.0
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 *
-	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
-	 */
-	public function generate_items( WP_REST_Request $request ) {
-		try {
-			$count = $this->sanitize_count( $request->get_param( 'count' ) );
-			
-			$validation_result = $this->validate_generation_request( $request, $count );
-			if ( is_wp_error( $validation_result ) ) {
-				return $validation_result;
-			}
-
-			/**
-			 * Action fired before generating items
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param int             $count   Number of items to generate.
-			 * @param string          $type    Resource type.
-			 * @param WP_REST_Request $request Request object.
-			 */
-			do_action( 'ecfp_before_generate_items', $count, $this->get_resource_type(), $request );
-
-			$result = $this->generator->generate( $count );
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
-
-			/**
-			 * Action fired after generating items
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param array           $result  Generation results.
-			 * @param int             $count   Number of items requested.
-			 * @param string          $type    Resource type.
-			 * @param WP_REST_Request $request Request object.
-			 */
-			do_action( 'ecfp_after_generate_items', $result, $count, $this->get_resource_type(), $request );
-
-			return $this->success_response( $result );
-
-		} catch ( \Exception $e ) {
-			return $this->error_response(
-				'generation_failed',
-				sprintf(
-					/* translators: 1: Resource type, 2: Error message */
-					__( '%1$s generation failed: %2$s', 'easycommerce-fakerpress' ),
-					ucfirst( $this->get_resource_type() ),
-					$e->getMessage()
-				),
-				500
-			);
-		}
-	}
-
-	/**
-	 * Check permissions for the endpoint
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 *
-	 * @return bool|WP_Error True if permission granted, WP_Error otherwise.
-	 */
-	public function check_permissions( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return $this->error_response(
-				'rest_forbidden',
-				sprintf(
-					/* translators: %s: Resource type */
-					__( 'You do not have permissions to generate %s.', 'easycommerce-fakerpress' ),
-					$this->get_resource_type_plural()
-				),
-				403
-			);
-		}
-
-		/**
-		 * Filter permission check result
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param bool            $allowed  Whether permission is granted.
-		 * @param string          $type     Resource type.
-		 * @param WP_REST_Request $request  Request object.
-		 */
-		return apply_filters( 'ecfp_rest_permission_check', true, $this->get_resource_type(), $request );
-	}
-
-	/**
-	 * Get generation parameters schema
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Generation parameters.
-	 */
-	public function get_generation_params() {
-		$params = array(
-			'count' => array(
-				'description' => sprintf(
-					/* translators: %s: Resource type plural */
-					__( 'Number of %s to generate.', 'easycommerce-fakerpress' ),
-					$this->get_resource_type_plural()
-				),
-				'type'        => 'integer',
-				'default'     => $this->default_count,
-				'minimum'     => 1,
-				'maximum'     => $this->max_count,
-				'required'    => false,
-			),
-		);
-
-		/**
-		 * Filter generation parameters
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array  $params Parameters array.
-		 * @param string $type   Resource type.
-		 */
-		return apply_filters( 'ecfp_rest_generation_params', $params, $this->get_resource_type() );
-	}
-
-	/**
-	 * Get item schema
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Item schema.
-	 */
-	public function get_item_schema() {
-		$schema = array(
-			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => $this->get_resource_type() . '_generation',
-			'type'       => 'object',
-			'properties' => array_merge(
-				$this->get_standard_response_properties(),
-				$this->get_resource_specific_properties()
-			)
-		);
-
-		/**
-		 * Filter the item schema
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array  $schema Item schema.
-		 * @param string $type   Resource type.
-		 */
-		return apply_filters( 'ecfp_rest_item_schema', $schema, $this->get_resource_type() );
-	}
-
-	/**
-	 * Get standard response properties
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Standard properties.
-	 */
-	protected function get_standard_response_properties() {
-		return array(
-			'success' => array(
-				'description' => __( 'Whether the request was successful.', 'easycommerce-fakerpress' ),
-				'type'        => 'boolean',
-				'readonly'    => true,
-			),
-			'message' => array(
-				'description' => __( 'Human-readable message describing the result.', 'easycommerce-fakerpress' ),
-				'type'        => 'string',
-				'readonly'    => true,
-			),
-			'data'    => array(
-				'description' => __( 'Generation result data.', 'easycommerce-fakerpress' ),
-				'type'        => 'object',
-				'properties'  => array(
-					'generated' => array(
-						'description' => sprintf(
-							/* translators: %s: Resource type plural */
-							__( 'Number of %s generated.', 'easycommerce-fakerpress' ),
-							$this->get_resource_type_plural()
-						),
-						'type'        => 'integer',
-					),
-				),
-			),
-		);
-	}
-
-	/**
-	 * Create success response
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $result Generation result data.
-	 *
-	 * @return WP_REST_Response Success response.
-	 */
-	protected function success_response( array $result ) {
-		return new WP_REST_Response(
-			array(
-				'success' => true,
-				'message' => $this->get_success_message( $result['generated'] ),
-				'data'    => $result,
-			),
-			201
-		);
-	}
-
-	/**
-	 * Create error response
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $code    Error code.
-	 * @param string $message Error message.
-	 * @param int    $status  HTTP status code.
-	 * @param mixed  $data    Additional error data.
-	 *
-	 * @return WP_Error Error response.
-	 */
-	protected function error_response( $code, $message, $status = 400, $data = null ) {
-		return new WP_Error( $code, $message, array( 'status' => $status, 'data' => $data ) );
-	}
-
-	/**
-	 * Get success message
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $count Number of items generated.
-	 *
-	 * @return string Success message.
-	 */
-	protected function get_success_message( $count ) {
-		return sprintf(
-			/* translators: 1: Number generated, 2: Resource type singular, 3: Resource type plural */
-			_n(
-				'%1$d %2$s generated successfully.',
-				'%1$d %3$s generated successfully.',
-				$count,
-				'easycommerce-fakerpress'
-			),
-			$count,
-			$this->get_resource_type(),
-			$this->get_resource_type_plural()
-		);
-	}
-
-	/**
-	 * Sanitize count parameter
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $count Count value to sanitize.
-	 *
-	 * @return int Sanitized count.
-	 */
-	protected function sanitize_count( $count ) {
-		$count = absint( $count );
-		return $count > 0 ? $count : $this->default_count;
-	}
-
-	/**
-	 * Validate generation request
+	 * Handles the generation request and returns the generated data.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @param int             $count   Requested count.
 	 *
-	 * @return true|WP_Error True if valid, WP_Error otherwise.
+	 * @return WP_REST_Response|WP_Error Response object or error.
 	 */
-	protected function validate_generation_request( WP_REST_Request $request, $count ) {
-		if ( $count <= 0 || $count > $this->max_count ) {
-			return $this->error_response(
+	public function generate_items( WP_REST_Request $request ) {
+		$count = $request->get_param( 'count' );
+
+		if ( ! $count || $count <= 0 ) {
+			return new WP_Error(
 				'invalid_count',
-				sprintf(
-					/* translators: 1: Maximum count, 2: Resource type plural */
-					__( 'Count must be between 1 and %1$d for %2$s.', 'easycommerce-fakerpress' ),
-					$this->max_count,
-					$this->get_resource_type_plural()
-				),
-				400
+				__( 'Count parameter is required and must be greater than 0.', 'easycommerce-fakerpress' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		$generator = $this->get_generator_instance();
+		$result    = $generator->generate( (int) $count );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return new WP_REST_Response( $result, 200 );
+	}
+
+	/**
+	 * Check permissions for generating items
+	 *
+	 * Verifies that the current user has permission to generate data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return bool|WP_Error True if permission granted, error otherwise.
+	 */
+	public function generate_items_permissions_check( WP_REST_Request $request ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to generate data.', 'easycommerce-fakerpress' ),
+				array( 'status' => rest_authorization_required_code() )
 			);
 		}
 
@@ -388,59 +113,128 @@ abstract class REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get generation endpoint parameters
+	 *
+	 * Returns the parameters schema for the generation endpoint.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Parameters schema.
+	 */
+	public function get_generation_params(): array {
+		return array(
+			'count' => array(
+				'description'       => __( 'Number of items to generate.', 'easycommerce-fakerpress' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'maximum'           => 100,
+				'required'          => true,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => array( $this, 'validate_count' ),
+			),
+		);
+	}
+
+	/**
+	 * Validate count parameter
+	 *
+	 * Validates the count parameter for generation requests.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed           $value   Parameter value.
+	 * @param WP_REST_Request $request Request object.
+	 * @param string          $param   Parameter name.
+	 *
+	 * @return bool|WP_Error True if valid, WP_Error otherwise.
+	 */
+	public function validate_count( $value, WP_REST_Request $request, string $param ) {
+		if ( ! is_numeric( $value ) || $value <= 0 || $value > 100 ) {
+			return new WP_Error(
+				'invalid_count',
+				__( 'Count must be a number between 1 and 100.', 'easycommerce-fakerpress' )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get public schema for the endpoint
+	 *
+	 * Returns the schema for API documentation and validation.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Schema definition.
+	 */
+	public function get_public_item_schema(): array {
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => sprintf( '%s Generation Response', ucfirst( $this->get_resource_type() ) ),
+			'type'       => 'object',
+			'properties' => array(
+				'generated' => array(
+					'description' => __( 'Number of items generated.', 'easycommerce-fakerpress' ),
+					'type'        => 'integer',
+					'context'     => array( 'view' ),
+					'readonly'    => true,
+				),
+			),
+		);
+
+		// Add resource-specific properties.
+		$resource_properties = $this->get_resource_specific_properties();
+		if ( ! empty( $resource_properties ) ) {
+			$schema['properties'] = array_merge( $schema['properties'], $resource_properties );
+		}
+
+		return $schema;
+	}
+
+	/**
 	 * Get REST base for the endpoint
 	 *
-	 * Must be implemented by child classes
+	 * Must be implemented by child classes to define the endpoint base.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string REST base.
 	 */
-	abstract protected function get_rest_base();
+	abstract protected function get_rest_base(): string;
 
 	/**
 	 * Get generator instance
 	 *
-	 * Must be implemented by child classes
+	 * Must be implemented by child classes to return the appropriate generator.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return Generator Generator instance.
 	 */
-	abstract protected function get_generator_instance();
+	abstract protected function get_generator_instance(): Generator;
 
 	/**
 	 * Get resource type name
 	 *
-	 * Must be implemented by child classes
+	 * Must be implemented by child classes to define the resource type.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return string Resource type.
 	 */
-	abstract protected function get_resource_type();
-
-	/**
-	 * Get resource type plural name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type plural.
-	 */
-	protected function get_resource_type_plural() {
-		return $this->get_resource_type() . 's';
-	}
+	abstract protected function get_resource_type(): string;
 
 	/**
 	 * Get resource-specific schema properties
 	 *
-	 * Can be overridden by child classes
+	 * Can be overridden by child classes to add specific schema properties.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Resource-specific properties.
 	 */
-	protected function get_resource_specific_properties() {
+	protected function get_resource_specific_properties(): array {
 		return array();
 	}
 }

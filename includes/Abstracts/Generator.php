@@ -2,12 +2,13 @@
 /**
  * Abstract Generator Class
  *
- * @package EasyCommerceFakerPress\Abstracts
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Abstracts
  */
 
 namespace EasyCommerceFakerPress\Abstracts;
 
+use Exception;
 use Faker\Factory;
 use Faker\Generator as FakerGenerator;
 use WP_Error;
@@ -64,20 +65,20 @@ abstract class Generator {
 	 * @return array|WP_Error Generation results or error.
 	 */
 	public function generate( int $count ) {
-		// Validate count
+		// Validate count.
 		$validation_result = $this->validate_count( $count );
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
-		$results = [];
+		$results = array();
 
 		try {
 			for ( $i = 0; $i < $count; $i++ ) {
 				$item_result = $this->generate_single_item();
 
 				if ( is_wp_error( $item_result ) ) {
-					// Continue with other items but log the error
+					// Continue with other items but log the error.
 					continue;
 				}
 
@@ -87,12 +88,11 @@ abstract class Generator {
 			}
 
 			return $this->format_results( $results );
-
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			return new WP_Error(
 				'generation_failed',
 				sprintf(
-					/* translators: %s: Error message */
+				/* translators: %s: Error message */
 					__( 'Generation failed: %s', 'easycommerce-fakerpress' ),
 					$e->getMessage()
 				)
@@ -154,7 +154,7 @@ abstract class Generator {
 			return new WP_Error(
 				'count_too_large',
 				sprintf(
-					/* translators: %d: Maximum batch size */
+				/* translators: %d: Maximum batch size */
 					__( 'Count cannot exceed %d items per batch.', 'easycommerce-fakerpress' ),
 					$this->max_batch_size
 				)
@@ -174,10 +174,10 @@ abstract class Generator {
 	 * @return array Formatted results.
 	 */
 	protected function format_results( array $results ): array {
-		return [
-			'generated' => count( $results ),
+		return array(
+			'generated'                       => count( $results ),
 			$this->get_resource_type_plural() => $results,
-		];
+		);
 	}
 
 	/**
@@ -185,7 +185,7 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array     $elements Elements to choose from.
+	 * @param array     $elements    Elements to choose from.
 	 * @param float|int $probability Probability (0-1) of returning an element vs null.
 	 *
 	 * @return mixed|null Random element or null.
@@ -207,15 +207,15 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $elements Elements to choose from.
-	 * @param int   $min Minimum number of elements.
-	 * @param int   $max Maximum number of elements.
+	 * @param array    $elements Elements to choose from.
+	 * @param int      $min      Minimum number of elements.
+	 * @param int|null $max      Maximum number of elements.
 	 *
 	 * @return array Random elements.
 	 */
 	protected function get_random_elements( array $elements, int $min = 1, int $max = null ): array {
 		if ( empty( $elements ) ) {
-			return [];
+			return array();
 		}
 
 		$max = $max ?? count( $elements );
@@ -257,11 +257,13 @@ abstract class Generator {
 
 		do {
 			$identifier = $this->faker->regexify( $pattern );
-			$existing   = $this->wpdb->get_var( $this->wpdb->prepare(
-				"SELECT {$column_name} FROM {$table_name} WHERE {$column_name} = %s",
-				$identifier
-			) );
-			$attempts++;
+			$existing   = $this->wpdb->get_var(
+				$this->wpdb->prepare(
+					"SELECT {$column_name} FROM {$table_name} WHERE {$column_name} = %s",
+					$identifier
+				)
+			);
+			++$attempts;
 		} while ( $existing && $attempts < $max_attempts );
 
 		return $existing ? false : $identifier;
@@ -278,10 +280,10 @@ abstract class Generator {
 	 *
 	 * @return void
 	 */
-	protected function log( string $message, string $level = 'info', array $context = [] ): void {
+	protected function log( string $message, string $level = 'info', array $context = array() ): void {
 		if ( function_exists( 'error_log' ) && WP_DEBUG_LOG ) {
 			$context['resource_type'] = $this->get_resource_type();
-			$log_message = sprintf(
+			$log_message              = sprintf(
 				'[EasyCommerce FakerPress] [%s] [%s] %s %s',
 				strtoupper( $level ),
 				$this->get_resource_type(),

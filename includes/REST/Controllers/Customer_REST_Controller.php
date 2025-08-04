@@ -2,8 +2,8 @@
 /**
  * Customer Generator REST Controller
  *
- * @package EasyCommerceFakerPress\REST\Controllers
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\REST\Controllers
  */
 
 namespace EasyCommerceFakerPress\REST\Controllers;
@@ -27,7 +27,7 @@ class Customer_REST_Controller extends REST_Controller {
 	 *
 	 * @return string REST base.
 	 */
-	protected function get_rest_base() {
+	protected function get_rest_base(): string {
 		return 'customers';
 	}
 
@@ -38,7 +38,7 @@ class Customer_REST_Controller extends REST_Controller {
 	 *
 	 * @return Customer_Generator Generator instance.
 	 */
-	protected function get_generator_instance() {
+	protected function get_generator_instance(): Customer_Generator {
 		return new Customer_Generator();
 	}
 
@@ -49,8 +49,40 @@ class Customer_REST_Controller extends REST_Controller {
 	 *
 	 * @return string Resource type.
 	 */
-	protected function get_resource_type() {
+	protected function get_resource_type(): string {
 		return 'customer';
 	}
 
+	/**
+	 * Get resource-specific schema properties
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Resource-specific properties.
+	 */
+	protected function get_resource_specific_properties(): array {
+		return array(
+			'customers' => array(
+				'description' => __( 'Generated customers data.', 'easycommerce-fakerpress' ),
+				'type'        => 'array',
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'       => array(
+							'type' => 'integer',
+						),
+						'username' => array(
+							'type' => 'string',
+						),
+						'email'    => array(
+							'type' => 'string',
+						),
+						'name'     => array(
+							'type' => 'string',
+						),
+					),
+				),
+			),
+		);
+	}
 }

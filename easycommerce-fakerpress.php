@@ -32,7 +32,7 @@ define( 'ECFP_PLUGIN_FILE', __FILE__ );
 define( 'ECFP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ECFP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-// Load Composer autoloader
+// Load Composer autoloader.
 if ( ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	return;
 }

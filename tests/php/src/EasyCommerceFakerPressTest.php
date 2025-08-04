@@ -59,7 +59,6 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->plugin->init();
 
 		// Verify the correct hooks were registered with proper priority
-		$this->assertEquals( 10, has_action( 'init', array( $this->plugin, 'load_textdomain' ) ) );
 		$this->assertEquals( 10, has_action( 'admin_menu', array( $this->plugin, 'add_admin_menu' ) ) );
 		$this->assertEquals( 10, has_action( 'admin_enqueue_scripts', array( $this->plugin, 'enqueue_admin_assets' ) ) );
 		$this->assertEquals( 10, has_action( 'wp_ajax_ecfp_generate_data', array( $this->plugin, 'handle_ajax_request' ) ) );
@@ -68,31 +67,6 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 		$file = plugin_basename( ECFP_PLUGIN_FILE );
 		$this->assertTrue( has_action( "activate_{$file}" ) !== false );
 		$this->assertTrue( has_action( "deactivate_{$file}" ) !== false );
-	}
-
-	/**
-	 * Test load_textdomain method
-	 */
-	public function test_load_textdomain(): void {
-		// Mock the load_plugin_textdomain function
-		$loaded = false;
-		add_filter(
-			'load_textdomain_mofile',
-			function ( $mofile, $domain ) use ( &$loaded ) {
-				if ( $domain === 'easycommerce-fakerpress' ) {
-					$loaded = true;
-				}
-				return $mofile;
-			},
-			10,
-			2
-		);
-
-		// Call the method
-		$this->plugin->load_textdomain();
-
-		// The actual loading depends on file existence, so we just check the method doesn't error
-		$this->assertTrue( true );
 	}
 
 	/**

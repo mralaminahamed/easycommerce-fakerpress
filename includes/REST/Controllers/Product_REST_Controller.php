@@ -2,8 +2,8 @@
 /**
  * Product Generator REST Controller
  *
- * @package EasyCommerceFakerPress\REST\Controllers
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\REST\Controllers
  */
 
 namespace EasyCommerceFakerPress\REST\Controllers;
@@ -27,7 +27,7 @@ class Product_REST_Controller extends REST_Controller {
 	 *
 	 * @return string REST base.
 	 */
-	protected function get_rest_base() {
+	protected function get_rest_base(): string {
 		return 'products';
 	}
 
@@ -38,7 +38,7 @@ class Product_REST_Controller extends REST_Controller {
 	 *
 	 * @return Product_Generator Generator instance.
 	 */
-	protected function get_generator_instance() {
+	protected function get_generator_instance(): Product_Generator {
 		return new Product_Generator();
 	}
 
@@ -49,7 +49,7 @@ class Product_REST_Controller extends REST_Controller {
 	 *
 	 * @return string Resource type.
 	 */
-	protected function get_resource_type() {
+	protected function get_resource_type(): string {
 		return 'product';
 	}
 
@@ -60,7 +60,7 @@ class Product_REST_Controller extends REST_Controller {
 	 *
 	 * @return array Resource-specific properties.
 	 */
-	protected function get_resource_specific_properties() {
+	protected function get_resource_specific_properties(): array {
 		return array(
 			'data' => array(
 				'properties' => array(
@@ -86,5 +86,4 @@ class Product_REST_Controller extends REST_Controller {
 			),
 		);
 	}
-
 }
