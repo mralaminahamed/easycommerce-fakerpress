@@ -10,6 +10,7 @@ namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Order;
+use EasyCommerce\Models\Customer;
 use WP_Error;
 use WP_User;
 
@@ -41,24 +42,37 @@ class Order_Generator extends Generator {
 	 * @return array|WP_Error|false Single order data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		$customer   = $this->get_random_customer();
-		$variations = $this->get_random_product_variations();
-
-		if ( ! $customer || empty( $variations ) ) {
-			return false;
-		}
-
-		// Convert variations to order items format
-		$order_items = $this->convert_variations_to_items( $variations );
-		$total       = $this->calculate_order_total( $order_items );
-
 		try {
+			// Check if EasyCommerce Order class exists.
+			if ( ! class_exists( Order::class ) ) {
+				return new WP_Error( 'missing_model', 'EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.' );
+			}
+
+			$customer   = $this->get_random_customer();
+			$variations = $this->get_random_product_variations();
+
+			if ( ! $customer || empty( $variations ) ) {
+				return false;
+			}
+
+			// Convert variations to order items format required by EasyCommerce
+			$order_items = $this->convert_variations_to_items( $variations );
+			$subtotal    = $this->calculate_subtotal( $order_items );
+			$order_meta  = $this->generate_order_meta( $customer, $subtotal );
+			$total       = $this->calculate_total( $subtotal, $order_meta );
+
+			// Use EasyCommerce Order model with complete data structure
 			$order = new Order();
 			$created = $order->create( array(
+				// Required fields
 				'customer_id'    => $customer->ID,
 				'total'          => $total,
-				'status'         => $this->faker->randomElement( array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' ) ),
-				'payment_method' => $this->faker->randomElement( array( 'stripe', 'paypal', 'bank_transfer', 'cash_on_delivery', 'credit_card' ) ),
+				
+				// Optional core fields
+				'status'         => $this->generate_order_status(),
+				'payment_method' => $this->generate_payment_method(),
+				
+				// Order items (required)
 				'items'          => $order_items,
 			) );
 
@@ -66,24 +80,31 @@ class Order_Generator extends Generator {
 				return new WP_Error( 'order_creation_failed', 'Failed to create order using EasyCommerce model.' );
 			}
 
-			// Update customer statistics.
+			// Add order metadata after creation
+			$this->add_order_metadata( $order->get_id(), $order_meta );
+
+			// Update customer statistics
 			$this->update_customer_stats( $customer->ID, $total );
 
 			return array(
-				'id'       => $order->get_id(),
-				'customer' => $customer->display_name,
-				'total'    => number_format( $total, 2 ),
-				'status'   => $order->get_status(),
+				'id'             => $order->get_id(),
+				'customer'       => $customer->display_name,
+				'customer_email' => $customer->user_email,
+				'total'          => '$' . number_format( $total, 2 ),
+				'status'         => $order->get_status(),
+				'payment_method' => $order_meta['payment_details']['method'],
+				'items_count'    => $this->count_order_items( $order_items ),
+				'created_date'   => current_time( 'Y-m-d H:i:s' ),
 			);
 		} catch ( \Exception $e ) {
+			$this->log( 'Order creation failed: ' . $e->getMessage(), 'error' );
+			
 			return new WP_Error( 'order_creation_failed', $e->getMessage() );
 		}
 	}
 
 	/**
 	 * Get a random customer for order generation
-	 *
-	 * Retrieves a random customer user with the 'customer' role to assign to the order.
 	 *
 	 * @since 1.0.0
 	 *
@@ -95,6 +116,7 @@ class Order_Generator extends Generator {
 				'role'    => 'customer',
 				'number'  => 1,
 				'orderby' => 'rand',
+				'fields'  => 'all',
 			)
 		);
 
@@ -104,9 +126,6 @@ class Order_Generator extends Generator {
 	/**
 	 * Get random product variations for order items
 	 *
-	 * Retrieves a random set of product variations that are in stock
-	 * to be used as order items.
-	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Array of product variation data from the database.
@@ -114,17 +133,19 @@ class Order_Generator extends Generator {
 	private function get_random_product_variations(): array {
 		$variations_table = $this->wpdb->prefix . 'product_variations';
 
-		return $this->wpdb->get_results(
+		$variations = $this->wpdb->get_results(
 			$this->wpdb->prepare(
 				"SELECT * FROM {$variations_table} WHERE status = 'in_stock' ORDER BY RAND() LIMIT %d",
 				$this->faker->numberBetween( 1, 5 )
 			),
 			ARRAY_A
 		);
+
+		return $variations ?: array();
 	}
 
 	/**
-	 * Convert product variations to order items format
+	 * Convert product variations to order items format for EasyCommerce
 	 *
 	 * @since 1.0.0
 	 *
@@ -155,15 +176,15 @@ class Order_Generator extends Generator {
 	}
 
 	/**
-	 * Calculate order total from items
+	 * Calculate order subtotal from items
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param array $order_items Order items array.
 	 *
-	 * @return float Total order amount.
+	 * @return float Subtotal amount.
 	 */
-	private function calculate_order_total( array $order_items ): float {
+	private function calculate_subtotal( array $order_items ): float {
 		$subtotal = 0;
 
 		foreach ( $order_items as $product_id => $variations ) {
@@ -172,331 +193,418 @@ class Order_Generator extends Generator {
 			}
 		}
 
-		// Add tax (8%) and shipping
-		$tax_amount    = $subtotal * 0.08;
-		$shipping_cost = $this->faker->randomFloat( 2, 0, 25 );
-
-		return $subtotal + $tax_amount + $shipping_cost;
+		return $subtotal;
 	}
 
 	/**
-	 * Add order items to the order
-	 *
-	 * Creates order item records for each product variation and calculates
-	 * the total order amount including taxes.
+	 * Generate comprehensive order metadata
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int   $order_id   The order ID to add items to.
-	 * @param array $variations Array of product variation data.
+	 * @param WP_User $customer Customer user object.
+	 * @param float   $subtotal Order subtotal.
 	 *
-	 * @return float The total order amount including all items and taxes.
+	 * @return array Order metadata.
 	 */
-	private function add_order_items( int $order_id, array $variations ): float {
-		$order_items_table = $this->wpdb->prefix . 'order_items';
-		$subtotal          = 0;
+	private function generate_order_meta( WP_User $customer, float $subtotal ): array {
+		$customer_model   = new Customer( $customer->ID );
+		$billing_address  = $customer_model->get_billing_address() ?: $this->generate_fallback_address( $customer );
+		$shipping_address = $customer_model->get_shipping_address() ?: $billing_address;
 
-		foreach ( $variations as $variation ) {
-			$quantity = $this->faker->numberBetween( 1, 3 );
-			$rate     = (float) $variation['price'];
-			$price    = $rate * $quantity;
-
-			// Get tax information.
-			$tax_class_id = $this->get_random_tax_class();
-			$tax_rate     = $this->get_tax_rate( $tax_class_id );
-
-			$item_data = array(
-				'order_id'     => $order_id,
-				'product_id'   => $variation['product_id'],
-				'variation_id' => $variation['id'],
-				'quantity'     => $quantity,
-				'rate'         => number_format( $rate, 2, '.', '' ),
-				'price'        => number_format( $price, 2, '.', '' ),
-				'tax_class_id' => $tax_class_id,
-				'tax_rate'     => number_format( $tax_rate, 4, '.', '' ),
-				'subtotal'     => number_format( $price, 2, '.', '' ),
-			);
-
-			$this->wpdb->insert( $order_items_table, $item_data );
-			$item_id = $this->wpdb->insert_id;
-
-			// Add order item metadata.
-			$this->add_order_item_meta( $item_id, $variation );
-
-			$subtotal += $price;
-		}
-
-		// Calculate tax and shipping.
-		$tax_amount    = $subtotal * 0.08; // 8% tax rate
-		$shipping_cost = $this->faker->randomFloat( 2, 0, 25 );
-
-		return $subtotal + $tax_amount + $shipping_cost;
-	}
-
-	/**
-	 * Add metadata to order item
-	 *
-	 * Creates metadata records for an order item including product information
-	 * and discount details.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int   $item_id   The order item ID to add metadata to.
-	 * @param array $variation Product variation data containing item details.
-	 *
-	 * @return void
-	 */
-	private function add_order_item_meta( int $item_id, array $variation ): void {
-		$order_item_meta_table = $this->wpdb->prefix . 'order_item_meta';
-
-		$meta_entries = array(
-			array(
-				'order_item_id' => $item_id,
-				'meta_key'      => 'product_name',
-				'meta_value'    => $variation['name'],
+		return array(
+			'addresses' => array(
+				'billing'  => $billing_address,
+				'shipping' => $shipping_address,
 			),
-			array(
-				'order_item_id' => $item_id,
-				'meta_key'      => 'product_sku',
-				'meta_value'    => $variation['sku'],
-			),
-			array(
-				'order_item_id' => $item_id,
-				'meta_key'      => 'product_type',
-				'meta_value'    => $variation['type'],
-			),
-			array(
-				'order_item_id' => $item_id,
-				'meta_key'      => 'discount_amount',
-				'meta_value'    => $this->faker->optional( 0.3 )->randomFloat( 2, 0, 50 ) ?: 0,
+			'payment_details' => $this->generate_payment_details(),
+			'shipping_details' => $this->generate_shipping_details( $subtotal ),
+			'tax_details' => $this->generate_tax_details( $subtotal ),
+			'coupon_details' => $this->generate_coupon_details( $subtotal ),
+			'order_notes' => $this->faker->optional( 0.3 )->paragraph( 2 ),
+			'source_info' => $this->generate_source_info(),
+			'fulfillment' => array(
+				'status' => $this->generate_fulfillment_status(),
+				'tracking_number' => $this->faker->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
+				'estimated_delivery' => $this->faker->dateTimeBetween( 'now', '+2 weeks' )->format( 'Y-m-d' ),
+				'carrier' => $this->faker->randomElement( array( 'UPS', 'FedEx', 'USPS', 'DHL', 'Local Delivery' ) ),
 			),
 		);
-
-		foreach ( $meta_entries as $meta ) {
-			$this->wpdb->insert( $order_item_meta_table, $meta );
-		}
 	}
 
 	/**
-	 * Add metadata to order
-	 *
-	 * Creates comprehensive metadata records for an order including addresses,
-	 * payment details, coupons, and shipping information.
+	 * Generate realistic order status
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int     $order_id The order ID to add metadata to.
-	 * @param WP_User $customer Customer user object.
-	 * @param float   $total    Order total amount.
-	 *
-	 * @return void
+	 * @return string Order status.
 	 */
-	private function add_order_meta( int $order_id, WP_User $customer, float $total ): void {
-		$order_meta_table = $this->wpdb->prefix . 'order_meta';
+	private function generate_order_status(): string {
+		$statuses = array(
+			'pending'    => 25,  // 25% chance
+			'processing' => 35,  // 35% chance
+			'completed'  => 30,  // 30% chance
+			'cancelled'  => 5,   // 5% chance
+			'on_hold'    => 3,   // 3% chance
+			'refunded'   => 2,   // 2% chance
+		);
 
-		// Get customer addresses.
-		$billing_address  = get_user_meta( $customer->ID, 'billing_address', true );
-		$shipping_address = get_user_meta( $customer->ID, 'shipping_address', true );
+		return $this->faker->randomElement( 
+			array_merge( 
+				...array_map( 
+					fn( $status, $weight ) => array_fill( 0, $weight, $status ), 
+					array_keys( $statuses ), 
+					$statuses 
+				) 
+			) 
+		);
+	}
 
-		if ( ! $billing_address ) {
-			$billing_address = array(
-				'first_name' => $customer->first_name,
-				'last_name'  => $customer->last_name,
-				'email'      => $customer->user_email,
-				'phone'      => $this->faker->phoneNumber,
-				'address_1'  => $this->faker->streetAddress,
-				'city'       => $this->faker->city,
-				'state'      => $this->faker->stateAbbr,
-				'postcode'   => $this->faker->postcode,
-				'country'    => 'US',
-			);
-		}
+	/**
+	 * Generate realistic payment method
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Payment method.
+	 */
+	private function generate_payment_method(): string {
+		$methods = array(
+			'stripe'           => 40,  // 40% chance
+			'paypal'           => 25,  // 25% chance
+			'bank_transfer'    => 15,  // 15% chance
+			'cash_on_delivery' => 10,  // 10% chance
+			'credit_card'      => 10,  // 10% chance
+		);
 
-		if ( ! $shipping_address ) {
-			$shipping_address = $billing_address;
-		}
+		return $this->faker->randomElement( 
+			array_merge( 
+				...array_map( 
+					fn( $method, $weight ) => array_fill( 0, $weight, $method ), 
+					array_keys( $methods ), 
+					$methods 
+				) 
+			) 
+		);
+	}
 
-		// Generate applied coupons (optional).
-		$coupons = array();
-		if ( $this->faker->boolean( 30 ) ) {
-			$coupon_ids = $this->get_random_coupons();
-			foreach ( $coupon_ids as $coupon_id ) {
-				$coupons[] = array(
-					'coupon_id'       => $coupon_id,
-					'discount_amount' => $this->faker->randomFloat( 2, 5, 50 ),
-				);
-			}
-		}
-
-		// Payment details.
-		$payment_details = array(
+	/**
+	 * Generate payment details
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Payment details.
+	 */
+	private function generate_payment_details(): array {
+		$payment_method = $this->generate_payment_method();
+		
+		$details = array(
+			'method'           => $payment_method,
+			'status'           => $this->faker->randomElement( array( 'completed', 'pending', 'failed', 'refunded' ) ),
 			'transaction_id'   => $this->faker->uuid,
-			'payment_status'   => $this->faker->randomElement( array( 'completed', 'pending', 'failed', 'refunded' ) ),
-			'payment_date'     => $this->faker->dateTimeBetween( '-1 year', 'now' )->format( 'Y-m-d H:i:s' ),
+			'payment_date'     => $this->faker->dateTimeBetween( '-30 days', 'now' )->format( 'Y-m-d H:i:s' ),
 			'gateway_response' => $this->faker->sentence(),
 		);
 
-		$meta_entries = array(
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'billing_address',
-				'meta_value' => serialize( $billing_address ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'shipping_address',
-				'meta_value' => serialize( $shipping_address ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'coupons',
-				'meta_value' => serialize( $coupons ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'payment_details',
-				'meta_value' => serialize( $payment_details ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'order_notes',
-				'meta_value' => $this->faker->optional( 0.4 )->sentence(),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'shipping_method',
-				'meta_value' => $this->faker->randomElement( array( 'standard', 'express', 'overnight', 'pickup' ) ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'tracking_number',
-				'meta_value' => $this->faker->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'estimated_delivery',
-				'meta_value' => $this->faker->dateTimeBetween( 'now', '+2 weeks' )->format( 'Y-m-d' ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'source',
-				'meta_value' => $this->faker->randomElement( array( 'website', 'mobile_app', 'phone', 'in_store' ) ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'currency',
-				'meta_value' => 'USD',
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'subtotal',
-				'meta_value' => number_format( $total * 0.85, 2, '.', '' ),
-			), // Approximate subtotal
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'tax_amount',
-				'meta_value' => number_format( $total * 0.08, 2, '.', '' ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'shipping_amount',
-				'meta_value' => number_format( $total * 0.07, 2, '.', '' ),
-			),
-			array(
-				'order_id'   => $order_id,
-				'meta_key'   => 'discount_amount',
-				'meta_value' => ! empty( $coupons ) ? array_sum( array_column( $coupons, 'discount_amount' ) ) : 0,
-			),
-		);
-
-		foreach ( $meta_entries as $meta ) {
-			$this->wpdb->insert( $order_meta_table, $meta );
+		// Add method-specific details
+		switch ( $payment_method ) {
+			case 'stripe':
+				$details['stripe_charge_id'] = 'ch_' . $this->faker->regexify( '[a-zA-Z0-9]{24}' );
+				$details['last4'] = $this->faker->numerify( '####' );
+				$details['brand'] = $this->faker->randomElement( array( 'visa', 'mastercard', 'amex', 'discover' ) );
+				break;
+			case 'paypal':
+				$details['paypal_transaction_id'] = $this->faker->regexify( '[A-Z0-9]{15}' );
+				$details['payer_email'] = $this->faker->email;
+				break;
+			case 'bank_transfer':
+				$details['bank_reference'] = $this->faker->regexify( '[A-Z0-9]{10}' );
+				break;
 		}
+
+		return $details;
 	}
 
 	/**
-	 * Get random tax class for order items
-	 *
-	 * Retrieves a random tax class from the database, or creates a default
-	 * tax class if none exist.
+	 * Generate shipping details
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return int Tax class ID.
+	 * @param float $subtotal Order subtotal.
+	 *
+	 * @return array Shipping details.
 	 */
-	private function get_random_tax_class(): int {
-		$tax_classes_table = $this->wpdb->prefix . 'tax_classes';
-		$tax_class         = $this->wpdb->get_var( "SELECT id FROM {$tax_classes_table} ORDER BY RAND() LIMIT 1" );
+	private function generate_shipping_details( float $subtotal ): array {
+		$shipping_methods = array(
+			'standard'  => array( 'min' => 5.99, 'max' => 12.99, 'days' => '5-7', 'weight' => 50 ),
+			'express'   => array( 'min' => 15.99, 'max' => 25.99, 'days' => '2-3', 'weight' => 30 ),
+			'overnight' => array( 'min' => 25.99, 'max' => 45.99, 'days' => '1', 'weight' => 15 ),
+			'pickup'    => array( 'min' => 0, 'max' => 0, 'days' => '0', 'weight' => 5 ),
+		);
 
-		if ( ! $tax_class ) {
-			// Create a default tax class if none exist.
-			$this->wpdb->insert(
-				$tax_classes_table,
-				array(
-					'name'     => 'Standard',
-					'rate'     => 8.00,
-					'country'  => 'US',
-					'state'    => '',
-					'city'     => '',
-					'postcode' => '',
-				)
+		$method = $this->faker->randomElement( 
+			array_merge( 
+				...array_map( 
+					fn( $method, $details ) => array_fill( 0, $details['weight'], $method ), 
+					array_keys( $shipping_methods ), 
+					$shipping_methods 
+				) 
+			) 
+		);
+
+		$method_details = $shipping_methods[ $method ];
+		$cost = $method_details['min'] === $method_details['max'] 
+			? $method_details['min'] 
+			: $this->faker->randomFloat( 2, $method_details['min'], $method_details['max'] );
+
+		// Free shipping for orders over $100
+		if ( $subtotal > 100 && $method !== 'overnight' ) {
+			$cost = 0;
+		}
+
+		return array(
+			'method'       => $method,
+			'cost'         => $cost,
+			'estimated_days' => $method_details['days'],
+			'insurance'    => $this->faker->boolean( 20 ) ? $this->faker->randomFloat( 2, 2.99, 9.99 ) : 0,
+			'signature_required' => $this->faker->boolean( 15 ),
+		);
+	}
+
+	/**
+	 * Generate tax details
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param float $subtotal Order subtotal.
+	 *
+	 * @return array Tax details.
+	 */
+	private function generate_tax_details( float $subtotal ): array {
+		$tax_rates = array(
+			array( 'name' => 'State Tax', 'rate' => 0.08, 'amount' => 0 ),
+			array( 'name' => 'City Tax', 'rate' => 0.025, 'amount' => 0 ),
+		);
+
+		$total_tax = 0;
+		foreach ( $tax_rates as &$tax ) {
+			$tax['amount'] = $subtotal * $tax['rate'];
+			$total_tax += $tax['amount'];
+		}
+
+		return array(
+			'total'     => $total_tax,
+			'breakdown' => $tax_rates,
+			'exempt'    => $this->faker->boolean( 5 ), // 5% tax exempt
+		);
+	}
+
+	/**
+	 * Generate coupon details
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param float $subtotal Order subtotal.
+	 *
+	 * @return array Coupon details.
+	 */
+	private function generate_coupon_details( float $subtotal ): array {
+		// 25% chance of coupon being applied
+		if ( ! $this->faker->boolean( 25 ) ) {
+			return array(
+				'applied'  => false,
+				'discount' => 0,
+				'coupons'  => array(),
 			);
-			$tax_class = $this->wpdb->insert_id;
 		}
 
-		return $tax_class;
+		$coupons = $this->get_random_coupons();
+		$total_discount = 0;
+
+		foreach ( $coupons as $coupon ) {
+			if ( $coupon['discount_type'] === 'percentage' ) {
+				$discount = $subtotal * ( $coupon['amount'] / 100 );
+			} else {
+				$discount = min( $coupon['amount'], $subtotal );
+			}
+			
+			$coupon['discount_applied'] = $discount;
+			$total_discount += $discount;
+		}
+
+		return array(
+			'applied'  => true,
+			'discount' => $total_discount,
+			'coupons'  => $coupons,
+		);
 	}
 
 	/**
-	 * Get tax rate for a specific tax class
-	 *
-	 * Retrieves the tax rate percentage for a given tax class ID.
-	 * Returns default rate if no specific rate is found.
+	 * Generate fulfillment status
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $tax_class_id The tax class ID to get rate for.
-	 *
-	 * @return float Tax rate as decimal (e.g., 0.08 for 8%).
+	 * @return string Fulfillment status.
 	 */
-	private function get_tax_rate( int $tax_class_id ): float {
-		$tax_rates_table = $this->wpdb->prefix . 'tax_rates';
-		$tax_rate        = $this->wpdb->get_var(
-			$this->wpdb->prepare(
-				"SELECT rate FROM {$tax_rates_table} WHERE tax_class_id = %d LIMIT 1",
-				$tax_class_id
-			)
+	private function generate_fulfillment_status(): string {
+		$statuses = array(
+			'unfulfilled'         => 30,
+			'partially_fulfilled' => 10,
+			'fulfilled'           => 25,
+			'shipped'             => 20,
+			'delivered'           => 10,
+			'returned'            => 3,
+			'cancelled'           => 2,
 		);
 
-		return $tax_rate ? (float) $tax_rate / 100 : 0.08; // Default 8%.
+		return $this->faker->randomElement( 
+			array_merge( 
+				...array_map( 
+					fn( $status, $weight ) => array_fill( 0, $weight, $status ), 
+					array_keys( $statuses ), 
+					$statuses 
+				) 
+			) 
+		);
+	}
+
+	/**
+	 * Generate source information
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Source information.
+	 */
+	private function generate_source_info(): array {
+		$sources = array(
+			'website'    => 60,
+			'mobile_app' => 25,
+			'phone'      => 10,
+			'in_store'   => 5,
+		);
+
+		$source = $this->faker->randomElement( 
+			array_merge( 
+				...array_map( 
+					fn( $src, $weight ) => array_fill( 0, $weight, $src ), 
+					array_keys( $sources ), 
+					$sources 
+				) 
+			) 
+		);
+
+		return array(
+			'channel'     => $source,
+			'user_agent'  => $this->faker->userAgent,
+			'ip_address'  => $this->faker->ipv4,
+			'referrer'    => $this->faker->optional( 0.4 )->url,
+			'utm_source'  => $this->faker->optional( 0.3 )->randomElement( array( 'google', 'facebook', 'email', 'direct' ) ),
+			'utm_medium'  => $this->faker->optional( 0.3 )->randomElement( array( 'cpc', 'social', 'email', 'organic' ) ),
+			'utm_campaign' => $this->faker->optional( 0.2 )->words( 2, true ),
+		);
+	}
+
+	/**
+	 * Calculate total order amount including fees and discounts
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param float $subtotal   Order subtotal.
+	 * @param array $order_meta Order metadata.
+	 *
+	 * @return float Total order amount.
+	 */
+	private function calculate_total( float $subtotal, array $order_meta ): float {
+		$shipping = $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'];
+		$tax = $order_meta['tax_details']['total'];
+		$discount = $order_meta['coupon_details']['discount'];
+
+		return max( 0, $subtotal + $shipping + $tax - $discount );
+	}
+
+	/**
+	 * Count total items in order
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $order_items Order items array.
+	 *
+	 * @return int Total item count.
+	 */
+	private function count_order_items( array $order_items ): int {
+		$count = 0;
+		foreach ( $order_items as $product_id => $variations ) {
+			foreach ( $variations as $price_id => $item ) {
+				$count += $item['quantity'];
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Add order metadata after creation
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int   $order_id   Order ID.
+	 * @param array $order_meta Order metadata.
+	 *
+	 * @return void
+	 */
+	private function add_order_metadata( int $order_id, array $order_meta ): void {
+		// This would use the EasyCommerce Order Meta system
+		// For now, we'll use basic WordPress meta functions
+		foreach ( $order_meta as $key => $value ) {
+			update_post_meta( $order_id, $key, $value );
+		}
+	}
+
+	/**
+	 * Generate fallback address if customer doesn't have one
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_User $customer Customer user object.
+	 *
+	 * @return array Address data.
+	 */
+	private function generate_fallback_address( WP_User $customer ): array {
+		return array(
+			'first_name' => $customer->first_name ?: $this->faker->firstName,
+			'last_name'  => $customer->last_name ?: $this->faker->lastName,
+			'email'      => $customer->user_email,
+			'phone'      => $this->faker->phoneNumber,
+			'company'    => $this->faker->optional( 0.3 )->company,
+			'address_1'  => $this->faker->streetAddress,
+			'address_2'  => $this->faker->optional( 0.3 )->secondaryAddress,
+			'city'       => $this->faker->city,
+			'state'      => $this->faker->stateAbbr,
+			'country'    => 'US',
+			'postcode'   => $this->faker->postcode,
+		);
 	}
 
 	/**
 	 * Get random coupons for order
 	 *
-	 * Retrieves a random selection of active coupons that can be
-	 * applied to the order.
-	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Array of coupon IDs.
+	 * @return array Array of coupon data.
 	 */
 	private function get_random_coupons(): array {
 		$coupons_table = $this->wpdb->prefix . 'coupons';
 
-		return $this->wpdb->get_col(
+		$coupons = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT id FROM {$coupons_table} WHERE status = 1 ORDER BY RAND() LIMIT %d",
+				"SELECT * FROM {$coupons_table} WHERE active = 1 ORDER BY RAND() LIMIT %d",
 				$this->faker->numberBetween( 1, 2 )
-			)
+			),
+			ARRAY_A
 		);
+
+		return $coupons ?: array();
 	}
 
 	/**
 	 * Update customer statistics after order creation
-	 *
-	 * Updates customer metadata with order statistics including total orders,
-	 * total spent, average order value, loyalty tier, and points.
 	 *
 	 * @since 1.0.0
 	 *
@@ -506,11 +614,11 @@ class Order_Generator extends Generator {
 	 * @return void
 	 */
 	private function update_customer_stats( int $customer_id, float $order_total ): void {
-		// Get current stats.
+		// Get current stats
 		$total_orders = (int) get_user_meta( $customer_id, 'total_orders', true );
 		$total_spent  = (float) get_user_meta( $customer_id, 'total_spent', true );
 
-		// Update stats.
+		// Update stats
 		$new_total_orders        = $total_orders + 1;
 		$new_total_spent         = $total_spent + $order_total;
 		$new_average_order_value = $new_total_spent / $new_total_orders;
@@ -518,9 +626,9 @@ class Order_Generator extends Generator {
 		update_user_meta( $customer_id, 'total_orders', $new_total_orders );
 		update_user_meta( $customer_id, 'total_spent', number_format( $new_total_spent, 2, '.', '' ) );
 		update_user_meta( $customer_id, 'average_order_value', number_format( $new_average_order_value, 2, '.', '' ) );
-		update_user_meta( $customer_id, 'last_order_date', wp_date( 'Y-m-d H:i:s' ) );
+		update_user_meta( $customer_id, 'last_order_date', current_time( 'Y-m-d H:i:s' ) );
 
-		// Update customer tier based on total spent.
+		// Update customer tier based on total spent
 		$tier = 'bronze';
 		if ( $new_total_spent >= 5000 ) {
 			$tier = 'platinum';
@@ -531,7 +639,7 @@ class Order_Generator extends Generator {
 		}
 		update_user_meta( $customer_id, 'loyalty_tier', $tier );
 
-		// Award loyalty points (1 point per dollar).
+		// Award loyalty points (1 point per dollar)
 		$current_points = (int) get_user_meta( $customer_id, 'loyalty_points', true );
 		$points_earned  = floor( $order_total );
 		update_user_meta( $customer_id, 'loyalty_points', $current_points + $points_earned );

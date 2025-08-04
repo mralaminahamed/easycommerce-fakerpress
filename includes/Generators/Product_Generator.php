@@ -47,29 +47,43 @@ class Product_Generator extends Generator {
 				return new WP_Error( 'missing_model', 'EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active.' );
 			}
 
-			$product_title  = $this->faker->words( 3, true );
-			$gallery_images = $this->generate_gallery_images();
-			$categories     = $this->get_or_create_product_categories();
-			$brands         = $this->get_or_create_product_brands();
+			$product_title = $this->generate_product_title();
+			$product_type  = $this->faker->randomElement( array( 'physical', 'digital' ) );
+			$categories    = $this->get_or_create_product_categories();
+			$brands        = $this->get_or_create_product_brands();
+			$attributes    = $this->generate_product_attributes( $product_type );
+			$variations    = $this->generate_product_variations( $attributes, $product_type );
 
-			// Use EasyCommerce Product model.
+			// Use EasyCommerce Product model with complete data structure.
 			$product    = new Product();
 			$product_id = $product->create(
 				array(
+					// Required fields
 					'title'       => $product_title,
-					'slug'        => sanitize_title( $product_title ),
-					'content'     => $this->faker->paragraphs( 3, true ),
-					'status'      => 'publish',
-					'description' => $this->faker->paragraphs( 2, true ),
-					'summary'     => $this->faker->sentence(),
-					'thumbnail'   => 0, // Could add image generation later.
+
+					// Optional core fields
+					'slug'        => sanitize_title( $product_title . '-' . uniqid( '', true ) ),
+					'content'     => $this->generate_product_description(),
+					'status'      => $this->faker->randomElement( array( 'publish', 'draft' ) ),
+					'description' => $this->generate_short_description(),
+					'summary'     => $this->faker->sentence( 10 ),
+					'thumbnail'   => 0, // Could integrate with media library later
+
+					// Taxonomy relationships
 					'categories'  => array_slice( $categories, 0, $this->faker->numberBetween( 1, 3 ) ),
 					'brands'      => array_slice( $brands, 0, 1 ),
-					'attributes'  => $this->generate_product_attributes(),
-					'variations'  => $this->generate_product_variations(),
+
+					// Product attributes and variations
+					'attributes'  => $attributes,
+					'variations'  => $variations,
+
+					// Additional meta data
 					'meta'        => array(
-						'gallery'  => $gallery_images,
-						'template' => 'template-1',
+						'gallery'         => $this->generate_gallery_images(),
+						'template'        => $this->faker->randomElement( array( 'template-1', 'template-2', 'default' ) ),
+						'featured'        => $this->faker->boolean( 20 ),
+						'seo_title'       => $product_title . ' - ' . $this->faker->words( 2, true ),
+						'seo_description' => $this->faker->sentence( 15 ),
 					),
 				)
 			);
@@ -78,15 +92,17 @@ class Product_Generator extends Generator {
 				return new WP_Error( 'product_creation_failed', 'Failed to create product using EasyCommerce model.' );
 			}
 
-			// Assign product tags.
+			// Assign product tags after creation
 			$this->assign_product_tags( $product_id );
 
 			return array(
-				'id'         => $product_id,
-				'title'      => $product_title,
-				'variations' => count( $this->generate_product_variations() ),
-				'categories' => count( $categories ),
-				'brands'     => count( $brands ),
+				'id'          => $product_id,
+				'title'       => $product_title,
+				'type'        => $product_type,
+				'variations'  => count( $variations ),
+				'categories'  => count( $categories ),
+				'brands'      => count( $brands ),
+				'price_range' => $this->get_price_range( $variations ),
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Product creation failed: ' . $e->getMessage(), 'error' );
@@ -96,23 +112,135 @@ class Product_Generator extends Generator {
 	}
 
 	/**
-	 * Generate gallery images for product
-	 *
-	 * Creates an array of fake image URLs to be used as product gallery images.
+	 * Generate realistic product title
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Gallery image URLs.
+	 * @return string Product title.
+	 */
+	private function generate_product_title(): string {
+		$product_types = array(
+			'Premium',
+			'Deluxe',
+			'Professional',
+			'Classic',
+			'Modern',
+			'Vintage',
+			'Ultra',
+			'Advanced',
+			'Standard',
+			'Essential',
+			'Limited Edition',
+		);
+
+		$product_names = array(
+			'Wireless Headphones',
+			'Smart Watch',
+			'Bluetooth Speaker',
+			'Gaming Mouse',
+			'Laptop Stand',
+			'Coffee Maker',
+			'Water Bottle',
+			'Backpack',
+			'Phone Case',
+			'Desk Lamp',
+			'Keyboard',
+			'Monitor',
+			'Tablet',
+			'Camera',
+			'Fitness Tracker',
+			'Power Bank',
+			'Wireless Charger',
+			'USB Cable',
+			'Screen Protector',
+			'Car Mount',
+		);
+
+		return $this->faker->randomElement( $product_types ) . ' ' . $this->faker->randomElement( $product_names );
+	}
+
+	/**
+	 * Generate detailed product description
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Product description.
+	 */
+	private function generate_product_description(): string {
+		$paragraphs = array();
+
+		// Feature paragraph
+		$paragraphs[] = 'Experience the perfect blend of innovation and functionality with this exceptional product. ' .
+						$this->faker->sentence( 12 ) . ' ' . $this->faker->sentence( 10 );
+
+		// Benefits paragraph
+		$paragraphs[] = 'Designed with the modern user in mind, this product offers unparalleled performance and reliability. ' .
+						$this->faker->sentence( 8 ) . ' ' . $this->faker->sentence( 15 );
+
+		// Technical paragraph
+		$paragraphs[] = 'Built using premium materials and cutting-edge technology, ensuring long-lasting durability. ' .
+						$this->faker->sentence( 10 ) . ' ' . $this->faker->sentence( 12 );
+
+		return implode( "\n\n", $paragraphs );
+	}
+
+	/**
+	 * Generate short product description
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Short description.
+	 */
+	private function generate_short_description(): string {
+		return $this->faker->sentence( 15 ) . ' Perfect for ' .
+				$this->faker->randomElement( array( 'professionals', 'students', 'gamers', 'home use', 'office work' ) ) . '.';
+	}
+
+	/**
+	 * Get price range from variations
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $variations Product variations.
+	 *
+	 * @return string Price range.
+	 */
+	private function get_price_range( array $variations ): string {
+		if ( empty( $variations ) ) {
+			return '$0.00';
+		}
+
+		$prices    = array_column( $variations, 'regular_price' );
+		$min_price = min( $prices );
+		$max_price = max( $prices );
+
+		if ( $min_price === $max_price ) {
+			return '$' . number_format( $min_price, 2 );
+		}
+
+		return '$' . number_format( $min_price, 2 ) . ' - $' . number_format( $max_price, 2 );
+	}
+
+	/**
+	 * Generate gallery images for product
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Array of image IDs for product gallery.
 	 */
 	private function generate_gallery_images(): array {
 		$gallery_images = array();
-		for ( $i = 0; $i < $this->faker->numberBetween( 1, 5 ); $i++ ) {
+		$image_count    = $this->faker->numberBetween( 2, 6 );
+
+		for ( $i = 0; $i < $image_count; $i++ ) {
+			// In a real implementation, you might upload images to WordPress media library.
+			// For now, we'll just use placeholder image URLs.
 			$gallery_images[] = array(
-				'id'          => $this->faker->unique()->numberBetween( 1000, 9999 ),
-				'url'         => $this->faker->imageUrl( 800, 800, 'product' ),
-				'alt'         => $this->faker->sentence( 6 ),
-				'caption'     => $this->faker->sentence( 10 ),
-				'description' => $this->faker->paragraph( 2 ),
+				'id'          => 0, // Would be WordPress attachment ID.
+				'url'         => $this->faker->imageUrl( 800, 600, 'products' ),
+				'alt'         => $this->faker->words( 3, true ),
+				'caption'     => $this->faker->sentence( 6 ),
+				'description' => $this->faker->sentence( 10 ),
 			);
 		}
 
@@ -120,71 +248,268 @@ class Product_Generator extends Generator {
 	}
 
 	/**
-	 * Generate product variations data for EasyCommerce model
-	 *
-	 * Creates multiple product variations with different attributes, prices, and stock levels.
+	 * Generate product attributes for variations
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Variations data for product creation.
+	 * @param string $product_type Product type (physical/digital).
+	 *
+	 * @return array Array of product attributes with their possible values.
 	 */
-	private function generate_product_variations(): array {
-		$variation_count = $this->faker->numberBetween( 1, 4 );
-		$variations      = array();
+	private function generate_product_attributes( string $product_type = 'physical' ): array {
+		$attributes = array();
 
-		$base_price      = $this->faker->randomFloat( 2, 10, 500 );
-		$variation_attrs = $this->generate_variation_attributes();
-
-		for ( $i = 0; $i < $variation_count; $i++ ) {
-			$price_modifier = $this->faker->randomFloat( 2, 0.8, 1.3 );
-			$final_price    = $base_price * $price_modifier;
-
-			$variations[] = array(
-				'sku'          => $this->faker->unique()->ean8,
-				'price'        => number_format( $final_price, 2, '.', '' ),
-				'sale_price'   => $this->faker->optional( 0.3 )->numberBetween( $final_price * 0.7, $final_price * 0.9 ),
-				'stock'        => $this->faker->numberBetween( 0, 100 ),
-				'status'       => $this->faker->randomElement( array( 'in_stock', 'out_of_stock', 'backorder' ) ),
-				'weight'       => $this->faker->optional( 0.8 )->randomFloat( 2, 0.1, 10 ),
-				'dimensions'   => array(
-					'length' => $this->faker->randomFloat( 2, 1, 50 ),
-					'width'  => $this->faker->randomFloat( 2, 1, 50 ),
-					'height' => $this->faker->randomFloat( 2, 1, 50 ),
-				),
-				'attributes'   => $this->get_random_variation_attributes( $variation_attrs ),
-				'image'        => $this->faker->imageUrl( 600, 600, 'product' ),
-				'downloadable' => $this->faker->boolean( 10 ),
-				'virtual'      => $this->faker->boolean( 15 ),
-				'manage_stock' => $this->faker->boolean( 80 ),
-				'tax_status'   => $this->faker->randomElement( array( 'taxable', 'shipping', 'none' ) ),
-				'tax_class'    => $this->faker->randomElement( array( 'standard', 'reduced-rate', 'zero-rate' ) ),
+		if ( $product_type === 'physical' ) {
+			// Physical product attributes
+			$possible_attributes = array(
+				'color'    => array( 'red', 'blue', 'green', 'black', 'white', 'gray', 'silver', 'gold' ),
+				'size'     => array( 'small', 'medium', 'large', 'extra-large' ),
+				'material' => array( 'plastic', 'metal', 'wood', 'glass', 'ceramic', 'fabric' ),
+				'style'    => array( 'modern', 'classic', 'vintage', 'minimalist', 'premium' ),
 			);
+		} else {
+			// Digital product attributes
+			$possible_attributes = array(
+				'format'   => array( 'pdf', 'video', 'audio', 'software' ),
+				'license'  => array( 'personal', 'commercial', 'extended' ),
+				'version'  => array( 'basic', 'pro', 'enterprise' ),
+				'platform' => array( 'windows', 'mac', 'linux', 'web', 'mobile' ),
+			);
+		}
+
+		// Select 2-3 random attributes
+		$selected_attributes = $this->faker->randomElements(
+			array_keys( $possible_attributes ),
+			$this->faker->numberBetween( 2, 3 )
+		);
+
+		foreach ( $selected_attributes as $attribute_name ) {
+			$attributes[ $attribute_name ] = $possible_attributes[ $attribute_name ];
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Generate product variations based on attributes
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array  $attributes   Product attributes.
+	 * @param string $product_type Product type (physical/digital).
+	 *
+	 * @return array Array of product variations with pricing and stock information.
+	 */
+	private function generate_product_variations( array $attributes, string $product_type = 'physical' ): array {
+		$variations  = array();
+		$base_price  = $this->faker->randomFloat( 2, 10, 500 );
+		$price_range = $base_price * 0.2; // 20% price variation
+
+		// Generate combinations of attributes
+		$attribute_keys   = array_keys( $attributes );
+		$attribute_values = array_values( $attributes );
+
+		// Limit to reasonable number of variations
+		$max_variations = min( 12, array_product( array_map( 'count', $attribute_values ) ) );
+		$generated      = 0;
+
+		// Generate cartesian product of attributes
+		foreach ( $this->cartesian_product( $attribute_values ) as $combination ) {
+			if ( $generated >= $max_variations ) {
+				break;
+			}
+
+			$variation_attributes = array();
+			$variation_name_parts = array();
+
+			foreach ( $combination as $index => $value ) {
+				$attribute_name                          = $attribute_keys[ $index ];
+				$variation_attributes[ $attribute_name ] = $value;
+				$variation_name_parts[]                  = ucfirst( $value );
+			}
+
+			$variation_name = implode( ' - ', $variation_name_parts );
+			$price_modifier = $this->faker->randomFloat( 2, -$price_range, $price_range );
+			$regular_price  = max( 1, $base_price + $price_modifier );
+			$sale_price     = $this->faker->boolean( 30 ) ? $regular_price * $this->faker->randomFloat( 2, 0.7, 0.9 ) : null;
+			$stock_quantity = $product_type === 'physical' ? $this->faker->optional( 0.8 )->numberBetween( 0, 100 ) : null;
+
+			$variation = array(
+				'name'           => $variation_name,
+				'sku'            => $this->generate_unique_sku(),
+				'type'           => $product_type,
+				'regular_price'  => $regular_price,
+				'sale_price'     => $sale_price,
+				'stock_quantity' => $stock_quantity,
+				'stock_limit'    => $this->faker->numberBetween( 5, 20 ),
+				'status'         => $this->determine_stock_status( $stock_quantity ),
+				'attributes'     => $variation_attributes,
+				'meta'           => $this->generate_variation_meta( $product_type ),
+			);
+
+			// Add downloads for digital products
+			if ( $product_type === 'digital' ) {
+				$variation['downloads'] = $this->generate_digital_downloads();
+			}
+
+			$variations[] = $variation;
+			++$generated;
 		}
 
 		return $variations;
 	}
 
 	/**
-	 * Get or create product categories
+	 * Determine stock status based on quantity
 	 *
-	 * Retrieves existing product categories or creates new ones if none exist.
+	 * @since 1.0.0
+	 *
+	 * @param int|null $stock_quantity Stock quantity.
+	 *
+	 * @return string Stock status.
+	 */
+	private function determine_stock_status( $stock_quantity ): string {
+		if ( is_null( $stock_quantity ) ) {
+			return 'in_stock'; // Digital products or unlimited stock
+		}
+
+		if ( $stock_quantity > 10 ) {
+			return 'in_stock';
+		} elseif ( $stock_quantity > 0 ) {
+			return $this->faker->randomElement( array( 'in_stock', 'backorder' ) );
+		} else {
+			return 'out_of_stock';
+		}
+	}
+
+	/**
+	 * Generate variation meta data
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $product_type Product type.
+	 *
+	 * @return array Variation meta data.
+	 */
+	private function generate_variation_meta( string $product_type ): array {
+		$meta = array(
+			'tax_class'        => $this->faker->numberBetween( 1, 3 ),
+			'is_managed_stock' => $product_type === 'physical',
+		);
+
+		if ( $product_type === 'physical' ) {
+			$meta = array_merge(
+				$meta,
+				array(
+					'weight'            => array(
+						'value' => $this->faker->randomFloat( 2, 0.1, 5.0 ),
+						'unit'  => 'kg',
+					),
+					'height'            => array(
+						'value' => $this->faker->randomFloat( 2, 1, 30 ),
+						'unit'  => 'cm',
+					),
+					'width'             => array(
+						'value' => $this->faker->randomFloat( 2, 5, 50 ),
+						'unit'  => 'cm',
+					),
+					'length'            => array(
+						'value' => $this->faker->randomFloat( 2, 5, 50 ),
+						'unit'  => 'cm',
+					),
+					'requires_shipping' => true,
+				)
+			);
+		} else {
+			$meta['requires_shipping'] = false;
+			$meta['download_limit']    = $this->faker->optional( 0.7 )->numberBetween( 1, 10 );
+			$meta['download_expiry']   = $this->faker->optional( 0.5 )->numberBetween( 1, 365 ); // days
+		}
+
+		return $meta;
+	}
+
+	/**
+	 * Generate digital downloads for digital products
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Digital download files.
+	 */
+	private function generate_digital_downloads(): array {
+		$download_types = array(
+			'Software License Key',
+			'PDF Guide',
+			'Video Tutorial',
+			'Audio File',
+			'Template Pack',
+			'Digital Asset',
+		);
+
+		$downloads = array();
+		$count     = $this->faker->numberBetween( 1, 3 );
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$downloads[] = array(
+				'media_id'  => 0, // Would reference WordPress media library
+				'name'      => $this->faker->randomElement( $download_types ),
+				'file_url'  => '', // Would be populated with actual file URL
+				'file_size' => $this->faker->numberBetween( 1024, 104857600 ), // 1KB to 100MB
+			);
+		}
+
+		return $downloads;
+	}
+
+	/**
+	 * Generate a cartesian product of arrays
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $arrays Arrays to combine.
+	 *
+	 * @return array Cartesian product.
+	 */
+	private function cartesian_product( array $arrays ): array {
+		$result = array( array() );
+
+		foreach ( $arrays as $array ) {
+			$temp = array();
+			foreach ( $result as $r ) {
+				foreach ( $array as $item ) {
+					$temp[] = array_merge( $r, array( $item ) );
+				}
+			}
+			$result = $temp;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Generate unique SKU for product variation
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Unique SKU.
+	 */
+	private function generate_unique_sku(): string {
+		$prefix = strtoupper( $this->faker->lexify( '???' ) );
+		$number = $this->faker->unique()->numberBetween( 1000, 9999 );
+
+		return $prefix . '-' . $number;
+	}
+
+	/**
+	 * Get or create product categories
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Category IDs.
 	 */
 	private function get_or_create_product_categories(): array {
-		$categories_table = $this->wpdb->prefix . 'product_categories';
-
-		// Check if categories exist.
-		$existing_categories = $this->wpdb->get_col( "SELECT id FROM {$categories_table} LIMIT 10" );
-
-		if ( ! empty( $existing_categories ) ) {
-			return $this->faker->randomElements( $existing_categories, $this->faker->numberBetween( 1, 3 ) );
-		}
-
-		// Create some default categories.
-		$default_categories = array(
+		// Use WordPress taxonomy for product categories
+		$category_names = array(
 			'Electronics',
 			'Clothing',
 			'Books',
@@ -198,18 +523,24 @@ class Product_Generator extends Generator {
 		);
 
 		$category_ids = array();
-		foreach ( $default_categories as $category_name ) {
-			$this->wpdb->insert(
-				$categories_table,
-				array(
-					'name'        => $category_name,
-					'slug'        => sanitize_title( $category_name ),
-					'description' => $this->faker->sentence(),
-					'image'       => $this->faker->imageUrl( 300, 300, 'category' ),
-					'created_at'  => wp_date( 'Y-m-d H:i:s' ),
-				)
-			);
-			$category_ids[] = $this->wpdb->insert_id;
+		foreach ( $category_names as $category_name ) {
+			$term = get_term_by( 'name', $category_name, 'product_cat' );
+			if ( ! $term ) {
+				$term_result = wp_insert_term(
+					$category_name,
+					'product_cat',
+					array(
+						'description' => $this->faker->sentence(),
+						'slug'        => sanitize_title( $category_name ),
+					)
+				);
+
+				if ( ! is_wp_error( $term_result ) ) {
+					$category_ids[] = $term_result['term_id'];
+				}
+			} else {
+				$category_ids[] = $term->term_id;
+			}
 		}
 
 		return $this->faker->randomElements( $category_ids, $this->faker->numberBetween( 1, 3 ) );
@@ -218,211 +549,71 @@ class Product_Generator extends Generator {
 	/**
 	 * Get or create product brands
 	 *
-	 * Retrieves existing product brands or creates new ones if none exist.
-	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Brand IDs.
 	 */
 	private function get_or_create_product_brands(): array {
-		$brands_table = $this->wpdb->prefix . 'product_brands';
-
-		// Check if brands exist.
-		$existing_brands = $this->wpdb->get_col( "SELECT id FROM {$brands_table} LIMIT 10" );
-
-		if ( ! empty( $existing_brands ) ) {
-			return array( $this->faker->randomElement( $existing_brands ) );
-		}
-
-		// Create some default brands.
-		$default_brands = array(
+		// Use WordPress taxonomy for product brands
+		$brand_names = array(
 			'TechCorp',
-			'StyleMaker',
-			'HomeComfort',
-			'SportsPro',
-			'EcoFriendly',
-			'LuxuryLife',
-			'BudgetBest',
-			'QualityFirst',
-			'Innovation Labs',
-			'Classic Brand',
+			'InnovateCo',
+			'QualityBrand',
+			'PremiumLine',
+			'ModernTech',
+			'ClassicDesign',
+			'FutureTech',
+			'ProSeries',
 		);
 
 		$brand_ids = array();
-		foreach ( $default_brands as $brand_name ) {
-			$this->wpdb->insert(
-				$brands_table,
-				array(
-					'name'        => $brand_name,
-					'slug'        => sanitize_title( $brand_name ),
-					'description' => $this->faker->company() . ' - ' . $this->faker->catchPhrase(),
-					'logo'        => $this->faker->imageUrl( 200, 100, 'logo' ),
-					'website'     => $this->faker->url(),
-					'created_at'  => wp_date( 'Y-m-d H:i:s' ),
-				)
-			);
-			$brand_ids[] = $this->wpdb->insert_id;
-		}
+		foreach ( $brand_names as $brand_name ) {
+			$term = get_term_by( 'name', $brand_name, 'product_brand' );
+			if ( ! $term ) {
+				$term_result = wp_insert_term(
+					$brand_name,
+					'product_brand',
+					array(
+						'description' => $this->faker->company . ' - ' . $this->faker->sentence(),
+						'slug'        => sanitize_title( $brand_name ),
+					)
+				);
 
-		return array( $this->faker->randomElement( $brand_ids ) );
-	}
-
-	/**
-	 * Generate product attributes
-	 *
-	 * Creates various product attributes like color, size, material, etc.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Product attributes.
-	 */
-	private function generate_product_attributes(): array {
-		$attribute_types = array( 'Color', 'Size', 'Material', 'Brand', 'Style' );
-		$selected_types  = $this->faker->randomElements( $attribute_types, $this->faker->numberBetween( 2, 4 ) );
-
-		$attributes = array();
-		foreach ( $selected_types as $type ) {
-			$values              = $this->get_attribute_values_for_type( $type );
-			$attributes[ $type ] = $this->faker->randomElements( $values, $this->faker->numberBetween( 1, 3 ) );
-		}
-
-		return $attributes;
-	}
-
-	/**
-	 * Generate variation attributes
-	 *
-	 * Creates attributes that can be used for product variations.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Variation attributes.
-	 */
-	private function generate_variation_attributes(): array {
-		$variation_types = array( 'Size', 'Color' );
-		$attributes      = array();
-
-		foreach ( $variation_types as $type ) {
-			if ( $this->faker->boolean( 70 ) ) {
-				$values              = $this->get_attribute_values_for_type( $type );
-				$attributes[ $type ] = $this->faker->randomElements( $values, $this->faker->numberBetween( 2, 4 ) );
+				if ( ! is_wp_error( $term_result ) ) {
+					$brand_ids[] = $term_result['term_id'];
+				}
+			} else {
+				$brand_ids[] = $term->term_id;
 			}
 		}
 
-		return $attributes;
+		return array_slice( $brand_ids, 0, 1 ); // Return only one brand
 	}
 
 	/**
-	 * Get attribute values for specific attribute type
-	 *
-	 * Returns predefined values for different attribute types.
+	 * Assign product tags
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $attribute_name The attribute type name.
-	 *
-	 * @return array Attribute values.
-	 */
-	private function get_attribute_values_for_type( string $attribute_name ): array {
-		$attribute_values = array(
-			'Color'    => array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Yellow', 'Purple', 'Orange', 'Pink', 'Gray' ),
-			'Size'     => array( 'XS', 'S', 'M', 'L', 'XL', 'XXL', '32', '34', '36', '38', '40', '42' ),
-			'Material' => array( 'Cotton', 'Polyester', 'Wool', 'Silk', 'Leather', 'Metal', 'Plastic', 'Wood', 'Glass' ),
-			'Brand'    => array( 'Premium', 'Standard', 'Economy', 'Luxury', 'Sport', 'Casual', 'Professional' ),
-			'Style'    => array( 'Modern', 'Classic', 'Vintage', 'Contemporary', 'Traditional', 'Minimalist', 'Rustic' ),
-		);
-
-		return $attribute_values[ $attribute_name ] ?? array();
-	}
-
-	/**
-	 * Assign product tags to a product
-	 *
-	 * Creates and assigns relevant tags to the product.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $product_id The product ID to assign tags to.
+	 * @param int $product_id Product ID.
 	 *
 	 * @return void
 	 */
 	private function assign_product_tags( int $product_id ): void {
-		$product_tags_table = $this->wpdb->prefix . 'product_tags';
-
-		$tag_names = array(
-			'New Arrival',
-			'Best Seller',
-			'Sale',
-			'Limited Edition',
-			'Popular',
-			'Featured',
-			'Trending',
-			'Eco-Friendly',
-			'Premium Quality',
-			'Budget Friendly',
-			'Gift Idea',
-			'Seasonal',
-			'Exclusive',
-			'Top Rated',
-			'Customer Favorite',
+		$tags = array(
+			'new',
+			'popular',
+			'featured',
+			'bestseller',
+			'trending',
+			'premium',
+			'limited',
+			'exclusive',
+			'sale',
+			'clearance',
 		);
 
-		$selected_tags = $this->faker->randomElements( $tag_names, $this->faker->numberBetween( 1, 4 ) );
-
-		foreach ( $selected_tags as $tag_name ) {
-			// Check if tag exists.
-			$existing_tag = $this->wpdb->get_var(
-				$this->wpdb->prepare(
-					"SELECT id FROM {$product_tags_table} WHERE name = %s",
-					$tag_name
-				)
-			);
-
-			if ( ! $existing_tag ) {
-				// Create new tag.
-				$this->wpdb->insert(
-					$product_tags_table,
-					array(
-						'name'        => $tag_name,
-						'slug'        => sanitize_title( $tag_name ),
-						'description' => $this->faker->sentence(),
-						'created_at'  => wp_date( 'Y-m-d H:i:s' ),
-					)
-				);
-				$tag_id = $this->wpdb->insert_id;
-			} else {
-				$tag_id = $existing_tag;
-			}
-
-			// Assign tag to product.
-			$product_tag_relations_table = $this->wpdb->prefix . 'product_tag_relations';
-			$this->wpdb->replace(
-				$product_tag_relations_table,
-				array(
-					'product_id' => $product_id,
-					'tag_id'     => $tag_id,
-				)
-			);
-		}
-	}
-
-	/**
-	 * Get random variation attributes for a specific variation
-	 *
-	 * Selects random attribute values from the available variation attributes.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $variation_attrs Available variation attributes.
-	 *
-	 * @return array Selected variation attributes.
-	 */
-	private function get_random_variation_attributes( array $variation_attrs ): array {
-		return array_map(
-			function ( $attr_values ) {
-				return $this->faker->randomElement( $attr_values );
-			},
-			$variation_attrs
-		);
+		$selected_tags = $this->faker->randomElements( $tags, $this->faker->numberBetween( 1, 4 ) );
+		wp_set_post_terms( $product_id, $selected_tags, 'product_tag' );
 	}
 }
