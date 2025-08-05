@@ -184,14 +184,17 @@ Options for data cleanup:
 
 == Screenshots ==
 
-1. **Modern Admin Interface** - React-based interface with tabbed navigation and responsive design
-2. **Product Generation** - Advanced product creation with attributes, variations, and categories
-3. **Customer Management** - Comprehensive customer profiles with purchase history and loyalty tracking
-4. **Order Processing** - Complete order generation with payment, shipping, and tax calculations
-5. **Coupon System** - Sophisticated coupon creation with extensive rule configurations
-6. **Progress Monitoring** - Real-time generation progress with detailed feedback and error handling
-7. **Mobile Experience** - Fully responsive admin interface optimized for all devices
-8. **Data Relationships** - Visual representation of generated data relationships and dependencies
+1. **Modern Admin Interface** - React-based interface with tabbed navigation and WordPress admin color integration
+2. **Product Generator** - Advanced product creation with attributes, variations, categories, and inventory management
+3. **Customer Generator** - Comprehensive customer profiles with demographics, purchase history, and loyalty tracking
+4. **Order Generator** - Complete order generation with payment processing, shipping, and tax calculations
+5. **Coupon Generator** - Sophisticated coupon creation with usage limits, restrictions, and validity periods
+6. **Product Variation Generator** - Detailed product variations with attribute systems and stock tracking
+7. **Shipping Plan Generator** - Shipping methods with regional coverage, carrier selection, and cost calculations
+8. **Tax Generator** - Multi-jurisdiction tax classes with location-based rates and rule systems
+9. **Transaction Generator** - Payment transaction history with multiple gateways and status distributions
+10. **Cart Session Generator** - Shopping cart sessions with abandonment scenarios and recovery simulation
+11. **Location Generator** - Geographic hierarchy (countries, states, cities) with coordinates and timezone support
 
 == Changelog ==
 
