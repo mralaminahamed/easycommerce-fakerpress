@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { Listbox, Switch, Disclosure, Button, Combobox } from '@headlessui/react';
 
-export default function GeneratorBase({
-    title,
-    description,
-    type,
-    onGenerate,
-    isLoading,
-    result,
-    error,
-    parameterConfig = {},
-    children
-}) {
+export default function GeneratorBase({ title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children }) {
     const [count, setCount] = useState(10);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [parameters, setParameters] = useState({});
@@ -36,73 +27,103 @@ export default function GeneratorBase({
             case 'string':
                 if (config.enum) {
                     return (
-                        <select
+                        <Listbox
                             value={value || ''}
-                            onChange={(e) => handleParameterChange(paramName, e.target.value)}
-                            className="ecfp-input"
+                            onChange={(val) => handleParameterChange(paramName, val)}
                             disabled={isLoading}
                         >
-                            <option value="">Select {config.description}</option>
-                            {config.enum.map(option => (
-                                <option key={option} value={option}>
-                                    {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                </option>
-                            ))}
-                        </select>
+                            <div className="relative">
+                                <Listbox.Button className="ecfp-input">
+                                    {value ? value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : `Select ${config.description}`}
+                                </Listbox.Button>
+                                <Listbox.Options className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    <Listbox.Option value="" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Select {config.description}
+                                    </Listbox.Option>
+                                    {config.enum.map(option => (
+                                        <Listbox.Option
+                                            key={option}
+                                            value={option}
+                                            className={({ active }) => `px-4 py-2 text-sm text-gray-700 ${active ? 'bg-gray-100' : ''}`}
+                                        >
+                                            {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                        </Listbox.Option>
+                                    ))}
+                                </Listbox.Options>
+                            </div>
+                        </Listbox>
                     );
                 }
                 return (
-                    <input
-                        type="text"
+                    <Combobox
                         value={value || ''}
-                        onChange={(e) => handleParameterChange(paramName, e.target.value)}
-                        className="ecfp-input"
-                        placeholder={config.description}
+                        onChange={(val) => handleParameterChange(paramName, val)}
                         disabled={isLoading}
-                    />
+                    >
+                        <div className="relative">
+                            <Combobox.Input
+                                className="ecfp-input"
+                                placeholder={config.description}
+                                onChange={(e) => handleParameterChange(paramName, e.target.value)}
+                            />
+                        </div>
+                    </Combobox>
                 );
 
             case 'integer':
                 return (
-                    <input
-                        type="number"
+                    <Combobox
                         value={value || ''}
-                        onChange={(e) => handleParameterChange(paramName, parseInt(e.target.value))}
-                        min={config.minimum || 0}
-                        max={config.maximum || 1000}
-                        className="ecfp-input w-32"
-                        placeholder={config.description}
+                        onChange={(val) => handleParameterChange(paramName, parseInt(val))}
                         disabled={isLoading}
-                    />
+                    >
+                        <div className="relative">
+                            <Combobox.Input
+                                className="ecfp-input w-32"
+                                type="number"
+                                min={config.minimum || 0}
+                                max={config.maximum || 1000}
+                                placeholder={config.description}
+                                onChange={(e) => handleParameterChange(paramName, parseInt(e.target.value))}
+                            />
+                        </div>
+                    </Combobox>
                 );
 
             case 'number':
                 return (
-                    <input
-                        type="number"
-                        step="0.01"
+                    <Combobox
                         value={value || ''}
-                        onChange={(e) => handleParameterChange(paramName, parseFloat(e.target.value))}
-                        min={config.minimum || 0}
-                        max={config.maximum || 10000}
-                        className="ecfp-input w-32"
-                        placeholder={config.description}
+                        onChange={(val) => handleParameterChange(paramName, parseFloat(val))}
                         disabled={isLoading}
-                    />
+                    >
+                        <div className="relative">
+                            <Combobox.Input
+                                className="ecfp-input w-32"
+                                type="number"
+                                step="0.01"
+                                min={config.minimum || 0}
+                                max={config.maximum || 10000}
+                                placeholder={config.description}
+                                onChange={(e) => handleParameterChange(paramName, parseFloat(e.target.value))}
+                            />
+                        </div>
+                    </Combobox>
                 );
 
             case 'boolean':
                 return (
-                    <label className="inline-flex items-center">
-                        <input
-                            type="checkbox"
+                    <Switch.Group as="div" className="flex items-center">
+                        <Switch
                             checked={value || false}
-                            onChange={(e) => handleParameterChange(paramName, e.target.checked)}
-                            className="form-checkbox h-4 w-4 text-wp-blue"
+                            onChange={(checked) => handleParameterChange(paramName, checked)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full ${value ? 'bg-wp-blue' : 'bg-gray-200'}`}
                             disabled={isLoading}
-                        />
-                        <span className="ml-2 text-sm text-gray-700">{config.description}</span>
-                    </label>
+                        >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+                        </Switch>
+                        <Switch.Label className="ml-2 text-sm text-gray-700">{config.description}</Switch.Label>
+                    </Switch.Group>
                 );
 
             case 'array':
@@ -113,23 +134,24 @@ export default function GeneratorBase({
                             <p className="text-sm text-gray-600">{config.description}</p>
                             <div className="grid grid-cols-2 gap-2">
                                 {config.items.enum.map(option => (
-                                    <label key={option} className="inline-flex items-center">
-                                        <input
-                                            type="checkbox"
+                                    <Switch.Group key={option} as="div" className="flex items-center">
+                                        <Switch
                                             checked={selectedValues.includes(option)}
-                                            onChange={(e) => {
-                                                const newValues = e.target.checked
+                                            onChange={(checked) => {
+                                                const newValues = checked
                                                     ? [...selectedValues, option]
                                                     : selectedValues.filter(v => v !== option);
                                                 handleParameterChange(paramName, newValues);
                                             }}
-                                            className="form-checkbox h-4 w-4 text-wp-blue"
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full ${selectedValues.includes(option) ? 'bg-wp-blue' : 'bg-gray-200'}`}
                                             disabled={isLoading}
-                                        />
-                                        <span className="ml-2 text-sm text-gray-700">
+                                        >
+                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${selectedValues.includes(option) ? 'translate-x-6' : 'translate-x-1'}`} />
+                                        </Switch>
+                                        <Switch.Label className="ml-2 text-sm text-gray-700">
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                        </span>
-                                    </label>
+                                        </Switch.Label>
+                                    </Switch.Group>
                                 ))}
                             </div>
                         </div>
@@ -164,7 +186,7 @@ export default function GeneratorBase({
                 <p className="mt-1 text-sm text-gray-600">{description}</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-6">
                 {/* Basic Parameters */}
                 <div className="bg-gray-50 p-4 rounded-lg">
                     <h4 className="font-medium text-gray-900 mb-4">Basic Settings</h4>
@@ -174,101 +196,129 @@ export default function GeneratorBase({
                             <label htmlFor={`${type}-count`} className="ecfp-label">
                                 Number of {type} to generate
                             </label>
-                            <input
-                                type="number"
-                                id={`${type}-count`}
-                                min="1"
-                                max="100"
+                            <Combobox
                                 value={count}
-                                onChange={(e) => setCount(parseInt(e.target.value))}
-                                className="ecfp-input w-32"
+                                onChange={(val) => setCount(parseInt(val))}
                                 disabled={isLoading}
-                            />
+                            >
+                                <div className="relative">
+                                    <Combobox.Input
+                                        type="number"
+                                        id={`${type}-count`}
+                                        min="1"
+                                        max="100"
+                                        className="ecfp-input w-32"
+                                        onChange={(e) => setCount(parseInt(e.target.value))}
+                                    />
+                                </div>
+                            </Combobox>
                         </div>
 
                         <div className="ecfp-form-group">
                             <label className="ecfp-label">Locale</label>
-                            <select
+                            <Listbox
                                 value={parameters.locale || 'en_US'}
-                                onChange={(e) => handleParameterChange('locale', e.target.value)}
-                                className="ecfp-input"
+                                onChange={(val) => handleParameterChange('locale', val)}
                                 disabled={isLoading}
                             >
-                                <option value="en_US">English (US)</option>
-                                <option value="en_GB">English (UK)</option>
-                                <option value="fr_FR">French</option>
-                                <option value="de_DE">German</option>
-                                <option value="es_ES">Spanish</option>
-                                <option value="it_IT">Italian</option>
-                            </select>
+                                <div className="relative">
+                                    <Listbox.Button className="ecfp-input">
+                                        {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Select Locale'}
+                                    </Listbox.Button>
+                                    <Listbox.Options className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        {['en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT'].map(locale => (
+                                            <Listbox.Option
+                                                key={locale}
+                                                value={locale}
+                                                className={({ active }) => `px-4 py-2 text-sm text-gray-700 ${active ? 'bg-gray-100' : ''}`}
+                                            >
+                                                {locale === 'en_US' && 'English (US)'}
+                                                {locale === 'en_GB' && 'English (UK)'}
+                                                {locale === 'fr_FR' && 'French'}
+                                                {locale === 'de_DE' && 'German'}
+                                                {locale === 'es_ES' && 'Spanish'}
+                                                {locale === 'it_IT' && 'Italian'}
+                                            </Listbox.Option>
+                                        ))}
+                                    </Listbox.Options>
+                                </div>
+                            </Listbox>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div className="ecfp-form-group">
                             <label className="ecfp-label">Random Seed (optional)</label>
-                            <input
-                                type="number"
+                            <Combobox
                                 value={parameters.seed || ''}
-                                onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
-                                className="ecfp-input w-32"
-                                placeholder="For reproducible data"
+                                onChange={(val) => handleParameterChange('seed', parseInt(val))}
                                 disabled={isLoading}
-                            />
+                            >
+                                <div className="relative">
+                                    <Combobox.Input
+                                        type="number"
+                                        className="ecfp-input w-32"
+                                        placeholder="For reproducible data"
+                                        onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
+                                    />
+                                </div>
+                            </Combobox>
                         </div>
 
                         <div className="ecfp-form-group">
-                            <label className="inline-flex items-center">
-                                <input
-                                    type="checkbox"
+                            <Switch.Group as="div" className="flex items-center">
+                                <Switch
                                     checked={parameters.include_meta !== false}
-                                    onChange={(e) => handleParameterChange('include_meta', e.target.checked)}
-                                    className="form-checkbox h-4 w-4 text-wp-blue"
+                                    onChange={(checked) => handleParameterChange('include_meta', checked)}
+                                    className={`relative inline-flex h-6 w-11 items-center rounded-full ${parameters.include_meta !== false ? 'bg-wp-blue' : 'bg-gray-200'}`}
                                     disabled={isLoading}
-                                />
-                                <span className="ml-2 text-sm text-gray-700">Include additional metadata</span>
-                            </label>
+                                >
+                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${parameters.include_meta !== false ? 'translate-x-6' : 'translate-x-1'}`} />
+                                </Switch>
+                                <Switch.Label className="ml-2 text-sm text-gray-700">Include additional metadata</Switch.Label>
+                            </Switch.Group>
                         </div>
                     </div>
                 </div>
 
                 {/* Advanced Parameters Toggle */}
                 {Object.keys(parameterConfig).length > 0 && (
-                    <div>
-                        <button
-                            type="button"
-                            onClick={() => setShowAdvanced(!showAdvanced)}
-                            className="flex items-center justify-between w-full px-4 py-2 text-left text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-wp-blue"
-                        >
-                            <span>Advanced Parameters</span>
-                            {showAdvanced ? (
-                                <ChevronUpIcon className="w-4 h-4" />
-                            ) : (
-                                <ChevronDownIcon className="w-4 h-4" />
-                            )}
-                        </button>
-
-                        {showAdvanced && (
-                            <div className="mt-4 bg-white border border-gray-200 rounded-lg p-4 space-y-4">
-                                {Object.entries(parameterConfig).map(([paramName, config]) => (
-                                    <div key={paramName} className="ecfp-form-group">
-                                        <label className="ecfp-label">
-                                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                        </label>
-                                        {renderParameterField(paramName, config)}
-                                    </div>
-                                ))}
-                            </div>
+                    <Disclosure>
+                        {({ open }) => (
+                            <>
+                                <Disclosure.Button
+                                    className="flex items-center justify-between w-full px-4 py-2 text-left text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-wp-blue"
+                                    onClick={() => setShowAdvanced(!showAdvanced)}
+                                >
+                                    <span>Advanced Parameters</span>
+                                    {open ? (
+                                        <ChevronUpIcon className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronDownIcon className="w-4 h-4" />
+                                    )}
+                                </Disclosure.Button>
+                                <Disclosure.Panel className="mt-4 bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+                                    {Object.entries(parameterConfig).map(([paramName, config]) => (
+                                        <div key={paramName} className="ecfp-form-group">
+                                            <label className="ecfp-label">
+                                                {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                            </label>
+                                            {renderParameterField(paramName, config)}
+                                        </div>
+                                    ))}
+                                </Disclosure.Panel>
+                            </>
                         )}
-                    </div>
+                    </Disclosure>
                 )}
 
                 {/* Custom Children Content */}
                 {children}
 
-                <button
+                <Button
                     type="submit"
                     disabled={isLoading}
+                    onClick={handleSubmit}
                     className="ecfp-button"
                 >
                     {isLoading ? (
@@ -279,8 +329,8 @@ export default function GeneratorBase({
                     ) : (
                         `Generate ${type}`
                     )}
-                </button>
-            </form>
+                </Button>
+            </div>
 
             {error && (
                 <div className="mt-4 ecfp-error">
