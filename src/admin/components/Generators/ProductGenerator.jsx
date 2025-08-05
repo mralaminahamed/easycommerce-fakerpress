@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function ProductGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +83,7 @@ export default function ProductGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Products"
             description="Create fake products with random names, descriptions, prices, and attributes. Configure product types, pricing, categories, and inventory settings."
             type="products"

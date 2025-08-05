@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function OrderGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +82,7 @@ export default function OrderGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Orders"
             description="Create realistic orders with comprehensive data including customers, products, payments, shipping, and taxes. Enhanced with Order_Item_Meta and location-based addresses."
             type="orders"

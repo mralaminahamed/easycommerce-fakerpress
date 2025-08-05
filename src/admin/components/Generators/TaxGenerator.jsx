@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function TaxGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,7 @@ export default function TaxGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Tax Classes"
             description="Create tax classes with location-based rates for different jurisdictions and product types."
             type="taxes"

@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function LocationGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function LocationGenerator() {
 
     return (
         <div>
-            <EnhancedGeneratorBase
+            <GeneratorBase
                 title="Generate Location Data"
                 description="Create comprehensive location hierarchy data (countries, states, cities) for the EasyCommerce system. This populates the locations.json file used throughout the system."
                 type="locations"
@@ -69,12 +69,12 @@ export default function LocationGenerator() {
                 error={error}
                 parameterConfig={parameterConfig}
             />
-            
+
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-2">Important Note</h4>
                 <p className="text-sm text-blue-800">
-                    The Location Generator creates the foundational geographic data used by other generators. 
-                    It's recommended to run this first, especially before generating customers and orders that 
+                    The Location Generator creates the foundational geographic data used by other generators.
+                    It's recommended to run this first, especially before generating customers and orders that
                     rely on realistic address data. The generated data is saved to the EasyCommerce locations.json file.
                 </p>
             </div>

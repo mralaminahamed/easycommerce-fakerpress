@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function CartSessionGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +72,7 @@ export default function CartSessionGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Cart Sessions"
             description="Create shopping cart sessions with abandonment scenarios for analyzing cart recovery and customer behavior."
             type="cart-sessions"

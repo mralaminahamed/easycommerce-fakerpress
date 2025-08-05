@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function ProductVariationGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function ProductVariationGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Product Variations"
             description="Create realistic product variations with different attributes, prices, and stock levels. Requires existing products to create variations for."
             type="product-variations"

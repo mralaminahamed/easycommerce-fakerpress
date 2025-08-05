@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function TransactionGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +66,7 @@ export default function TransactionGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Transactions"
             description="Create realistic payment transaction history with different gateways, amounts, and status distributions."
             type="transactions"

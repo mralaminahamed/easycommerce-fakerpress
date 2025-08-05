@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Tab } from '@headlessui/react';
-import ProductGenerator from './ProductGenerator';
-import CustomerGenerator from './CustomerGenerator';
-import OrderGenerator from './OrderGenerator';
-import CouponGenerator from './CouponGenerator';
-import ProductVariationGenerator from './ProductVariationGenerator';
-import ShippingPlanGenerator from './ShippingPlanGenerator';
-import TaxGenerator from './TaxGenerator';
-import TransactionGenerator from './TransactionGenerator';
-import CartSessionGenerator from './CartSessionGenerator';
-import LocationGenerator from './LocationGenerator';
+import ProductGenerator from './Generators/ProductGenerator';
+import CustomerGenerator from './Generators/CustomerGenerator';
+import OrderGenerator from './Generators/OrderGenerator';
+import CouponGenerator from './Generators/CouponGenerator';
+import ProductVariationGenerator from './Generators/ProductVariationGenerator';
+import ShippingPlanGenerator from './Generators/ShippingPlanGenerator';
+import TaxGenerator from './Generators/TaxGenerator';
+import TransactionGenerator from './Generators/TransactionGenerator';
+import CartSessionGenerator from './Generators/CartSessionGenerator';
+import LocationGenerator from './Generators/LocationGenerator';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -22,7 +22,7 @@ export default function App() {
         { name: 'Customers', component: CustomerGenerator, category: 'core' },
         { name: 'Orders', component: OrderGenerator, category: 'core' },
         { name: 'Coupons', component: CouponGenerator, category: 'core' },
-        
+
         // Enhanced generators (Version 2.0)
         { name: 'Product Variations', component: ProductVariationGenerator, category: 'enhanced' },
         { name: 'Shipping Plans', component: ShippingPlanGenerator, category: 'enhanced' },

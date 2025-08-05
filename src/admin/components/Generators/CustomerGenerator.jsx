@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function CustomerGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +87,7 @@ export default function CustomerGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Customers"
             description="Create realistic customer accounts with demographics, addresses, contact information, and purchase history simulation."
             type="customers"

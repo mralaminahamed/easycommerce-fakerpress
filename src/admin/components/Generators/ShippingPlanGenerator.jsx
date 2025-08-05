@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import EnhancedGeneratorBase from './EnhancedGeneratorBase';
+import GeneratorBase from '../GeneratorBase';
 
 export default function ShippingPlanGenerator() {
     const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +74,7 @@ export default function ShippingPlanGenerator() {
     };
 
     return (
-        <EnhancedGeneratorBase
+        <GeneratorBase
             title="Generate Shipping Plans"
             description="Create comprehensive shipping plans with different methods, costs, coverage areas, and delivery timeframes."
             type="shipping-plans"
