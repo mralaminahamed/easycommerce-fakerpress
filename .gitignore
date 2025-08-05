@@ -10,3 +10,4 @@ yarn-error.log*
 .idea/
 *.zip
 wp-config.php
+/.yarn/

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { Listbox, Switch, Disclosure, Button, Combobox } from '@headlessui/react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch, Field, Label, Disclosure, DisclosureButton, DisclosurePanel, Button, Input } from '@headlessui/react';
 import {RawHTML} from "@wordpress/element";
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -35,92 +35,74 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                             disabled={isLoading}
                         >
                             <div className="relative">
-                                <Listbox.Button className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                                <ListboxButton className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
                                     <span className={value ? 'text-gray-900' : 'text-gray-500'}>
                                         {value ? value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </span>
                                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                         <ChevronDownIcon className="h-5 w-5 text-gray-400" />
                                     </span>
-                                </Listbox.Button>
-                                <Listbox.Options className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-                                    <Listbox.Option value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 hover:bg-blue-50">
+                                </ListboxButton>
+                                <ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
+                                    <ListboxOption value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 hover:bg-blue-50">
                                         {sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
-                                    </Listbox.Option>
+                                    </ListboxOption>
                                     {config.enum.map(option => (
-                                        <Listbox.Option
+                                        <ListboxOption
                                             key={option}
                                             value={option}
                                             className={({ active }) => `cursor-pointer select-none px-4 py-2 text-sm ${active ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
                                         >
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                        </Listbox.Option>
+                                        </ListboxOption>
                                     ))}
-                                </Listbox.Options>
+                                </ListboxOptions>
                             </div>
                         </Listbox>
                     );
                 }
                 return (
-                    <Combobox
+                    <Input
                         value={value || ''}
-                        onChange={(val) => handleParameterChange(paramName, val)}
+                        className="w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
+                        placeholder={config.description}
                         disabled={isLoading}
-                    >
-                        <div className="relative">
-                            <Combobox.Input
-                                className="w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                                placeholder={config.description}
-                                onChange={(e) => handleParameterChange(paramName, e.target.value)}
-                            />
-                        </div>
-                    </Combobox>
+                        onChange={(e) => handleParameterChange(paramName, e.target.value)}
+                    />
                 );
 
             case 'integer':
                 return (
-                    <Combobox
+                    <Input
+                        type="number"
                         value={value || ''}
-                        onChange={(val) => handleParameterChange(paramName, parseInt(val))}
+                        className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
+                        min={config.minimum || 0}
+                        max={config.maximum || 1000}
+                        placeholder={config.description}
                         disabled={isLoading}
-                    >
-                        <div className="relative">
-                            <Combobox.Input
-                                type="number"
-                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                                min={config.minimum || 0}
-                                max={config.maximum || 1000}
-                                placeholder={config.description}
-                                onChange={(e) => handleParameterChange(paramName, parseInt(e.target.value))}
-                            />
-                        </div>
-                    </Combobox>
+                        onChange={(e) => handleParameterChange(paramName, parseInt(e.target.value))}
+                    />
                 );
 
             case 'number':
                 return (
-                    <Combobox
+                    <Input
+                        type="number"
+                        step="0.01"
                         value={value || ''}
-                        onChange={(val) => handleParameterChange(paramName, parseFloat(val))}
+                        className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
+                        min={config.minimum || 0}
+                        max={config.maximum || 10000}
+                        placeholder={config.description}
                         disabled={isLoading}
-                    >
-                        <div className="relative">
-                            <Combobox.Input
-                                type="number"
-                                step="0.01"
-                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                                min={config.minimum || 0}
-                                max={config.maximum || 10000}
-                                placeholder={config.description}
-                                onChange={(e) => handleParameterChange(paramName, parseFloat(e.target.value))}
-                            />
-                        </div>
-                    </Combobox>
+                        onChange={(e) => handleParameterChange(paramName, parseFloat(e.target.value))}
+                    />
                 );
 
             case 'boolean':
                 return (
-                    <Switch.Group as="div" className="flex items-center">
+                    <Field as="div" className="flex items-center">
                         <Switch
                             checked={value || false}
                             onChange={(checked) => handleParameterChange(paramName, checked)}
@@ -129,8 +111,8 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                         >
                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${value ? 'translate-x-6' : 'translate-x-1'}`} />
                         </Switch>
-                        <Switch.Label className="ml-3 text-sm font-medium text-gray-700">{config.description}</Switch.Label>
-                    </Switch.Group>
+                        <Label className="ml-3 text-sm font-medium text-gray-700">{config.description}</Label>
+                    </Field>
                 );
 
             case 'array':
@@ -141,7 +123,7 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                             <p className="text-sm text-gray-500">{config.description}</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {config.items.enum.map(option => (
-                                    <Switch.Group key={option} as="div" className="flex items-center">
+                                    <Field key={option} as="div" className="flex items-center">
                                         <Switch
                                             checked={selectedValues.includes(option)}
                                             onChange={(checked) => {
@@ -153,10 +135,10 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                         >
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${selectedValues.includes(option) ? 'translate-x-6' : 'translate-x-1'}`} />
                                         </Switch>
-                                        <Switch.Label className="ml-3 text-sm font-medium text-gray-700">
+                                        <Label className="ml-3 text-sm font-medium text-gray-700">
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                        </Switch.Label>
-                                    </Switch.Group>
+                                        </Label>
+                                    </Field>
                                 ))}
                             </div>
                         </div>
@@ -201,22 +183,16 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                             <label htmlFor={`${type}-count`} className="block text-sm font-medium text-gray-700">
                                 {sprintf(__('Number of %s to generate', 'easycommerce-fakerpress'), type)}
                             </label>
-                            <Combobox
+                            <Input
+                                type="number"
+                                id={`${type}-count`}
                                 value={count}
-                                onChange={(val) => setCount(parseInt(val))}
+                                min="1"
+                                max="100"
+                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
                                 disabled={isLoading}
-                            >
-                                <div className="relative">
-                                    <Combobox.Input
-                                        type="number"
-                                        id={`${type}-count`}
-                                        min="1"
-                                        max="100"
-                                        className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                                        onChange={(e) => setCount(parseInt(e.target.value))}
-                                    />
-                                </div>
-                            </Combobox>
+                                onChange={(e) => setCount(parseInt(e.target.value))}
+                            />
                         </div>
 
                         <div className="space-y-1">
@@ -227,17 +203,17 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                 disabled={isLoading}
                             >
                                 <div className="relative">
-                                    <Listbox.Button className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                                    <ListboxButton className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
                                         <span className={parameters.locale ? 'text-gray-900' : 'text-gray-500'}>
                                             {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : __('Select Locale', 'easycommerce-fakerpress')}
                                         </span>
                                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                             <ChevronDownIcon className="h-5 w-5 text-gray-400" />
                                         </span>
-                                    </Listbox.Button>
-                                    <Listbox.Options className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
+                                    </ListboxButton>
+                                    <ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
                                         {['en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT'].map(locale => (
-                                            <Listbox.Option
+                                            <ListboxOption
                                                 key={locale}
                                                 value={locale}
                                                 className={({ active }) => `cursor-pointer select-none px-4 py-2 text-sm ${active ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
@@ -248,9 +224,9 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                                 {locale === 'de_DE' && __('German', 'easycommerce-fakerpress')}
                                                 {locale === 'es_ES' && __('Spanish', 'easycommerce-fakerpress')}
                                                 {locale === 'it_IT' && __('Italian', 'easycommerce-fakerpress')}
-                                            </Listbox.Option>
+                                            </ListboxOption>
                                         ))}
-                                    </Listbox.Options>
+                                    </ListboxOptions>
                                 </div>
                             </Listbox>
                         </div>
@@ -259,24 +235,18 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
                         <div className="space-y-1">
                             <label className="block text-sm font-medium text-gray-700">{__('Random Seed (optional)', 'easycommerce-fakerpress')}</label>
-                            <Combobox
+                            <Input
+                                type="number"
                                 value={parameters.seed || ''}
-                                onChange={(val) => handleParameterChange('seed', parseInt(val))}
+                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
+                                placeholder={__('For reproducible data', 'easycommerce-fakerpress')}
                                 disabled={isLoading}
-                            >
-                                <div className="relative">
-                                    <Combobox.Input
-                                        type="number"
-                                        className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                                        placeholder={__('For reproducible data', 'easycommerce-fakerpress')}
-                                        onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
-                                    />
-                                </div>
-                            </Combobox>
+                                onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
+                            />
                         </div>
 
                         <div className="space-y-1">
-                            <Switch.Group as="div" className="flex items-center">
+                            <Field as="div" className="flex items-center">
                                 <Switch
                                     checked={parameters.include_meta !== false}
                                     onChange={(checked) => handleParameterChange('include_meta', checked)}
@@ -285,8 +255,8 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                 >
                                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${parameters.include_meta !== false ? 'translate-x-6' : 'translate-x-1'}`} />
                                 </Switch>
-                                <Switch.Label className="ml-3 text-sm font-medium text-gray-700">{__('Include additional metadata', 'easycommerce-fakerpress')}</Switch.Label>
-                            </Switch.Group>
+                                <Label className="ml-3 text-sm font-medium text-gray-700">{__('Include additional metadata', 'easycommerce-fakerpress')}</Label>
+                            </Field>
                         </div>
                     </div>
                 </div>
@@ -296,7 +266,7 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                     <Disclosure>
                         {({ open }) => (
                             <>
-                                <Disclosure.Button
+                                <DisclosureButton
                                     className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
                                     onClick={() => setShowAdvanced(!showAdvanced)}
                                 >
@@ -306,8 +276,8 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                     ) : (
                                         <ChevronDownIcon className="h-5 w-5 text-gray-500" />
                                     )}
-                                </Disclosure.Button>
-                                <Disclosure.Panel className="mt-4 rounded-lg border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+                                </DisclosureButton>
+                                <DisclosurePanel className="mt-4 rounded-lg border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
                                     {Object.entries(parameterConfig).map(([paramName, config]) => (
                                         <div key={paramName} className="space-y-1">
                                             <label className="block text-sm font-medium text-gray-700">
@@ -316,7 +286,7 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                             {renderParameterField(paramName, config)}
                                         </div>
                                     ))}
-                                </Disclosure.Panel>
+                                </DisclosurePanel>
                             </>
                         )}
                     </Disclosure>
