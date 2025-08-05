@@ -776,13 +776,13 @@ class Order_Generator extends Generator {
 		$product = $variation->get_product();
 
 		return array(
-			// Core product information
+			// Core product information.
 			'product_name'       => $product->get_title(),
-			'product_sku'        => $product->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}' ),
+			//'product_sku'        => $product->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}' ),
 			'variation_name'     => $variation->get_name( false ),
-			'variation_sku'      => $variation->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}-[A-Z]{2}' ),
+			//'variation_sku'      => $variation->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}-[A-Z]{2}' ),
 
-			// Pricing details
+			// Pricing details.
 			'regular_price'      => $variation->get_regular_price(),
 			'sale_price'         => $variation->get_sale_price(),
 			'price_formatted'    => easycommerce_price( $rate ),
@@ -809,7 +809,7 @@ class Order_Generator extends Generator {
 			'tax_status'         => $this->faker->randomElement( array( 'taxable', 'shipping', 'none' ) ),
 
 			// Inventory tracking
-			'stock_quantity'     => $variation->get_stock_quantity(),
+			'stock_quantity'     => $variation->get_stock(),
 			'low_stock_amount'   => $this->faker->numberBetween( 1, 10 ),
 			'backorders'         => $this->faker->randomElement( array( 'no', 'notify', 'yes' ) ),
 
@@ -829,18 +829,18 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_item_tax_rate(): float {
 		$tax_rates = array(
-			0.00   => 10, // Tax-free (10%)
-			0.05   => 15, // 5% tax (15%)
-			0.08   => 35, // 8% tax (35%)
-			0.0825 => 25, // 8.25% tax (25%)
-			0.10   => 10, // 10% tax (10%)
-			0.125  => 5,  // 12.5% tax (5%)
+			0.00   => 10, // Tax-free (10%).
+			0.05   => 15, // 5% tax (15%).
+			0.08   => 35, // 8% tax (35%).
+			0.0825 => 25, // 8.25% tax (25%).
+			0.10   => 10, // 10% tax (10%).
+			0.125  => 5,  // 12.5% tax (5%).
 		);
 
 		return $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $rate, $weight ) => array_fill( 0, $weight, $rate ),
+					static fn( $rate, $weight ) => array_fill( 0, $weight, $rate ),
 					array_keys( $tax_rates ),
 					$tax_rates
 				)

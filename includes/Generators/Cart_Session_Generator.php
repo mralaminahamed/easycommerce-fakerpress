@@ -10,6 +10,7 @@ use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Helpers\Utility;
+use WP_Error;
 
 /**
  * Cart Session Generator Class
@@ -30,7 +31,7 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate a single cart session
 	 *
-	 * @return array|WP_Error Single cart session data, error, or false on failure.
+	 * @return array|bool Single cart session data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		try {
@@ -38,11 +39,11 @@ class Cart_Session_Generator extends Generator {
 			$product_db  = new Database( 'products' );
 			$customer_db = new Database( 'customers' );
 
-			$products  = $product_db->get_results( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 50" );
-			$customers = $customer_db->get_results( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 30" );
+			$products  = $product_db->exec( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 50" );
+			$customers = $customer_db->exec( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 30" );
 
 			if ( empty( $products ) ) {
-				throw new \Exception( 'No products found. Please generate products first.' );
+				throw new \RuntimeException( 'No products found. Please generate products first.' );
 			}
 
 			$cart_data    = $this->generate_cart_session_data( $products, $customers );

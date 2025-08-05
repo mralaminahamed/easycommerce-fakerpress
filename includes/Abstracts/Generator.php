@@ -12,6 +12,7 @@ use Bluemmb\Faker\PicsumPhotosProvider;
 use Exception;
 use Faker\Factory;
 use Faker\Generator as FakerGenerator;
+use Faker\Provider\DateTime;
 use WP_Error;
 use wpdb;
 
@@ -55,7 +56,8 @@ abstract class Generator {
 		$this->wpdb  = $wpdb;
 		$this->faker = Factory::create( get_locale() );
 
-		// Add image provider for Picsum photos.
+		// Add addtional providers.
+		$this->faker->addProvider( new DateTime( $this->faker ) );
 		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
 	}
 

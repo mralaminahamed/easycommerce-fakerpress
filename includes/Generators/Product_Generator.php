@@ -18,7 +18,7 @@ use WP_Error;
 /**
  * Product Generator Class
  *
- * Generates fake product data for EasyCommerce
+ * Generates realistic fake product data for EasyCommerce
  *
  * @since 1.0.0
  */
@@ -49,8 +49,8 @@ class Product_Generator extends Generator {
 				return new WP_Error( 'missing_model', 'EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active.' );
 			}
 
-			$product_title = $this->generate_product_title();
 			$product_type  = $this->faker->randomElement( array( 'physical', 'digital' ) );
+			$product_title = $this->generate_product_title( $product_type );
 			$categories    = $this->get_or_create_product_categories();
 			$brands        = $this->get_or_create_product_brands();
 			$attributes    = $this->get_or_create_product_attributes( $product_type );
@@ -60,32 +60,37 @@ class Product_Generator extends Generator {
 			$product    = new Product();
 			$product_id = $product->create(
 				array(
-					// Required fields
+					// Required fields.
 					'title'       => $product_title,
 
-					// Optional core fields
+					// Optional core fields.
 					'slug'        => sanitize_title( $product_title . '-' . uniqid( '', true ) ),
-					'content'     => $this->generate_product_description(),
-					'status'      => $this->faker->randomElement( array( 'publish', 'draft' ) ),
-					'description' => $this->generate_short_description(),
-					'summary'     => $this->faker->sentence( 40 ),
-					'thumbnail'   => 0, // Could integrate with media library later
+					'content'     => $this->generate_product_description( $product_type ),
+					'status'      => $this->faker->randomElement( array( 'publish', 'draft', 'pending' ) ),
+					'description' => $this->generate_short_description( $product_type ),
+					'summary'     => $this->faker->sentence( 20, true ),
+					'thumbnail'   => $this->generate_thumbnail(),
 
-					// Taxonomy relationships
-					'categories'  => array_slice( $categories, 0, $this->faker->numberBetween( 1, 3 ) ),
-					'brands'      => array_slice( $brands, 0, 1 ),
+					// Taxonomy relationships.
+					'categories'  => array_slice( $categories, 0, $this->faker->numberBetween( 1, 4 ) ),
+					'brands'      => array_slice( $brands, 0, $this->faker->numberBetween( 1, 2 ) ),
 
-					// Product attributes and variations
+					// Product attributes and variations.
 					'attributes'  => $attributes,
 					'variations'  => $variations,
 
-					// Additional meta data
+					// Additional meta data.
 					'meta'        => array(
 						'gallery'         => $this->generate_gallery_images(),
-						'template'        => $this->faker->randomElement( array( 'template-1', 'template-2', 'default' ) ),
-						'featured'        => $this->faker->boolean( 20 ),
-						'seo_title'       => $product_title . ' - ' . $this->faker->words( 2, true ),
-						'seo_description' => $this->faker->sentence( 15 ),
+						'template'        => $this->faker->randomElement( array( 'template-standard', 'template-premium', 'template-minimal' ) ),
+						'featured'        => $this->faker->boolean( 25 ),
+						'seo_title'       => $product_title . ' | ' . $this->faker->company,
+						'seo_description' => $this->faker->sentence( 15, true ),
+						'seo_keywords'    => implode( ', ', $this->faker->words( 5 ) ),
+						'sku_prefix'      => strtoupper( $this->faker->lexify( '???' ) ),
+						'release_date'    => $this->faker->dateTimeThisYear()->format( 'Y-m-d' ),
+						'warranty'        => 'physical' === $product_type ? $this->faker->randomElement( array( '1 year', '2 years', 'Limited Lifetime' ) ) : null,
+						'shipping_class'  => 'physical' === $product_type ? $this->faker->randomElement( array( 'standard', 'expedited', 'fragile' ) ) : null,
 					),
 				)
 			);
@@ -94,18 +99,19 @@ class Product_Generator extends Generator {
 				return new WP_Error( 'product_creation_failed', 'Failed to create product using EasyCommerce model.' );
 			}
 
-			// Assign product tags after creation
+			// Assign product tags after creation.
 			$this->assign_product_tags( $product_id );
 
 			return array(
-				'id'          => $product_id,
-				'title'       => $product_title,
-				'type'        => $product_type,
-				'variations'  => count( $variations ),
-				'categories'  => count( $categories ),
-				'brands'      => count( $brands ),
-				'attributes'  => count( $attributes ),
-				'price_range' => $this->get_price_range( $variations ),
+				'id'           => $product_id,
+				'title'        => $product_title,
+				'type'         => $product_type,
+				'variations'   => count( $variations ),
+				'categories'   => count( $categories ),
+				'brands'       => count( $brands ),
+				'attributes'   => count( $attributes ),
+				'price_range'  => $this->get_price_range( $variations ),
+				'stock_status' => $variations ? $this->determine_stock_status( $variations[0]['stock_quantity'] ) : 'in_stock',
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Product creation failed: ' . $e->getMessage(), 'error' );
@@ -115,14 +121,16 @@ class Product_Generator extends Generator {
 	}
 
 	/**
-	 * Generate realistic product title
+	 * Generate realistic product title based on product type
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $product_type Product type (physical/digital).
+	 *
 	 * @return string Product title.
 	 */
-	private function generate_product_title(): string {
-		$product_types = array(
+	private function generate_product_title( string $product_type ): string {
+		$adjectives = array(
 			'Premium',
 			'Deluxe',
 			'Professional',
@@ -131,35 +139,57 @@ class Product_Generator extends Generator {
 			'Vintage',
 			'Ultra',
 			'Advanced',
-			'Standard',
-			'Essential',
-			'Limited Edition',
+			'Eco-Friendly',
+			'Smart',
+			'Portable',
+			'Ergonomic',
+			'High-Performance',
 		);
 
-		$product_names = array(
+		$physical_products = array(
 			'Wireless Headphones',
 			'Smart Watch',
 			'Bluetooth Speaker',
 			'Gaming Mouse',
 			'Laptop Stand',
 			'Coffee Maker',
-			'Water Bottle',
-			'Backpack',
+			'Insulated Water Bottle',
+			'Travel Backpack',
 			'Phone Case',
-			'Desk Lamp',
-			'Keyboard',
-			'Monitor',
-			'Tablet',
-			'Camera',
+			'LED Desk Lamp',
+			'Mechanical Keyboard',
+			'4K Monitor',
+			'Tablet Pro',
+			'DSLR Camera',
 			'Fitness Tracker',
 			'Power Bank',
 			'Wireless Charger',
-			'USB Cable',
-			'Screen Protector',
-			'Car Mount',
+			'USB-C Cable',
+			'Tempered Glass Screen Protector',
+			'Car Phone Mount',
 		);
 
-		return $this->faker->randomElement( $product_types ) . ' ' . $this->faker->randomElement( $product_names );
+		$digital_products = array(
+			'Productivity Software',
+			'Graphic Design Suite',
+			'Video Editing Software',
+			'E-Learning Course',
+			'Digital Planner',
+			'Music Production Plugin',
+			'Website Template',
+			'Stock Photo Bundle',
+			'Mobile App',
+			'Game Asset Pack',
+			'E-Book',
+			'Audio Book',
+			'Virtual Workshop',
+			'Coding Tutorial Series',
+		);
+
+		$product_names = 'physical' === $product_type ? $physical_products : $digital_products;
+		$brand_prefix  = $this->faker->randomElement( array( '', $this->faker->company . ' ' ) );
+
+		return $brand_prefix . $this->faker->randomElement( $adjectives ) . ' ' . $this->faker->randomElement( $product_names );
 	}
 
 	/**
@@ -167,22 +197,34 @@ class Product_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $product_type Product type (physical/digital).
+	 *
 	 * @return string Product description.
 	 */
-	private function generate_product_description(): string {
+	private function generate_product_description( string $product_type ): string {
 		$paragraphs = array();
 
-		// Feature paragraph
-		$paragraphs[] = 'Experience the perfect blend of innovation and functionality with this exceptional product. ' .
-						$this->faker->sentence( 12 ) . ' ' . $this->faker->sentence( 10 );
+		// Introduction paragraph.
+		$paragraphs[] = 'Discover the ultimate ' . ( 'physical' === $product_type ? 'product' : 'digital solution' ) . ' designed to ' .
+						$this->faker->randomElement( array( 'elevate your experience', 'enhance your productivity', 'simplify your daily tasks', 'redefine convenience' ) ) . '. ' .
+						$this->faker->sentence( 50, true );
 
-		// Benefits paragraph
-		$paragraphs[] = 'Designed with the modern user in mind, this product offers unparalleled performance and reliability. ' .
-						$this->faker->sentence( 8 ) . ' ' . $this->faker->sentence( 15 );
+		// Features paragraph.
+		$features     = 'physical' === $product_type ?
+			array( 'durable construction', 'sleek design', 'advanced technology', 'ergonomic comfort', 'long-lasting battery', 'water-resistant coating' ) :
+			array( 'user-friendly interface', 'cross-platform compatibility', 'regular updates', 'cloud integration', 'secure encryption', 'customizable features' );
+		$paragraphs[] = 'Key features include: ' . implode( ', ', $this->faker->randomElements( $features, 3 ) ) . '. ' .
+						$this->faker->sentence( 50, true );
 
-		// Technical paragraph
-		$paragraphs[] = 'Built using premium materials and cutting-edge technology, ensuring long-lasting durability. ' .
-						$this->faker->sentence( 10 ) . ' ' . $this->faker->sentence( 12 );
+		// Use case paragraph.
+		$use_cases    = 'physical' === $product_type ?
+			array( 'perfect for home, office, or travel', 'ideal for professionals and hobbyists', 'designed for everyday use', 'great for outdoor adventures' ) :
+			array( 'perfect for remote work', 'ideal for creative professionals', 'designed for seamless integration', 'great for educational purposes' );
+		$paragraphs[] = $this->faker->randomElement( $use_cases ) . '. ' . $this->faker->sentence( 15, true );
+
+		// Technical specifications.
+		$paragraphs[] = 'Built with ' . ( 'physical' === $product_type ? 'premium materials and cutting-edge technology' : 'robust code and scalable architecture' ) . '. ' .
+						$this->faker->sentence( 50, true ) . ' ' . $this->faker->sentence( 8, true );
 
 		return implode( "\n\n", $paragraphs );
 	}
@@ -192,11 +234,27 @@ class Product_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $product_type Product type (physical/digital).
+	 *
 	 * @return string Short description.
 	 */
-	private function generate_short_description(): string {
-		return $this->faker->sentence( 120 ) . ' Perfect for ' .
-				$this->faker->randomElement( array( 'professionals', 'students', 'gamers', 'home use', 'office work' ) ) . '.';
+	private function generate_short_description( string $product_type ): string {
+		$use_case = 'physical' === $product_type ?
+			$this->faker->randomElement( array( 'professionals', 'students', 'gamers', 'home use', 'outdoor enthusiasts' ) ) :
+			$this->faker->randomElement( array( 'creatives', 'developers', 'educators', 'remote workers', 'businesses' ) );
+		return $this->faker->sentence( 10, true ) . ' Perfect for ' . $use_case . '.';
+	}
+
+	/**
+	 * Generate thumbnail image ID
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return int Thumbnail ID (placeholder for now).
+	 */
+	private function generate_thumbnail(): int {
+		// Placeholder for WordPress media library integration.
+		return 0; // In a real implementation, this would upload an image and return the attachment ID.
 	}
 
 	/**
@@ -229,21 +287,19 @@ class Product_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Array of image IDs for product gallery.
+	 * @return array Array of image metadata for product gallery.
 	 */
 	private function generate_gallery_images(): array {
 		$gallery_images = array();
-		$image_count    = $this->faker->numberBetween( 2, 6 );
+		$image_count    = $this->faker->numberBetween( 3, 8 );
 
 		for ( $i = 0; $i < $image_count; $i++ ) {
-			// In a real implementation, you might upload images to WordPress media library.
-			// For now, we'll just use placeholder image URLs.
 			$gallery_images[] = array(
-				'id'          => 0, // Would be WordPress attachment ID.
-				'url'         => $this->faker->imageUrl( 800, 600, 'products' ),
-				'alt'         => $this->faker->words( 3, true ),
-				'caption'     => $this->faker->sentence( 6 ),
-				'description' => $this->faker->sentence( 10 ),
+				'id'          => 0, // Placeholder for WordPress attachment ID.
+				'url'         => $this->faker->imageUrl( 1200, 800, 'products' ),
+				'alt'         => $this->faker->words( 4, true ),
+				'caption'     => $this->faker->sentence( 8, true ),
+				'description' => $this->faker->sentence( 12, true ),
 			);
 		}
 
@@ -262,66 +318,70 @@ class Product_Generator extends Generator {
 	private function get_or_create_product_attributes( string $product_type = 'physical' ): array {
 		$attributes = array();
 
-		if ( $product_type === 'physical' ) {
-			// Physical product attributes
-			$possible_attributes = array(
-				'color'    => array(
-					'name'   => 'Color',
-					'type'   => 'text',
-					'values' => array( 'red', 'blue', 'green', 'black', 'white', 'gray', 'silver', 'gold' ),
-				),
-				'size'     => array(
-					'name'   => 'Size',
-					'type'   => 'text',
-					'values' => array( 'small', 'medium', 'large', 'extra-large' ),
-				),
-				'material' => array(
-					'name'   => 'Material',
-					'type'   => 'text',
-					'values' => array( 'plastic', 'metal', 'wood', 'glass', 'ceramic', 'fabric' ),
-				),
-				'style'    => array(
-					'name'   => 'Style',
-					'type'   => 'text',
-					'values' => array( 'modern', 'classic', 'vintage', 'minimalist', 'premium' ),
-				),
-			);
-		} else {
-			// Digital product attributes
-			$possible_attributes = array(
-				'format'   => array(
-					'name'   => 'Format',
-					'type'   => 'text',
-					'values' => array( 'pdf', 'video', 'audio', 'software' ),
-				),
-				'license'  => array(
-					'name'   => 'License',
-					'type'   => 'text',
-					'values' => array( 'personal', 'commercial', 'extended' ),
-				),
-				'version'  => array(
-					'name'   => 'Version',
-					'type'   => 'text',
-					'values' => array( 'basic', 'pro', 'enterprise' ),
-				),
-				'platform' => array(
-					'name'   => 'Platform',
-					'type'   => 'text',
-					'values' => array( 'windows', 'mac', 'linux', 'web', 'mobile' ),
-				),
-			);
-		}
+		$possible_attributes = 'physical' === $product_type ? array(
+			'color'    => array(
+				'name'   => 'Color',
+				'type'   => 'text',
+				'values' => array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Silver', 'Gold', 'Navy', 'Purple' ),
+			),
+			'size'     => array(
+				'name'   => 'Size',
+				'type'   => 'text',
+				'values' => array( 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size' ),
+			),
+			'material' => array(
+				'name'   => 'Material',
+				'type'   => 'text',
+				'values' => array( 'Cotton', 'Polyester', 'Aluminum', 'Stainless Steel', 'Leather', 'Wood', 'Glass', 'Ceramic', 'Silicone' ),
+			),
+			'finish'   => array(
+				'name'   => 'Finish',
+				'type'   => 'text',
+				'values' => array( 'Matte', 'Glossy', 'Brushed', 'Polished', 'Textured' ),
+			),
+			'capacity' => array(
+				'name'   => 'Capacity',
+				'type'   => 'text',
+				'values' => array( '16GB', '32GB', '64GB', '128GB', '256GB', '500ml', '1L', '2L' ),
+			),
+		) : array(
+			'format'       => array(
+				'name'   => 'Format',
+				'type'   => 'text',
+				'values' => array( 'PDF', 'MP4', 'MP3', 'ZIP', 'EXE', 'DMG' ),
+			),
+			'license'      => array(
+				'name'   => 'License',
+				'type'   => 'text',
+				'values' => array( 'Personal', 'Commercial', 'Extended', 'Enterprise' ),
+			),
+			'version'      => array(
+				'name'   => 'Version',
+				'type'   => 'text',
+				'values' => array( '1.0', '2.0', '3.0', 'Basic', 'Pro', 'Premium' ),
+			),
+			'platform'     => array(
+				'name'   => 'Platform',
+				'type'   => 'text',
+				'values' => array( 'Windows', 'macOS', 'Linux', 'iOS', 'Android', 'Web' ),
+			),
+			'subscription' => array(
+				'name'   => 'Subscription',
+				'type'   => 'text',
+				'values' => array( 'Monthly', 'Annual', 'Lifetime' ),
+			),
+		);
 
-		// Select 2-3 random attributes
+		// Select 2-4 random attributes for more variety.
 		$selected_attributes = $this->faker->randomElements(
 			array_keys( $possible_attributes ),
-			$this->faker->numberBetween( 2, 3 )
+			$this->faker->numberBetween( 2, 4 )
 		);
 
 		foreach ( $selected_attributes as $attribute_slug ) {
 			$attribute_info = $possible_attributes[ $attribute_slug ];
 
-			// Create or get the attribute using EasyCommerce models
+			// Create or get the attribute using EasyCommerce models.
 			$attribute_id = $this->get_or_create_attribute(
 				$attribute_info['name'],
 				$attribute_info['type'],
@@ -329,13 +389,17 @@ class Product_Generator extends Generator {
 			);
 
 			if ( $attribute_id ) {
-				// Create or get attribute values
+				// Create or get attribute values.
 				$attribute_values = array();
-				foreach ( $attribute_info['values'] as $value ) {
+				$selected_values  = $this->faker->randomElements(
+					$attribute_info['values'],
+					$this->faker->numberBetween( 2, count( $attribute_info['values'] ) )
+				);
+				foreach ( $selected_values as $value ) {
 					$value_id = $this->get_or_create_attribute_value(
 						$attribute_id,
-						ucfirst( $value ),
-						$value
+						$value,
+						sanitize_title( $value )
 					);
 					if ( $value_id ) {
 						$attribute_values[] = $value;
@@ -366,13 +430,13 @@ class Product_Generator extends Generator {
 		try {
 			$attribute_model = new Attribute();
 
-			// Check if attribute already exists
+			// Check if attribute already exists.
 			$existing_attribute = $attribute_model->get_by_slug( $slug );
 			if ( $existing_attribute ) {
 				return $existing_attribute->id;
 			}
 
-			// Create new attribute
+			// Create new attribute.
 			return $attribute_model->add( $name, $type, $slug );
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to create attribute: ' . $e->getMessage(), 'error' );
@@ -396,13 +460,13 @@ class Product_Generator extends Generator {
 			$value_model = new Attribute_Value();
 			$value_slug  = sanitize_title( $value );
 
-			// Check if value already exists
+			// Check if value already exists.
 			$existing_value = $value_model->get_by_slug( $value_slug );
-			if ( $existing_value && $existing_value->attribute_id == $attribute_id ) {
+			if ( $existing_value && (int) $existing_value->attribute_id === $attribute_id ) {
 				return $existing_value->id;
 			}
 
-			// Create new attribute value
+			// Create new attribute value.
 			return $value_model->add( $attribute_id, $name, $value, $value_slug );
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to create attribute value: ' . $e->getMessage(), 'error' );
@@ -422,18 +486,18 @@ class Product_Generator extends Generator {
 	 */
 	private function generate_product_variations( array $attributes, string $product_type = 'physical' ): array {
 		$variations  = array();
-		$base_price  = $this->faker->randomFloat( 2, 10, 500 );
-		$price_range = $base_price * 0.2; // 20% price variation
+		$base_price  = 'physical' === $product_type ? $this->faker->randomFloat( 2, 20, 800 ) : $this->faker->randomFloat( 2, 5, 200 );
+		$price_range = $base_price * 0.3; // 30% price variation for more realistic pricing
 
-		// Generate combinations of attributes
+		// Generate combinations of attributes.
 		$attribute_keys   = array_keys( $attributes );
 		$attribute_values = array_values( $attributes );
 
-		// Limit to reasonable number of variations
-		$max_variations = min( 12, array_product( array_map( 'count', $attribute_values ) ) );
+		// Limit to a reasonable number of variations (max 10).
+		$max_variations = min( 10, array_product( array_map( 'count', $attribute_values ) ) );
 		$generated      = 0;
 
-		// Generate cartesian product of attributes
+		// Generate cartesian product of attributes.
 		foreach ( $this->cartesian_product( $attribute_values ) as $combination ) {
 			if ( $generated >= $max_variations ) {
 				break;
@@ -445,14 +509,14 @@ class Product_Generator extends Generator {
 			foreach ( $combination as $index => $value ) {
 				$attribute_name                          = $attribute_keys[ $index ];
 				$variation_attributes[ $attribute_name ] = $value;
-				$variation_name_parts[]                  = ucfirst( $value );
+				$variation_name_parts[]                  = $value;
 			}
 
 			$variation_name = implode( ' - ', $variation_name_parts );
 			$price_modifier = $this->faker->randomFloat( 2, -$price_range, $price_range );
 			$regular_price  = max( 1, $base_price + $price_modifier );
-			$sale_price     = $this->faker->boolean( 30 ) ? $regular_price * $this->faker->randomFloat( 2, 0.7, 0.9 ) : null;
-			$stock_quantity = 'physical' === $product_type ? $this->faker->optional( 0.8 )->numberBetween( 0, 100 ) : null;
+			$sale_price     = $this->faker->boolean( 40 ) ? $regular_price * $this->faker->randomFloat( 2, 0.6, 0.9 ) : null;
+			$stock_quantity = 'physical' === $product_type ? $this->faker->optional( 0.85 )->numberBetween( 0, 150 ) : null;
 
 			$variation = array(
 				'name'           => $variation_name,
@@ -461,11 +525,11 @@ class Product_Generator extends Generator {
 				'regular_price'  => $regular_price,
 				'sale_price'     => $sale_price,
 				'stock_quantity' => $stock_quantity,
-				'stock_limit'    => $this->faker->numberBetween( 5, 20 ),
+				'stock_limit'    => $this->faker->numberBetween( 10, 50 ),
 				'status'         => $this->determine_stock_status( $stock_quantity ),
 				'attributes'     => $variation_attributes,
 				'meta'           => $this->generate_variation_meta( $product_type ),
-				'downloads'      => array(), // Will be populated for digital products.
+				'downloads'      => array(),
 			);
 
 			// Add downloads for digital products.
@@ -491,16 +555,18 @@ class Product_Generator extends Generator {
 	 */
 	private function determine_stock_status( $stock_quantity ): string {
 		if ( is_null( $stock_quantity ) ) {
-			return 'in_stock'; // Digital products or unlimited stock
+			return 'in_stock'; // Digital products or unlimited stock.
 		}
 
-		if ( $stock_quantity > 10 ) {
+		if ( $stock_quantity > 20 ) {
 			return 'in_stock';
-		} elseif ( $stock_quantity > 0 ) {
-			return $this->faker->randomElement( array( 'in_stock', 'backorder' ) );
-		} else {
-			return 'out_of_stock';
 		}
+
+		if ( $stock_quantity > 0 ) {
+			return $this->faker->randomElement( array( 'in_stock', 'low_stock', 'backorder' ) );
+		}
+
+		return 'out_of_stock';
 	}
 
 	/**
@@ -514,37 +580,38 @@ class Product_Generator extends Generator {
 	 */
 	private function generate_variation_meta( string $product_type ): array {
 		$meta = array(
-			'tax_class'        => $this->faker->numberBetween( 1, 3 ),
-			'is_managed_stock' => $product_type === 'physical',
+			'tax_class'        => $this->faker->randomElement( array( 'standard', 'reduced-rate', 'zero-rate' ) ),
+			'is_managed_stock' => 'physical' === $product_type,
 		);
 
-		if ( $product_type === 'physical' ) {
+		if ( 'physical' === $product_type ) {
 			$meta = array_merge(
 				$meta,
 				array(
 					'weight'            => array(
-						'value' => $this->faker->randomFloat( 2, 0.1, 5.0 ),
-						'unit'  => 'kg',
+						'value' => $this->faker->randomFloat( 2, 0.05, 10.0 ),
+						'unit'  => $this->faker->randomElement( array( 'kg', 'g', 'lb' ) ),
 					),
-					'height'            => array(
-						'value' => $this->faker->randomFloat( 2, 1, 30 ),
-						'unit'  => 'cm',
-					),
-					'width'             => array(
-						'value' => $this->faker->randomFloat( 2, 5, 50 ),
-						'unit'  => 'cm',
-					),
-					'length'            => array(
-						'value' => $this->faker->randomFloat( 2, 5, 50 ),
-						'unit'  => 'cm',
+					'dimensions'        => array(
+						'height' => $this->faker->randomFloat( 2, 1, 50 ),
+						'width'  => $this->faker->randomFloat( 2, 5, 100 ),
+						'length' => $this->faker->randomFloat( 2, 5, 100 ),
+						'unit'   => $this->faker->randomElement( array( 'cm', 'in' ) ),
 					),
 					'requires_shipping' => true,
+					'packaging'         => $this->faker->randomElement( array( 'standard', 'gift', 'eco-friendly' ) ),
 				)
 			);
 		} else {
-			$meta['requires_shipping'] = false;
-			$meta['download_limit']    = $this->faker->optional( 0.7 )->numberBetween( 1, 10 );
-			$meta['download_expiry']   = $this->faker->optional( 0.5 )->numberBetween( 1, 365 ); // days
+			$meta = array_merge(
+				$meta,
+				array(
+					'requires_shipping' => false,
+					'download_limit'    => $this->faker->optional( 0.8 )->numberBetween( 1, 20 ),
+					'download_expiry'   => $this->faker->optional( 0.6 )->numberBetween( 7, 365 ),
+					'file_format'       => $this->faker->randomElement( array( 'PDF', 'MP4', 'MP3', 'ZIP', 'EXE', 'DMG' ) ),
+				)
+			);
 		}
 
 		return $meta;
@@ -560,22 +627,27 @@ class Product_Generator extends Generator {
 	private function generate_digital_downloads(): array {
 		$download_types = array(
 			'Software License Key',
-			'PDF Guide',
-			'Video Tutorial',
-			'Audio File',
-			'Template Pack',
-			'Digital Asset',
+			'PDF User Guide',
+			'Video Tutorial Series',
+			'High-Quality Audio Track',
+			'Design Template Pack',
+			'Digital Asset Bundle',
+			'E-Book Chapter',
+			'Source Code Package',
 		);
 
 		$downloads = array();
-		$count     = $this->faker->numberBetween( 1, 3 );
+		$count     = $this->faker->numberBetween( 1, 4 );
 
 		for ( $i = 0; $i < $count; $i++ ) {
+			$file_type   = $this->faker->randomElement( array( 'pdf', 'mp4', 'mp3', 'zip', 'exe', 'dmg' ) );
 			$downloads[] = array(
-				'media_id'  => 0, // Would reference WordPress media library
+				'media_id'  => 0, // Placeholder for WordPress media library.
 				'name'      => $this->faker->randomElement( $download_types ),
-				'file_url'  => '', // Would be populated with actual file URL
-				'file_size' => $this->faker->numberBetween( 1024, 104857600 ), // 1KB to 100MB
+				'file_url'  => $this->faker->imageUrl( 800, 600, 'digital', true, $file_type ),
+				'file_size' => $this->faker->numberBetween( 1024, 52428800 ), // 1KB to 50MB
+				'file_type' => $file_type,
+				'version'   => $this->faker->randomElement( array( '1.0', '1.1', '2.0', 'Latest' ) ),
 			);
 		}
 
@@ -615,8 +687,8 @@ class Product_Generator extends Generator {
 	 * @return string Unique SKU.
 	 */
 	private function generate_unique_sku(): string {
-		$prefix = strtoupper( $this->faker->lexify( '???' ) );
-		$number = $this->faker->unique()->numberBetween( 1000, 9999 );
+		$prefix = strtoupper( $this->faker->lexify( '????' ) );
+		$number = $this->faker->unique()->numberBetween( 10000, 99999 );
 
 		return $prefix . '-' . $number;
 	}
@@ -629,18 +701,19 @@ class Product_Generator extends Generator {
 	 * @return array Category IDs.
 	 */
 	private function get_or_create_product_categories(): array {
-		// Use WordPress taxonomy for product categories
 		$category_names = array(
-			'Electronics',
-			'Clothing',
-			'Books',
-			'Home & Garden',
-			'Sports & Outdoors',
-			'Health & Beauty',
+			'Electronics & Gadgets',
+			'Fashion & Apparel',
+			'Books & Stationery',
+			'Home & Kitchen',
+			'Sports & Fitness',
+			'Health & Wellness',
 			'Toys & Games',
-			'Automotive',
-			'Food & Beverage',
-			'Jewelry',
+			'Automotive Accessories',
+			'Food & Beverages',
+			'Jewelry & Accessories',
+			'Beauty & Personal Care',
+			'Office Supplies',
 		);
 
 		$category_ids = array();
@@ -651,7 +724,7 @@ class Product_Generator extends Generator {
 					$category_name,
 					'product_cat',
 					array(
-						'description' => $this->faker->sentence(),
+						'description' => $this->faker->sentence( 10, true ),
 						'slug'        => sanitize_title( $category_name ),
 					)
 				);
@@ -664,7 +737,7 @@ class Product_Generator extends Generator {
 			}
 		}
 
-		return $this->faker->randomElements( $category_ids, $this->faker->numberBetween( 1, 3 ) );
+		return $this->faker->randomElements( $category_ids, $this->faker->numberBetween( 1, 4 ) );
 	}
 
 	/**
@@ -675,16 +748,17 @@ class Product_Generator extends Generator {
 	 * @return array Brand IDs.
 	 */
 	private function get_or_create_product_brands(): array {
-		// Use WordPress taxonomy for product brands
 		$brand_names = array(
-			'TechCorp',
-			'InnovateCo',
-			'QualityBrand',
-			'PremiumLine',
-			'ModernTech',
-			'ClassicDesign',
-			'FutureTech',
-			'ProSeries',
+			'TechTrend Innovations',
+			'EcoVibe Solutions',
+			'QualityCraft',
+			'NextGen Tech',
+			'PureEssence',
+			'StylePeak',
+			'FutureWave',
+			'ProElite Series',
+			'UrbanPulse',
+			'SmartLife Co.',
 		);
 
 		$brand_ids = array();
@@ -695,7 +769,7 @@ class Product_Generator extends Generator {
 					$brand_name,
 					'product_brand',
 					array(
-						'description' => $this->faker->company . ' - ' . $this->faker->sentence(),
+						'description' => $this->faker->company . ' - ' . $this->faker->sentence( 8, true ),
 						'slug'        => sanitize_title( $brand_name ),
 					)
 				);
@@ -708,7 +782,7 @@ class Product_Generator extends Generator {
 			}
 		}
 
-		return array_slice( $brand_ids, 0, 1 ); // Return only one brand
+		return $this->faker->randomElements( $brand_ids, $this->faker->numberBetween( 1, 2 ) );
 	}
 
 	/**
@@ -722,19 +796,20 @@ class Product_Generator extends Generator {
 	 */
 	private function assign_product_tags( int $product_id ): void {
 		$tags = array(
-			'new',
-			'popular',
+			'new-arrival',
+			'best-seller',
 			'featured',
-			'bestseller',
 			'trending',
 			'premium',
-			'limited',
+			'limited-edition',
 			'exclusive',
-			'sale',
+			'on-sale',
 			'clearance',
+			'eco-friendly',
+			'high-demand',
 		);
 
-		$selected_tags = $this->faker->randomElements( $tags, $this->faker->numberBetween( 1, 4 ) );
+		$selected_tags = $this->faker->randomElements( $tags, $this->faker->numberBetween( 2, 5 ) );
 		wp_set_post_terms( $product_id, $selected_tags, 'product_tag' );
 	}
 }
