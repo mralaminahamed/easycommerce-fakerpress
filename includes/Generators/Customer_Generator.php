@@ -280,7 +280,7 @@ class Customer_Generator extends Generator {
 				'account_status'       => $this->faker->randomElement( array( 'active', 'inactive', 'pending' ) ),
 				'email_verified'       => $this->faker->boolean( 90 ),
 				'phone_verified'       => $this->faker->boolean( 65 ),
-				//'last_contacted'       => $this->faker->optional( 0.3 )->dateTimeThisYear()->format( 'Y-m-d H:i:s' ),
+				// 'last_contacted'       => $this->faker->optional( 0.3 )->dateTimeThisYear()->format( 'Y-m-d H:i:s' ),
 			),
 			$customer_history
 		);

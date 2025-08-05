@@ -1,4 +1,11 @@
 <?php
+/**
+ * Tax Generator
+ *
+ * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
+ */
+
 namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
@@ -54,8 +61,8 @@ class Tax_Generator extends Generator {
 	/**
 	 * Generate multiple tax classes with rates.
 	 *
-	 * @param int   $count Number of tax classes to generate
-	 * @param array $args Additional arguments
+	 * @param int   $count Number of tax classes to generate.
+	 * @param array $args Additional arguments.
 	 * @return array Generated tax class data
 	 */
 	public function generate_multiple( int $count = 5, array $args = array() ): array {
@@ -305,7 +312,7 @@ class Tax_Generator extends Generator {
 	 */
 	private function get_global_tax_locations(): array {
 		return array(
-			// United States
+			// United States.
 			array(
 				'country' => 'US',
 				'state'   => 'CA',
@@ -367,7 +374,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// Canada
+			// Canada.
 			array(
 				'country' => 'CA',
 				'state'   => 'ON',
@@ -399,7 +406,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// United Kingdom
+			// United Kingdom.
 			array(
 				'country' => 'GB',
 				'state'   => 'EN',
@@ -421,7 +428,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// Germany
+			// Germany.
 			array(
 				'country' => 'DE',
 				'state'   => 'BY',
@@ -443,7 +450,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// France
+			// France.
 			array(
 				'country' => 'FR',
 				'state'   => '75',
@@ -465,7 +472,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// Australia
+			// Australia.
 			array(
 				'country' => 'AU',
 				'state'   => 'NSW',
@@ -487,7 +494,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// Japan
+			// Japan.
 			array(
 				'country' => 'JP',
 				'state'   => '13',
@@ -509,7 +516,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// India
+			// India.
 			array(
 				'country' => 'IN',
 				'state'   => 'DL',
@@ -531,7 +538,7 @@ class Tax_Generator extends Generator {
 				'city'    => '',
 			),
 
-			// Brazil
+			// Brazil.
 			array(
 				'country' => 'BR',
 				'state'   => 'SP',
@@ -558,7 +565,7 @@ class Tax_Generator extends Generator {
 	/**
 	 * Create tax class in database.
 	 *
-	 * @param array $data Tax class data
+	 * @param array $data Tax class data.
 	 * @return array|null Created tax class data
 	 */
 	private function create_tax_class( array $data ): ?array {
@@ -576,7 +583,7 @@ class Tax_Generator extends Generator {
 	/**
 	 * Get tax class regions from rates.
 	 *
-	 * @param array $rates Tax rates
+	 * @param array $rates Tax rates.
 	 * @return string Comma-separated regions
 	 */
 	private function get_tax_class_regions( array $rates ): string {

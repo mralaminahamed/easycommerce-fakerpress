@@ -79,12 +79,12 @@ abstract class REST_Controller extends WP_REST_Controller {
 			);
 		}
 
-		// Pass all request parameters to the generator
+		// Pass all request parameters to the generator.
 		$params = $request->get_params();
 
 		$generator = $this->get_generator_instance();
 
-		// Set generator parameters if the generator supports it
+		// Set generator parameters if the generator supports it.
 		if ( method_exists( $generator, 'set_generation_params' ) ) {
 			$generator->set_generation_params( $params );
 		}
@@ -210,7 +210,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 			),
 		);
 
-		// Merge with resource-specific parameters
+		// Merge with resource-specific parameters.
 		$resource_params = $this->get_resource_specific_params();
 
 		return array_merge( $base_params, $resource_params );

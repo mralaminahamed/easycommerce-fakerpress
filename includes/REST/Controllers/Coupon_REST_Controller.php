@@ -62,7 +62,7 @@ class Coupon_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
-			'discount_types' => array(
+			'discount_types'  => array(
 				'description'       => __( 'Types of discount coupons to generate', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
@@ -72,7 +72,7 @@ class Coupon_REST_Controller extends REST_Controller {
 				'default'           => array( 'percentage', 'fixed_amount' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'discount_range' => array(
+			'discount_range'  => array(
 				'description' => __( 'Discount value range', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
@@ -88,27 +88,27 @@ class Coupon_REST_Controller extends REST_Controller {
 						'maximum' => 95,
 						'default' => 50,
 					),
-					'min_fixed' => array(
+					'min_fixed'      => array(
 						'type'    => 'number',
 						'minimum' => 1,
 						'default' => 5,
 					),
-					'max_fixed' => array(
+					'max_fixed'      => array(
 						'type'    => 'number',
 						'minimum' => 1,
 						'default' => 100,
 					),
 				),
 			),
-			'usage_limits' => array(
+			'usage_limits'    => array(
 				'description' => __( 'Usage limitation settings', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
-					'set_usage_limits' => array(
+					'set_usage_limits'  => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
-					'max_uses' => array(
+					'max_uses'          => array(
 						'type'    => 'integer',
 						'minimum' => 1,
 						'maximum' => 1000,
@@ -140,19 +140,19 @@ class Coupon_REST_Controller extends REST_Controller {
 					),
 				),
 			),
-			'restrictions' => array(
+			'restrictions'    => array(
 				'description' => __( 'Coupon usage restrictions', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
-					'minimum_spend' => array(
+					'minimum_spend'        => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
-					'maximum_spend' => array(
+					'maximum_spend'        => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),
-					'exclude_sale_items' => array(
+					'exclude_sale_items'   => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),

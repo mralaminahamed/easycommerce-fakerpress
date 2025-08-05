@@ -778,9 +778,9 @@ class Order_Generator extends Generator {
 		return array(
 			// Core product information.
 			'product_name'       => $product->get_title(),
-			//'product_sku'        => $product->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}' ),
+			// 'product_sku'        => $product->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}' ),
 			'variation_name'     => $variation->get_name( false ),
-			//'variation_sku'      => $variation->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}-[A-Z]{2}' ),
+			// 'variation_sku'      => $variation->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}-[A-Z]{2}' ),
 
 			// Pricing details.
 			'regular_price'      => $variation->get_regular_price(),

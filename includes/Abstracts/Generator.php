@@ -263,9 +263,12 @@ abstract class Generator {
 
 		do {
 			$identifier = $this->faker->regexify( $pattern );
-			$existing   = $this->wpdb->get_var(
+			// Sanitize table and column names to prevent SQL injection.
+			$sanitized_table_name  = sanitize_key( $table_name );
+			$sanitized_column_name = sanitize_key( $column_name );
+			$existing              = $this->wpdb->get_var(
 				$this->wpdb->prepare(
-					"SELECT {$column_name} FROM {$table_name} WHERE {$column_name} = %s",
+					"SELECT `{$sanitized_column_name}` FROM `{$sanitized_table_name}` WHERE `{$sanitized_column_name}` = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 					$identifier
 				)
 			);

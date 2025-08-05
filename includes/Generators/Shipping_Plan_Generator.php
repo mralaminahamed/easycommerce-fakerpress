@@ -56,8 +56,8 @@ class Shipping_Plan_Generator extends Generator {
 	/**
 	 * Generate multiple shipping plans.
 	 *
-	 * @param int   $count Number of shipping plans to generate
-	 * @param array $args Additional arguments
+	 * @param int   $count Number of shipping plans to generate.
+	 * @param array $args Additional arguments.
 	 * @return array Generated shipping plan data
 	 */
 	public function generate_multiple( int $count = 5, array $args = array() ): array {
@@ -288,7 +288,7 @@ class Shipping_Plan_Generator extends Generator {
 	 */
 	private function generate_regional_coverage(): array {
 		$regions = array(
-			// North America
+			// North America.
 			'US-CA',
 			'US-NY',
 			'US-TX',
@@ -302,7 +302,7 @@ class Shipping_Plan_Generator extends Generator {
 			'MX-NL',
 			'MX-JA',
 
-			// Europe
+			// Europe.
 			'GB-EN',
 			'GB-SC',
 			'GB-WA',
@@ -324,7 +324,7 @@ class Shipping_Plan_Generator extends Generator {
 			'ES-AN',
 			'ES-VC',
 
-			// Asia Pacific
+			// Asia Pacific.
 			'AU-NSW',
 			'AU-VIC',
 			'AU-QLD',
@@ -342,7 +342,7 @@ class Shipping_Plan_Generator extends Generator {
 			'IN-KA',
 			'IN-TN',
 
-			// Others
+			// Others.
 			'BR-SP',
 			'BR-RJ',
 			'BR-MG',
@@ -357,7 +357,7 @@ class Shipping_Plan_Generator extends Generator {
 			'NG-RI',
 		);
 
-		// Select random regions (2-8 regions per shipping plan)
+		// Select random regions (2-8 regions per shipping plan).
 		$selected_regions = $this->faker->randomElements(
 			$regions,
 			$this->faker->numberBetween( 2, 8 )
@@ -369,7 +369,7 @@ class Shipping_Plan_Generator extends Generator {
 	/**
 	 * Create shipping plan in database.
 	 *
-	 * @param array $data Shipping plan data
+	 * @param array $data Shipping plan data.
 	 * @return Shipping_Plan|null Created shipping plan instance
 	 */
 	private function create_shipping_plan( array $data ): ?Shipping_Plan {

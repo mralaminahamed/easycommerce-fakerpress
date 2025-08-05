@@ -69,6 +69,14 @@
             "Composer\\Config::disableProcessTimeout",
             "phpcbf --standard=phpcs.xml"
         ],
+        "phpcs.plugin-review": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpcs --standard=phpcs.plugin-review.xml"
+        ],
+        "phpcbf.plugin-review": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpcbf --standard=phpcs.plugin-review.xml"
+        ],
         "phpstan": "phpstan analyse --memory-limit 2G",
         "test": "phpunit",
         "test:coverage": "phpunit --coverage-html=tests/coverage/html",
