@@ -47,10 +47,10 @@ class Location_Generator extends Generator {
 				return new WP_Error( 'missing_model', 'EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active.' );
 			}
 
-			// Create comprehensive location data structure
+			// Create comprehensive location data structure.
 			$location_data = $this->create_location_data_structure();
 
-			// Save to EasyCommerce location system
+			// Save to EasyCommerce location system.
 			$result = $this->save_location_data( $location_data );
 
 			if ( ! $result ) {
@@ -81,7 +81,7 @@ class Location_Generator extends Generator {
 	private function create_location_data_structure(): array {
 		$countries = array();
 
-		// Generate major countries with realistic data
+		// Generate major countries with realistic data.
 		$country_configs = $this->get_country_configurations();
 
 		foreach ( $country_configs as $config ) {
@@ -236,8 +236,9 @@ class Location_Generator extends Generator {
 	private function generate_states_for_country( array $config ): array {
 		$states      = array();
 		$state_names = $this->get_realistic_state_names( $config['iso2'] );
+		$name_count  = count( $state_names );
 
-		for ( $i = 1; $i <= min( $config['states_count'], count( $state_names ) ); $i++ ) {
+		for ( $i = 1; $i <= min( $config['states_count'], $name_count ); $i++ ) {
 			$state_name = $state_names[ $i - 1 ];
 			$state      = array(
 				'id'         => $i,
@@ -423,7 +424,7 @@ class Location_Generator extends Generator {
 	 * @return string State code.
 	 */
 	private function generate_state_code( string $state_name, string $country_code ): string {
-		// Generate appropriate state codes based on country
+		// Generate appropriate state codes based on country.
 		switch ( $country_code ) {
 			case 'US':
 				$state_codes = array(
@@ -541,7 +542,7 @@ class Location_Generator extends Generator {
 			$upload_dir       = wp_upload_dir();
 			$easycommerce_dir = $upload_dir['basedir'] . '/easycommerce';
 
-			// Create directory if it doesn't exist
+			// Create directory if it doesn't exist.
 			if ( ! file_exists( $easycommerce_dir ) ) {
 				wp_mkdir_p( $easycommerce_dir );
 			}
@@ -549,7 +550,15 @@ class Location_Generator extends Generator {
 			$json_path = $easycommerce_dir . '/locations.json';
 			$json_data = wp_json_encode( $location_data, JSON_PRETTY_PRINT );
 
-			return file_put_contents( $json_path, $json_data ) !== false;
+			// Use WP_Filesystem instead of direct file operations.
+			global $wp_filesystem;
+
+			if ( ! $wp_filesystem ) {
+				require_once ABSPATH . '/wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
+
+			return $wp_filesystem->put_contents( $json_path, $json_data, FS_CHMOD_FILE );
 		} catch ( \Exception $e ) {
 			$this->log( 'Failed to save location data: ' . $e->getMessage(), 'error' );
 			return false;

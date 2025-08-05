@@ -69,11 +69,11 @@
             "Composer\\Config::disableProcessTimeout",
             "phpcbf --standard=phpcs.xml"
         ],
-        "phpcs.plugin-review": [
+        "phpcs:plugin-review": [
             "Composer\\Config::disableProcessTimeout",
             "phpcs --standard=phpcs.plugin-review.xml"
         ],
-        "phpcbf.plugin-review": [
+        "phpcbf:plugin-review": [
             "Composer\\Config::disableProcessTimeout",
             "phpcbf --standard=phpcs.plugin-review.xml"
         ],

@@ -20,6 +20,7 @@ use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Attribute;
 use EasyCommerce\Models\Attribute_Value;
 use EasyCommerce\Models\Database;
+use WP_Error;
 
 /**
  * Product Variation Generator Class
@@ -40,21 +41,35 @@ class Product_Variation_Generator extends Generator {
 	/**
 	 * Generate a single product variation
 	 *
-	 * @return array|WP_Error Single variation data, error, or false on failure.
+	 * @return array|WP_Error|bool Single variation data, error, or false on failure.
 	 * @throws \Exception When no products are found or on other errors.
 	 */
 	protected function generate_single_item() {
 		try {
-			// Get existing products to create variations for.
-			$product_db = new Database( 'products' );
-			$products   = $product_db->get_results( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 20" );
+			// Get existing products to create variations for using WordPress posts.
+			$products = get_posts(
+				array(
+					'post_type'   => 'product',
+					'post_status' => 'publish',
+					'numberposts' => 20,
+					'orderby'     => 'rand',
+					'fields'      => 'ids',
+					'meta_query'  => array(
+						array(
+							'key'     => '_easycommerce_product_id',
+							'compare' => 'EXISTS',
+						),
+					),
+				)
+			);
 
 			if ( empty( $products ) ) {
 				throw new \Exception( 'No products found. Please generate products first.' );
 			}
 
-			$product     = $this->faker->randomElement( $products );
-			$product_obj = new Product( $product->id );
+			$product_post_id = $this->faker->randomElement( $products );
+			$product_id      = get_post_meta( $product_post_id, '_easycommerce_product_id', true );
+			$product_obj     = new Product( $product_id );
 
 			if ( ! $product_obj->exists() ) {
 				return false;
@@ -144,7 +159,6 @@ class Product_Variation_Generator extends Generator {
 		return array(
 			'product_id'     => $product->get_id(),
 			'name'           => $variation_name,
-			// 'sku'            => $this->generate_variation_sku( $product->get_sku() ? $product->get_sku() : 'PROD', $variation_attributes ),
 			'type'           => $this->faker->randomElement( array( 'physical', 'digital' ) ),
 			'price'          => $regular_price,
 			'sale_price'     => $sale_price,
@@ -270,18 +284,18 @@ class Product_Variation_Generator extends Generator {
 			}
 
 			// Get or create attribute value.
-			$attribute_value = $this->get_or_create_attribute_value( $attribute->get_id(), $value_slug );
+			$attribute_value = $this->get_or_create_attribute_value( $attribute->id, $value_slug );
 			if ( ! $attribute_value ) {
 				continue;
 			}
 
-			// Add to variation.
+			// Add to variation using Product_Variation_Attribute model.
 			$attributes->add(
 				$variation->get_id(),
 				$attribute_slug,
 				$value_slug,
-				$attribute->get_id(),
-				$attribute_value->get_id()
+				$attribute->id,
+				$attribute_value->id
 			);
 		}
 	}
@@ -290,25 +304,22 @@ class Product_Variation_Generator extends Generator {
 	 * Get or create attribute.
 	 *
 	 * @param string $slug Attribute slug.
-	 * @return Attribute|null Attribute instance.
+	 * @return object|null Attribute data object.
 	 */
-	private function get_or_create_attribute( string $slug ): ?Attribute {
-		$db       = new Database( 'attributes' );
-		$existing = $db->get_row( array( 'slug' => $slug ) );
+	private function get_or_create_attribute( string $slug ): ?object {
+		$attribute_model = new Attribute();
+		$existing        = $attribute_model->get_by_slug( $slug );
 
 		if ( $existing ) {
-			return new Attribute( $existing->id );
+			return $existing;
 		}
 
 		// Create new attribute.
-		$attribute = new Attribute();
-		$attribute->set_name( ucfirst( str_replace( '_', ' ', $slug ) ) );
-		$attribute->set_slug( $slug );
-		$attribute->set_type( 'select' );
-		$attribute->set_description( "Product {$slug} attribute" );
+		$name         = ucfirst( str_replace( '_', ' ', $slug ) );
+		$attribute_id = $attribute_model->add( $name, 'select', $slug );
 
-		if ( $attribute->save() ) {
-			return $attribute;
+		if ( $attribute_id ) {
+			return $attribute_model->get( $attribute_id );
 		}
 
 		return null;
@@ -319,30 +330,24 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int    $attribute_id Attribute ID.
 	 * @param string $value_slug Value slug.
-	 * @return Attribute_Value|null Attribute value instance.
+	 * @return object|null Attribute value data object.
 	 */
-	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ): ?Attribute_Value {
-		$db       = new Database( 'attribute_values' );
-		$existing = $db->get_row(
-			array(
-				'attribute_id' => $attribute_id,
-				'slug'         => $value_slug,
-			)
-		);
+	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ): ?object {
+		$attribute_value_model = new Attribute_Value();
+		$existing              = $attribute_value_model->get_by_slug( $value_slug );
 
-		if ( $existing ) {
-			return new Attribute_Value( $existing->id );
+		// Check if existing value belongs to the same attribute.
+		if ( $existing && (int) $existing->attribute_id === $attribute_id ) {
+			return $existing;
 		}
 
 		// Create new attribute value.
-		$attribute_value = new Attribute_Value();
-		$attribute_value->set_attribute_id( $attribute_id );
-		$attribute_value->set_name( $value_slug );
-		$attribute_value->set_slug( strtolower( str_replace( ' ', '_', $value_slug ) ) );
-		$attribute_value->set_description( "Attribute value: {$value_slug}" );
+		$name     = $value_slug;
+		$slug     = strtolower( str_replace( ' ', '_', $value_slug ) );
+		$value_id = $attribute_value_model->add( $attribute_id, $name, $value_slug, $slug );
 
-		if ( $attribute_value->save() ) {
-			return $attribute_value;
+		if ( $value_id ) {
+			return $attribute_value_model->get( $value_id );
 		}
 
 		return null;
