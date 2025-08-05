@@ -1,9 +1,9 @@
 <?php
 /**
- * Product Generator
+ * Product Generator.
  *
- * @since   1.0.0
  * @package EasyCommerceFakerPress\Generators
+ * @since   1.0.0
  */
 
 namespace EasyCommerceFakerPress\Generators;

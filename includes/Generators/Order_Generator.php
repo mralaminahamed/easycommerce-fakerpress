@@ -1,9 +1,9 @@
 <?php
 /**
- * Order Generator
+ * Order Generator.
  *
- * @since   1.0.0
  * @package EasyCommerceFakerPress\Generators
+ * @since   1.0.0
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -65,29 +65,29 @@ class Order_Generator extends Generator {
 				return new WP_Error( 'no_variations', 'No product variations found for order generation. Please create products with variations first.' );
 			}
 
-			// Convert variations to order items format required by EasyCommerce
+			// Convert variations to order items format required by EasyCommerce.
 			$order_items = $this->convert_variations_to_items( $variations );
 			$subtotal    = $this->calculate_subtotal( $order_items );
 			$order_meta  = $this->generate_order_meta( $customer, $subtotal );
 			$total       = $this->calculate_total( $subtotal, $order_meta );
 
-			// Use EasyCommerce Order model with complete data structure
+			// Use EasyCommerce Order model with complete data structure.
 			$order   = new Order();
 			$created = $order->create(
 				array(
-					// Required fields
+					// Required fields.
 					'customer_id'    => $customer->ID,
 					'total'          => $total,
 
-					// Optional core fields
+					// Optional core fields.
 					'status'         => $this->generate_order_status(),
 					'fulfill_status' => $this->generate_fulfillment_status(),
 					'payment_method' => $this->generate_payment_method(),
 
-					// Order items (required)
+					// Order items (required).
 					'items'          => $order_items,
 
-					// Order metadata
+					// Order metadata.
 					'meta'           => $order_meta,
 				)
 			);
@@ -96,9 +96,7 @@ class Order_Generator extends Generator {
 				return new WP_Error( 'order_creation_failed', 'Failed to create order using EasyCommerce model.' );
 			}
 
-			// Order metadata is already added during creation via the Order model
-
-			// Update customer statistics
+			// Update customer statistics.
 			$this->update_customer_stats( $customer->ID, $total );
 
 			return array(
@@ -126,7 +124,7 @@ class Order_Generator extends Generator {
 	 * @return WP_User|false Random customer user object or false if none found.
 	 */
 	private function get_random_customer() {
-		// First try to get users with customer role
+		// First try to get users with customer role.
 		$customers = get_users(
 			array(
 				'role'    => 'customer',
@@ -140,7 +138,7 @@ class Order_Generator extends Generator {
 			return $customers[0];
 		}
 
-		// If no customers found, get any user except admin
+		// If no customers found, get any user except admin.
 		$users = get_users(
 			array(
 				'role__not_in' => array( 'administrator' ),
@@ -151,7 +149,7 @@ class Order_Generator extends Generator {
 		);
 
 		if ( ! empty( $users ) ) {
-			// Assign customer role to this user
+			// Assign customer role to this user.
 			$user = $users[0];
 			$user->add_role( 'customer' );
 			return $user;
@@ -211,7 +209,7 @@ class Order_Generator extends Generator {
 				$order_items[ $product_id ] = array();
 			}
 
-			// Enhanced metadata for order items
+			// Enhanced metadata for order items.
 			$item_meta = $this->generate_order_item_meta( $variation, $quantity, $rate, $subtotal );
 
 			$order_items[ $product_id ][ $price_id ] = array(
@@ -242,7 +240,7 @@ class Order_Generator extends Generator {
 
 		foreach ( $order_items as $product_id => $variations ) {
 			foreach ( $variations as $price_id => $item ) {
-				$subtotal += $item['price']; // Use the pre-calculated price
+				$subtotal += $item['price']; // Use the pre-calculated price.
 			}
 		}
 
@@ -261,8 +259,8 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_order_meta( WP_User $customer, float $subtotal ): array {
 		$customer_model   = new Customer( $customer->ID );
-		$billing_address  = $customer_model->get_billing_address() ?: $this->generate_fallback_address( $customer );
-		$shipping_address = $customer_model->get_shipping_address() ?: $billing_address;
+		$billing_address  = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
+		$shipping_address = $customer_model->get_shipping_address() ? $customer_model->get_shipping_address() : $billing_address;
 
 		return array(
 			'addresses'        => array(
@@ -357,7 +355,7 @@ class Order_Generator extends Generator {
 			'gateway_response' => $this->faker->sentence(),
 		);
 
-		// Add method-specific details
+		// Add method-specific details.
 		switch ( $payment_method ) {
 			case 'stripe':
 				$details['stripe_charge_id'] = 'ch_' . $this->faker->regexify( '[a-zA-Z0-9]{24}' );
@@ -428,8 +426,8 @@ class Order_Generator extends Generator {
 			? $method_details['min']
 			: $this->faker->randomFloat( 2, $method_details['min'], $method_details['max'] );
 
-		// Free shipping for orders over $100
-		if ( $subtotal > 100 && $method !== 'overnight' ) {
+		// Free shipping for orders over $100.
+		if ( 100 < $subtotal && 'overnight' !== $method ) {
 			$cost = 0;
 		}
 
@@ -501,7 +499,7 @@ class Order_Generator extends Generator {
 		$total_discount = 0;
 
 		foreach ( $coupons as $coupon ) {
-			if ( $coupon['discount_type'] === 'percentage' ) {
+			if ( 'percentage' === $coupon['discount_type'] ) {
 				$discount = $subtotal * ( $coupon['amount'] / 100 );
 			} else {
 				$discount = min( $coupon['amount'], $subtotal );
@@ -631,21 +629,21 @@ class Order_Generator extends Generator {
 	 * @return array Address data.
 	 */
 	private function generate_fallback_address( WP_User $customer ): array {
-		// Use Location model for realistic geographic data
+		// Use Location model for realistic geographic data.
 		$countries = Location::get_countries();
 		if ( empty( $countries ) ) {
-			// Fallback to static data if Location model data not available
+			// Fallback to static data if Location model data not available.
 			return $this->generate_static_fallback_address( $customer );
 		}
 
-		// Weighted selection favoring common shipping countries
+		// Weighted selection favoring common shipping countries.
 		$weighted_countries = array(
-			'US' => 60, // 60% US
-			'CA' => 15, // 15% Canada
-			'GB' => 10, // 10% UK
-			'AU' => 8,  // 8% Australia
-			'DE' => 4,  // 4% Germany
-			'FR' => 3,  // 3% France
+			'US' => 60, // 60% US.
+			'CA' => 15, // 15% Canada.
+			'GB' => 10, // 10% UK.
+			'AU' => 8,  // 8% Australia.
+			'DE' => 4,  // 4% Germany.
+			'FR' => 3,  // 3% France.
 		);
 
 		$country_code = $this->faker->randomElement(
@@ -658,26 +656,26 @@ class Order_Generator extends Generator {
 			)
 		);
 
-		// Get states for the selected country
+		// Get states for the selected country.
 		$states     = Location::get_states( $country_code );
 		$state_data = $this->faker->randomElement( $states );
-		$state_name = $state_data['name'] ?? $this->faker->state;
-		$state_code = $state_data['state_code'] ?? $this->faker->stateAbbr;
+		$state_name = isset( $state_data['name'] ) ? $state_data['name'] : $this->faker->state;
+		$state_code = isset( $state_data['state_code'] ) ? $state_data['state_code'] : $this->faker->stateAbbr;
 
-		// Get cities for the selected state
+		// Get cities for the selected state.
 		$cities    = Location::get_cities( $country_code, $state_code );
 		$city_data = $this->faker->randomElement( $cities );
-		$city_name = $city_data['name'] ?? $this->faker->city;
+		$city_name = isset( $city_data['name'] ) ? $city_data['name'] : $this->faker->city;
 
-		// Get country details
+		// Get country details.
 		$country_data = array_filter( $countries, fn( $c ) => $c['iso2'] === $country_code );
 		$country_info = reset( $country_data );
-		$country_name = $country_info['name'] ?? $country_code;
-		$phone_code   = $country_info['phone_code'] ?? '+1';
+		$country_name = isset( $country_info['name'] ) ? $country_info['name'] : $country_code;
+		$phone_code   = isset( $country_info['phone_code'] ) ? $country_info['phone_code'] : '+1';
 
 		return array(
-			'first_name'   => $customer->first_name ?: $this->faker->firstName,
-			'last_name'    => $customer->last_name ?: $this->faker->lastName,
+			'first_name'   => $customer->first_name ? $customer->first_name : $this->faker->firstName,
+			'last_name'    => $customer->last_name ? $customer->last_name : $this->faker->lastName,
 			'email'        => $customer->user_email,
 			'phone'        => $phone_code . ' ' . $this->generate_phone_for_country( $country_code ),
 			'company'      => $this->faker->optional( 0.3 )->company,
@@ -729,11 +727,11 @@ class Order_Generator extends Generator {
 	 * @return void
 	 */
 	private function update_customer_stats( int $customer_id, float $order_total ): void {
-		// Get current stats
+		// Get current stats.
 		$total_orders = (int) get_user_meta( $customer_id, 'total_orders', true );
 		$total_spent  = (float) get_user_meta( $customer_id, 'total_spent', true );
 
-		// Update stats
+		// Update stats.
 		$new_total_orders        = $total_orders + 1;
 		$new_total_spent         = $total_spent + $order_total;
 		$new_average_order_value = $new_total_spent / $new_total_orders;
@@ -743,7 +741,7 @@ class Order_Generator extends Generator {
 		update_user_meta( $customer_id, 'average_order_value', number_format( $new_average_order_value, 2, '.', '' ) );
 		update_user_meta( $customer_id, 'last_order_date', current_time( 'Y-m-d H:i:s' ) );
 
-		// Update customer tier based on total spent
+		// Update customer tier based on total spent.
 		$tier = 'bronze';
 		if ( $new_total_spent >= 5000 ) {
 			$tier = 'platinum';
@@ -754,7 +752,7 @@ class Order_Generator extends Generator {
 		}
 		update_user_meta( $customer_id, 'loyalty_tier', $tier );
 
-		// Award loyalty points (1 point per dollar)
+		// Award loyalty points (1 point per dollar).
 		$current_points = (int) get_user_meta( $customer_id, 'loyalty_points', true );
 		$points_earned  = floor( $order_total );
 		update_user_meta( $customer_id, 'loyalty_points', $current_points + $points_earned );
@@ -778,9 +776,7 @@ class Order_Generator extends Generator {
 		return array(
 			// Core product information.
 			'product_name'       => $product->get_title(),
-			// 'product_sku'        => $product->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}' ),
 			'variation_name'     => $variation->get_name( false ),
-			// 'variation_sku'      => $variation->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}-[A-Z]{2}' ),
 
 			// Pricing details.
 			'regular_price'      => $variation->get_regular_price(),
@@ -788,7 +784,7 @@ class Order_Generator extends Generator {
 			'price_formatted'    => easycommerce_price( $rate ),
 			'subtotal_formatted' => easycommerce_price( $subtotal ),
 
-			// Product attributes
+			// Product attributes.
 			'attributes'         => $variation->get_attributes(),
 			'weight'             => $this->faker->randomFloat( 2, 0.1, 5.0 ),
 			'dimensions'         => array(
@@ -797,23 +793,23 @@ class Order_Generator extends Generator {
 				'height' => $this->faker->randomFloat( 2, 1, 20 ),
 			),
 
-			// Fulfillment details
-			'requires_shipping'  => $this->faker->boolean( 85 ), // 85% require shipping
-			'is_virtual'         => $this->faker->boolean( 15 ), // 15% virtual products
-			'is_downloadable'    => $this->faker->boolean( 10 ), // 10% downloadable
+			// Fulfillment details.
+			'requires_shipping'  => $this->faker->boolean( 85 ), // 85% require shipping.
+			'is_virtual'         => $this->faker->boolean( 15 ), // 15% virtual products.
+			'is_downloadable'    => $this->faker->boolean( 10 ), // 10% downloadable.
 			'download_limit'     => $this->faker->optional( 0.3 )->numberBetween( 1, 10 ),
 			'download_expiry'    => $this->faker->optional( 0.3 )->numberBetween( 1, 365 ),
 
-			// Tax information
+			// Tax information.
 			'tax_class'          => $variation->get_tax_class(),
 			'tax_status'         => $this->faker->randomElement( array( 'taxable', 'shipping', 'none' ) ),
 
-			// Inventory tracking
+			// Inventory tracking.
 			'stock_quantity'     => $variation->get_stock(),
 			'low_stock_amount'   => $this->faker->numberBetween( 1, 10 ),
 			'backorders'         => $this->faker->randomElement( array( 'no', 'notify', 'yes' ) ),
 
-			// Additional metadata
+			// Additional metadata.
 			'purchase_note'      => $this->faker->optional( 0.2 )->sentence(),
 			'warranty_info'      => $this->faker->optional( 0.3 )->sentence(),
 			'return_policy'      => $this->faker->optional( 0.2 )->sentence(),
@@ -829,12 +825,12 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_item_tax_rate(): float {
 		$tax_rates = array(
-			0.00   => 10, // Tax-free (10%).
-			0.05   => 15, // 5% tax (15%).
-			0.08   => 35, // 8% tax (35%).
-			0.0825 => 25, // 8.25% tax (25%).
-			0.10   => 10, // 10% tax (10%).
-			0.125  => 5,  // 12.5% tax (5%).
+			'0.00'   => 10, // Tax-free (10%).
+			'0.05'   => 15, // 5% tax (15%).
+			'0.08'   => 35, // 8% tax (35%).
+			'0.0825' => 25, // 8.25% tax (25%).
+			'0.10'   => 10, // 10% tax (10%).
+			'0.125'  => 5,  // 12.5% tax (5%).
 		);
 
 		return $this->faker->randomElement(
@@ -859,8 +855,8 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_static_fallback_address( WP_User $customer ): array {
 		return array(
-			'first_name' => $customer->first_name ?: $this->faker->firstName,
-			'last_name'  => $customer->last_name ?: $this->faker->lastName,
+			'first_name' => $customer->first_name ? $customer->first_name : $this->faker->firstName,
+			'last_name'  => $customer->last_name ? $customer->last_name : $this->faker->lastName,
 			'email'      => $customer->user_email,
 			'phone'      => $this->faker->phoneNumber,
 			'company'    => $this->faker->optional( 0.3 )->company,

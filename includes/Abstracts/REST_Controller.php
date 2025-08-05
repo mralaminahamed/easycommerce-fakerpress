@@ -1,9 +1,9 @@
 <?php
 /**
- * Abstract REST Controller Class
+ * Abstract REST Controller Class.
  *
- * @since   1.0.0
  * @package EasyCommerceFakerPress\Abstracts
+ * @since   1.0.0
  */
 
 namespace EasyCommerceFakerPress\Abstracts;

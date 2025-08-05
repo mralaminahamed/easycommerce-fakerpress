@@ -1,4 +1,11 @@
 <?php
+/**
+ * Shipping Plan Generator.
+ *
+ * @package EasyCommerceFakerPress\Generators
+ * @since   1.0.0
+ */
+
 namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
@@ -6,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Shipping_Plan;
 use EasyCommerce\Models\Database;
+use WP_Error;
 
 /**
  * Shipping Plan Generator Class
@@ -26,7 +34,7 @@ class Shipping_Plan_Generator extends Generator {
 	/**
 	 * Generate a single shipping plan
 	 *
-	 * @return array|WP_Error Single shipping plan data, error, or false on failure.
+	 * @return array|bool Single shipping plan data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		try {
@@ -156,7 +164,7 @@ class Shipping_Plan_Generator extends Generator {
 				'name' => 'Over $200',
 				'min'  => 200.00,
 				'max'  => 999999.99,
-				'cost' => 0.00, // Free shipping
+				'cost' => 0.00, // Free shipping.
 			),
 		);
 	}

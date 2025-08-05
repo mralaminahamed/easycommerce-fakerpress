@@ -1,9 +1,9 @@
 <?php
 /**
- * Coupon Generator
+ * Coupon Generator.
  *
- * @since   1.0.0
  * @package EasyCommerceFakerPress\Generators
+ * @since   1.0.0
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -12,6 +12,7 @@ use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Coupon;
 use EasyCommerce\Models\Database;
 use Exception;
+use RuntimeException;
 use WP_Error;
 
 /**
@@ -277,7 +278,7 @@ class Coupon_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @return string Unique coupon code.
-	 * @throws Exception If unable to generate a unique code after 10 attempts.
+	 * @throws RuntimeException If unable to generate a unique coupon code after 10 attempts.
 	 */
 	private function generate_unique_code(): string {
 		$attempts = 0;
@@ -288,7 +289,7 @@ class Coupon_Generator extends Generator {
 		} while ( $existing && $attempts < 10 );
 
 		if ( $existing ) {
-			throw new \RuntimeException( 'Unable to generate unique coupon code after 10 attempts.' );
+			throw new RuntimeException( 'Unable to generate unique coupon code after 10 attempts.' );
 		}
 
 		return $code;
@@ -309,7 +310,7 @@ class Coupon_Generator extends Generator {
 			'OFFER####',
 			'PROMO####',
 			'COUPON####',
-			// Seasonal patterns
+			// Seasonal patterns.
 			'SPRING###',
 			'SUMMER###',
 			'FALL###',
