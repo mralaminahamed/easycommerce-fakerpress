@@ -55,12 +55,12 @@ class Product_Variation_Generator extends Generator {
 				throw new RuntimeException( 'No products found. Please generate products first.' );
 			}
 
-			$product_obj = $this->faker->randomElement( $products );
-			if ( ! $product_obj->exists() ) {
+			$product = $this->faker->randomElement( $products );
+			if ( ! $product->exists() ) {
 				return false;
 			}
 
-			$variation_data = $this->generate_variation_data( $product_obj );
+			$variation_data = $this->generate_variation_data( $product );
 			$variation      = $this->create_variation( $variation_data );
 
 			if ( $variation ) {

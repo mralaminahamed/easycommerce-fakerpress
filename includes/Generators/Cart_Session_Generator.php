@@ -39,11 +39,11 @@ class Cart_Session_Generator extends Generator {
 	protected function generate_single_item() {
 		try {
 			// Get existing products and customers.
-			$product_db  = new Database( 'products' );
-			$customer_db = new Database( 'customers' );
+			$product_data  = Product::list( array(), 50 );
+			$customer_data = Customer::list( 'customer', null, 1, 30 );
 
-			$products  = $product_db->exec( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 50" );
-			$customers = $customer_db->exec( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 30" );
+			$products  = $product_data['products'] ?? array();
+			$customers = $customer_data['users'] ?? array();
 
 			if ( empty( $products ) ) {
 				throw new RuntimeException( 'No products found. Please generate products first.' );
@@ -100,8 +100,8 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart session data.
 	 *
-	 * @param array $products Available products.
-	 * @param array $customers Available customers.
+	 * @param Product[] $products Available products.
+	 * @param array     $customers Available customers.
 	 * @return array Cart session data
 	 */
 	private function generate_cart_session_data( array $products, array $customers ): array {
@@ -115,30 +115,30 @@ class Cart_Session_Generator extends Generator {
 		$status = $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
 					array_keys( $cart_statuses ),
 					$cart_statuses
 				)
 			)
 		);
 
-		// Select customer (70% have customer accounts)
+		// Select customer (70% have customer accounts).
 		$customer = $this->faker->boolean( 70 ) && ! empty( $customers )
 			? $this->faker->randomElement( $customers )
 			: null;
 
-		// Generate cart items
+		// Generate cart items.
 		$items        = $this->generate_cart_items( $products );
 		$total_amount = $this->calculate_cart_total( $items );
 
-		// Generate addresses if cart is advanced
+		// Generate addresses if cart is advanced.
 		$addresses = $this->faker->boolean( 40 ) ? $this->generate_cart_addresses() : array();
 
-		// Generate timeline based on status
+		// Generate timeline based on status.
 		$timeline = $this->generate_cart_timeline( $status );
 
 		return array(
-			'user_id'      => $customer ? $customer->id : 0,
+			'user_id'      => $customer['id'] ?? 0,
 			'status'       => $status,
 			'items'        => $items,
 			'addresses'    => $addresses,
@@ -152,7 +152,7 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart items.
 	 *
-	 * @param array $products Available products.
+	 * @param Product[] $products Available products.
 	 * @return array Cart items
 	 */
 	private function generate_cart_items( array $products ): array {
@@ -165,9 +165,9 @@ class Cart_Session_Generator extends Generator {
 		);
 
 		foreach ( $selected_products as $product ) {
-			// Get product variations
+			// Get product variations.
 			$variation_db = new Database( 'product_variations' );
-			$variations   = $variation_db->get_rows( array( 'product_id' => $product->id ) );
+			$variations   = $variation_db->get_rows( array( 'product_id' => $product->get_id() ) );
 
 			if ( empty( $variations ) ) {
 				continue;
@@ -177,7 +177,7 @@ class Cart_Session_Generator extends Generator {
 			$quantity  = $this->faker->numberBetween( 1, 5 );
 			$price     = $this->faker->randomFloat( 2, 5, 200 );
 
-			$items[ $product->id ][ $variation->price_id ] = array(
+			$items[ $product->get_id() ][ $variation->price_id ] = array(
 				'quantity' => $quantity,
 				'rate'     => $price,
 				'price'    => $quantity * $price,
@@ -202,7 +202,7 @@ class Cart_Session_Generator extends Generator {
 			}
 		}
 
-		// Add shipping and tax estimate
+		// Add shipping and tax estimate.
 		$shipping = $this->faker->randomFloat( 2, 0, 25 );
 		$tax      = $total * $this->faker->randomFloat( 2, 0.05, 0.15 ); // 5-15% tax
 
@@ -403,20 +403,21 @@ class Cart_Session_Generator extends Generator {
 		$results = array();
 
 		// Get existing products and customers.
-		$product_db  = new Database( 'products' );
-		$customer_db = new Database( 'customers' );
+		$product_data  = Product::list( array(), 30 );
+		$customer_data = Customer::list( 'customer', null, 1, 20 );
 
-		$products  = $product_db->exec( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 30" );
-		$customers = $customer_db->exec( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 20" );
+		$products  = $product_data['products'] ?? array();
+		$customers = $customer_data['users'] ?? array();
 
 		for ( $i = 0; $i < $count; $i++ ) {
 			try {
-				$cart_data              = $this->generate_cart_session_data( $products, $customers );
+				$now       = current_datetime()->getTimestamp();
+				$cart_data = $this->generate_cart_session_data( $products, $customers );
+
 				$cart_data['status']    = 'abandoned'; // Force abandoned status.
 				$cart_data['reminders'] = $this->faker->numberBetween( 0, 3 );
 
 				// Ensure older timeline for abandoned carts.
-				$now       = current_datetime()->getTimestamp();
 				$hours_ago = $this->faker->numberBetween( 48, 336 ); // 2-14 days ago
 
 				$cart_data['created_at'] = wp_date( 'Y-m-d H:i:s', $now - ( $hours_ago * 3600 ) );
