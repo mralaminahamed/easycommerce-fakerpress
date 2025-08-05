@@ -1,0 +1,918 @@
+# Copyright (C) 2025 Al Amin Ahamed
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: EasyCommerce FakerPress 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easycommerce-fakerpress\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-08-05T13:49:12+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: easycommerce-fakerpress\n"
+
+#. Plugin Name of the plugin
+#: easycommerce-fakerpress.php
+#: class-easycommerce-fakerpress.php:97
+#: src/admin/components/App.jsx:49
+msgid "EasyCommerce FakerPress"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: easycommerce-fakerpress.php
+msgid "https://alaminahamed.com/projects/easycommerce-fakerpress"
+msgstr ""
+
+#. Description of the plugin
+#: easycommerce-fakerpress.php
+msgid "Generate fake eCommerce data (orders, products, customers, coupons) for EasyCommerce plugin using PHPFaker library with modern React-based admin interface."
+msgstr ""
+
+#. Author of the plugin
+#: easycommerce-fakerpress.php
+msgid "Al Amin Ahamed"
+msgstr ""
+
+#. Author URI of the plugin
+#: easycommerce-fakerpress.php
+msgid "https://alaminahamed.com"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:98
+msgid "EC FakerPress"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:243
+msgid "EasyCommerce FakerPress requires EasyCommerce plugin."
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:244
+msgid "Plugin Activation Error"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:277
+msgid "EasyCommerce FakerPress requires EasyCommerce plugin to be installed and active."
+msgstr ""
+
+#. translators: %s: Error message
+#: includes/Abstracts/Generator.php:102
+#, php-format
+msgid "Generation failed: %s"
+msgstr ""
+
+#: includes/Abstracts/Generator.php:155
+msgid "Count must be a positive number."
+msgstr ""
+
+#. translators: %d: Maximum batch size
+#: includes/Abstracts/Generator.php:164
+#, php-format
+msgid "Count cannot exceed %d items per batch."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:77
+msgid "Count parameter is required and must be greater than 0."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:116
+msgid "You do not have permission to generate data."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:136
+msgid "Number of items to generate."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:145
+msgid "Locale for generated data (e.g., en_US, fr_FR, de_DE)."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:152
+msgid "Random seed for reproducible data generation."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:158
+msgid "Status filter for generated items."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:164
+msgid "Date range for generated items."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:168
+msgid "Start date (YYYY-MM-DD format)."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:173
+msgid "End date (YYYY-MM-DD format)."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:180
+msgid "Control relationship creation with existing data."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:184
+msgid "Create missing related items if needed."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:189
+msgid "Link to existing items when possible."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:196
+msgid "Metadata generation options."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:200
+msgid "Include additional metadata."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:205
+msgid "Generate custom fields."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:236
+msgid "Count must be a number between 1 and 100."
+msgstr ""
+
+#: includes/Abstracts/REST_Controller.php:259
+msgid "Number of items generated."
+msgstr ""
+
+#: includes/REST/Controllers/Cart_Session_REST_Controller.php:67
+msgid "Generated cart sessions with items and customer data."
+msgstr ""
+
+#: includes/REST/Controllers/Coupon_REST_Controller.php:66
+#: src/admin/components/Generators/CouponGenerator.jsx:34
+msgid "Types of discount coupons to generate"
+msgstr ""
+
+#: includes/REST/Controllers/Coupon_REST_Controller.php:76
+#: src/admin/components/Generators/CouponGenerator.jsx:43
+msgid "Discount value range"
+msgstr ""
+
+#: includes/REST/Controllers/Coupon_REST_Controller.php:104
+#: src/admin/components/Generators/CouponGenerator.jsx:53
+msgid "Usage limitation settings"
+msgstr ""
+
+#: includes/REST/Controllers/Coupon_REST_Controller.php:126
+#: src/admin/components/Generators/CouponGenerator.jsx:62
+msgid "Coupon validity period configuration"
+msgstr ""
+
+#: includes/REST/Controllers/Coupon_REST_Controller.php:144
+#: src/admin/components/Generators/CouponGenerator.jsx:70
+msgid "Coupon usage restrictions"
+msgstr ""
+
+#: includes/REST/Controllers/Coupon_REST_Controller.php:178
+msgid "Generated coupons data."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:66
+msgid "Types of customers to generate."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:75
+msgid "Demographic distribution."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:79
+msgid "Age group distribution."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:88
+msgid "Gender distribution weight."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:114
+msgid "Address generation preferences."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:118
+msgid "Include billing addresses."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:123
+msgid "Include shipping addresses."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:128
+msgid "Percentage with different billing/shipping (0-100)."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:137
+msgid "Purchase history simulation."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:141
+msgid "Generate purchase history metadata."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:146
+msgid "Include loyalty tier assignments."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:153
+msgid "Contact and communication preferences."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:157
+msgid "Include phone numbers."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:162
+msgid "Percentage opted in for marketing (0-100)."
+msgstr ""
+
+#: includes/REST/Controllers/Customer_REST_Controller.php:183
+msgid "Generated customers data."
+msgstr ""
+
+#: includes/REST/Controllers/Location_REST_Controller.php:67
+msgid "Generated location hierarchy with countries, states, and cities."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:66
+msgid "Order status distribution."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:73
+msgid "Type of customers for orders."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:80
+msgid "Order value configuration."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:84
+msgid "Minimum order total."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:90
+msgid "Maximum order total."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:98
+msgid "Number of items per order."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:102
+msgid "Minimum items per order."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:108
+msgid "Maximum items per order."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:117
+msgid "Payment methods to use."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:126
+msgid "Geographic distribution of orders."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:130
+msgid "Countries to generate orders from."
+msgstr ""
+
+#: includes/REST/Controllers/Order_REST_Controller.php:153
+msgid "Generated orders data."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:66
+msgid "Type of products to generate."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:73
+msgid "Price range for generated products."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:77
+msgid "Minimum price."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:83
+msgid "Maximum price."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:91
+msgid "Product categories configuration."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:95
+msgid "Create new categories if needed."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:100
+msgid "Maximum categories per product."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:109
+msgid "Product attributes configuration."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:113
+msgid "Include product attributes."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:118
+msgid "Number of variations for variable products."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:127
+msgid "Inventory settings for generated products."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:131
+msgid "Enable stock management."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:136
+msgid "Stock quantity range."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:154
+msgid "Product content generation options."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:158
+msgid "Generate product images."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:163
+msgid "Product description length."
+msgstr ""
+
+#: includes/REST/Controllers/Product_REST_Controller.php:185
+msgid "Generated products data."
+msgstr ""
+
+#: includes/REST/Controllers/Product_Variation_REST_Controller.php:67
+msgid "Generated product variations with attributes."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:67
+msgid "Types of shipping methods to generate."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:76
+msgid "Shipping cost range."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:80
+msgid "Minimum shipping cost."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:86
+msgid "Maximum shipping cost."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:94
+msgid "Geographic coverage areas."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:103
+msgid "Shipping calculation methods."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:112
+msgid "Delivery time ranges."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:116
+msgid "Minimum delivery days."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:122
+msgid "Maximum delivery days."
+msgstr ""
+
+#: includes/REST/Controllers/Shipping_Plan_REST_Controller.php:142
+msgid "Generated shipping plans with methods and regions."
+msgstr ""
+
+#: includes/REST/Controllers/Tax_REST_Controller.php:67
+msgid "Generated tax classes with location-based rates."
+msgstr ""
+
+#: includes/REST/Controllers/Transaction_REST_Controller.php:67
+msgid "Generated payment transactions with realistic data."
+msgstr ""
+
+#: src/admin/components/App.jsx:19
+msgid "Products"
+msgstr ""
+
+#: src/admin/components/App.jsx:19
+#: src/admin/components/App.jsx:20
+#: src/admin/components/App.jsx:21
+#: src/admin/components/App.jsx:22
+msgid "Core"
+msgstr ""
+
+#: src/admin/components/App.jsx:19
+msgid "Generate fake product data for testing."
+msgstr ""
+
+#: src/admin/components/App.jsx:20
+msgid "Customers"
+msgstr ""
+
+#: src/admin/components/App.jsx:20
+msgid "Generate fake customer data for testing."
+msgstr ""
+
+#: src/admin/components/App.jsx:21
+msgid "Orders"
+msgstr ""
+
+#: src/admin/components/App.jsx:21
+msgid "Generate fake order data for testing."
+msgstr ""
+
+#: src/admin/components/App.jsx:22
+msgid "Coupons"
+msgstr ""
+
+#: src/admin/components/App.jsx:22
+msgid "Generate fake coupon data for testing."
+msgstr ""
+
+#: src/admin/components/App.jsx:23
+msgid "Product Variations"
+msgstr ""
+
+#: src/admin/components/App.jsx:23
+#: src/admin/components/App.jsx:24
+#: src/admin/components/App.jsx:25
+#: src/admin/components/App.jsx:26
+#: src/admin/components/App.jsx:27
+#: src/admin/components/App.jsx:28
+msgid "Enhanced"
+msgstr ""
+
+#: src/admin/components/App.jsx:23
+msgid "Generate fake product variation data."
+msgstr ""
+
+#: src/admin/components/App.jsx:24
+msgid "Shipping Plans"
+msgstr ""
+
+#: src/admin/components/App.jsx:24
+msgid "Generate fake shipping plan data."
+msgstr ""
+
+#: src/admin/components/App.jsx:25
+msgid "Tax Classes"
+msgstr ""
+
+#: src/admin/components/App.jsx:25
+msgid "Generate fake tax class data."
+msgstr ""
+
+#: src/admin/components/App.jsx:26
+msgid "Transactions"
+msgstr ""
+
+#: src/admin/components/App.jsx:26
+msgid "Generate fake transaction data."
+msgstr ""
+
+#: src/admin/components/App.jsx:27
+msgid "Cart Sessions"
+msgstr ""
+
+#: src/admin/components/App.jsx:27
+msgid "Generate fake cart session data."
+msgstr ""
+
+#: src/admin/components/App.jsx:28
+msgid "Locations"
+msgstr ""
+
+#: src/admin/components/App.jsx:28
+msgid "Generate fake location data."
+msgstr ""
+
+#: src/admin/components/App.jsx:51
+msgid "Generate fake ecommerce data for testing and development with a seamless and intuitive interface."
+msgstr ""
+
+#: src/admin/components/App.jsx:59
+msgid "Other Generators"
+msgstr ""
+
+#: src/admin/components/App.jsx:84
+msgid "Back to Generators"
+msgstr ""
+
+#: src/admin/components/App.jsx:93
+msgid "Home"
+msgstr ""
+
+#: src/admin/components/App.jsx:114
+#, js-format
+msgid "%s Generators"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:77
+#: src/admin/components/GeneratorBase.jsx:85
+#, js-format
+msgid "Select %s"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:231
+msgid "Basic Settings"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:236
+#, js-format
+msgid "Number of %s to generate"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:251
+msgid "Locale"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:259
+msgid "Select Locale"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:272
+msgid "English (US)"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:273
+msgid "English (UK)"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:274
+msgid "French"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:275
+msgid "German"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:276
+msgid "Spanish"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:277
+msgid "Italian"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:287
+msgid "Random Seed (optional)"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:292
+msgid "For reproducible data"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:307
+msgid "Include additional metadata"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:319
+msgid "Advanced Parameters"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:350
+msgid "Generating..."
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:353
+#, js-format
+msgid "Generate %s"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:367
+msgid "Error"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:383
+msgid "Success!"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:385
+#, js-format
+msgid "Generated %1$d %2$s."
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:389
+msgid "Generated items:"
+msgstr ""
+
+#: src/admin/components/GeneratorBase.jsx:401
+#, js-format
+msgid "... and %d more"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:26
+msgid "An error occurred while generating cart sessions."
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:34
+msgid "Cart session statuses to generate"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:43
+msgid "Cart abandonment scenarios"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:51
+msgid "Items per cart session"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:59
+msgid "Cart value ranges"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:67
+msgid "Cart recovery simulation"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:78
+msgid "Generate Cart Sessions"
+msgstr ""
+
+#: src/admin/components/Generators/CartSessionGenerator.jsx:79
+msgid "Create shopping cart sessions with abandonment scenarios for analyzing cart recovery and customer behavior."
+msgstr ""
+
+#: src/admin/components/Generators/CouponGenerator.jsx:26
+msgid "An error occurred while generating coupons."
+msgstr ""
+
+#: src/admin/components/Generators/CouponGenerator.jsx:83
+msgid "Generate Coupons"
+msgstr ""
+
+#: src/admin/components/Generators/CouponGenerator.jsx:84
+msgid "Create discount coupons with configurable types, discount values, usage limits, validity periods, and usage restrictions."
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:26
+msgid "An error occurred while generating customers."
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:34
+msgid "Types of customers to generate"
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:43
+msgid "Demographic distribution"
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:65
+msgid "Address generation preferences"
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:74
+msgid "Purchase history simulation"
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:82
+msgid "Contact and communication preferences"
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:93
+msgid "Generate Customers"
+msgstr ""
+
+#: src/admin/components/Generators/CustomerGenerator.jsx:94
+msgid "Create realistic customer accounts with demographics, addresses, contact information, and purchase history simulation."
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:26
+msgid "An error occurred while generating location data."
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:34
+msgid "Geographic coverage scope"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:40
+msgid "Location data completeness level"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:46
+msgid "Include latitude/longitude coordinates"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:51
+msgid "Include timezone information"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:56
+msgid "Include currency information"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:65
+msgid "Generate Location Data"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:66
+msgid "Create comprehensive location hierarchy data (countries, states, cities) for the EasyCommerce system. This populates the locations.json file used throughout the system."
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:76
+msgid "Important Note"
+msgstr ""
+
+#: src/admin/components/Generators/LocationGenerator.jsx:78
+msgid "The Location Generator creates the foundational geographic data used by other generators. It's recommended to run this first, especially before generating customers and orders that rely on realistic address data. The generated data is saved to the EasyCommerce locations.json file."
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:26
+msgid "An error occurred while generating orders."
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:34
+msgid "Order status distribution"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:40
+msgid "Type of customers for orders"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:46
+msgid "Order value configuration"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:54
+msgid "Number of items per order"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:62
+msgid "Payment methods to use"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:71
+msgid "Geographic distribution of orders"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:88
+msgid "Generate Orders"
+msgstr ""
+
+#: src/admin/components/Generators/OrderGenerator.jsx:89
+msgid "Create realistic orders with comprehensive data including customers, products, payments, shipping, and taxes. Enhanced with Order_Item_Meta and location-based addresses."
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:26
+msgid "An error occurred while generating products."
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:34
+msgid "Type of products to generate"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:40
+msgid "Price range for generated products"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:48
+msgid "Product categories configuration"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:56
+msgid "Product attributes configuration"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:64
+msgid "Inventory settings"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:78
+msgid "Content generation options"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:89
+msgid "Generate Products"
+msgstr ""
+
+#: src/admin/components/Generators/ProductGenerator.jsx:90
+msgid "Create fake products with random names, descriptions, prices, and attributes. Configure product types, pricing, categories, and inventory settings."
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:26
+msgid "An error occurred while generating product variations."
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:34
+msgid "Type of variations to generate"
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:40
+msgid "Price variation settings"
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:48
+msgid "Stock quantity distribution"
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:56
+msgid "Attribute complexity level"
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:65
+msgid "Generate Product Variations"
+msgstr ""
+
+#: src/admin/components/Generators/ProductVariationGenerator.jsx:66
+msgid "Create realistic product variations with different attributes, prices, and stock levels. Requires existing products to create variations for."
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:26
+msgid "An error occurred while generating shipping plans."
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:34
+msgid "Types of shipping methods to generate"
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:43
+msgid "Shipping cost range"
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:51
+msgid "Geographic coverage areas"
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:60
+msgid "Shipping calculation methods"
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:69
+msgid "Delivery time ranges"
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:80
+msgid "Generate Shipping Plans"
+msgstr ""
+
+#: src/admin/components/Generators/ShippingPlanGenerator.jsx:81
+msgid "Create comprehensive shipping plans with different methods, costs, coverage areas, and delivery timeframes."
+msgstr ""
+
+#: src/admin/components/Generators/TaxGenerator.jsx:26
+msgid "An error occurred while generating tax classes."
+msgstr ""
+
+#: src/admin/components/Generators/TaxGenerator.jsx:34
+msgid "Types of tax classes to generate"
+msgstr ""
+
+#: src/admin/components/Generators/TaxGenerator.jsx:43
+msgid "Tax rate ranges"
+msgstr ""
+
+#: src/admin/components/Generators/TaxGenerator.jsx:51
+msgid "Tax jurisdictions"
+msgstr ""
+
+#: src/admin/components/Generators/TaxGenerator.jsx:63
+msgid "Generate Tax Classes"
+msgstr ""
+
+#: src/admin/components/Generators/TaxGenerator.jsx:64
+msgid "Create tax classes with location-based rates for different jurisdictions and product types."
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:26
+msgid "An error occurred while generating transactions."
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:34
+msgid "Types of transactions to generate"
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:43
+msgid "Payment gateways to simulate"
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:52
+msgid "Transaction amount range"
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:60
+msgid "Transaction status distribution"
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:72
+msgid "Generate Transactions"
+msgstr ""
+
+#: src/admin/components/Generators/TransactionGenerator.jsx:73
+msgid "Create realistic payment transaction history with different gateways, amounts, and status distributions."
+msgstr ""

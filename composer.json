@@ -80,6 +80,7 @@
         "phpstan": "phpstan analyse --memory-limit 2G",
         "test": "phpunit",
         "test:coverage": "phpunit --coverage-html=tests/coverage/html",
+        "makepot": "wp i18n make-pot . languages/easycommerce-fakerpress.pot --exclude=node_modules,vendor,drafts,docs,build,release,tests",
         "format": "@phpcbf",
         "lint": "@phpcs",
         "analyse": "@phpstan",
