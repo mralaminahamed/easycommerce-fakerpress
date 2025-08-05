@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function OrderGenerator() {
@@ -21,7 +23,7 @@ export default function OrderGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating orders.');
+            setError(err.message || __('An error occurred while generating orders.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,19 +31,19 @@ export default function OrderGenerator() {
 
     const parameterConfig = {
         order_status: {
-            description: 'Order status distribution',
+            description: __('Order status distribution', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded', 'mixed'],
             default: 'mixed'
         },
         customer_type: {
-            description: 'Type of customers for orders',
+            description: __('Type of customers for orders', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['existing', 'new', 'mixed'],
             default: 'mixed'
         },
         order_value: {
-            description: 'Order value configuration',
+            description: __('Order value configuration', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min_total: { type: 'number', minimum: 0, default: 10 },
@@ -49,7 +51,7 @@ export default function OrderGenerator() {
             }
         },
         items_per_order: {
-            description: 'Number of items per order',
+            description: __('Number of items per order', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min: { type: 'integer', minimum: 1, default: 1 },
@@ -57,7 +59,7 @@ export default function OrderGenerator() {
             }
         },
         payment_methods: {
-            description: 'Payment methods to use',
+            description: __('Payment methods to use', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -66,7 +68,7 @@ export default function OrderGenerator() {
             default: ['stripe', 'paypal', 'bank_transfer']
         },
         geographical_distribution: {
-            description: 'Geographic distribution of orders',
+            description: __('Geographic distribution of orders', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 countries: {
@@ -83,8 +85,8 @@ export default function OrderGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Orders"
-            description="Create realistic orders with comprehensive data including customers, products, payments, shipping, and taxes. Enhanced with Order_Item_Meta and location-based addresses."
+            title={__('Generate Orders', 'easycommerce-fakerpress')}
+            description={__('Create realistic orders with comprehensive data including customers, products, payments, shipping, and taxes. Enhanced with Order_Item_Meta and location-based addresses.', 'easycommerce-fakerpress')}
             type="orders"
             onGenerate={handleGenerate}
             isLoading={isLoading}

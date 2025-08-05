@@ -2,18 +2,9 @@ import React, { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Listbox, Switch, Disclosure, Button, Combobox } from '@headlessui/react';
 import {RawHTML} from "@wordpress/element";
+import { __, sprintf } from '@wordpress/i18n';
 
-export default function GeneratorBase({
-                                          title,
-                                          description,
-                                          type,
-                                          onGenerate,
-                                          isLoading,
-                                          result,
-                                          error,
-                                          parameterConfig = {},
-                                          children
-                                      }) {
+export default function GeneratorBase({ title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children }) {
     const [count, setCount] = useState(10);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [parameters, setParameters] = useState({});
@@ -46,18 +37,15 @@ export default function GeneratorBase({
                             <div className="relative">
                                 <Listbox.Button className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
                                     <span className={value ? 'text-gray-900' : 'text-gray-500'}>
-                                        {value ? value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : `Select ${config.description}`}
+                                        {value ? value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </span>
                                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                         <ChevronDownIcon className="h-5 w-5 text-gray-400" />
                                     </span>
                                 </Listbox.Button>
                                 <Listbox.Options className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-                                    <Listbox.Option
-                                        value=""
-                                        className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 hover:bg-blue-50"
-                                    >
-                                        Select {config.description}
+                                    <Listbox.Option value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 hover:bg-blue-50">
+                                        {sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </Listbox.Option>
                                     {config.enum.map(option => (
                                         <Listbox.Option
@@ -157,9 +145,7 @@ export default function GeneratorBase({
                                         <Switch
                                             checked={selectedValues.includes(option)}
                                             onChange={(checked) => {
-                                                const newValues = checked
-                                                    ? [...selectedValues, option]
-                                                    : selectedValues.filter(v => v !== option);
+                                                const newValues = checked ? [...selectedValues, option] : selectedValues.filter(v => v !== option);
                                                 handleParameterChange(paramName, newValues);
                                             }}
                                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${selectedValues.includes(option) ? 'bg-blue-600' : 'bg-gray-200'} disabled:bg-gray-300`}
@@ -208,12 +194,12 @@ export default function GeneratorBase({
             <div className="space-y-6">
                 {/* Basic Parameters */}
                 <div className="rounded-lg bg-gray-50 p-6 shadow-sm">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-4">Basic Settings</h4>
+                    <h4 className="text-sm font-semibold text-gray-900 mb-4">{__('Basic Settings', 'easycommerce-fakerpress')}</h4>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="space-y-1">
                             <label htmlFor={`${type}-count`} className="block text-sm font-medium text-gray-700">
-                                Number of {type} to generate
+                                {sprintf(__('Number of %s to generate', 'easycommerce-fakerpress'), type)}
                             </label>
                             <Combobox
                                 value={count}
@@ -234,7 +220,7 @@ export default function GeneratorBase({
                         </div>
 
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-gray-700">Locale</label>
+                            <label className="block text-sm font-medium text-gray-700">{__('Locale', 'easycommerce-fakerpress')}</label>
                             <Listbox
                                 value={parameters.locale || 'en_US'}
                                 onChange={(val) => handleParameterChange('locale', val)}
@@ -243,7 +229,7 @@ export default function GeneratorBase({
                                 <div className="relative">
                                     <Listbox.Button className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
                                         <span className={parameters.locale ? 'text-gray-900' : 'text-gray-500'}>
-                                            {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Select Locale'}
+                                            {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : __('Select Locale', 'easycommerce-fakerpress')}
                                         </span>
                                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                             <ChevronDownIcon className="h-5 w-5 text-gray-400" />
@@ -256,12 +242,12 @@ export default function GeneratorBase({
                                                 value={locale}
                                                 className={({ active }) => `cursor-pointer select-none px-4 py-2 text-sm ${active ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
                                             >
-                                                {locale === 'en_US' && 'English (US)'}
-                                                {locale === 'en_GB' && 'English (UK)'}
-                                                {locale === 'fr_FR' && 'French'}
-                                                {locale === 'de_DE' && 'German'}
-                                                {locale === 'es_ES' && 'Spanish'}
-                                                {locale === 'it_IT' && 'Italian'}
+                                                {locale === 'en_US' && __('English (US)', 'easycommerce-fakerpress')}
+                                                {locale === 'en_GB' && __('English (UK)', 'easycommerce-fakerpress')}
+                                                {locale === 'fr_FR' && __('French', 'easycommerce-fakerpress')}
+                                                {locale === 'de_DE' && __('German', 'easycommerce-fakerpress')}
+                                                {locale === 'es_ES' && __('Spanish', 'easycommerce-fakerpress')}
+                                                {locale === 'it_IT' && __('Italian', 'easycommerce-fakerpress')}
                                             </Listbox.Option>
                                         ))}
                                     </Listbox.Options>
@@ -272,7 +258,7 @@ export default function GeneratorBase({
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-gray-700">Random Seed (optional)</label>
+                            <label className="block text-sm font-medium text-gray-700">{__('Random Seed (optional)', 'easycommerce-fakerpress')}</label>
                             <Combobox
                                 value={parameters.seed || ''}
                                 onChange={(val) => handleParameterChange('seed', parseInt(val))}
@@ -282,7 +268,7 @@ export default function GeneratorBase({
                                     <Combobox.Input
                                         type="number"
                                         className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                                        placeholder="For reproducible data"
+                                        placeholder={__('For reproducible data', 'easycommerce-fakerpress')}
                                         onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
                                     />
                                 </div>
@@ -299,7 +285,7 @@ export default function GeneratorBase({
                                 >
                                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${parameters.include_meta !== false ? 'translate-x-6' : 'translate-x-1'}`} />
                                 </Switch>
-                                <Switch.Label className="ml-3 text-sm font-medium text-gray-700">Include additional metadata</Switch.Label>
+                                <Switch.Label className="ml-3 text-sm font-medium text-gray-700">{__('Include additional metadata', 'easycommerce-fakerpress')}</Switch.Label>
                             </Switch.Group>
                         </div>
                     </div>
@@ -314,7 +300,7 @@ export default function GeneratorBase({
                                     className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
                                     onClick={() => setShowAdvanced(!showAdvanced)}
                                 >
-                                    <span>Advanced Parameters</span>
+                                    <span>{__('Advanced Parameters', 'easycommerce-fakerpress')}</span>
                                     {open ? (
                                         <ChevronUpIcon className="h-5 w-5 text-gray-500" />
                                     ) : (
@@ -350,10 +336,10 @@ export default function GeneratorBase({
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Generating...
+                            {__('Generating...', 'easycommerce-fakerpress')}
                         </>
                     ) : (
-                        `Generate ${type}`
+                        sprintf(__('Generate %s', 'easycommerce-fakerpress'), type)
                     )}
                 </Button>
             </div>
@@ -367,7 +353,7 @@ export default function GeneratorBase({
                             </svg>
                         </div>
                         <div className="ml-3">
-                            <h3 className="text-sm font-medium text-red-800">Error</h3>
+                            <h3 className="text-sm font-medium text-red-800">{__('Error', 'easycommerce-fakerpress')}</h3>
                             <RawHTML className="mt-2 text-sm text-red-700">{error}</RawHTML>
                         </div>
                     </div>
@@ -383,13 +369,13 @@ export default function GeneratorBase({
                             </svg>
                         </div>
                         <div className="ml-3">
-                            <h3 className="text-sm font-medium text-green-800">Success!</h3>
+                            <h3 className="text-sm font-medium text-green-800">{__('Success!', 'easycommerce-fakerpress')}</h3>
                             <div className="mt-2 text-sm text-green-700">
-                                Generated {result.generated} {type}.
+                                {sprintf(__('Generated %1$d %2$s.', 'easycommerce-fakerpress'), result.generated, type)}
                             </div>
                             {result.data && result.data[type] && result.data[type].length > 0 && (
                                 <div className="mt-4">
-                                    <h4 className="text-sm font-medium text-gray-900">Generated items:</h4>
+                                    <h4 className="text-sm font-medium text-gray-900">{__('Generated items:', 'easycommerce-fakerpress')}</h4>
                                     <ul className="mt-2 text-sm text-gray-600 divide-y divide-gray-200">
                                         {result.data[type].slice(0, 5).map((item, index) => (
                                             <li key={index} className="flex justify-between py-2">
@@ -401,7 +387,7 @@ export default function GeneratorBase({
                                         ))}
                                         {result.data[type].length > 5 && (
                                             <li className="py-2 text-gray-500 italic">
-                                                ... and {result.data[type].length - 5} more
+                                                {sprintf(__('... and %d more', 'easycommerce-fakerpress'), result.data[type].length - 5)}
                                             </li>
                                         )}
                                     </ul>

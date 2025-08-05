@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function ProductVariationGenerator() {
@@ -21,7 +23,7 @@ export default function ProductVariationGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating product variations.');
+            setError(err.message || __('An error occurred while generating product variations.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,13 +31,13 @@ export default function ProductVariationGenerator() {
 
     const parameterConfig = {
         variation_type: {
-            description: 'Type of variations to generate',
+            description: __('Type of variations to generate', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['color', 'size', 'material', 'style', 'mixed'],
             default: 'mixed'
         },
         price_variation: {
-            description: 'Price variation settings',
+            description: __('Price variation settings', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 enable_variation: { type: 'boolean', default: true },
@@ -43,7 +45,7 @@ export default function ProductVariationGenerator() {
             }
         },
         stock_distribution: {
-            description: 'Stock quantity distribution',
+            description: __('Stock quantity distribution', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 low_stock_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 10 },
@@ -51,7 +53,7 @@ export default function ProductVariationGenerator() {
             }
         },
         attribute_complexity: {
-            description: 'Attribute complexity level',
+            description: __('Attribute complexity level', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['simple', 'moderate', 'complex'],
             default: 'moderate'
@@ -60,8 +62,8 @@ export default function ProductVariationGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Product Variations"
-            description="Create realistic product variations with different attributes, prices, and stock levels. Requires existing products to create variations for."
+            title={__('Generate Product Variations', 'easycommerce-fakerpress')}
+            description={__('Create realistic product variations with different attributes, prices, and stock levels. Requires existing products to create variations for.', 'easycommerce-fakerpress')}
             type="product-variations"
             onGenerate={handleGenerate}
             isLoading={isLoading}

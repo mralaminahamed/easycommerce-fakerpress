@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function CustomerGenerator() {
@@ -21,7 +23,7 @@ export default function CustomerGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating customers.');
+            setError(err.message || __('An error occurred while generating customers.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,7 +31,7 @@ export default function CustomerGenerator() {
 
     const parameterConfig = {
         customer_types: {
-            description: 'Types of customers to generate',
+            description: __('Types of customers to generate', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -38,7 +40,7 @@ export default function CustomerGenerator() {
             default: ['regular', 'returning']
         },
         demographics: {
-            description: 'Demographic distribution',
+            description: __('Demographic distribution', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 age_groups: {
@@ -60,7 +62,7 @@ export default function CustomerGenerator() {
             }
         },
         address_preferences: {
-            description: 'Address generation preferences',
+            description: __('Address generation preferences', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 include_billing: { type: 'boolean', default: true },
@@ -69,7 +71,7 @@ export default function CustomerGenerator() {
             }
         },
         purchase_history: {
-            description: 'Purchase history simulation',
+            description: __('Purchase history simulation', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 simulate_history: { type: 'boolean', default: true },
@@ -77,7 +79,7 @@ export default function CustomerGenerator() {
             }
         },
         contact_preferences: {
-            description: 'Contact and communication preferences',
+            description: __('Contact and communication preferences', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 phone_numbers: { type: 'boolean', default: true },
@@ -88,8 +90,8 @@ export default function CustomerGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Customers"
-            description="Create realistic customer accounts with demographics, addresses, contact information, and purchase history simulation."
+            title={__('Generate Customers', 'easycommerce-fakerpress')}
+            description={__('Create realistic customer accounts with demographics, addresses, contact information, and purchase history simulation.', 'easycommerce-fakerpress')}
             type="customers"
             onGenerate={handleGenerate}
             isLoading={isLoading}

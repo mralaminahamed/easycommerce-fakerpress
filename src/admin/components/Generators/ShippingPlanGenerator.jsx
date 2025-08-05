@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function ShippingPlanGenerator() {
@@ -21,7 +23,7 @@ export default function ShippingPlanGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating shipping plans.');
+            setError(err.message || __('An error occurred while generating shipping plans.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,7 +31,7 @@ export default function ShippingPlanGenerator() {
 
     const parameterConfig = {
         shipping_types: {
-            description: 'Types of shipping methods to generate',
+            description: __('Types of shipping methods to generate', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -38,7 +40,7 @@ export default function ShippingPlanGenerator() {
             default: ['standard', 'express', 'free']
         },
         cost_range: {
-            description: 'Shipping cost range',
+            description: __('Shipping cost range', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min: { type: 'number', minimum: 0, default: 0 },
@@ -46,7 +48,7 @@ export default function ShippingPlanGenerator() {
             }
         },
         coverage_areas: {
-            description: 'Geographic coverage areas',
+            description: __('Geographic coverage areas', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -55,7 +57,7 @@ export default function ShippingPlanGenerator() {
             default: ['domestic', 'international']
         },
         calculation_methods: {
-            description: 'Shipping calculation methods',
+            description: __('Shipping calculation methods', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -64,7 +66,7 @@ export default function ShippingPlanGenerator() {
             default: ['flat_rate', 'weight_based']
         },
         delivery_timeframes: {
-            description: 'Delivery time ranges',
+            description: __('Delivery time ranges', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min_days: { type: 'integer', minimum: 0, default: 1 },
@@ -75,8 +77,8 @@ export default function ShippingPlanGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Shipping Plans"
-            description="Create comprehensive shipping plans with different methods, costs, coverage areas, and delivery timeframes."
+            title={__('Generate Shipping Plans', 'easycommerce-fakerpress')}
+            description={__('Create comprehensive shipping plans with different methods, costs, coverage areas, and delivery timeframes.', 'easycommerce-fakerpress')}
             type="shipping-plans"
             onGenerate={handleGenerate}
             isLoading={isLoading}

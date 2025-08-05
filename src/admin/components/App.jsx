@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { __, sprintf } from '@wordpress/i18n';
+
 import ProductGenerator from './Generators/ProductGenerator';
 import CustomerGenerator from './Generators/CustomerGenerator';
 import OrderGenerator from './Generators/OrderGenerator';
@@ -11,22 +13,18 @@ import TransactionGenerator from './Generators/TransactionGenerator';
 import CartSessionGenerator from './Generators/CartSessionGenerator';
 import LocationGenerator from './Generators/LocationGenerator';
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-}
-
 export default function App() {
     const generators = [
-        { name: 'Products', component: ProductGenerator, category: 'Core', order: 1, description: 'Generate fake product data for testing.' },
-        { name: 'Customers', component: CustomerGenerator, category: 'Core', order: 2, description: 'Generate fake customer data for testing.' },
-        { name: 'Orders', component: OrderGenerator, category: 'Core', order: 3, description: 'Generate fake order data for testing.' },
-        { name: 'Coupons', component: CouponGenerator, category: 'Core', order: 4, description: 'Generate fake coupon data for testing.' },
-        { name: 'Product Variations', component: ProductVariationGenerator, category: 'Enhanced', order: 1, description: 'Generate fake product variation data.' },
-        { name: 'Shipping Plans', component: ShippingPlanGenerator, category: 'Enhanced', order: 2, description: 'Generate fake shipping plan data.' },
-        { name: 'Tax Classes', component: TaxGenerator, category: 'Enhanced', order: 3, description: 'Generate fake tax class data.' },
-        { name: 'Transactions', component: TransactionGenerator, category: 'Enhanced', order: 4, description: 'Generate fake transaction data.' },
-        { name: 'Cart Sessions', component: CartSessionGenerator, category: 'Enhanced', order: 5, description: 'Generate fake cart session data.' },
-        { name: 'Locations', component: LocationGenerator, category: 'Enhanced', order: 6, description: 'Generate fake location data.' },
+        { name: __('Products', 'easycommerce-fakerpress'), component: ProductGenerator, category: __('Core', 'easycommerce-fakerpress'), order: 1, description: __('Generate fake product data for testing.', 'easycommerce-fakerpress') },
+        { name: __('Customers', 'easycommerce-fakerpress'), component: CustomerGenerator, category: __('Core', 'easycommerce-fakerpress'), order: 2, description: __('Generate fake customer data for testing.', 'easycommerce-fakerpress') },
+        { name: __('Orders', 'easycommerce-fakerpress'), component: OrderGenerator, category: __('Core', 'easycommerce-fakerpress'), order: 3, description: __('Generate fake order data for testing.', 'easycommerce-fakerpress') },
+        { name: __('Coupons', 'easycommerce-fakerpress'), component: CouponGenerator, category: __('Core', 'easycommerce-fakerpress'), order: 4, description: __('Generate fake coupon data for testing.', 'easycommerce-fakerpress') },
+        { name: __('Product Variations', 'easycommerce-fakerpress'), component: ProductVariationGenerator, category: __('Enhanced', 'easycommerce-fakerpress'), order: 1, description: __('Generate fake product variation data.', 'easycommerce-fakerpress') },
+        { name: __('Shipping Plans', 'easycommerce-fakerpress'), component: ShippingPlanGenerator, category: __('Enhanced', 'easycommerce-fakerpress'), order: 2, description: __('Generate fake shipping plan data.', 'easycommerce-fakerpress') },
+        { name: __('Tax Classes', 'easycommerce-fakerpress'), component: TaxGenerator, category: __('Enhanced', 'easycommerce-fakerpress'), order: 3, description: __('Generate fake tax class data.', 'easycommerce-fakerpress') },
+        { name: __('Transactions', 'easycommerce-fakerpress'), component: TransactionGenerator, category: __('Enhanced', 'easycommerce-fakerpress'), order: 4, description: __('Generate fake transaction data.', 'easycommerce-fakerpress') },
+        { name: __('Cart Sessions', 'easycommerce-fakerpress'), component: CartSessionGenerator, category: __('Enhanced', 'easycommerce-fakerpress'), order: 5, description: __('Generate fake cart session data.', 'easycommerce-fakerpress') },
+        { name: __('Locations', 'easycommerce-fakerpress'), component: LocationGenerator, category: __('Enhanced', 'easycommerce-fakerpress'), order: 6, description: __('Generate fake location data.', 'easycommerce-fakerpress') },
     ];
 
     const [selectedGenerator, setSelectedGenerator] = useState(null);
@@ -47,9 +45,9 @@ export default function App() {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">EasyCommerce FakerPress</h1>
+                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{__('EasyCommerce FakerPress', 'easycommerce-fakerpress')}</h1>
                 <p className="mt-2 text-sm text-gray-500 leading-relaxed">
-                    Generate fake ecommerce data for testing and development with a seamless and intuitive interface.
+                    {__('Generate fake ecommerce data for testing and development with a seamless and intuitive interface.', 'easycommerce-fakerpress')}
                 </p>
             </div>
 
@@ -57,7 +55,7 @@ export default function App() {
                 <div className="flex">
                     {/* Sidebar for other generators */}
                     <div className="w-64 hidden lg:block">
-                        <h2 className="text-sm font-semibold text-gray-900 mb-4">Other Generators</h2>
+                        <h2 className="text-sm font-semibold text-gray-900 mb-4">{__('Other Generators', 'easycommerce-fakerpress')}</h2>
                         <ul className="space-y-2">
                             {sortedGenerators
                                 .filter(gen => gen.name !== selectedGenerator.name)
@@ -82,7 +80,7 @@ export default function App() {
                                 className="inline-flex items-center px-4 py-2 rounded-md bg-gray-100 text-gray-700 font-medium text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
                             >
                                 <ArrowLeftIcon className="h-5 w-5 mr-2" aria-hidden="true" />
-                                Back to Generators
+                                {__('Back to Generators', 'easycommerce-fakerpress')}
                             </button>
                             <nav className="flex" aria-label="Breadcrumb">
                                 <ol className="flex items-center space-x-2">
@@ -91,7 +89,7 @@ export default function App() {
                                             onClick={() => setSelectedGenerator(null)}
                                             className="text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200"
                                         >
-                                            Home
+                                            {__('Home', 'easycommerce-fakerpress')}
                                         </button>
                                     </li>
                                     <li>
@@ -112,7 +110,7 @@ export default function App() {
                 <div className="space-y-8">
                     {sortedCategories.map(category => (
                         <div key={category}>
-                            <h2 className="text-lg font-semibold text-gray-900 mb-4">{category} Generators</h2>
+                            <h2 className="text-lg font-semibold text-gray-900 mb-4">{sprintf(__('%s Generators', 'easycommerce-fakerpress'), category)}</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {groupedGenerators[category].map(generator => (
                                     <button

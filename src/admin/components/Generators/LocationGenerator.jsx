@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function LocationGenerator() {
@@ -21,7 +23,7 @@ export default function LocationGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating location data.');
+            setError(err.message || __('An error occurred while generating location data.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,29 +31,29 @@ export default function LocationGenerator() {
 
     const parameterConfig = {
         coverage_scope: {
-            description: 'Geographic coverage scope',
+            description: __('Geographic coverage scope', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['minimal', 'regional', 'national', 'international'],
             default: 'international'
         },
         data_completeness: {
-            description: 'Location data completeness level',
+            description: __('Location data completeness level', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['basic', 'standard', 'comprehensive'],
             default: 'standard'
         },
         include_coordinates: {
-            description: 'Include latitude/longitude coordinates',
+            description: __('Include latitude/longitude coordinates', 'easycommerce-fakerpress'),
             type: 'boolean',
             default: true
         },
         include_timezones: {
-            description: 'Include timezone information',
+            description: __('Include timezone information', 'easycommerce-fakerpress'),
             type: 'boolean',
             default: true
         },
         include_currencies: {
-            description: 'Include currency information',
+            description: __('Include currency information', 'easycommerce-fakerpress'),
             type: 'boolean',
             default: true
         }
@@ -60,8 +62,8 @@ export default function LocationGenerator() {
     return (
         <div>
             <GeneratorBase
-                title="Generate Location Data"
-                description="Create comprehensive location hierarchy data (countries, states, cities) for the EasyCommerce system. This populates the locations.json file used throughout the system."
+                title={__('Generate Location Data', 'easycommerce-fakerpress')}
+                description={__('Create comprehensive location hierarchy data (countries, states, cities) for the EasyCommerce system. This populates the locations.json file used throughout the system.', 'easycommerce-fakerpress')}
                 type="locations"
                 onGenerate={handleGenerate}
                 isLoading={isLoading}
@@ -71,11 +73,9 @@ export default function LocationGenerator() {
             />
 
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">Important Note</h4>
+                <h4 className="font-medium text-blue-900 mb-2">{__('Important Note', 'easycommerce-fakerpress')}</h4>
                 <p className="text-sm text-blue-800">
-                    The Location Generator creates the foundational geographic data used by other generators.
-                    It's recommended to run this first, especially before generating customers and orders that
-                    rely on realistic address data. The generated data is saved to the EasyCommerce locations.json file.
+                    {__('The Location Generator creates the foundational geographic data used by other generators. It\'s recommended to run this first, especially before generating customers and orders that rely on realistic address data. The generated data is saved to the EasyCommerce locations.json file.', 'easycommerce-fakerpress')}
                 </p>
             </div>
         </div>

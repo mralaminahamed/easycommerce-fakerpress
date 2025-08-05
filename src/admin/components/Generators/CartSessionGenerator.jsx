@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function CartSessionGenerator() {
@@ -21,7 +23,7 @@ export default function CartSessionGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating cart sessions.');
+            setError(err.message || __('An error occurred while generating cart sessions.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,7 +31,7 @@ export default function CartSessionGenerator() {
 
     const parameterConfig = {
         session_statuses: {
-            description: 'Cart session statuses to generate',
+            description: __('Cart session statuses to generate', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -38,7 +40,7 @@ export default function CartSessionGenerator() {
             default: ['pending', 'abandoned', 'completed']
         },
         abandonment_scenarios: {
-            description: 'Cart abandonment scenarios',
+            description: __('Cart abandonment scenarios', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 abandonment_rate: { type: 'integer', minimum: 0, maximum: 100, default: 70 },
@@ -46,7 +48,7 @@ export default function CartSessionGenerator() {
             }
         },
         items_per_cart: {
-            description: 'Items per cart session',
+            description: __('Items per cart session', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min: { type: 'integer', minimum: 1, default: 1 },
@@ -54,7 +56,7 @@ export default function CartSessionGenerator() {
             }
         },
         value_ranges: {
-            description: 'Cart value ranges',
+            description: __('Cart value ranges', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min_value: { type: 'number', minimum: 0, default: 10 },
@@ -62,7 +64,7 @@ export default function CartSessionGenerator() {
             }
         },
         recovery_simulation: {
-            description: 'Cart recovery simulation',
+            description: __('Cart recovery simulation', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 enable_recovery: { type: 'boolean', default: true },
@@ -73,8 +75,8 @@ export default function CartSessionGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Cart Sessions"
-            description="Create shopping cart sessions with abandonment scenarios for analyzing cart recovery and customer behavior."
+            title={__('Generate Cart Sessions', 'easycommerce-fakerpress')}
+            description={__('Create shopping cart sessions with abandonment scenarios for analyzing cart recovery and customer behavior.', 'easycommerce-fakerpress')}
             type="cart-sessions"
             onGenerate={handleGenerate}
             isLoading={isLoading}

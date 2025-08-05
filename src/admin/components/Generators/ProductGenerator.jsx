@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function ProductGenerator() {
@@ -21,7 +23,7 @@ export default function ProductGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating products.');
+            setError(err.message || __('An error occurred while generating products.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,13 +31,13 @@ export default function ProductGenerator() {
 
     const parameterConfig = {
         product_type: {
-            description: 'Type of products to generate',
+            description: __('Type of products to generate', 'easycommerce-fakerpress'),
             type: 'string',
             enum: ['simple', 'variable', 'grouped', 'external', 'digital', 'mixed'],
             default: 'mixed'
         },
         price_range: {
-            description: 'Price range for generated products',
+            description: __('Price range for generated products', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min: { type: 'number', minimum: 0, default: 10 },
@@ -43,7 +45,7 @@ export default function ProductGenerator() {
             }
         },
         categories: {
-            description: 'Product categories configuration',
+            description: __('Product categories configuration', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 create_new: { type: 'boolean', default: true },
@@ -51,7 +53,7 @@ export default function ProductGenerator() {
             }
         },
         attributes: {
-            description: 'Product attributes configuration',
+            description: __('Product attributes configuration', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 include_attributes: { type: 'boolean', default: true },
@@ -59,7 +61,7 @@ export default function ProductGenerator() {
             }
         },
         inventory: {
-            description: 'Inventory settings',
+            description: __('Inventory settings', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 manage_stock: { type: 'boolean', default: true },
@@ -73,7 +75,7 @@ export default function ProductGenerator() {
             }
         },
         content_options: {
-            description: 'Content generation options',
+            description: __('Content generation options', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 include_images: { type: 'boolean', default: false },
@@ -84,8 +86,8 @@ export default function ProductGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Products"
-            description="Create fake products with random names, descriptions, prices, and attributes. Configure product types, pricing, categories, and inventory settings."
+            title={__('Generate Products', 'easycommerce-fakerpress')}
+            description={__('Create fake products with random names, descriptions, prices, and attributes. Configure product types, pricing, categories, and inventory settings.', 'easycommerce-fakerpress')}
             type="products"
             onGenerate={handleGenerate}
             isLoading={isLoading}

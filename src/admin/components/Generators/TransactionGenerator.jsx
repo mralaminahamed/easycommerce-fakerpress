@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function TransactionGenerator() {
@@ -21,7 +23,7 @@ export default function TransactionGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating transactions.');
+            setError(err.message || __('An error occurred while generating transactions.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,7 +31,7 @@ export default function TransactionGenerator() {
 
     const parameterConfig = {
         transaction_types: {
-            description: 'Types of transactions to generate',
+            description: __('Types of transactions to generate', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -38,7 +40,7 @@ export default function TransactionGenerator() {
             default: ['payment', 'refund', 'adjustment']
         },
         payment_gateways: {
-            description: 'Payment gateways to simulate',
+            description: __('Payment gateways to simulate', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -47,7 +49,7 @@ export default function TransactionGenerator() {
             default: ['stripe', 'paypal', 'square']
         },
         amount_range: {
-            description: 'Transaction amount range',
+            description: __('Transaction amount range', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min: { type: 'number', minimum: 0, default: 1 },
@@ -55,7 +57,7 @@ export default function TransactionGenerator() {
             }
         },
         status_distribution: {
-            description: 'Transaction status distribution',
+            description: __('Transaction status distribution', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 success_rate: { type: 'integer', minimum: 0, maximum: 100, default: 85 },
@@ -67,8 +69,8 @@ export default function TransactionGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Transactions"
-            description="Create realistic payment transaction history with different gateways, amounts, and status distributions."
+            title={__('Generate Transactions', 'easycommerce-fakerpress')}
+            description={__('Create realistic payment transaction history with different gateways, amounts, and status distributions.', 'easycommerce-fakerpress')}
             type="transactions"
             onGenerate={handleGenerate}
             isLoading={isLoading}

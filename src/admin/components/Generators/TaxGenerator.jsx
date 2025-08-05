@@ -1,5 +1,7 @@
 import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+
 import GeneratorBase from '../GeneratorBase';
 
 export default function TaxGenerator() {
@@ -21,7 +23,7 @@ export default function TaxGenerator() {
 
             setResult(data);
         } catch (err) {
-            setError(err.message || 'An error occurred while generating tax classes.');
+            setError(err.message || __('An error occurred while generating tax classes.', 'easycommerce-fakerpress'));
         } finally {
             setIsLoading(false);
         }
@@ -29,7 +31,7 @@ export default function TaxGenerator() {
 
     const parameterConfig = {
         tax_types: {
-            description: 'Types of tax classes to generate',
+            description: __('Types of tax classes to generate', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -38,7 +40,7 @@ export default function TaxGenerator() {
             default: ['standard', 'reduced', 'luxury']
         },
         rate_ranges: {
-            description: 'Tax rate ranges',
+            description: __('Tax rate ranges', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
                 min_rate: { type: 'number', minimum: 0, maximum: 50, default: 0 },
@@ -46,7 +48,7 @@ export default function TaxGenerator() {
             }
         },
         jurisdictions: {
-            description: 'Tax jurisdictions',
+            description: __('Tax jurisdictions', 'easycommerce-fakerpress'),
             type: 'array',
             items: {
                 type: 'string',
@@ -58,8 +60,8 @@ export default function TaxGenerator() {
 
     return (
         <GeneratorBase
-            title="Generate Tax Classes"
-            description="Create tax classes with location-based rates for different jurisdictions and product types."
+            title={__('Generate Tax Classes', 'easycommerce-fakerpress')}
+            description={__('Create tax classes with location-based rates for different jurisdictions and product types.', 'easycommerce-fakerpress')}
             type="taxes"
             onGenerate={handleGenerate}
             isLoading={isLoading}
