@@ -20,6 +20,8 @@ use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Attribute;
 use EasyCommerce\Models\Attribute_Value;
 use EasyCommerce\Models\Database;
+use Exception;
+use RuntimeException;
 use WP_Error;
 
 /**
@@ -41,36 +43,19 @@ class Product_Variation_Generator extends Generator {
 	/**
 	 * Generate a single product variation
 	 *
-	 * @return array|WP_Error|bool Single variation data, error, or false on failure.
-	 * @throws \Exception When no products are found or on other errors.
+	 * @return array|bool Single variation data, error, or false on failure.
+	 * @throws RuntimeException When no products are found or on other errors.
 	 */
 	protected function generate_single_item() {
 		try {
-			// Get existing products to create variations for using WordPress posts.
-			$products = get_posts(
-				array(
-					'post_type'   => 'product',
-					'post_status' => 'publish',
-					'numberposts' => 20,
-					'orderby'     => 'rand',
-					'fields'      => 'ids',
-					'meta_query'  => array(
-						array(
-							'key'     => '_easycommerce_product_id',
-							'compare' => 'EXISTS',
-						),
-					),
-				)
-			);
+			$data     = Product::list( array(), 20 );
+			$products = $data['products'] ?? array();
 
 			if ( empty( $products ) ) {
-				throw new \Exception( 'No products found. Please generate products first.' );
+				throw new RuntimeException( 'No products found. Please generate products first.' );
 			}
 
-			$product_post_id = $this->faker->randomElement( $products );
-			$product_id      = get_post_meta( $product_post_id, '_easycommerce_product_id', true );
-			$product_obj     = new Product( $product_id );
-
+			$product_obj = $this->faker->randomElement( $products );
 			if ( ! $product_obj->exists() ) {
 				return false;
 			}
@@ -109,7 +94,7 @@ class Product_Variation_Generator extends Generator {
 			}
 
 			return false;
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate variation: ' . $e->getMessage(), 'error' );
 			return false;
 		}
@@ -143,7 +128,9 @@ class Product_Variation_Generator extends Generator {
 	 * @return array Variation data.
 	 */
 	private function generate_variation_data( Product $product ): array {
-		$base_price      = $product->get_regular_price() ? $product->get_regular_price() : $this->faker->randomFloat( 2, 10, 500 );
+		$prices = $product->get_prices( false );
+
+		$base_price      = (float) ( $prices[0]['regular_price'] ?? $this->faker->randomFloat( 2, 10, 500 ) );
 		$price_variation = $this->faker->randomFloat( 2, -0.2 * $base_price, 0.3 * $base_price );
 		$regular_price   = max( 1, $base_price + $price_variation );
 
@@ -162,6 +149,7 @@ class Product_Variation_Generator extends Generator {
 			'type'           => $this->faker->randomElement( array( 'physical', 'digital' ) ),
 			'price'          => $regular_price,
 			'sale_price'     => $sale_price,
+			'sku'            => $this->generate_variation_sku( $product->get_slug(), $variation_attributes ),
 			'stock_quantity' => $this->faker->numberBetween( 0, 100 ),
 			'stock_limit'    => $this->faker->numberBetween( 5, 20 ),
 			'status'         => $this->faker->randomElement( array( 'active', 'inactive', 'draft' ) ),

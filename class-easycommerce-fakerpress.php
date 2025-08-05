@@ -289,7 +289,9 @@ class EasyCommerce_FakerPress {
 	 * @return bool True if EasyCommerce is active, false otherwise.
 	 */
 	public function is_easycommerce_active(): bool {
-		return is_plugin_active( 'easycommerce/easycommerce.php' );
+		$plugin = 'easycommerce/easycommerce.php';
+
+		return in_array( $plugin, (array) get_option( 'active_plugins', array() ), true );
 	}
 
 	/**

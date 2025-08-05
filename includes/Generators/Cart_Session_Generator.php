@@ -10,6 +10,8 @@ use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Helpers\Utility;
+use Exception;
+use RuntimeException;
 use WP_Error;
 
 /**
@@ -32,10 +34,11 @@ class Cart_Session_Generator extends Generator {
 	 * Generate a single cart session
 	 *
 	 * @return array|bool Single cart session data, error, or false on failure.
+	 * @throws RuntimeException If no products or customers are found.
 	 */
 	protected function generate_single_item() {
 		try {
-			// Get existing products and customers
+			// Get existing products and customers.
 			$product_db  = new Database( 'products' );
 			$customer_db = new Database( 'customers' );
 
@@ -43,7 +46,7 @@ class Cart_Session_Generator extends Generator {
 			$customers = $customer_db->exec( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 30" );
 
 			if ( empty( $products ) ) {
-				throw new \RuntimeException( 'No products found. Please generate products first.' );
+				throw new RuntimeException( 'No products found. Please generate products first.' );
 			}
 
 			$cart_data    = $this->generate_cart_session_data( $products, $customers );
@@ -67,7 +70,7 @@ class Cart_Session_Generator extends Generator {
 			}
 
 			return false;
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate cart session: ' . $e->getMessage(), 'error' );
 			return false;
 		}
@@ -76,8 +79,8 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate multiple cart sessions.
 	 *
-	 * @param int   $count Number of cart sessions to generate
-	 * @param array $args Additional arguments
+	 * @param int   $count Number of cart sessions to generate.
+	 * @param array $args Additional arguments.
 	 * @return array Generated cart session data
 	 */
 	public function generate_multiple( int $count = 15, array $args = array() ): array {
@@ -97,8 +100,8 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart session data.
 	 *
-	 * @param array $products Available products
-	 * @param array $customers Available customers
+	 * @param array $products Available products.
+	 * @param array $customers Available customers.
 	 * @return array Cart session data
 	 */
 	private function generate_cart_session_data( array $products, array $customers ): array {
@@ -149,7 +152,7 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart items.
 	 *
-	 * @param array $products Available products
+	 * @param array $products Available products.
 	 * @return array Cart items
 	 */
 	private function generate_cart_items( array $products ): array {
@@ -187,7 +190,7 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Calculate cart total amount.
 	 *
-	 * @param array $items Cart items
+	 * @param array $items Cart items.
 	 * @return float Total amount
 	 */
 	private function calculate_cart_total( array $items ): float {
@@ -247,34 +250,34 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart timeline based on status.
 	 *
-	 * @param string $status Cart status
+	 * @param string $status Cart status.
 	 * @return array Timeline data
 	 */
 	private function generate_cart_timeline( string $status ): array {
-		$now = current_time( 'timestamp' );
+		$now = current_datetime()->getTimestamp();
 
 		switch ( $status ) {
 			case 'pending':
-				// Active carts - recent activity
+				// Active carts - recent activity.
 				$created_hours_ago   = $this->faker->numberBetween( 1, 24 );
 				$updated_minutes_ago = $this->faker->numberBetween( 1, 180 );
 				break;
 
 			case 'abandoned':
-				// Abandoned carts - older with no recent activity
+				// Abandoned carts - older with no recent activity.
 				$created_hours_ago   = $this->faker->numberBetween( 24, 168 ); // 1-7 days ago
 				$updated_hours_ago   = $this->faker->numberBetween( 2, 72 ); // 2-72 hours ago
 				$updated_minutes_ago = $updated_hours_ago * 60;
 				break;
 
 			case 'completed':
-				// Completed carts
+				// Completed carts.
 				$created_hours_ago   = $this->faker->numberBetween( 1, 72 );
 				$updated_minutes_ago = $this->faker->numberBetween( 30, $created_hours_ago * 60 );
 				break;
 
 			case 'cancelled':
-				// Cancelled carts
+				// Cancelled carts.
 				$created_hours_ago   = $this->faker->numberBetween( 1, 48 );
 				$updated_minutes_ago = $this->faker->numberBetween( 10, $created_hours_ago * 60 );
 				break;
@@ -284,8 +287,8 @@ class Cart_Session_Generator extends Generator {
 				$updated_minutes_ago = $this->faker->numberBetween( 1, 180 );
 		}
 
-		$created_at = date( 'Y-m-d H:i:s', $now - ( $created_hours_ago * 3600 ) );
-		$updated_at = date( 'Y-m-d H:i:s', $now - ( $updated_minutes_ago * 60 ) );
+		$created_at = wp_date( 'Y-m-d H:i:s', $now - ( $created_hours_ago * 3600 ) );
+		$updated_at = wp_date( 'Y-m-d H:i:s', $now - ( $updated_minutes_ago * 60 ) );
 
 		return array(
 			'created_at' => $created_at,
@@ -296,13 +299,13 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate reminder count based on status.
 	 *
-	 * @param string $status Cart status
+	 * @param string $status Cart status.
 	 * @return int Reminder count
 	 */
 	private function generate_reminder_count( string $status ): int {
 		switch ( $status ) {
 			case 'abandoned':
-				return $this->faker->numberBetween( 1, 5 ); // Abandoned carts get reminders
+				return $this->faker->numberBetween( 1, 5 ); // Abandoned carts get reminders.
 			case 'pending':
 				return $this->faker->boolean( 30 ) ? $this->faker->numberBetween( 0, 2 ) : 0;
 			default:
@@ -313,31 +316,31 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Create cart session in database.
 	 *
-	 * @param array $data Cart session data
+	 * @param array $data Cart session data.
 	 * @return array|null Created cart session data
 	 */
 	private function create_cart_session( array $data ): ?array {
 		$cart_db = new Database( 'cart_sessions' );
 
-		// Generate unique hash
+		// Generate unique hash.
 		$hash = Utility::generate_hash();
 
-		// Prepare cart data for database
+		// Prepare cart data for database.
 		$cart_data = array(
 			'items' => $data['items'],
 		);
 
-		// Add addresses if present
+		// Add addresses if present.
 		if ( ! empty( $data['addresses'] ) ) {
 			$cart_data['address'] = $data['addresses'];
 		}
 
-		// Add coupons randomly (20% chance)
+		// Add coupons randomly (20% chance).
 		if ( $this->faker->boolean( 20 ) ) {
 			$cart_data['coupons'] = array( $this->faker->regexify( '[A-Z]{4}[0-9]{2}' ) );
 		}
 
-		// Add shipping method randomly (30% chance)
+		// Add shipping method randomly (30% chance).
 		if ( $this->faker->boolean( 30 ) ) {
 			$cart_data['shipping_method'] = $this->faker->numberBetween( 1, 5 );
 		}
@@ -355,13 +358,13 @@ class Cart_Session_Generator extends Generator {
 		$cart_id = $cart_db->insert_row( $db_data );
 
 		if ( $cart_id ) {
-			// Get customer details
+			// Get customer details.
 			$customer_email = '';
 			$customer_name  = '';
 
 			if ( $data['user_id'] > 0 ) {
 				$customer = new Customer( $data['user_id'] );
-				if ( $customer->exists() ) {
+				if ( $customer->get_id() ) {
 					$customer_email = $customer->get_email();
 					$customer_name  = $customer->get_name();
 				}
@@ -393,37 +396,39 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate abandoned cart scenarios specifically.
 	 *
-	 * @param int $count Number of abandoned carts to generate
+	 * @param int $count Number of abandoned carts to generate.
 	 * @return array Generated abandoned cart data
 	 */
 	public function generate_abandoned_carts( int $count = 10 ): array {
 		$results = array();
 
-		// Get existing products and customers
+		// Get existing products and customers.
 		$product_db  = new Database( 'products' );
 		$customer_db = new Database( 'customers' );
 
-		$products  = $product_db->get_results( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 30" );
-		$customers = $customer_db->get_results( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 20" );
+		$products  = $product_db->exec( "SELECT id FROM {$product_db->get_table()} ORDER BY RAND() LIMIT 30" );
+		$customers = $customer_db->exec( "SELECT id FROM {$customer_db->get_table()} ORDER BY RAND() LIMIT 20" );
 
 		for ( $i = 0; $i < $count; $i++ ) {
 			try {
 				$cart_data              = $this->generate_cart_session_data( $products, $customers );
-				$cart_data['status']    = 'abandoned'; // Force abandoned status
+				$cart_data['status']    = 'abandoned'; // Force abandoned status.
 				$cart_data['reminders'] = $this->faker->numberBetween( 0, 3 );
 
-				// Ensure older timeline for abandoned carts
-				$hours_ago               = $this->faker->numberBetween( 48, 336 ); // 2-14 days ago
-				$cart_data['created_at'] = date( 'Y-m-d H:i:s', current_time( 'timestamp' ) - ( $hours_ago * 3600 ) );
-				$cart_data['updated_at'] = date( 'Y-m-d H:i:s', current_time( 'timestamp' ) - ( $this->faker->numberBetween( 24, $hours_ago ) * 3600 ) );
+				// Ensure older timeline for abandoned carts.
+				$now       = current_datetime()->getTimestamp();
+				$hours_ago = $this->faker->numberBetween( 48, 336 ); // 2-14 days ago
+
+				$cart_data['created_at'] = wp_date( 'Y-m-d H:i:s', $now - ( $hours_ago * 3600 ) );
+				$cart_data['updated_at'] = wp_date( 'Y-m-d H:i:s', $now - ( $this->faker->numberBetween( 24, $hours_ago ) * 3600 ) );
 
 				$cart_session = $this->create_cart_session( $cart_data );
 
 				if ( $cart_session ) {
 					$results[] = $cart_session;
 				}
-			} catch ( \Exception $e ) {
-				$this->log_error( "Failed to generate abandoned cart {$i}: " . $e->getMessage() );
+			} catch ( Exception $e ) {
+				$this->log( "Failed to generate abandoned cart {$i}: " . $e->getMessage(), 'error' );
 				continue;
 			}
 		}

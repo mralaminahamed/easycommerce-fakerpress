@@ -3,11 +3,11 @@
  * PHPUnit bootstrap file for EasyCommerce FakerPress
  */
 
-// Define plugin directories
+// Define plugin directories..
 define( 'TEST_ECFP_DIR', dirname( __DIR__, 2 ) );
-define( 'TEST_EC_DIR', dirname( TEST_ECFP_DIR, 1 ) . '/easycommerce' );
+define( 'TEST_EC_DIR', dirname( __DIR__, 3 ) . '/easycommerce' );
 
-// Composer autoloader must be loaded before WP_PHPUNIT__DIR will be available
+// Composer autoloader must be loaded before WP_PHPUNIT__DIR will be available.
 require_once TEST_ECFP_DIR . '/vendor/autoload.php';
 
 // Define WordPress test environment path
@@ -28,31 +28,29 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 function ecfp_truncate_table_data(): void {
 	$tables = array(
 		'ecfp_generated_data',
-		// Add other tables as needed
+		// Add other tables as needed.
 	);
 
 	global $wpdb;
 	foreach ( $tables as $table_name ) {
-		$table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $wpdb->prefix . $table_name ) );
+		$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . $table_name ) );
 		if ( $table_exists ) {
 			$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}{$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 	}
 }
 
-// Give access to tests_add_filter() function
+// Give access to tests_add_filter() function.
 require_once $_tests_dir . '/includes/functions.php';
 
 /**
  * Manually load the plugins being tested
  */
 function _manually_load_plugin() {
-	// Load EasyCommerce if the directory exists
-	if ( file_exists( TEST_EC_DIR . '/easycommerce.php' ) ) {
-		require TEST_EC_DIR . '/easycommerce.php';
-	}
+	// Load EasyCommerce if the directory exists.
+	require TEST_EC_DIR . '/easycommerce.php';
 
-	// Load our plugin
+	// Load our plugin.
 	require TEST_ECFP_DIR . '/easycommerce-fakerpress.php';
 }
 
@@ -62,7 +60,7 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
  * Install EasyCommerce for testing
  */
 function install_easycommerce() {
-	// Skip if EasyCommerce doesn't exist
+	// Skip if EasyCommerce doesn't exist..
 	if ( ! file_exists( TEST_EC_DIR . '/easycommerce.php' ) ) {
 		echo 'Warning: EasyCommerce plugin not found. Some tests may fail.' . PHP_EOL;
 		return;
@@ -70,12 +68,10 @@ function install_easycommerce() {
 
 	echo 'Installing EasyCommerce...' . PHP_EOL;
 
-	// Install EasyCommerce if it has an installation method
-	if ( function_exists( 'easycommerce_install' ) ) {
-		easycommerce_install();
-	}
+	// Install EasyCommerce if it has an installation method.
+	easycommerce_install();
 
-	// Reload capabilities after install
+	// Reload capabilities after install.
 	if ( version_compare( $GLOBALS['wp_version'], '4.7', '<' ) ) {
 		$GLOBALS['wp_roles']->reinit();
 	} else {
@@ -90,18 +86,18 @@ function install_easycommerce() {
 function install_ecfp() {
 	echo 'Installing EasyCommerce FakerPress...' . PHP_EOL;
 
-	// Clean up existing tables
+	// Clean up existing tables.
 	ecfp_truncate_table_data();
 
-	// Activate the plugin
+	// Activate the plugin.
 	if ( function_exists( 'easycommerce_fakerpress' ) ) {
 		easycommerce_fakerpress()->activate();
 	}
 }
 
-// Install dependencies and our plugin
+// Install dependencies and our plugin.
 tests_add_filter( 'setup_theme', 'install_easycommerce' );
 tests_add_filter( 'setup_theme', 'install_ecfp' );
 
-// Start up the WP testing environment
+// Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';

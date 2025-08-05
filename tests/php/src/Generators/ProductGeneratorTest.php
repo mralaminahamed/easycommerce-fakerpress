@@ -2,8 +2,8 @@
 
 namespace EasyCommerceFakerPress\Tests\Generators;
 
+use EasyCommerceFakerPress\Generators\Product_Generator;
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use ECFP_Product_Generator;
 
 /**
  * Test class for Product Generator
@@ -13,7 +13,7 @@ use ECFP_Product_Generator;
 class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var ECFP_Product_Generator
+	 * @var Product_Generator
 	 */
 	private $generator;
 
@@ -22,11 +22,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
-		// Only create generator if the class exists
-		if ( class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->generator = new ECFP_Product_Generator();
-		}
+
+		$this->generator = new Product_Generator();
 	}
 
 	/**
@@ -112,7 +109,7 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'success', $result );
-		
+
 		// Should succeed or return appropriate error for large count
 		if ( $result['success'] ) {
 			$this->assertEquals( 100, $result['products_created'] );
@@ -189,7 +186,7 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (5 seconds)
 		$this->assertLessThan( 5, $execution_time, 'Product generation took too long' );
-		
+
 		if ( $result['success'] ) {
 			$this->assertEquals( 10, $result['products_created'] );
 		}
@@ -211,7 +208,7 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 10MB for 20 products)
 		$this->assertLessThan( 10 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		if ( $result['success'] ) {
 			$this->assertEquals( 20, $result['products_created'] );
 		}

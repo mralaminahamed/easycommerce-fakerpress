@@ -253,7 +253,7 @@ class Shipping_Plan_Generator extends Generator {
 				'cost' => $this->faker->randomFloat( 2, 4.99, 9.99 ),
 			),
 			array(
-				'name' => "Free Shipping (Orders over ${minimum_order})",
+				'name' => "Free Shipping (Orders over {$minimum_order})",
 				'min'  => $minimum_order,
 				'max'  => 999999.99,
 				'cost' => 0.00,

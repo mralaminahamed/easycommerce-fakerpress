@@ -71,13 +71,14 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 
 	/**
 	 * Tear down the test case.
+	 *
 	 * @see https://make.wordpress.org/core/handbook/testing/automated-testing/writing-phpunit-tests/#shared-fixtures
 	 *
 	 * @return void
 	 */
 	public function tear_down() {
 		Monkey\tearDown();
-		
+
 		parent::tear_down();
 	}
 
