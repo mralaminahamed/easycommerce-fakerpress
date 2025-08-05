@@ -130,6 +130,8 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
+		global $_wp_admin_css_colors;
+
 		if ( 'toplevel_page_easycommerce-fakerpress' !== $hook ) {
 			return;
 		}
@@ -142,6 +144,17 @@ class EasyCommerce_FakerPress {
 		$asset_data = require $asset_file;
 		$deps       = $asset_data['dependencies'];
 		$version    = $asset_data['version'];
+
+		$current_color = get_user_option( 'admin_color', get_current_user_id() ) ?? 'fresh';
+		$color_scheme  = $_wp_admin_css_colors[ $current_color ] ?? $_wp_admin_css_colors['fresh'];
+
+		// Extract colors for Tailwind CSS variables.
+		$admin_colors = array(
+			'primary'   => $color_scheme->colors[0] ?? '#2271b1',
+			'secondary' => $color_scheme->colors[1] ?? '#135e96',
+			'highlight' => $color_scheme->colors[2] ?? '#043f54',
+			'accent'    => $color_scheme->colors[3] ?? '#0a4b78',
+		);
 
 		wp_enqueue_script(
 			'easycommerce-fakerpress-admin',
@@ -158,12 +171,24 @@ class EasyCommerce_FakerPress {
 			$version
 		);
 
+		// Add CSS variables for admin colors.
+		$css_vars = sprintf(
+			':root { --wp-admin-primary: %s; --wp-admin-secondary: %s; --wp-admin-highlight: %s; --wp-admin-accent: %s; }',
+			esc_attr( $admin_colors['primary'] ),
+			esc_attr( $admin_colors['secondary'] ),
+			esc_attr( $admin_colors['highlight'] ),
+			esc_attr( $admin_colors['accent'] )
+		);
+		wp_add_inline_style( 'easycommerce-fakerpress-admin', $css_vars );
+
 		wp_localize_script(
 			'easycommerce-fakerpress-admin',
 			'ecfpApi',
 			array(
-				'restUrl'   => rest_url( 'easycommerce-fakerpress/v1/' ),
-				'restNonce' => wp_create_nonce( 'wp_rest' ),
+				'restUrl'     => rest_url( 'easycommerce-fakerpress/v1/' ),
+				'restNonce'   => wp_create_nonce( 'wp_rest' ),
+				'adminColors' => $admin_colors,
+				'colorScheme' => $current_color,
 			)
 		);
 

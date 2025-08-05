@@ -8,20 +8,31 @@ Stable tag: 2.0.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic fake ecommerce data with complete EasyCommerce model integration, advanced business logic, and modern React admin interface.
+Generate realistic fake ecommerce data with 10 specialized generators, advanced parameter configuration, WordPress admin color integration, and modern React interface.
 
 == Description ==
 
-EasyCommerce FakerPress is a professional WordPress plugin designed for developers and store owners who need realistic test data for their EasyCommerce stores. Built with modern technologies and complete EasyCommerce model integration, it provides comprehensive data generation with advanced business logic and realistic customer journeys.
+EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. Version 2.0 features 10 specialized generators, advanced parameter systems, automatic WordPress admin color integration, and enhanced business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
 
-**✨ Core Features:**
+**🗂️ 10 Specialized Generators:**
 
-* **🛍️ Advanced Product Generation**: Create products with attributes, variations, categories, pricing, gallery images, and inventory management
-* **👥 Comprehensive Customer Profiles**: Generate customers with realistic purchase history, loyalty tiers, and behavioral patterns
-* **📦 Complete Order Management**: Create orders with payment processing, shipping calculations, tax management, and fulfillment tracking
-* **🎫 Sophisticated Coupon System**: Generate coupons with comprehensive rule engines, restrictions, and business logic
-* **⚡ EasyCommerce Integration**: Full integration with EasyCommerce models, database abstraction, and business rules
-* **🏗️ Modern Architecture**: PSR-4 namespacing, REST API controllers, abstract base classes, and dependency injection
+* **🛍️ Products**: Advanced products with attributes, variations, categories, pricing, and inventory management
+* **👥 Customers**: Comprehensive profiles with demographics, purchase history, and loyalty tier progression
+* **📦 Orders**: Complete orders with payment processing, shipping, tax calculations, and item metadata
+* **🎫 Coupons**: Sophisticated discount coupons with usage limits, restrictions, and validity periods
+* **🔄 Product Variations**: Detailed variations with attribute systems and inventory tracking
+* **🚚 Shipping Plans**: Shipping methods with regional coverage, carrier selection, and cost calculations
+* **💰 Tax Management**: Multi-jurisdiction tax classes with location-based rates and rule systems
+* **💳 Transactions**: Payment transaction history with multiple gateways and status distributions
+* **🛒 Cart Sessions**: Shopping cart sessions with abandonment scenarios and recovery simulation
+* **🌍 Location Data**: Comprehensive geographic hierarchy (countries, states, cities) with coordinates
+
+**🎨 Advanced User Experience:**
+
+* **WordPress Admin Color Integration**: Automatically adapts to user's chosen admin color scheme
+* **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation
+* **Enhanced Form Controls**: Modern React interface with smart form fields and proper labeling
+* **Real-time Feedback**: Live generation progress with detailed status updates and error handling
 
 **🎯 Advanced Features:**
 
@@ -185,49 +196,41 @@ Options for data cleanup:
 == Changelog ==
 
 = 2.0.0 =
-**Release Date: August 4, 2025**
+**Release Date: August 5, 2025**
 
-**🚀 Major Architecture Update:**
+**🚀 Complete Platform Overhaul:**
 
-**EasyCommerce Integration:**
-* ✨ Complete EasyCommerce model integration replacing direct database queries
-* 🔗 Native Product, Customer, Order, and Coupon model usage
-* 📊 EasyCommerce Database class integration for consistent data access
-* 🎯 Business rule enforcement through EasyCommerce validation systems
-* 🏷️ Comprehensive attribute system with proper relationships
-* 📝 EasyCommerce meta system integration for extended data storage
+**10 Specialized Generators:**
+* ✨ **Products**: Advanced generation with attributes, variations, categories, and inventory
+* 👥 **Customers**: Comprehensive profiles with demographics and loyalty tier progression
+* 📦 **Orders**: Complete orders with payment processing, shipping, and item metadata
+* 🎫 **Coupons**: Sophisticated discount system with usage limits and restrictions
+* 🔄 **Product Variations**: Detailed variations with attribute systems and inventory tracking
+* 🚚 **Shipping Plans**: Methods with regional coverage and cost calculations
+* 💰 **Tax Management**: Multi-jurisdiction tax classes with location-based rates
+* 💳 **Transactions**: Payment transaction history with multiple gateways
+* 🛒 **Cart Sessions**: Shopping cart abandonment scenarios and recovery simulation
+* 🌍 **Location Data**: Geographic hierarchy with coordinates and timezone support
 
-**Modern Architecture:**
-* 📦 PSR-4 namespace restructuring with Composer autoloading
-* 🏗️ Abstract base classes for consistent patterns and extensibility
-* 🌐 REST API controllers replacing legacy AJAX endpoints  
-* 🔄 Dependency injection and modern PHP patterns
-* 📚 Comprehensive PHPDoc documentation and type hinting
-* 🛠️ Developer-friendly hooks and filter system
+**Advanced User Experience:**
+* 🎨 **WordPress Admin Color Integration**: Automatic adaptation to user's admin color scheme
+* 🎛️ **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation
+* 📝 **Smart Form Controls**: Enhanced form fields with proper labeling and state management
+* 📱 **Responsive Design**: Mobile-optimized interface with improved accessibility
+* ⚡ **Real-time Feedback**: Live generation progress with detailed status updates
 
-**Enhanced Data Generation:**
-* 👥 Advanced customer profiling with realistic purchase history
-* 🏆 Loyalty tier progression (Bronze/Silver/Gold/Platinum) with points
-* 🛍️ Product variations with comprehensive attribute systems
-* 📦 Complete order lifecycle with payment, shipping, and fulfillment
-* 🎫 Sophisticated coupon rule engine with extensive validation
-* 🌍 International support with multi-country address formatting
+**Technical Architecture:**
+* 🏗️ **Enhanced REST API**: 10 controllers with comprehensive parameter schemas
+* 🔗 **Deep EasyCommerce Integration**: Enhanced model usage with Order_Item_Meta and location system
+* 🎯 **Advanced Abstract Patterns**: Improved base classes with parameter handling
+* 🌈 **CSS Variable System**: Dynamic color management with WordPress integration
+* 🔧 **Modern Build System**: Enhanced Webpack configuration with optimizations
 
-**Technical Improvements:**
-* ⚡ Performance optimization with efficient database operations  
-* 🛡️ Enhanced security with comprehensive validation and sanitization
-* 📱 Improved React interface with better UX and responsiveness
-* 🔧 Modern build system with Webpack 5 and updated dependencies
-* 📊 Advanced error handling and user feedback systems
-* 🔍 Code quality improvements with updated linting and analysis tools
-
-**Business Logic:**
-* 📈 Customer journey modeling from new to loyal customers
-* 💰 Realistic pricing strategies and inventory management
-* 🚚 Shipping calculations with carrier selection and costs
-* 💳 Multiple payment methods with transaction data
-* 🎯 Advanced coupon targeting and restriction systems
-* 📊 Purchase behavior analytics and segmentation
+**Developer Experience:**
+* 📚 **Comprehensive Documentation**: Updated CLAUDE.md with extensive guidance
+* 🛠️ **Improved Hook System**: More extensive customization points
+* 🔍 **Code Quality**: Updated linting, TypeScript support, and better patterns
+* 🧪 **Enhanced Testing**: Better error handling and validation systems
 
 = 1.0.0 =
 **Release Date: June 15, 2025**

@@ -35,9 +35,22 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
         });
     };
 
+    const getFieldLabel = (paramName, config) => {
+        // Use config.title if available, otherwise use config.description, fallback to formatted paramName
+        if (config.title) {
+            return config.title;
+        }
+        if (config.description && !config.description.toLowerCase().includes('type') && !config.description.toLowerCase().includes('options')) {
+            return config.description;
+        }
+        // For nested parameters, use only the property name part
+        const displayName = paramName.includes('.') ? paramName.split('.')[1] : paramName;
+        return displayName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    };
+
     const renderParameterField = (paramName, config) => {
-        let value = config.default;
-        
+        let value;
+
         if (paramName.includes('.')) {
             // Handle nested object properties
             const [objectName, propName] = paramName.split('.');
@@ -52,14 +65,14 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                     return (
                         <Field className="relative">
                             <Label className="block text-sm font-medium text-gray-700">
-                                {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                {getFieldLabel(paramName, config)}
                             </Label>
                             <Listbox
                                 value={value || ''}
                                 onChange={(val) => handleParameterChange(paramName, val)}
                                 disabled={isLoading}
                             >
-                                <ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors">
+                                <ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors">
                                     <span className={value ? 'text-gray-900' : 'text-gray-500'}>
                                         {value ? value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </span>
@@ -68,14 +81,14 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                                     </span>
                                 </ListboxButton>
                                 <ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-                                    <ListboxOption value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 data-[focus]:bg-blue-50 data-[focus]:text-blue-700">
+                                    <ListboxOption value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 data-[focus]:bg-blue-50 data-[focus]:text-wp-admin-highlight">
                                         {sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </ListboxOption>
                                     {config.enum.map(option => (
                                         <ListboxOption
                                             key={option}
                                             value={option}
-                                            className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-blue-700"
+                                            className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-wp-admin-highlight"
                                         >
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                                         </ListboxOption>
@@ -88,11 +101,11 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                 return (
                     <Field className="relative">
                         <Label className="block text-sm font-medium text-gray-700">
-                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            {getFieldLabel(paramName, config)}
                         </Label>
                         <Input
                             value={value || ''}
-                            className="mt-1 w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                            className="mt-1 w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors"
                             placeholder={config.description}
                             disabled={isLoading}
                             onChange={(e) => handleParameterChange(paramName, e.target.value)}
@@ -104,12 +117,12 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                 return (
                     <Field className="relative">
                         <Label className="block text-sm font-medium text-gray-700">
-                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            {getFieldLabel(paramName, config)}
                         </Label>
                         <Input
                             type="number"
                             value={value || ''}
-                            className="mt-1 w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                            className="mt-1 w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors"
                             min={config.minimum || 0}
                             max={config.maximum || 1000}
                             placeholder={config.description}
@@ -123,13 +136,13 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                 return (
                     <Field className="relative">
                         <Label className="block text-sm font-medium text-gray-700">
-                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            {getFieldLabel(paramName, config)}
                         </Label>
                         <Input
                             type="number"
                             step="0.01"
                             value={value || ''}
-                            className="mt-1 w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                            className="mt-1 w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors"
                             min={config.minimum || 0}
                             max={config.maximum || 10000}
                             placeholder={config.description}
@@ -145,12 +158,14 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                         <Switch
                             checked={value || false}
                             onChange={(checked) => handleParameterChange(paramName, checked)}
-                            className={`${value ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300`}
+                            className={`${value ? 'bg-wp-admin-primary' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-wp-admin-primary focus:ring-offset-2 disabled:bg-gray-300`}
                             disabled={isLoading}
                         >
                             <span className={`${value ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
                         </Switch>
-                        <Label className="ml-3 text-sm font-medium text-gray-700">{config.description}</Label>
+                        <Label className="ml-3 text-sm font-medium text-gray-700">
+                            {config.title || config.description || getFieldLabel(paramName, config)}
+                        </Label>
                     </Field>
                 );
 
@@ -159,7 +174,9 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                     const selectedValues = Array.isArray(value) ? value : (config.default || []);
                     return (
                         <Field className="space-y-2 relative">
-                            <Label className="block text-sm font-medium text-gray-700">{config.description}</Label>
+                            <Label className="block text-sm font-medium text-gray-700">
+                                {config.title || config.description || getFieldLabel(paramName, config)}
+                            </Label>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {config.items.enum.map(option => (
                                     <Field key={option} className="flex items-center">
@@ -169,7 +186,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                                                 const newValues = checked ? [...selectedValues, option] : selectedValues.filter(v => v !== option);
                                                 handleParameterChange(paramName, newValues);
                                             }}
-                                            className={`${selectedValues.includes(option) ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300`}
+                                            className={`${selectedValues.includes(option) ? 'bg-wp-admin-primary' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-wp-admin-primary focus:ring-offset-2 disabled:bg-gray-300`}
                                             disabled={isLoading}
                                         >
                                             <span className={`${selectedValues.includes(option) ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
@@ -188,7 +205,6 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
             case 'object':
                 return (
                     <Field className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4 relative">
-                        <Label className="block text-sm font-semibold text-gray-900">{config.description}</Label>
                         {config.properties && Object.entries(config.properties).map(([propName, propConfig]) => (
                             <div key={propName} className="space-y-1 relative">
                                 {renderParameterField(`${paramName}.${propName}`, propConfig)}
@@ -225,7 +241,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                                 value={count}
                                 min="1"
                                 max="100"
-                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors"
                                 disabled={isLoading}
                                 onChange={(e) => setCount(parseInt(e.target.value))}
                             />
@@ -238,7 +254,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                                 onChange={(val) => handleParameterChange('locale', val)}
                                 disabled={isLoading}
                             >
-                                <ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors">
+                                <ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors">
                                     <span className={parameters.locale ? 'text-gray-900' : 'text-gray-500'}>
                                         {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : __('Select Locale', 'easycommerce-fakerpress')}
                                     </span>
@@ -251,7 +267,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                                         <ListboxOption
                                             key={locale}
                                             value={locale}
-                                            className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-blue-700"
+                                            className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-wp-admin-highlight"
                                         >
                                             {locale === 'en_US' && __('English (US)', 'easycommerce-fakerpress')}
                                             {locale === 'en_GB' && __('English (UK)', 'easycommerce-fakerpress')}
@@ -272,7 +288,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                             <Input
                                 type="number"
                                 value={parameters.seed || ''}
-                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors"
                                 placeholder={__('For reproducible data', 'easycommerce-fakerpress')}
                                 disabled={isLoading}
                                 onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
@@ -283,7 +299,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                             <Switch
                                 checked={parameters.include_meta !== false}
                                 onChange={(checked) => handleParameterChange('include_meta', checked)}
-                                className={`${parameters.include_meta !== false ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300`}
+                                className={`${parameters.include_meta !== false ? 'bg-wp-admin-primary' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-wp-admin-primary focus:ring-offset-2 disabled:bg-gray-300`}
                                 disabled={isLoading}
                             >
                                 <span className={`${parameters.include_meta !== false ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
@@ -297,7 +313,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                 {Object.keys(parameterConfig).length > 0 && (
                     <Disclosure>
                         <DisclosureButton
-                            className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 data-[focus]:ring-2 data-[focus]:ring-blue-500 transition-colors"
+                            className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary transition-colors"
                             onClick={() => setShowAdvanced(!showAdvanced)}
                         >
                             <span>{__('Advanced Parameters', 'easycommerce-fakerpress')}</span>
@@ -323,7 +339,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                 <Button
                     disabled={isLoading}
                     onClick={handleSubmit}
-                    className="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[focus]:ring-offset-2 data-[disabled]:bg-blue-300 data-[disabled]:cursor-not-allowed transition-colors"
+                    className="inline-flex items-center px-4 py-2 rounded-md bg-wp-admin-primary text-white font-medium text-sm hover:bg-wp-admin-secondary data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[focus]:ring-offset-2 data-[disabled]:bg-wp-admin-accent data-[disabled]:cursor-not-allowed transition-colors"
                 >
                     {isLoading ? (
                         <>
