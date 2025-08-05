@@ -30,45 +30,50 @@ export default function CouponGenerator() {
     };
 
     const parameterConfig = {
-        locale: {
-            description: __('Locale for generated data', 'easycommerce-fakerpress'),
-            type: 'string',
-            enum: ['en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT', 'ja_JP', 'zh_CN'],
-            default: 'en_US'
+        discount_types: {
+            description: __('Types of discount coupons to generate', 'easycommerce-fakerpress'),
+            type: 'array',
+            items: {
+                type: 'string',
+                enum: ['percentage', 'fixed_amount', 'free_shipping', 'buy_x_get_y']
+            },
+            default: ['percentage', 'fixed_amount']
         },
-        seed: {
-            description: __('Random seed for reproducible data generation', 'easycommerce-fakerpress'),
-            type: 'integer',
-            minimum: 1
-        },
-        status: {
-            description: __('Status filter for generated coupons', 'easycommerce-fakerpress'),
-            type: 'string',
-            enum: ['active', 'inactive', 'draft', 'pending'],
-            default: 'active'
-        },
-        date_range: {
-            description: __('Date range for coupon validity', 'easycommerce-fakerpress'),
+        discount_range: {
+            description: __('Discount value range', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
-                start: { type: 'string', format: 'date', description: __('Start date (YYYY-MM-DD)', 'easycommerce-fakerpress') },
-                end: { type: 'string', format: 'date', description: __('End date (YYYY-MM-DD)', 'easycommerce-fakerpress') }
+                min_percentage: { type: 'integer', minimum: 5, maximum: 95, default: 10 },
+                max_percentage: { type: 'integer', minimum: 5, maximum: 95, default: 50 },
+                min_fixed: { type: 'number', minimum: 1, default: 5 },
+                max_fixed: { type: 'number', minimum: 1, default: 100 }
             }
         },
-        relationships: {
-            description: __('Control relationship creation with existing data', 'easycommerce-fakerpress'),
+        usage_limits: {
+            description: __('Usage limitation settings', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
-                create_missing: { type: 'boolean', default: true, description: __('Create missing related items if needed', 'easycommerce-fakerpress') },
-                link_existing: { type: 'boolean', default: true, description: __('Link to existing items when possible', 'easycommerce-fakerpress') }
+                set_usage_limits: { type: 'boolean', default: true },
+                max_uses: { type: 'integer', minimum: 1, maximum: 1000, default: 100 },
+                max_uses_per_user: { type: 'integer', minimum: 1, maximum: 10, default: 1 }
             }
         },
-        meta_options: {
-            description: __('Metadata generation options', 'easycommerce-fakerpress'),
+        validity_period: {
+            description: __('Coupon validity period configuration', 'easycommerce-fakerpress'),
             type: 'object',
             properties: {
-                include_meta: { type: 'boolean', default: true, description: __('Include additional metadata', 'easycommerce-fakerpress') },
-                custom_fields: { type: 'boolean', default: false, description: __('Generate custom fields', 'easycommerce-fakerpress') }
+                min_days: { type: 'integer', minimum: 1, maximum: 365, default: 7 },
+                max_days: { type: 'integer', minimum: 1, maximum: 365, default: 90 }
+            }
+        },
+        restrictions: {
+            description: __('Coupon usage restrictions', 'easycommerce-fakerpress'),
+            type: 'object',
+            properties: {
+                minimum_spend: { type: 'boolean', default: true },
+                maximum_spend: { type: 'boolean', default: false },
+                exclude_sale_items: { type: 'boolean', default: false },
+                product_restrictions: { type: 'boolean', default: true }
             }
         }
     };
@@ -76,7 +81,7 @@ export default function CouponGenerator() {
     return (
         <GeneratorBase
             title={__('Generate Coupons', 'easycommerce-fakerpress')}
-            description={__('Create fake discount coupons with random codes, amounts, and expiration dates. Configure locale, status, date ranges, and metadata options.', 'easycommerce-fakerpress')}
+            description={__('Create discount coupons with configurable types, discount values, usage limits, validity periods, and usage restrictions.', 'easycommerce-fakerpress')}
             type="coupons"
             onGenerate={handleGenerate}
             isLoading={isLoading}

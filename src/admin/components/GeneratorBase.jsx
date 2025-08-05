@@ -16,14 +16,35 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
     };
 
     const handleParameterChange = (paramName, value) => {
-        setParameters(prev => ({
-            ...prev,
-            [paramName]: value
-        }));
+        setParameters(prev => {
+            if (paramName.includes('.')) {
+                // Handle nested object properties
+                const [objectName, propName] = paramName.split('.');
+                return {
+                    ...prev,
+                    [objectName]: {
+                        ...(prev[objectName] || {}),
+                        [propName]: value
+                    }
+                };
+            }
+            return {
+                ...prev,
+                [paramName]: value
+            };
+        });
     };
 
     const renderParameterField = (paramName, config) => {
-        const value = parameters[paramName] || config.default;
+        let value = config.default;
+        
+        if (paramName.includes('.')) {
+            // Handle nested object properties
+            const [objectName, propName] = paramName.split('.');
+            value = parameters[objectName]?.[propName] ?? config.default;
+        } else {
+            value = parameters[paramName] ?? config.default;
+        }
 
         switch (config.type) {
             case 'string':
@@ -124,10 +145,10 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                         <Switch
                             checked={value || false}
                             onChange={(checked) => handleParameterChange(paramName, checked)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors data-[checked]:bg-blue-600 data-[unchecked]:bg-gray-200 data-[disabled]:bg-gray-300`}
+                            className={`${value ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300`}
                             disabled={isLoading}
                         >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform data-[checked]:translate-x-6 data-[unchecked]:translate-x-1`}/>
+                            <span className={`${value ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
                         </Switch>
                         <Label className="ml-3 text-sm font-medium text-gray-700">{config.description}</Label>
                     </Field>
@@ -148,10 +169,10 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                                                 const newValues = checked ? [...selectedValues, option] : selectedValues.filter(v => v !== option);
                                                 handleParameterChange(paramName, newValues);
                                             }}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors data-[checked]:bg-blue-600 data-[unchecked]:bg-gray-200 data-[disabled]:bg-gray-300`}
+                                            className={`${selectedValues.includes(option) ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300`}
                                             disabled={isLoading}
                                         >
-                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform data-[checked]:translate-x-6 data-[unchecked]:translate-x-1`}/>
+                                            <span className={`${selectedValues.includes(option) ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
                                         </Switch>
                                         <Label className="ml-3 text-sm font-medium text-gray-700">
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -262,10 +283,10 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                             <Switch
                                 checked={parameters.include_meta !== false}
                                 onChange={(checked) => handleParameterChange('include_meta', checked)}
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors data-[checked]:bg-blue-600 data-[unchecked]:bg-gray-200 data-[disabled]:bg-gray-300`}
+                                className={`${parameters.include_meta !== false ? 'bg-blue-600' : 'bg-gray-200'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300`}
                                 disabled={isLoading}
                             >
-                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform data-[checked]:translate-x-6 data-[unchecked]:translate-x-1`}/>
+                                <span className={`${parameters.include_meta !== false ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
                             </Switch>
                             <Label className="ml-3 text-sm font-medium text-gray-700">{__('Include additional metadata', 'easycommerce-fakerpress')}</Label>
                         </Field>
