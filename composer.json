@@ -63,11 +63,11 @@
     "scripts": {
         "phpcs": [
             "Composer\\Config::disableProcessTimeout",
-            "phpcs --standard=phpcs.xml.dist"
+            "phpcs --standard=phpcs.xml"
         ],
         "phpcbf": [
             "Composer\\Config::disableProcessTimeout",
-            "phpcbf --standard=phpcs.xml.dist"
+            "phpcbf --standard=phpcs.xml"
         ],
         "phpstan": "phpstan analyse --memory-limit 2G",
         "test": "phpunit",

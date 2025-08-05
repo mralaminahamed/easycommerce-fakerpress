@@ -16,6 +16,8 @@
     <rule ref="WordPress">
         <!-- Allow short array syntax -->
         <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
     </rule>
 
     <!-- Set minimum PHP version -->

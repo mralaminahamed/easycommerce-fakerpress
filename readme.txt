@@ -4,7 +4,7 @@ Tags: ecommerce, easycommerce, faker, data-generation, testing, development, pro
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 1.0.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Generate realistic fake ecommerce data with 10 specialized generators, advanced 
 
 == Description ==
 
-EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. Version 2.0 features 10 specialized generators, advanced parameter systems, automatic WordPress admin color integration, and enhanced business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
+EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. This initial release features 10 specialized generators, advanced parameter systems, automatic WordPress admin color integration, and comprehensive business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
 
 **🗂️ 10 Specialized Generators:**
 
@@ -115,19 +115,19 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 
 == Frequently Asked Questions ==
 
-= What's new in version 2.0.0? =
+= What makes version 1.0.0 special? =
 
-Version 2.0.0 is a complete architectural rebuild featuring:
-- Full EasyCommerce model integration replacing direct database queries
-- PSR-4 namespace restructuring with Composer autoloading
-- REST API controllers replacing legacy AJAX endpoints
-- Advanced business logic with realistic customer journeys
-- Comprehensive attribute system for product variations
-- Sophisticated coupon rule engine with extensive validation
+This initial release is a comprehensive EasyCommerce data generation solution featuring:
+- 10 specialized generators covering all major ecommerce data types
+- Advanced parameter system with dynamic, nested configuration options
+- WordPress admin color integration for personalized user experience
+- Complete EasyCommerce model integration with proper business logic
+- Modern React interface with enhanced form controls and validation
+- Enterprise-grade architecture with PSR-4 namespacing and REST API controllers
 
 = How does EasyCommerce model integration work? =
 
-The plugin now uses native EasyCommerce models (Product, Customer, Order, Coupon) instead of direct database queries. This ensures:
+The plugin uses native EasyCommerce models (Product, Customer, Order, Coupon) instead of direct database queries. This ensures:
 - Proper data validation and business rule enforcement
 - Compatibility with EasyCommerce updates and extensions
 - Consistent data relationships and integrity
@@ -195,60 +195,49 @@ Options for data cleanup:
 
 == Changelog ==
 
-= 2.0.0 =
+= 1.0.0 =
 **Release Date: August 5, 2025**
 
-**🚀 Complete Platform Overhaul:**
+**🎉 Initial Release - Complete EasyCommerce Data Generation Solution:**
 
-**10 Specialized Generators:**
-* ✨ **Products**: Advanced generation with attributes, variations, categories, and inventory
-* 👥 **Customers**: Comprehensive profiles with demographics and loyalty tier progression
-* 📦 **Orders**: Complete orders with payment processing, shipping, and item metadata
-* 🎫 **Coupons**: Sophisticated discount system with usage limits and restrictions
+**🗂️ 10 Specialized Generators:**
+* ✨ **Products**: Advanced generation with attributes, variations, categories, pricing, and inventory management
+* 👥 **Customers**: Comprehensive profiles with demographics, purchase history, and loyalty tier progression
+* 📦 **Orders**: Complete orders with payment processing, shipping, tax calculations, and item metadata
+* 🎫 **Coupons**: Sophisticated discount system with usage limits, restrictions, and validity periods
 * 🔄 **Product Variations**: Detailed variations with attribute systems and inventory tracking
-* 🚚 **Shipping Plans**: Methods with regional coverage and cost calculations
-* 💰 **Tax Management**: Multi-jurisdiction tax classes with location-based rates
-* 💳 **Transactions**: Payment transaction history with multiple gateways
+* 🚚 **Shipping Plans**: Methods with regional coverage, carrier selection, and cost calculations
+* 💰 **Tax Management**: Multi-jurisdiction tax classes with location-based rates and rule systems
+* 💳 **Transactions**: Payment transaction history with multiple gateways and status distributions
 * 🛒 **Cart Sessions**: Shopping cart abandonment scenarios and recovery simulation
-* 🌍 **Location Data**: Geographic hierarchy with coordinates and timezone support
+* 🌍 **Location Data**: Geographic hierarchy (countries, states, cities) with coordinates and timezone support
 
-**Advanced User Experience:**
-* 🎨 **WordPress Admin Color Integration**: Automatic adaptation to user's admin color scheme
-* 🎛️ **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation
-* 📝 **Smart Form Controls**: Enhanced form fields with proper labeling and state management
+**🎨 Modern User Experience:**
+* 🌈 **WordPress Admin Color Integration**: Automatic adaptation to user's chosen admin color scheme
+* 🎛️ **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation and smart defaults
+* 📝 **Enhanced Form Controls**: Modern React interface with smart form fields and proper labeling
+* 📋 **Tabbed Navigation**: Organized 10-generator interface with progress tracking
+* ⚡ **Real-time Feedback**: Live generation progress with detailed status updates and error handling
 * 📱 **Responsive Design**: Mobile-optimized interface with improved accessibility
-* ⚡ **Real-time Feedback**: Live generation progress with detailed status updates
 
-**Technical Architecture:**
-* 🏗️ **Enhanced REST API**: 10 controllers with comprehensive parameter schemas
-* 🔗 **Deep EasyCommerce Integration**: Enhanced model usage with Order_Item_Meta and location system
-* 🎯 **Advanced Abstract Patterns**: Improved base classes with parameter handling
-* 🌈 **CSS Variable System**: Dynamic color management with WordPress integration
-* 🔧 **Modern Build System**: Enhanced Webpack configuration with optimizations
+**🏗️ Enterprise Architecture:**
+* 🔧 **PSR-4 Architecture**: Modern PHP with namespacing, autoloading, and abstract base classes
+* 🌐 **REST API Controllers**: 10 clean API controllers with comprehensive parameter schemas
+* 🔗 **EasyCommerce Integration**: Native model usage with Order_Item_Meta and location system integration
+* 📚 **WordPress Standards**: Full WPCS compliance with security best practices and proper internationalization
+* 🛠️ **Extensible Design**: Hook system and abstract patterns for easy customization and extension
 
-**Developer Experience:**
-* 📚 **Comprehensive Documentation**: Updated CLAUDE.md with extensive guidance
-* 🛠️ **Improved Hook System**: More extensive customization points
-* 🔍 **Code Quality**: Updated linting, TypeScript support, and better patterns
-* 🧪 **Enhanced Testing**: Better error handling and validation systems
-
-= 1.0.0 =
-**Release Date: June 15, 2025**
-
-**🎉 Initial Release:**
-* 🛍️ Basic product, customer, order, and coupon generation
-* 🖥️ React-based admin interface with Tailwind CSS
-* 📚 WordPress Coding Standards compliance
-* 🔧 Basic EasyCommerce compatibility
-* 🎨 Tabbed navigation and modern UI design
+**🔧 Technical Excellence:**
+* ⚡ **Modern Build System**: React 18, Tailwind CSS, Webpack 5 with CSS variable integration
+* ✅ **Advanced Validation**: Client-side and server-side parameter validation with proper error handling
+* 🔄 **State Management**: Complex form handling with nested object parameter support
+* 🚀 **Performance Optimization**: Efficient database operations and memory management
+* 👨‍💻 **Developer Experience**: Comprehensive documentation, modern tooling, and extensive customization hooks
 
 == Upgrade Notice ==
 
-= 2.0.0 =
-Major update with complete EasyCommerce model integration! This version provides enterprise-grade data generation with advanced business logic, realistic customer journeys, and comprehensive ecommerce functionality. Backup your database before upgrading. Requires EasyCommerce plugin for full functionality.
-
 = 1.0.0 =
-Initial release of EasyCommerce FakerPress! Generate realistic EasyCommerce test data with modern React interface.
+Initial release of EasyCommerce FakerPress! Complete EasyCommerce data generation solution with 10 specialized generators, WordPress admin color integration, advanced parameter system, and modern React interface. Requires EasyCommerce plugin for full functionality.
 
 == Privacy & Data Handling ==
 
