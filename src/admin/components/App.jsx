@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { __, sprintf } from '@wordpress/i18n';
+import { Button } from '@headlessui/react';
 
 import ProductGenerator from './Generators/ProductGenerator';
 import CustomerGenerator from './Generators/CustomerGenerator';
@@ -43,57 +44,57 @@ export default function App() {
     );
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{__('EasyCommerce FakerPress', 'easycommerce-fakerpress')}</h1>
-                <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+                <p className="mt-2 text-sm text-gray-500 leading-6">
                     {__('Generate fake ecommerce data for testing and development with a seamless and intuitive interface.', 'easycommerce-fakerpress')}
                 </p>
             </div>
 
             {selectedGenerator ? (
-                <div className="flex">
+                <div className="flex gap-6">
                     {/* Sidebar for other generators */}
-                    <div className="w-64 hidden lg:block">
+                    <aside className="w-64 hidden lg:block">
                         <h2 className="text-sm font-semibold text-gray-900 mb-4">{__('Other Generators', 'easycommerce-fakerpress')}</h2>
                         <ul className="space-y-2">
                             {sortedGenerators
                                 .filter(gen => gen.name !== selectedGenerator.name)
                                 .map(gen => (
                                     <li key={gen.name}>
-                                        <button
+                                        <Button
                                             onClick={() => setSelectedGenerator(gen)}
-                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors duration-200"
+                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md transition-colors data-[focus]:ring-2 data-[focus]:ring-blue-500"
                                         >
                                             {gen.name}
-                                        </button>
+                                        </Button>
                                     </li>
                                 ))}
                         </ul>
-                    </div>
+                    </aside>
 
                     {/* Main content with back button and breadcrumb */}
-                    <div className="flex-1">
-                        <div className="flex flex-row-reverse justify-between mb-6 w-full">
-                            <button
+                    <main className="flex-1">
+                        <div className="flex flex-row-reverse justify-between mb-6">
+                            <Button
                                 onClick={() => setSelectedGenerator(null)}
-                                className="inline-flex items-center px-4 py-2 rounded-md bg-gray-100 text-gray-700 font-medium text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                                className="inline-flex items-center px-4 py-2 rounded-md bg-gray-100 text-gray-700 font-medium text-sm hover:bg-gray-200 data-[focus]:ring-2 data-[focus]:ring-blue-500 transition-colors"
                             >
                                 <ArrowLeftIcon className="h-5 w-5 mr-2" aria-hidden="true" />
                                 {__('Back to Generators', 'easycommerce-fakerpress')}
-                            </button>
-                            <nav className="flex" aria-label="Breadcrumb">
+                            </Button>
+                            <nav aria-label="Breadcrumb" className="flex">
                                 <ol className="flex items-center space-x-2">
                                     <li>
-                                        <button
+                                        <Button
                                             onClick={() => setSelectedGenerator(null)}
-                                            className="text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                                            className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
                                         >
                                             {__('Home', 'easycommerce-fakerpress')}
-                                        </button>
+                                        </Button>
                                     </li>
                                     <li>
-                                        <ChevronRightIcon className="h-4 w-4 text-gray-400" />
+                                        <ChevronRightIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
                                     </li>
                                     <li>
                                         <span className="text-sm text-gray-500">{selectedGenerator.name}</span>
@@ -101,10 +102,10 @@ export default function App() {
                                 </ol>
                             </nav>
                         </div>
-                        <div className="rounded-xl bg-white p-6 shadow-sm transition-all duration-200">
+                        <div className="rounded-xl bg-white p-6 shadow-sm transition-all">
                             <selectedGenerator.component />
                         </div>
-                    </div>
+                    </main>
                 </div>
             ) : (
                 <div className="space-y-8">
@@ -113,14 +114,14 @@ export default function App() {
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">{sprintf(__('%s Generators', 'easycommerce-fakerpress'), category)}</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {groupedGenerators[category].map(generator => (
-                                    <button
+                                    <Button
                                         key={generator.name}
                                         onClick={() => setSelectedGenerator(generator)}
-                                        className="text-left bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-200"
+                                        className="text-left bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 hover:border-blue-200 data-[focus]:ring-2 data-[focus]:ring-blue-500"
                                     >
                                         <h3 className="text-base font-medium text-gray-900">{generator.name}</h3>
                                         <p className="mt-1 text-sm text-gray-500">{generator.description}</p>
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>

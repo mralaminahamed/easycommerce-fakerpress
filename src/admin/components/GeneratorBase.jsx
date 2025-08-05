@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch, Field, Label, Disclosure, DisclosureButton, DisclosurePanel, Button, Input } from '@headlessui/react';
-import {RawHTML} from "@wordpress/element";
-import { __, sprintf } from '@wordpress/i18n';
+import React, {useState} from 'react';
+import {ChevronDownIcon, ChevronUpIcon} from '@heroicons/react/24/outline';
+import {Button, Disclosure, DisclosureButton, DisclosurePanel, Field, Input, Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch} from '@headlessui/react';
+import {RawHTML} from '@wordpress/element';
+import {__, sprintf} from '@wordpress/i18n';
 
-export default function GeneratorBase({ title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children }) {
+export default function GeneratorBase({title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children}) {
     const [count, setCount] = useState(10);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [parameters, setParameters] = useState({});
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const allParams = { count, ...parameters };
+        const allParams = {count, ...parameters};
         onGenerate(allParams);
     };
 
@@ -29,87 +29,105 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
             case 'string':
                 if (config.enum) {
                     return (
-                        <Listbox
-                            value={value || ''}
-                            onChange={(val) => handleParameterChange(paramName, val)}
-                            disabled={isLoading}
-                        >
-                            <div className="relative">
-                                <ListboxButton className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                        <Field className="relative">
+                            <Label className="block text-sm font-medium text-gray-700">
+                                {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </Label>
+                            <Listbox
+                                value={value || ''}
+                                onChange={(val) => handleParameterChange(paramName, val)}
+                                disabled={isLoading}
+                            >
+                                <ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors">
                                     <span className={value ? 'text-gray-900' : 'text-gray-500'}>
                                         {value ? value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </span>
                                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+                                        <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true"/>
                                     </span>
                                 </ListboxButton>
                                 <ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-                                    <ListboxOption value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 hover:bg-blue-50">
+                                    <ListboxOption value="" className="cursor-pointer select-none px-4 py-2 text-sm text-gray-500 data-[focus]:bg-blue-50 data-[focus]:text-blue-700">
                                         {sprintf(__('Select %s', 'easycommerce-fakerpress'), config.description)}
                                     </ListboxOption>
                                     {config.enum.map(option => (
                                         <ListboxOption
                                             key={option}
                                             value={option}
-                                            className={({ active }) => `cursor-pointer select-none px-4 py-2 text-sm ${active ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
+                                            className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-blue-700"
                                         >
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                                         </ListboxOption>
                                     ))}
                                 </ListboxOptions>
-                            </div>
-                        </Listbox>
+                            </Listbox>
+                        </Field>
                     );
                 }
                 return (
-                    <Input
-                        value={value || ''}
-                        className="w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                        placeholder={config.description}
-                        disabled={isLoading}
-                        onChange={(e) => handleParameterChange(paramName, e.target.value)}
-                    />
+                    <Field className="relative">
+                        <Label className="block text-sm font-medium text-gray-700">
+                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </Label>
+                        <Input
+                            value={value || ''}
+                            className="mt-1 w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                            placeholder={config.description}
+                            disabled={isLoading}
+                            onChange={(e) => handleParameterChange(paramName, e.target.value)}
+                        />
+                    </Field>
                 );
 
             case 'integer':
                 return (
-                    <Input
-                        type="number"
-                        value={value || ''}
-                        className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                        min={config.minimum || 0}
-                        max={config.maximum || 1000}
-                        placeholder={config.description}
-                        disabled={isLoading}
-                        onChange={(e) => handleParameterChange(paramName, parseInt(e.target.value))}
-                    />
+                    <Field className="relative">
+                        <Label className="block text-sm font-medium text-gray-700">
+                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </Label>
+                        <Input
+                            type="number"
+                            value={value || ''}
+                            className="mt-1 w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                            min={config.minimum || 0}
+                            max={config.maximum || 1000}
+                            placeholder={config.description}
+                            disabled={isLoading}
+                            onChange={(e) => handleParameterChange(paramName, parseInt(e.target.value))}
+                        />
+                    </Field>
                 );
 
             case 'number':
                 return (
-                    <Input
-                        type="number"
-                        step="0.01"
-                        value={value || ''}
-                        className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
-                        min={config.minimum || 0}
-                        max={config.maximum || 10000}
-                        placeholder={config.description}
-                        disabled={isLoading}
-                        onChange={(e) => handleParameterChange(paramName, parseFloat(e.target.value))}
-                    />
+                    <Field className="relative">
+                        <Label className="block text-sm font-medium text-gray-700">
+                            {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </Label>
+                        <Input
+                            type="number"
+                            step="0.01"
+                            value={value || ''}
+                            className="mt-1 w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
+                            min={config.minimum || 0}
+                            max={config.maximum || 10000}
+                            placeholder={config.description}
+                            disabled={isLoading}
+                            onChange={(e) => handleParameterChange(paramName, parseFloat(e.target.value))}
+                        />
+                    </Field>
                 );
 
             case 'boolean':
                 return (
-                    <Field as="div" className="flex items-center">
+                    <Field className="flex items-center relative">
                         <Switch
                             checked={value || false}
                             onChange={(checked) => handleParameterChange(paramName, checked)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${value ? 'bg-blue-600' : 'bg-gray-200'} disabled:bg-gray-300`}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors data-[checked]:bg-blue-600 data-[unchecked]:bg-gray-200 data-[disabled]:bg-gray-300`}
                             disabled={isLoading}
                         >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform data-[checked]:translate-x-6 data-[unchecked]:translate-x-1`}/>
                         </Switch>
                         <Label className="ml-3 text-sm font-medium text-gray-700">{config.description}</Label>
                     </Field>
@@ -119,21 +137,21 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                 if (config.items && config.items.enum) {
                     const selectedValues = Array.isArray(value) ? value : (config.default || []);
                     return (
-                        <div className="space-y-2">
-                            <p className="text-sm text-gray-500">{config.description}</p>
+                        <Field className="space-y-2 relative">
+                            <Label className="block text-sm font-medium text-gray-700">{config.description}</Label>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {config.items.enum.map(option => (
-                                    <Field key={option} as="div" className="flex items-center">
+                                    <Field key={option} className="flex items-center">
                                         <Switch
                                             checked={selectedValues.includes(option)}
                                             onChange={(checked) => {
                                                 const newValues = checked ? [...selectedValues, option] : selectedValues.filter(v => v !== option);
                                                 handleParameterChange(paramName, newValues);
                                             }}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${selectedValues.includes(option) ? 'bg-blue-600' : 'bg-gray-200'} disabled:bg-gray-300`}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors data-[checked]:bg-blue-600 data-[unchecked]:bg-gray-200 data-[disabled]:bg-gray-300`}
                                             disabled={isLoading}
                                         >
-                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${selectedValues.includes(option) ? 'translate-x-6' : 'translate-x-1'}`} />
+                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform data-[checked]:translate-x-6 data-[unchecked]:translate-x-1`}/>
                                         </Switch>
                                         <Label className="ml-3 text-sm font-medium text-gray-700">
                                             {option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -141,24 +159,21 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                                     </Field>
                                 ))}
                             </div>
-                        </div>
+                        </Field>
                     );
                 }
                 return null;
 
             case 'object':
                 return (
-                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4">
-                        <h4 className="text-sm font-semibold text-gray-900">{config.description}</h4>
+                    <Field className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4 relative">
+                        <Label className="block text-sm font-semibold text-gray-900">{config.description}</Label>
                         {config.properties && Object.entries(config.properties).map(([propName, propConfig]) => (
-                            <div key={propName} className="space-y-1">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    {propName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                </label>
+                            <div key={propName} className="space-y-1 relative">
                                 {renderParameterField(`${paramName}.${propName}`, propConfig)}
                             </div>
                         ))}
-                    </div>
+                    </Field>
                 );
 
             default:
@@ -170,7 +185,7 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
         <div className="space-y-6">
             <div className="mb-8">
                 <h3 className="text-xl font-semibold text-gray-900 tracking-tight">{title}</h3>
-                <p className="mt-1 text-sm text-gray-500 leading-relaxed">{description}</p>
+                <p className="mt-1 text-sm text-gray-500 leading-6">{description}</p>
             </div>
 
             <div className="space-y-6">
@@ -179,116 +194,105 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                     <h4 className="text-sm font-semibold text-gray-900 mb-4">{__('Basic Settings', 'easycommerce-fakerpress')}</h4>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="space-y-1">
-                            <label htmlFor={`${type}-count`} className="block text-sm font-medium text-gray-700">
+                        <Field className="space-y-1 relative">
+                            <Label htmlFor={`${type}-count`} className="block text-sm font-medium text-gray-700">
                                 {sprintf(__('Number of %s to generate', 'easycommerce-fakerpress'), type)}
-                            </label>
+                            </Label>
                             <Input
                                 type="number"
                                 id={`${type}-count`}
                                 value={count}
                                 min="1"
                                 max="100"
-                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
+                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
                                 disabled={isLoading}
                                 onChange={(e) => setCount(parseInt(e.target.value))}
                             />
-                        </div>
+                        </Field>
 
-                        <div className="space-y-1">
-                            <label className="block text-sm font-medium text-gray-700">{__('Locale', 'easycommerce-fakerpress')}</label>
+                        <Field className="space-y-1 relative">
+                            <Label className="block text-sm font-medium text-gray-700">{__('Locale', 'easycommerce-fakerpress')}</Label>
                             <Listbox
                                 value={parameters.locale || 'en_US'}
                                 onChange={(val) => handleParameterChange('locale', val)}
                                 disabled={isLoading}
                             >
-                                <div className="relative">
-                                    <ListboxButton className="relative w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
-                                        <span className={parameters.locale ? 'text-gray-900' : 'text-gray-500'}>
-                                            {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : __('Select Locale', 'easycommerce-fakerpress')}
-                                        </span>
-                                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                            <ChevronDownIcon className="h-5 w-5 text-gray-400" />
-                                        </span>
-                                    </ListboxButton>
-                                    <ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-                                        {['en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT'].map(locale => (
-                                            <ListboxOption
-                                                key={locale}
-                                                value={locale}
-                                                className={({ active }) => `cursor-pointer select-none px-4 py-2 text-sm ${active ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
-                                            >
-                                                {locale === 'en_US' && __('English (US)', 'easycommerce-fakerpress')}
-                                                {locale === 'en_GB' && __('English (UK)', 'easycommerce-fakerpress')}
-                                                {locale === 'fr_FR' && __('French', 'easycommerce-fakerpress')}
-                                                {locale === 'de_DE' && __('German', 'easycommerce-fakerpress')}
-                                                {locale === 'es_ES' && __('Spanish', 'easycommerce-fakerpress')}
-                                                {locale === 'it_IT' && __('Italian', 'easycommerce-fakerpress')}
-                                            </ListboxOption>
-                                        ))}
-                                    </ListboxOptions>
-                                </div>
+                                <ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors">
+                                    <span className={parameters.locale ? 'text-gray-900' : 'text-gray-500'}>
+                                        {parameters.locale ? parameters.locale.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : __('Select Locale', 'easycommerce-fakerpress')}
+                                    </span>
+                                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true"/>
+                                    </span>
+                                </ListboxButton>
+                                <ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
+                                    {['en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT'].map(locale => (
+                                        <ListboxOption
+                                            key={locale}
+                                            value={locale}
+                                            className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-blue-700"
+                                        >
+                                            {locale === 'en_US' && __('English (US)', 'easycommerce-fakerpress')}
+                                            {locale === 'en_GB' && __('English (UK)', 'easycommerce-fakerpress')}
+                                            {locale === 'fr_FR' && __('French', 'easycommerce-fakerpress')}
+                                            {locale === 'de_DE' && __('German', 'easycommerce-fakerpress')}
+                                            {locale === 'es_ES' && __('Spanish', 'easycommerce-fakerpress')}
+                                            {locale === 'it_IT' && __('Italian', 'easycommerce-fakerpress')}
+                                        </ListboxOption>
+                                    ))}
+                                </ListboxOptions>
                             </Listbox>
-                        </div>
+                        </Field>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-                        <div className="space-y-1">
-                            <label className="block text-sm font-medium text-gray-700">{__('Random Seed (optional)', 'easycommerce-fakerpress')}</label>
+                        <Field className="space-y-1 relative">
+                            <Label className="block text-sm font-medium text-gray-700">{__('Random Seed (optional)', 'easycommerce-fakerpress')}</Label>
                             <Input
                                 type="number"
                                 value={parameters.seed || ''}
-                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 transition-colors duration-200"
+                                className="w-32 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 placeholder-gray-400 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[disabled]:bg-gray-100 transition-colors"
                                 placeholder={__('For reproducible data', 'easycommerce-fakerpress')}
                                 disabled={isLoading}
                                 onChange={(e) => handleParameterChange('seed', parseInt(e.target.value))}
                             />
-                        </div>
+                        </Field>
 
-                        <div className="space-y-1">
-                            <Field as="div" className="flex items-center">
-                                <Switch
-                                    checked={parameters.include_meta !== false}
-                                    onChange={(checked) => handleParameterChange('include_meta', checked)}
-                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${parameters.include_meta !== false ? 'bg-blue-600' : 'bg-gray-200'} disabled:bg-gray-300`}
-                                    disabled={isLoading}
-                                >
-                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${parameters.include_meta !== false ? 'translate-x-6' : 'translate-x-1'}`} />
-                                </Switch>
-                                <Label className="ml-3 text-sm font-medium text-gray-700">{__('Include additional metadata', 'easycommerce-fakerpress')}</Label>
-                            </Field>
-                        </div>
+                        <Field className="flex items-center relative">
+                            <Switch
+                                checked={parameters.include_meta !== false}
+                                onChange={(checked) => handleParameterChange('include_meta', checked)}
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors data-[checked]:bg-blue-600 data-[unchecked]:bg-gray-200 data-[disabled]:bg-gray-300`}
+                                disabled={isLoading}
+                            >
+                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform data-[checked]:translate-x-6 data-[unchecked]:translate-x-1`}/>
+                            </Switch>
+                            <Label className="ml-3 text-sm font-medium text-gray-700">{__('Include additional metadata', 'easycommerce-fakerpress')}</Label>
+                        </Field>
                     </div>
                 </div>
 
                 {/* Advanced Parameters Toggle */}
                 {Object.keys(parameterConfig).length > 0 && (
                     <Disclosure>
-                        {({ open }) => (
-                            <>
-                                <DisclosureButton
-                                    className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-                                    onClick={() => setShowAdvanced(!showAdvanced)}
-                                >
-                                    <span>{__('Advanced Parameters', 'easycommerce-fakerpress')}</span>
-                                    {open ? (
-                                        <ChevronUpIcon className="h-5 w-5 text-gray-500" />
-                                    ) : (
-                                        <ChevronDownIcon className="h-5 w-5 text-gray-500" />
-                                    )}
-                                </DisclosureButton>
-                                <DisclosurePanel className="mt-4 rounded-lg border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
-                                    {Object.entries(parameterConfig).map(([paramName, config]) => (
-                                        <div key={paramName} className="space-y-1">
-                                            <label className="block text-sm font-medium text-gray-700">
-                                                {paramName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                            </label>
-                                            {renderParameterField(paramName, config)}
-                                        </div>
-                                    ))}
-                                </DisclosurePanel>
-                            </>
-                        )}
+                        <DisclosureButton
+                            className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 data-[focus]:ring-2 data-[focus]:ring-blue-500 transition-colors"
+                            onClick={() => setShowAdvanced(!showAdvanced)}
+                        >
+                            <span>{__('Advanced Parameters', 'easycommerce-fakerpress')}</span>
+                            {showAdvanced ? (
+                                <ChevronUpIcon className="h-5 w-5 text-gray-500" aria-hidden="true"/>
+                            ) : (
+                                <ChevronDownIcon className="h-5 w-5 text-gray-500" aria-hidden="true"/>
+                            )}
+                        </DisclosureButton>
+                        <DisclosurePanel className="mt-4 rounded-lg border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+                            {Object.entries(parameterConfig).map(([paramName, config]) => (
+                                <div key={paramName} className="space-y-1 relative">
+                                    {renderParameterField(paramName, config)}
+                                </div>
+                            ))}
+                        </DisclosurePanel>
                     </Disclosure>
                 )}
 
@@ -298,7 +302,7 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                 <Button
                     disabled={isLoading}
                     onClick={handleSubmit}
-                    className="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors duration-200"
+                    className="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 data-[focus]:ring-2 data-[focus]:ring-blue-500 data-[focus]:ring-offset-2 data-[disabled]:bg-blue-300 data-[disabled]:cursor-not-allowed transition-colors"
                 >
                     {isLoading ? (
                         <>
@@ -318,8 +322,8 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                 <div className="mt-4 rounded-md bg-red-50 p-4">
                     <div className="flex">
                         <div className="flex-shrink-0">
-                            <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
                             </svg>
                         </div>
                         <div className="ml-3">
@@ -334,8 +338,8 @@ export default function GeneratorBase({ title, description, type, onGenerate, is
                 <div className="mt-4 rounded-md bg-green-50 p-4">
                     <div className="flex">
                         <div className="flex-shrink-0">
-                            <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                             </svg>
                         </div>
                         <div className="ml-3">
