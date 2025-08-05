@@ -452,7 +452,7 @@ class Product_Generator extends Generator {
 			$price_modifier = $this->faker->randomFloat( 2, -$price_range, $price_range );
 			$regular_price  = max( 1, $base_price + $price_modifier );
 			$sale_price     = $this->faker->boolean( 30 ) ? $regular_price * $this->faker->randomFloat( 2, 0.7, 0.9 ) : null;
-			$stock_quantity = $product_type === 'physical' ? $this->faker->optional( 0.8 )->numberBetween( 0, 100 ) : null;
+			$stock_quantity = 'physical' === $product_type ? $this->faker->optional( 0.8 )->numberBetween( 0, 100 ) : null;
 
 			$variation = array(
 				'name'           => $variation_name,
@@ -465,10 +465,11 @@ class Product_Generator extends Generator {
 				'status'         => $this->determine_stock_status( $stock_quantity ),
 				'attributes'     => $variation_attributes,
 				'meta'           => $this->generate_variation_meta( $product_type ),
+				'downloads'      => array(), // Will be populated for digital products.
 			);
 
-			// Add downloads for digital products
-			if ( $product_type === 'digital' ) {
+			// Add downloads for digital products.
+			if ( 'digital' === $product_type ) {
 				$variation['downloads'] = $this->generate_digital_downloads();
 			}
 

@@ -182,13 +182,13 @@ class EasyCommerce_FakerPress {
 	 */
 	public function register_rest_routes(): void {
 		$controllers = array(
-			// Core generators
+			// Core generators.
 			new Product_REST_Controller(),
 			new Customer_REST_Controller(),
 			new Order_REST_Controller(),
 			new Coupon_REST_Controller(),
-			
-			// Enhanced generators (Version 2.0)
+
+			// Enhanced generators (Version 2.0).
 			new Product_Variation_REST_Controller(),
 			new Shipping_Plan_REST_Controller(),
 			new Tax_REST_Controller(),
