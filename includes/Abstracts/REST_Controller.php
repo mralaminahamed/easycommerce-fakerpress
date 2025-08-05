@@ -79,8 +79,17 @@ abstract class REST_Controller extends WP_REST_Controller {
 			);
 		}
 
+		// Pass all request parameters to the generator
+		$params = $request->get_params();
+
 		$generator = $this->get_generator_instance();
-		$result    = $generator->generate( (int) $count );
+
+		// Set generator parameters if the generator supports it
+		if ( method_exists( $generator, 'set_generation_params' ) ) {
+			$generator->set_generation_params( $params );
+		}
+
+		$result = $generator->generate( (int) $count );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -122,8 +131,8 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 * @return array Parameters schema.
 	 */
 	public function get_generation_params(): array {
-		return array(
-			'count' => array(
+		$base_params = array(
+			'count'         => array(
 				'description'       => __( 'Number of items to generate.', 'easycommerce-fakerpress' ),
 				'type'              => 'integer',
 				'minimum'           => 1,
@@ -132,7 +141,79 @@ abstract class REST_Controller extends WP_REST_Controller {
 				'sanitize_callback' => 'absint',
 				'validate_callback' => array( $this, 'validate_count' ),
 			),
+			'locale'        => array(
+				'description'       => __( 'Locale for generated data (e.g., en_US, fr_FR, de_DE).', 'easycommerce-fakerpress' ),
+				'type'              => 'string',
+				'default'           => 'en_US',
+				'enum'              => array( 'en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT', 'ja_JP', 'zh_CN' ),
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'seed'          => array(
+				'description'       => __( 'Random seed for reproducible data generation.', 'easycommerce-fakerpress' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+			),
+			'status'        => array(
+				'description'       => __( 'Status filter for generated items.', 'easycommerce-fakerpress' ),
+				'type'              => 'string',
+				'enum'              => array( 'active', 'inactive', 'draft', 'pending', 'completed', 'cancelled' ),
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'date_range'    => array(
+				'description' => __( 'Date range for generated items.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'start' => array(
+						'description' => __( 'Start date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
+						'type'        => 'string',
+						'format'      => 'date',
+					),
+					'end'   => array(
+						'description' => __( 'End date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
+						'type'        => 'string',
+						'format'      => 'date',
+					),
+				),
+			),
+			'relationships' => array(
+				'description' => __( 'Control relationship creation with existing data.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'create_missing' => array(
+						'description' => __( 'Create missing related items if needed.', 'easycommerce-fakerpress' ),
+						'type'        => 'boolean',
+						'default'     => true,
+					),
+					'link_existing'  => array(
+						'description' => __( 'Link to existing items when possible.', 'easycommerce-fakerpress' ),
+						'type'        => 'boolean',
+						'default'     => true,
+					),
+				),
+			),
+			'meta_options'  => array(
+				'description' => __( 'Metadata generation options.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'include_meta'  => array(
+						'description' => __( 'Include additional metadata.', 'easycommerce-fakerpress' ),
+						'type'        => 'boolean',
+						'default'     => true,
+					),
+					'custom_fields' => array(
+						'description' => __( 'Generate custom fields.', 'easycommerce-fakerpress' ),
+						'type'        => 'boolean',
+						'default'     => false,
+					),
+				),
+			),
 		);
+
+		// Merge with resource-specific parameters
+		$resource_params = $this->get_resource_specific_params();
+
+		return array_merge( $base_params, $resource_params );
 	}
 
 	/**
@@ -235,6 +316,19 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 * @return array Resource-specific properties.
 	 */
 	protected function get_resource_specific_properties(): array {
+		return array();
+	}
+
+	/**
+	 * Get resource-specific generation parameters
+	 *
+	 * Can be overridden by child classes to add specific generation parameters.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Resource-specific parameters.
+	 */
+	protected function get_resource_specific_params(): array {
 		return array();
 	}
 }

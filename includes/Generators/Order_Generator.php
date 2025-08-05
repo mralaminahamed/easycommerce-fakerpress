@@ -13,6 +13,9 @@ use EasyCommerce\Models\Order;
 use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Database;
+use EasyCommerce\Models\Location;
+use EasyCommerce\Models\Order_Item;
+use EasyCommerce\Models\Order_Item_Meta;
 use WP_Error;
 use WP_User;
 use Exception;
@@ -69,23 +72,25 @@ class Order_Generator extends Generator {
 			$total       = $this->calculate_total( $subtotal, $order_meta );
 
 			// Use EasyCommerce Order model with complete data structure
-			$order = new Order();
-			$created = $order->create( array(
-				// Required fields
-				'customer_id'    => $customer->ID,
-				'total'          => $total,
-				
-				// Optional core fields
-				'status'         => $this->generate_order_status(),
-				'fulfill_status' => $this->generate_fulfillment_status(),
-				'payment_method' => $this->generate_payment_method(),
-				
-				// Order items (required)
-				'items'          => $order_items,
-				
-				// Order metadata
-				'meta'           => $order_meta,
-			) );
+			$order   = new Order();
+			$created = $order->create(
+				array(
+					// Required fields
+					'customer_id'    => $customer->ID,
+					'total'          => $total,
+
+					// Optional core fields
+					'status'         => $this->generate_order_status(),
+					'fulfill_status' => $this->generate_fulfillment_status(),
+					'payment_method' => $this->generate_payment_method(),
+
+					// Order items (required)
+					'items'          => $order_items,
+
+					// Order metadata
+					'meta'           => $order_meta,
+				)
+			);
 
 			if ( ! $created ) {
 				return new WP_Error( 'order_creation_failed', 'Failed to create order using EasyCommerce model.' );
@@ -108,7 +113,7 @@ class Order_Generator extends Generator {
 			);
 		} catch ( \Exception $e ) {
 			$this->log( 'Order creation failed: ' . $e->getMessage(), 'error' );
-			
+
 			return new WP_Error( 'order_creation_failed', $e->getMessage() );
 		}
 	}
@@ -163,7 +168,7 @@ class Order_Generator extends Generator {
 	 * @return array Array of Product_Variation objects.
 	 */
 	private function get_random_product_variations(): array {
-		$db = new Database( 'product_variations' );
+		$db              = new Database( 'product_variations' );
 		$variations_data = $db->get_rows(
 			array( 'status' => 'in_stock' ),
 			$this->faker->numberBetween( 1, 5 ),
@@ -200,15 +205,23 @@ class Order_Generator extends Generator {
 			$price_id   = $variation->get_price_id();
 			$quantity   = $this->faker->numberBetween( 1, 3 );
 			$rate       = $variation->get_regular_price();
+			$subtotal   = $rate * $quantity;
 
 			if ( ! isset( $order_items[ $product_id ] ) ) {
 				$order_items[ $product_id ] = array();
 			}
 
+			// Enhanced metadata for order items
+			$item_meta = $this->generate_order_item_meta( $variation, $quantity, $rate, $subtotal );
+
 			$order_items[ $product_id ][ $price_id ] = array(
-				'quantity' => $quantity,
-				'rate'     => $rate,
-				'price'    => $rate * $quantity, // Total price for this line item
+				'quantity'     => $quantity,
+				'rate'         => $rate,
+				'price'        => $subtotal,
+				'tax_class_id' => $variation->get_tax_class(),
+				'tax_rate'     => $this->generate_item_tax_rate(),
+				'subtotal'     => $subtotal,
+				'meta'         => $item_meta,
 			);
 		}
 
@@ -252,21 +265,21 @@ class Order_Generator extends Generator {
 		$shipping_address = $customer_model->get_shipping_address() ?: $billing_address;
 
 		return array(
-			'addresses' => array(
+			'addresses'        => array(
 				'billing'  => $billing_address,
 				'shipping' => $shipping_address,
 			),
-			'payment_details' => $this->generate_payment_details(),
+			'payment_details'  => $this->generate_payment_details(),
 			'shipping_details' => $this->generate_shipping_details( $subtotal ),
-			'tax_details' => $this->generate_tax_details( $subtotal ),
-			'coupon_details' => $this->generate_coupon_details( $subtotal ),
-			'order_notes' => $this->faker->optional( 0.3 )->paragraph( 2 ),
-			'source_info' => $this->generate_source_info(),
-			'fulfillment' => array(
-				'status' => $this->generate_fulfillment_status(),
-				'tracking_number' => $this->faker->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
+			'tax_details'      => $this->generate_tax_details( $subtotal ),
+			'coupon_details'   => $this->generate_coupon_details( $subtotal ),
+			'order_notes'      => $this->faker->optional( 0.3 )->paragraph( 2 ),
+			'source_info'      => $this->generate_source_info(),
+			'fulfillment'      => array(
+				'status'             => $this->generate_fulfillment_status(),
+				'tracking_number'    => $this->faker->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
 				'estimated_delivery' => $this->faker->dateTimeBetween( 'now', '+2 weeks' )->format( 'Y-m-d' ),
-				'carrier' => $this->faker->randomElement( array( 'UPS', 'FedEx', 'USPS', 'DHL', 'Local Delivery' ) ),
+				'carrier'            => $this->faker->randomElement( array( 'UPS', 'FedEx', 'USPS', 'DHL', 'Local Delivery' ) ),
 			),
 		);
 	}
@@ -288,14 +301,14 @@ class Order_Generator extends Generator {
 			'refunded'   => 2,   // 2% chance
 		);
 
-		return $this->faker->randomElement( 
-			array_merge( 
-				...array_map( 
-					fn( $status, $weight ) => array_fill( 0, $weight, $status ), 
-					array_keys( $statuses ), 
-					$statuses 
-				) 
-			) 
+		return $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					array_keys( $statuses ),
+					$statuses
+				)
+			)
 		);
 	}
 
@@ -315,14 +328,14 @@ class Order_Generator extends Generator {
 			'credit_card'      => 10,  // 10% chance
 		);
 
-		return $this->faker->randomElement( 
-			array_merge( 
-				...array_map( 
-					fn( $method, $weight ) => array_fill( 0, $weight, $method ), 
-					array_keys( $methods ), 
-					$methods 
-				) 
-			) 
+		return $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $method, $weight ) => array_fill( 0, $weight, $method ),
+					array_keys( $methods ),
+					$methods
+				)
+			)
 		);
 	}
 
@@ -335,7 +348,7 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_payment_details(): array {
 		$payment_method = $this->generate_payment_method();
-		
+
 		$details = array(
 			'method'           => $payment_method,
 			'status'           => $this->faker->randomElement( array( 'completed', 'pending', 'failed', 'refunded' ) ),
@@ -348,12 +361,12 @@ class Order_Generator extends Generator {
 		switch ( $payment_method ) {
 			case 'stripe':
 				$details['stripe_charge_id'] = 'ch_' . $this->faker->regexify( '[a-zA-Z0-9]{24}' );
-				$details['last4'] = $this->faker->numerify( '####' );
-				$details['brand'] = $this->faker->randomElement( array( 'visa', 'mastercard', 'amex', 'discover' ) );
+				$details['last4']            = $this->faker->numerify( '####' );
+				$details['brand']            = $this->faker->randomElement( array( 'visa', 'mastercard', 'amex', 'discover' ) );
 				break;
 			case 'paypal':
 				$details['paypal_transaction_id'] = $this->faker->regexify( '[A-Z0-9]{15}' );
-				$details['payer_email'] = $this->faker->email;
+				$details['payer_email']           = $this->faker->email;
 				break;
 			case 'bank_transfer':
 				$details['bank_reference'] = $this->faker->regexify( '[A-Z0-9]{10}' );
@@ -374,25 +387,45 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_shipping_details( float $subtotal ): array {
 		$shipping_methods = array(
-			'standard'  => array( 'min' => 5.99, 'max' => 12.99, 'days' => '5-7', 'weight' => 50 ),
-			'express'   => array( 'min' => 15.99, 'max' => 25.99, 'days' => '2-3', 'weight' => 30 ),
-			'overnight' => array( 'min' => 25.99, 'max' => 45.99, 'days' => '1', 'weight' => 15 ),
-			'pickup'    => array( 'min' => 0, 'max' => 0, 'days' => '0', 'weight' => 5 ),
+			'standard'  => array(
+				'min'    => 5.99,
+				'max'    => 12.99,
+				'days'   => '5-7',
+				'weight' => 50,
+			),
+			'express'   => array(
+				'min'    => 15.99,
+				'max'    => 25.99,
+				'days'   => '2-3',
+				'weight' => 30,
+			),
+			'overnight' => array(
+				'min'    => 25.99,
+				'max'    => 45.99,
+				'days'   => '1',
+				'weight' => 15,
+			),
+			'pickup'    => array(
+				'min'    => 0,
+				'max'    => 0,
+				'days'   => '0',
+				'weight' => 5,
+			),
 		);
 
-		$method = $this->faker->randomElement( 
-			array_merge( 
-				...array_map( 
-					fn( $method, $details ) => array_fill( 0, $details['weight'], $method ), 
-					array_keys( $shipping_methods ), 
-					$shipping_methods 
-				) 
-			) 
+		$method = $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $method, $details ) => array_fill( 0, $details['weight'], $method ),
+					array_keys( $shipping_methods ),
+					$shipping_methods
+				)
+			)
 		);
 
 		$method_details = $shipping_methods[ $method ];
-		$cost = $method_details['min'] === $method_details['max'] 
-			? $method_details['min'] 
+		$cost           = $method_details['min'] === $method_details['max']
+			? $method_details['min']
 			: $this->faker->randomFloat( 2, $method_details['min'], $method_details['max'] );
 
 		// Free shipping for orders over $100
@@ -401,10 +434,10 @@ class Order_Generator extends Generator {
 		}
 
 		return array(
-			'method'       => $method,
-			'cost'         => $cost,
-			'estimated_days' => $method_details['days'],
-			'insurance'    => $this->faker->boolean( 20 ) ? $this->faker->randomFloat( 2, 2.99, 9.99 ) : 0,
+			'method'             => $method,
+			'cost'               => $cost,
+			'estimated_days'     => $method_details['days'],
+			'insurance'          => $this->faker->boolean( 20 ) ? $this->faker->randomFloat( 2, 2.99, 9.99 ) : 0,
 			'signature_required' => $this->faker->boolean( 15 ),
 		);
 	}
@@ -420,14 +453,22 @@ class Order_Generator extends Generator {
 	 */
 	private function generate_tax_details( float $subtotal ): array {
 		$tax_rates = array(
-			array( 'name' => 'State Tax', 'rate' => 0.08, 'amount' => 0 ),
-			array( 'name' => 'City Tax', 'rate' => 0.025, 'amount' => 0 ),
+			array(
+				'name'   => 'State Tax',
+				'rate'   => 0.08,
+				'amount' => 0,
+			),
+			array(
+				'name'   => 'City Tax',
+				'rate'   => 0.025,
+				'amount' => 0,
+			),
 		);
 
 		$total_tax = 0;
 		foreach ( $tax_rates as &$tax ) {
 			$tax['amount'] = $subtotal * $tax['rate'];
-			$total_tax += $tax['amount'];
+			$total_tax    += $tax['amount'];
 		}
 
 		return array(
@@ -456,7 +497,7 @@ class Order_Generator extends Generator {
 			);
 		}
 
-		$coupons = $this->get_random_coupons();
+		$coupons        = $this->get_random_coupons();
 		$total_discount = 0;
 
 		foreach ( $coupons as $coupon ) {
@@ -465,9 +506,9 @@ class Order_Generator extends Generator {
 			} else {
 				$discount = min( $coupon['amount'], $subtotal );
 			}
-			
+
 			$coupon['discount_applied'] = $discount;
-			$total_discount += $discount;
+			$total_discount            += $discount;
 		}
 
 		return array(
@@ -495,14 +536,14 @@ class Order_Generator extends Generator {
 			'cancelled'           => 2,
 		);
 
-		return $this->faker->randomElement( 
-			array_merge( 
-				...array_map( 
-					fn( $status, $weight ) => array_fill( 0, $weight, $status ), 
-					array_keys( $statuses ), 
-					$statuses 
-				) 
-			) 
+		return $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					array_keys( $statuses ),
+					$statuses
+				)
+			)
 		);
 	}
 
@@ -521,23 +562,23 @@ class Order_Generator extends Generator {
 			'in_store'   => 5,
 		);
 
-		$source = $this->faker->randomElement( 
-			array_merge( 
-				...array_map( 
-					fn( $src, $weight ) => array_fill( 0, $weight, $src ), 
-					array_keys( $sources ), 
-					$sources 
-				) 
-			) 
+		$source = $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $src, $weight ) => array_fill( 0, $weight, $src ),
+					array_keys( $sources ),
+					$sources
+				)
+			)
 		);
 
 		return array(
-			'channel'     => $source,
-			'user_agent'  => $this->faker->userAgent,
-			'ip_address'  => $this->faker->ipv4,
-			'referrer'    => $this->faker->optional( 0.4 )->url,
-			'utm_source'  => $this->faker->optional( 0.3 )->randomElement( array( 'google', 'facebook', 'email', 'direct' ) ),
-			'utm_medium'  => $this->faker->optional( 0.3 )->randomElement( array( 'cpc', 'social', 'email', 'organic' ) ),
+			'channel'      => $source,
+			'user_agent'   => $this->faker->userAgent,
+			'ip_address'   => $this->faker->ipv4,
+			'referrer'     => $this->faker->optional( 0.4 )->url,
+			'utm_source'   => $this->faker->optional( 0.3 )->randomElement( array( 'google', 'facebook', 'email', 'direct' ) ),
+			'utm_medium'   => $this->faker->optional( 0.3 )->randomElement( array( 'cpc', 'social', 'email', 'organic' ) ),
 			'utm_campaign' => $this->faker->optional( 0.2 )->words( 2, true ),
 		);
 	}
@@ -554,7 +595,7 @@ class Order_Generator extends Generator {
 	 */
 	private function calculate_total( float $subtotal, array $order_meta ): float {
 		$shipping = $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'];
-		$tax = $order_meta['tax_details']['total'];
+		$tax      = $order_meta['tax_details']['total'];
 		$discount = $order_meta['coupon_details']['discount'];
 
 		return max( 0, $subtotal + $shipping + $tax - $discount );
@@ -590,18 +631,66 @@ class Order_Generator extends Generator {
 	 * @return array Address data.
 	 */
 	private function generate_fallback_address( WP_User $customer ): array {
+		// Use Location model for realistic geographic data
+		$countries = Location::get_countries();
+		if ( empty( $countries ) ) {
+			// Fallback to static data if Location model data not available
+			return $this->generate_static_fallback_address( $customer );
+		}
+
+		// Weighted selection favoring common shipping countries
+		$weighted_countries = array(
+			'US' => 60, // 60% US
+			'CA' => 15, // 15% Canada
+			'GB' => 10, // 10% UK
+			'AU' => 8,  // 8% Australia
+			'DE' => 4,  // 4% Germany
+			'FR' => 3,  // 3% France
+		);
+
+		$country_code = $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $code, $weight ) => array_fill( 0, $weight, $code ),
+					array_keys( $weighted_countries ),
+					$weighted_countries
+				)
+			)
+		);
+
+		// Get states for the selected country
+		$states     = Location::get_states( $country_code );
+		$state_data = $this->faker->randomElement( $states );
+		$state_name = $state_data['name'] ?? $this->faker->state;
+		$state_code = $state_data['state_code'] ?? $this->faker->stateAbbr;
+
+		// Get cities for the selected state
+		$cities    = Location::get_cities( $country_code, $state_code );
+		$city_data = $this->faker->randomElement( $cities );
+		$city_name = $city_data['name'] ?? $this->faker->city;
+
+		// Get country details
+		$country_data = array_filter( $countries, fn( $c ) => $c['iso2'] === $country_code );
+		$country_info = reset( $country_data );
+		$country_name = $country_info['name'] ?? $country_code;
+		$phone_code   = $country_info['phone_code'] ?? '+1';
+
 		return array(
-			'first_name' => $customer->first_name ?: $this->faker->firstName,
-			'last_name'  => $customer->last_name ?: $this->faker->lastName,
-			'email'      => $customer->user_email,
-			'phone'      => $this->faker->phoneNumber,
-			'company'    => $this->faker->optional( 0.3 )->company,
-			'address_1'  => $this->faker->streetAddress,
-			'address_2'  => $this->faker->optional( 0.3 )->secondaryAddress,
-			'city'       => $this->faker->city,
-			'state'      => $this->faker->stateAbbr,
-			'country'    => 'US',
-			'postcode'   => $this->faker->postcode,
+			'first_name'   => $customer->first_name ?: $this->faker->firstName,
+			'last_name'    => $customer->last_name ?: $this->faker->lastName,
+			'email'        => $customer->user_email,
+			'phone'        => $phone_code . ' ' . $this->generate_phone_for_country( $country_code ),
+			'company'      => $this->faker->optional( 0.3 )->company,
+			'address_1'    => $this->faker->streetAddress,
+			'address_2'    => $this->faker->optional( 0.3 )->secondaryAddress,
+			'city'         => $city_name,
+			'state'        => $state_name,
+			'state_code'   => $state_code,
+			'country'      => $country_name,
+			'country_code' => $country_code,
+			'postcode'     => $this->generate_postcode_for_country( $country_code ),
+			'latitude'     => $city_data['latitude'] ?? null,
+			'longitude'    => $city_data['longitude'] ?? null,
 		);
 	}
 
@@ -613,7 +702,7 @@ class Order_Generator extends Generator {
 	 * @return array Array of coupon data.
 	 */
 	private function get_random_coupons(): array {
-		$db = new Database( 'coupons' );
+		$db      = new Database( 'coupons' );
 		$coupons = $db->get_rows(
 			array( 'active' => 1 ),
 			$this->faker->numberBetween( 1, 2 ),
@@ -621,9 +710,12 @@ class Order_Generator extends Generator {
 			'RAND()'
 		);
 
-		return array_map( function( $coupon ) {
-			return (array) $coupon;
-		}, $coupons );
+		return array_map(
+			function ( $coupon ) {
+				return (array) $coupon;
+			},
+			$coupons
+		);
 	}
 
 	/**
@@ -666,5 +758,173 @@ class Order_Generator extends Generator {
 		$current_points = (int) get_user_meta( $customer_id, 'loyalty_points', true );
 		$points_earned  = floor( $order_total );
 		update_user_meta( $customer_id, 'loyalty_points', $current_points + $points_earned );
+	}
+
+	/**
+	 * Generate comprehensive order item metadata
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param Product_Variation $variation Product variation object.
+	 * @param int               $quantity  Item quantity.
+	 * @param float             $rate      Item rate.
+	 * @param float             $subtotal  Item subtotal.
+	 *
+	 * @return array Enhanced order item metadata.
+	 */
+	private function generate_order_item_meta( Product_Variation $variation, int $quantity, float $rate, float $subtotal ): array {
+		$product = $variation->get_product();
+
+		return array(
+			// Core product information
+			'product_name'       => $product->get_title(),
+			'product_sku'        => $product->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}' ),
+			'variation_name'     => $variation->get_name( false ),
+			'variation_sku'      => $variation->get_sku() ?: $this->faker->regexify( '[A-Z]{3}[0-9]{4}-[A-Z]{2}' ),
+
+			// Pricing details
+			'regular_price'      => $variation->get_regular_price(),
+			'sale_price'         => $variation->get_sale_price(),
+			'price_formatted'    => easycommerce_price( $rate ),
+			'subtotal_formatted' => easycommerce_price( $subtotal ),
+
+			// Product attributes
+			'attributes'         => $variation->get_attributes(),
+			'weight'             => $this->faker->randomFloat( 2, 0.1, 5.0 ),
+			'dimensions'         => array(
+				'length' => $this->faker->randomFloat( 2, 1, 20 ),
+				'width'  => $this->faker->randomFloat( 2, 1, 20 ),
+				'height' => $this->faker->randomFloat( 2, 1, 20 ),
+			),
+
+			// Fulfillment details
+			'requires_shipping'  => $this->faker->boolean( 85 ), // 85% require shipping
+			'is_virtual'         => $this->faker->boolean( 15 ), // 15% virtual products
+			'is_downloadable'    => $this->faker->boolean( 10 ), // 10% downloadable
+			'download_limit'     => $this->faker->optional( 0.3 )->numberBetween( 1, 10 ),
+			'download_expiry'    => $this->faker->optional( 0.3 )->numberBetween( 1, 365 ),
+
+			// Tax information
+			'tax_class'          => $variation->get_tax_class(),
+			'tax_status'         => $this->faker->randomElement( array( 'taxable', 'shipping', 'none' ) ),
+
+			// Inventory tracking
+			'stock_quantity'     => $variation->get_stock_quantity(),
+			'low_stock_amount'   => $this->faker->numberBetween( 1, 10 ),
+			'backorders'         => $this->faker->randomElement( array( 'no', 'notify', 'yes' ) ),
+
+			// Additional metadata
+			'purchase_note'      => $this->faker->optional( 0.2 )->sentence(),
+			'warranty_info'      => $this->faker->optional( 0.3 )->sentence(),
+			'return_policy'      => $this->faker->optional( 0.2 )->sentence(),
+		);
+	}
+
+	/**
+	 * Generate item tax rate based on product type and location
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return float Tax rate for the item.
+	 */
+	private function generate_item_tax_rate(): float {
+		$tax_rates = array(
+			0.00   => 10, // Tax-free (10%)
+			0.05   => 15, // 5% tax (15%)
+			0.08   => 35, // 8% tax (35%)
+			0.0825 => 25, // 8.25% tax (25%)
+			0.10   => 10, // 10% tax (10%)
+			0.125  => 5,  // 12.5% tax (5%)
+		);
+
+		return $this->faker->randomElement(
+			array_merge(
+				...array_map(
+					fn( $rate, $weight ) => array_fill( 0, $weight, $rate ),
+					array_keys( $tax_rates ),
+					$tax_rates
+				)
+			)
+		);
+	}
+
+	/**
+	 * Generate static fallback address when Location model is unavailable
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_User $customer Customer user object.
+	 *
+	 * @return array Static address data.
+	 */
+	private function generate_static_fallback_address( WP_User $customer ): array {
+		return array(
+			'first_name' => $customer->first_name ?: $this->faker->firstName,
+			'last_name'  => $customer->last_name ?: $this->faker->lastName,
+			'email'      => $customer->user_email,
+			'phone'      => $this->faker->phoneNumber,
+			'company'    => $this->faker->optional( 0.3 )->company,
+			'address_1'  => $this->faker->streetAddress,
+			'address_2'  => $this->faker->optional( 0.3 )->secondaryAddress,
+			'city'       => $this->faker->city,
+			'state'      => $this->faker->stateAbbr,
+			'country'    => 'US',
+			'postcode'   => $this->faker->postcode,
+		);
+	}
+
+	/**
+	 * Generate phone number formatted for specific country
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $country_code ISO2 country code.
+	 *
+	 * @return string Formatted phone number.
+	 */
+	private function generate_phone_for_country( string $country_code ): string {
+		switch ( $country_code ) {
+			case 'US':
+			case 'CA':
+				return $this->faker->regexify( '\([0-9]{3}\) [0-9]{3}-[0-9]{4}' );
+			case 'GB':
+				return $this->faker->regexify( '[0-9]{4} [0-9]{3} [0-9]{4}' );
+			case 'AU':
+				return $this->faker->regexify( '[0-9]{4} [0-9]{3} [0-9]{3}' );
+			case 'DE':
+				return $this->faker->regexify( '[0-9]{3} [0-9]{3} [0-9]{4}' );
+			case 'FR':
+				return $this->faker->regexify( '[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}' );
+			default:
+				return $this->faker->phoneNumber;
+		}
+	}
+
+	/**
+	 * Generate postcode formatted for specific country
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $country_code ISO2 country code.
+	 *
+	 * @return string Formatted postcode.
+	 */
+	private function generate_postcode_for_country( string $country_code ): string {
+		switch ( $country_code ) {
+			case 'US':
+				return $this->faker->regexify( '[0-9]{5}(-[0-9]{4})?' );
+			case 'CA':
+				return $this->faker->regexify( '[A-Z][0-9][A-Z] [0-9][A-Z][0-9]' );
+			case 'GB':
+				return $this->faker->regexify( '[A-Z]{1,2}[0-9]{1,2}[A-Z]? [0-9][A-Z]{2}' );
+			case 'AU':
+				return $this->faker->regexify( '[0-9]{4}' );
+			case 'DE':
+				return $this->faker->regexify( '[0-9]{5}' );
+			case 'FR':
+				return $this->faker->regexify( '[0-9]{5}' );
+			default:
+				return $this->faker->postcode;
+		}
 	}
 }

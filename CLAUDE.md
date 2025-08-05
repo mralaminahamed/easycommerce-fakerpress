@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 ## Project Overview
 
-EasyCommerce FakerPress is a modernized WordPress plugin that generates realistic fake ecommerce data (products, customers, orders, coupons) for testing and development. It integrates with the EasyCommerce plugin's data models and features a modern React-based admin interface with REST API architecture.
+EasyCommerce FakerPress is a modernized WordPress plugin that generates realistic fake ecommerce data for testing and development. It integrates deeply with the EasyCommerce plugin's data models and features a modern React-based admin interface with comprehensive REST API architecture.
 
 ## Development Environment
 
@@ -24,22 +24,32 @@ The plugin has been completely modernized with:
 - **Abstract Base Classes**: Uniform patterns reducing code duplication by ~70%
 - **EasyCommerce Model Integration**: Uses EasyCommerce plugin's data models instead of direct database queries
 
-### Backend (PHP)
+### Backend (PHP) - Current Structure
 ```
 includes/
 ├── Abstracts/
-│   ├── Abstract_Generator.php     # Base generator with common functionality
-│   └── Abstract_Rest_Controller.php # Base REST controller
-├── Controllers/
-│   ├── Product_Controller.php     # REST endpoints for product generation
-│   ├── Customer_Controller.php    # REST endpoints for customer generation
-│   ├── Order_Controller.php       # REST endpoints for order generation
-│   └── Coupon_Controller.php      # REST endpoints for coupon generation
+│   ├── Generator.php              # Base generator with common functionality
+│   └── REST_Controller.php        # Base REST controller
+├── REST/Controllers/
+│   ├── Product_REST_Controller.php           # REST endpoints for product generation
+│   ├── Customer_REST_Controller.php          # REST endpoints for customer generation
+│   ├── Order_REST_Controller.php             # REST endpoints for order generation
+│   ├── Coupon_REST_Controller.php            # REST endpoints for coupon generation
+│   ├── Product_Variation_REST_Controller.php # REST endpoints for product variations
+│   ├── Shipping_Plan_REST_Controller.php     # REST endpoints for shipping plans
+│   ├── Tax_REST_Controller.php               # REST endpoints for tax classes
+│   ├── Transaction_REST_Controller.php       # REST endpoints for transactions
+│   └── Cart_Session_REST_Controller.php      # REST endpoints for cart sessions
 └── Generators/
-    ├── Product_Generator.php      # Product generation with EasyCommerce integration
-    ├── Customer_Generator.php     # Customer generation with realistic profiles
-    ├── Order_Generator.php        # Order generation with business logic
-    └── Coupon_Generator.php       # Coupon generation with rules engine
+    ├── Product_Generator.php           # Product generation with EasyCommerce integration
+    ├── Customer_Generator.php          # Customer generation with realistic profiles
+    ├── Order_Generator.php             # Order generation with business logic
+    ├── Coupon_Generator.php            # Coupon generation with rules engine
+    ├── Product_Variation_Generator.php # Product variations with attributes
+    ├── Shipping_Plan_Generator.php     # Shipping methods and regional coverage
+    ├── Tax_Generator.php               # Location-based tax classes and rates
+    ├── Transaction_Generator.php       # Payment transaction history
+    └── Cart_Session_Generator.php      # Shopping cart sessions and abandoned carts
 ```
 
 ### Frontend (React)
@@ -60,152 +70,258 @@ npm run dev          # Watch mode for development
 npm run build        # Production build
 
 # Code quality
-npm run lint         # Lint JS and CSS
+npm run lint         # Lint JS and CSS with ESLint and Stylelint
 npm run fix          # Auto-fix linting issues
-composer run lint    # PHP CodeSniffer (WPCS)
+composer run lint    # PHP CodeSniffer (WPCS) with PHPStan
 composer run fix     # PHP Code Beautifier
 ```
 
+## Coding Standards & Quality
+
+### PHP Standards
+- **WordPress Coding Standards (WPCS)**: Strict adherence to WordPress PHP standards
+- **PHPStan**: Static analysis for type safety and code quality
+- **PHPCS**: Code style enforcement with WordPress ruleset
+- **PSR-4**: Namespace and autoloading standards
+- **PHPDoc**: Comprehensive documentation for all methods and properties
+
+### JavaScript Standards
+- **ESLint**: JavaScript linting with WordPress and React rulesets
+- **Prettier**: Code formatting consistency
+- **React Best Practices**: Hooks, component patterns, and performance optimization
+
+### CSS/SCSS Standards
+- **Stylelint**: CSS/SCSS linting with WordPress standards
+- **BEM Methodology**: Block Element Modifier naming convention
+- **Tailwind CSS**: Utility-first approach with custom configurations
+
 ## EasyCommerce Integration
 
-### Data Models Used
-The plugin integrates with EasyCommerce's data models for proper data validation and relationships:
+### Enhanced Data Models Used
+The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 
-- **Product Model**: Creates products with attributes, variations, pricing, and inventory
-- **Customer Model**: Creates customer profiles with billing/shipping addresses and loyalty tiers
-- **Order Model**: Creates orders with items, payment methods, shipping, and taxes
-- **Coupon Model**: Creates discount coupons with rules and restrictions
-- **Attribute/Attribute_Value Models**: Manages product attributes and their values
+#### Core Models
+- **Product Model**: Products with attributes, variations, pricing, and inventory
+- **Customer Model**: Customer profiles with billing/shipping addresses and loyalty tiers
+- **Order Model**: Orders with items, payment methods, shipping, and taxes
+- **Coupon Model**: Discount coupons with advanced rules and restrictions
 
-### Key Integration Points
-- **REST API Base**: `/wp-json/easycommerce-fakerpress/v1/`
-- **Endpoints**:
-  - `POST /products/generate` - Generate products
-  - `POST /customers/generate` - Generate customers
-  - `POST /orders/generate` - Generate orders
-  - `POST /coupons/generate` - Generate coupons
-- **Admin Interface**: WordPress admin page at `admin.php?page=easycommerce-fakerpress`
+#### Advanced Models (New in v2.0.0)
+- **Product_Variation Model**: Product variations with attributes and pricing
+- **Attribute/Attribute_Value Models**: Product attribute system management
+- **Shipping_Plan Model**: Shipping methods with regional coverage and pricing tiers
+- **Tax Model**: Location-based tax classes with multi-jurisdiction support
+- **Transaction Model**: Payment transaction history with multiple gateways
+- **Cart Model**: Shopping cart sessions with abandonment tracking
+
+#### Utility Models
+- **Location Model**: Geographic hierarchy (countries, states, cities) with currency data
+- **Database Model**: Enhanced database operations with query optimization
+
+### REST API Endpoints
+- **Base URL**: `/wp-json/easycommerce-fakerpress/v1/`
+- **Core Endpoints**:
+  - `POST /products/generate` - Generate products with variations
+  - `POST /customers/generate` - Generate customer profiles
+  - `POST /orders/generate` - Generate orders with comprehensive data
+  - `POST /coupons/generate` - Generate discount coupons
+- **Advanced Endpoints** (New in v2.0.0):
+  - `POST /product-variations/generate` - Generate product variations
+  - `POST /shipping-plans/generate` - Generate shipping configurations
+  - `POST /taxes/generate` - Generate tax classes and rates
+  - `POST /transactions/generate` - Generate payment transactions
+  - `POST /cart-sessions/generate` - Generate cart sessions and abandoned carts
+
+### Admin Interface
+- **Page**: `admin.php?page=easycommerce-fakerpress`
 - **React Mount Point**: `#easycommerce-fakerpress-root`
-- **Nonce**: `ecfp_nonce` for REST API security
+- **Security**: `ecfp_nonce` for REST API authentication
+- **Permissions**: `manage_options` capability required
 
 ## Data Generation Features
 
 ### Advanced Product Generation
 - **Product Types**: Physical products, digital products, variations
-- **Attribute System**: Creates proper EasyCommerce attributes and values
-- **Categories & Brands**: WordPress taxonomy integration
-- **Pricing Strategy**: Cost-based pricing with realistic margins
-- **Inventory Management**: Stock tracking and low stock alerts
-- **SEO Optimization**: Meta descriptions, keywords, and slugs
+- **Attribute System**: Creates proper EasyCommerce attributes and values with validation
+- **Variation System**: Complex product variations with attribute combinations
+- **Categories & Brands**: WordPress taxonomy integration with realistic hierarchies
+- **Pricing Strategy**: Cost-based pricing with realistic margins and sale prices
+- **Inventory Management**: Stock tracking, low stock alerts, and stock limits
+- **SEO Optimization**: Meta descriptions, keywords, slugs, and structured data
 
-### Realistic Customer Profiles
+### Comprehensive Customer Profiles
 - **Demographics**: Age-appropriate purchase patterns and preferences
-- **Geographic Diversity**: International addresses with proper formatting
-- **Loyalty Progression**: Customer lifetime value and tier advancement
-- **Purchase History**: Historical order patterns based on customer age
+- **Geographic Diversity**: International addresses with proper formatting and validation
+- **Loyalty Progression**: Customer lifetime value and tier advancement algorithms
+- **Purchase History**: Historical order patterns based on customer demographics
 - **Address Validation**: Proper billing and shipping address structures
+- **Customer Journey**: Realistic progression from registration to loyal customer
 
-### Business Logic Orders
-- **Customer Matching**: Links orders to existing customers with fallback user creation
-- **Product Selection**: Intelligent product selection with stock validation
-- **Payment Methods**: Realistic payment method distribution
-- **Order Status**: Proper order lifecycle status progression
-- **Tax Calculation**: Location-based tax computation
-- **Shipping Integration**: Multiple shipping methods and rates
+### Advanced Order Management
+- **Customer Matching**: Links orders to existing customers with intelligent fallback
+- **Product Selection**: Stock validation and realistic product combinations
+- **Payment Methods**: Distribution based on regional preferences
+- **Order Status**: Proper order lifecycle with realistic timing
+- **Tax Calculation**: Multi-jurisdiction tax computation with compound rates
+- **Shipping Integration**: Multiple methods with regional pricing and restrictions
+- **Order Items**: Detailed line items with meta data and variations
 
-### Advanced Coupon System
-- **Discount Types**: Percentage, fixed amount, BOGO, free shipping
-- **Rule Engine**: Customer restrictions, product limitations, usage limits
-- **Expiration Logic**: Time-based and usage-based expiration
-- **Code Generation**: Unique coupon codes with validation
-- **A/B Testing**: Multiple coupon variants for testing
+### Sophisticated Coupon System
+- **Discount Types**: Percentage, fixed amount, BOGO, free shipping, tiered discounts
+- **Rule Engine**: Customer restrictions, product limitations, usage limits, date ranges
+- **Expiration Logic**: Time-based and usage-based expiration with grace periods
+- **Code Generation**: Unique coupon codes with customizable patterns and validation
+- **A/B Testing**: Multiple coupon variants for conversion optimization
+
+### Enhanced Transaction Tracking
+- **Payment Gateways**: Stripe, PayPal, Square, Authorize.Net, and 6+ others
+- **Transaction Types**: Payments, refunds, adjustments, fees, commissions
+- **Realistic IDs**: Gateway-specific transaction ID patterns
+- **Status Distribution**: Realistic success/failure rates by transaction type
+- **Multi-Currency**: Support for 7+ major currencies with proper formatting
+
+### Advanced Cart Analytics
+- **Cart Sessions**: Realistic shopping cart behavior simulation
+- **Abandonment Patterns**: Time-based abandonment with customer segmentation
+- **Recovery Tracking**: Email reminder campaigns with effectiveness metrics
+- **Value Analysis**: Cart value distribution and trending analysis
+- **Customer Behavior**: Registered vs guest abandonment patterns
 
 ## WordPress Standards Compliance
 
-- **Coding Standards**: WordPress Coding Standards (WPCS) compliance
-- **Security**: Proper sanitization, validation, and nonce verification
-- **Internationalization**: Text domain `easycommerce-fakerpress` for translations
-- **Hooks System**: Uses WordPress actions and filters appropriately
-- **User Capabilities**: Respects `manage_options` capability
-- **Database**: Uses WordPress database abstraction layer
+- **Coding Standards**: Strict WordPress Coding Standards (WPCS) compliance
+- **Security**: Comprehensive sanitization, validation, and nonce verification
+- **Internationalization**: Full i18n support with `easycommerce-fakerpress` text domain
+- **Hooks System**: Proper use of WordPress actions and filters with custom hooks
+- **User Capabilities**: Granular permission system respecting WordPress roles
+- **Database**: WordPress database abstraction layer with prepared statements
+- **Performance**: Query optimization, caching strategies, and memory management
 
 ## Technical Architecture
 
 ### Abstract Base Classes
-- **Abstract_Generator**: Common functionality for all data generators
-- **Abstract_Rest_Controller**: Standardized REST API response handling
-- **Template Method Pattern**: Consistent generation workflow across all generators
+- **Generator**: Common functionality for all data generators with template method pattern
+- **REST_Controller**: Standardized REST API response handling with error management
+- **Validation**: Input validation and sanitization with WordPress standards
+- **Logging**: Integrated WordPress debug logging with context information
 
-### Error Handling
-- **Validation**: Input validation before data generation
-- **Logging**: WordPress debug logging for troubleshooting
-- **Graceful Degradation**: Fallback mechanisms for missing dependencies
-- **User Feedback**: Clear error messages in admin interface
+### Design Patterns
+- **Template Method**: Consistent generation workflow across all generators
+- **Factory Pattern**: Dynamic generator instantiation based on data type
+- **Strategy Pattern**: Configurable generation strategies per data type
+- **Observer Pattern**: Event-driven generation with progress tracking
+
+### Error Handling & Validation
+- **Input Validation**: Comprehensive validation before data generation
+- **Type Safety**: PHPStan level 8 compliance with strict typing
+- **Exception Handling**: Graceful error handling with user-friendly messages
+- **Logging**: Detailed error logging with context and stack traces
+- **Fallback Mechanisms**: Graceful degradation for missing dependencies
 
 ### Performance Optimization
-- **Batch Processing**: Efficient bulk data generation
-- **Memory Management**: Proper cleanup for large data sets
-- **Database Optimization**: Optimized queries and transactions
-- **Caching**: Strategic caching for repeated operations
+- **Batch Processing**: Efficient bulk data generation with memory management
+- **Query Optimization**: Optimized database queries with proper indexing
+- **Caching**: Strategic caching for repeated operations and lookups
+- **Memory Management**: Proper cleanup for large data sets with garbage collection
+- **Database Transactions**: Atomic operations for data consistency
 
 ## Development Workflow
 
 1. **Setup**: Install dependencies with `composer install` and `npm install`
 2. **Development**: Use `npm run dev` for hot reloading during development
-3. **Testing**: Generate test data using the admin interface
-4. **Code Quality**: Run `npm run lint` and `composer run lint` before commits
+3. **Code Quality**: Run linting and static analysis before commits
+4. **Testing**: Generate test data and validate with EasyCommerce interface
 5. **Build**: Use `npm run build` for production deployment
+6. **Documentation**: Update PHPDoc and inline documentation
+
+### Pre-Commit Checklist
+- [ ] Run `composer run lint` (PHPCS + PHPStan)
+- [ ] Run `npm run lint` (ESLint + Stylelint)
+- [ ] Test data generation functionality
+- [ ] Verify REST API endpoints
+- [ ] Check error handling and validation
+- [ ] Update documentation if needed
 
 ## Dependencies
 
 ### PHP Dependencies (Composer)
-- `fakerphp/faker`: Realistic fake data generation
-- `EasyCommerce Plugin`: Data models and business logic (required)
+- `fakerphp/faker`: Realistic fake data generation with localization
+- `EasyCommerce Plugin`: Data models and business logic (required dependency)
+- `WordPress`: 5.0+ with proper database abstraction
 
 ### JavaScript Dependencies (NPM)
-- `react`: UI component library
+- `react`: UI component library with hooks
 - `@headlessui/react`: Accessible UI components
 - `tailwindcss`: Utility-first CSS framework
-- `webpack`: Module bundler
-- `babel`: JavaScript compiler
+- `webpack`: Module bundler with optimization
+- `babel`: JavaScript compiler with modern syntax support
 
-## Plugin Activation Requirements
+### Development Dependencies
+- `phpstan/phpstan`: PHP static analysis
+- `squizlabs/php_codesniffer`: PHP code style checking
+- `wp-coding-standards/wpcs`: WordPress coding standards
+- `eslint`: JavaScript linting
+- `stylelint`: CSS/SCSS linting
 
-- **EasyCommerce Plugin**: Must be active (dependency)
+## Plugin Requirements
+
+- **EasyCommerce Plugin**: Must be active (critical dependency)
 - **WordPress Version**: 5.0 or higher
-- **PHP Version**: 7.4 or higher
+- **PHP Version**: 7.4 or higher (8.0+ recommended)
 - **Database**: MySQL 5.6 or higher
+- **Memory Limit**: 256MB+ recommended for large data generation
+- **User Permissions**: `manage_options` capability
 
 ## Troubleshooting
 
 ### Common Issues
-- **Model Not Found**: Ensure EasyCommerce plugin is active
-- **Permission Denied**: Check user has `manage_options` capability
-- **Generation Fails**: Verify database connectivity and plugin dependencies
-- **Frontend Not Loading**: Run `npm run build` and check console for errors
+- **Model Not Found**: Ensure EasyCommerce plugin is active and properly configured
+- **Permission Denied**: Verify user has `manage_options` capability
+- **Generation Fails**: Check database connectivity and plugin dependencies
+- **Frontend Not Loading**: Run `npm run build` and check browser console
+- **Memory Issues**: Increase PHP memory limit for large batch operations
 
 ### Debug Mode
-Enable WordPress debug mode for detailed error logging:
+Enable comprehensive WordPress debug mode:
 ```php
 define('WP_DEBUG', true);
 define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+define('SCRIPT_DEBUG', true);
 ```
 
-## Development Memories
+### Performance Debugging
+```php
+define('SAVEQUERIES', true);
+define('WP_DEBUG_LOG', true);
+```
 
-### EasyCommerce Integration Notes
-- Always use EasyCommerce data models instead of direct database queries
-- Validate product attributes exist before creating attribute relationships
-- Ensure customer roles are properly assigned for order generation
-- Use EasyCommerce Database class for code uniqueness validation
-- Follow EasyCommerce's business logic patterns for realistic data
+## Development Best Practices
 
-### Code Patterns
-- All generators extend `Abstract_Generator` for consistency
-- All REST controllers extend `Abstract_Rest_Controller`
-- Use dependency injection for model instantiation
-- Implement proper error handling and user feedback
-- Follow PSR-4 autoloading standards
+### Code Architecture
+- **Follow existing structure**: Always align new classes with abstract base classes
+- **Consistent naming**: Use WordPress and PSR-4 naming conventions
+- **Type safety**: Implement strict typing with PHPStan compliance
+- **Documentation**: Comprehensive PHPDoc for all public methods
+- **Error handling**: Implement proper exception handling and user feedback
+
+### Generator Development
+- All generators MUST extend `EasyCommerceFakerPress\Abstracts\Generator`
+- Implement required `generate_single_item()` method
+- Include `get_resource_type()` method for identification
+- Follow template method pattern for consistency
+- Use EasyCommerce models instead of direct database queries
+- Implement proper validation and error handling
+
+### Controller Development
+- All REST controllers MUST extend `EasyCommerceFakerPress\Abstracts\REST_Controller`
+- Place in `includes/REST/Controllers/` directory
+- Use `_REST_Controller` suffix in class names
+- Implement required abstract methods:
+  - `get_rest_base()`
+  - `get_generator_instance()`
+  - `get_resource_type()`
+- Follow WordPress REST API standards
 
 ### Testing Strategy
 - Generate small batches first to validate data structure
@@ -213,3 +329,46 @@ define('WP_DEBUG_LOG', true);
 - Verify database relationships are properly established
 - Check frontend rendering of generated data
 - Validate REST API endpoints with proper authentication
+- Test error conditions and edge cases
+- Verify performance with large data sets
+
+### Security Considerations
+- Always sanitize and validate input data
+- Use WordPress nonces for CSRF protection
+- Respect user capabilities and permissions
+- Implement proper SQL injection prevention
+- Validate file uploads and media handling
+- Use WordPress security functions and filters
+
+### Performance Guidelines
+- Implement batch processing for large data sets
+- Use database transactions for data consistency
+- Optimize queries and avoid N+1 problems
+- Implement proper caching strategies
+- Monitor memory usage during generation
+- Use WordPress object cache where appropriate
+
+## EasyCommerce Integration Notes
+
+### Critical Integration Points
+- Always use EasyCommerce data models instead of direct database queries
+- Validate product attributes exist before creating relationships
+- Ensure customer roles are properly assigned for order generation
+- Use EasyCommerce Database class for code uniqueness validation
+- Follow EasyCommerce's business logic patterns for realistic data
+- Respect EasyCommerce's data validation and constraints
+- Integrate with EasyCommerce's event system and hooks
+
+### Data Relationship Management
+- Maintain proper foreign key relationships
+- Validate data integrity across related models
+- Handle cascading operations appropriately
+- Implement proper data cleanup and orphan handling
+- Respect EasyCommerce's data lifecycle management
+
+### Business Logic Compliance
+- Follow EasyCommerce's pricing calculation logic
+- Implement proper tax calculation workflows
+- Respect inventory management rules and constraints
+- Handle shipping calculation integration properly
+- Maintain coupon usage tracking and validation

@@ -14,6 +14,12 @@ use EasyCommerceFakerPress\REST\Controllers\Product_REST_Controller;
 use EasyCommerceFakerPress\REST\Controllers\Customer_REST_Controller;
 use EasyCommerceFakerPress\REST\Controllers\Order_REST_Controller;
 use EasyCommerceFakerPress\REST\Controllers\Coupon_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Product_Variation_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Shipping_Plan_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Tax_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Transaction_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Cart_Session_REST_Controller;
+use EasyCommerceFakerPress\REST\Controllers\Location_REST_Controller;
 
 /**
  * Main Plugin Class
@@ -129,14 +135,13 @@ class EasyCommerce_FakerPress {
 		}
 
 		$asset_file = ECFP_PLUGIN_PATH . 'build/admin.asset.php';
-		if ( file_exists( $asset_file ) ) {
-			$asset_data = require $asset_file;
-			$deps       = $asset_data['dependencies'];
-			$version    = $asset_data['version'];
-		} else {
-			$deps    = array( 'wp-element', 'wp-i18n' );
-			$version = ECFP_VERSION;
+		if ( ! file_exists( $asset_file ) ) {
+			return;
 		}
+
+		$asset_data = require $asset_file;
+		$deps       = $asset_data['dependencies'];
+		$version    = $asset_data['version'];
 
 		wp_enqueue_script(
 			'easycommerce-fakerpress-admin',
@@ -169,6 +174,7 @@ class EasyCommerce_FakerPress {
 	 * Register REST API routes
 	 *
 	 * Initializes and registers all REST API controllers for the plugin.
+	 * Includes both core generators and enhanced Version 2.0 generators.
 	 *
 	 * @since 1.0.0
 	 *
@@ -176,10 +182,19 @@ class EasyCommerce_FakerPress {
 	 */
 	public function register_rest_routes(): void {
 		$controllers = array(
+			// Core generators
 			new Product_REST_Controller(),
 			new Customer_REST_Controller(),
 			new Order_REST_Controller(),
 			new Coupon_REST_Controller(),
+			
+			// Enhanced generators (Version 2.0)
+			new Product_Variation_REST_Controller(),
+			new Shipping_Plan_REST_Controller(),
+			new Tax_REST_Controller(),
+			new Transaction_REST_Controller(),
+			new Cart_Session_REST_Controller(),
+			new Location_REST_Controller(),
 		);
 
 		foreach ( $controllers as $controller ) {

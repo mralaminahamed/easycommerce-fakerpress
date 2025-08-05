@@ -4,6 +4,12 @@ import ProductGenerator from './ProductGenerator';
 import CustomerGenerator from './CustomerGenerator';
 import OrderGenerator from './OrderGenerator';
 import CouponGenerator from './CouponGenerator';
+import ProductVariationGenerator from './ProductVariationGenerator';
+import ShippingPlanGenerator from './ShippingPlanGenerator';
+import TaxGenerator from './TaxGenerator';
+import TransactionGenerator from './TransactionGenerator';
+import CartSessionGenerator from './CartSessionGenerator';
+import LocationGenerator from './LocationGenerator';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -11,10 +17,19 @@ function classNames(...classes) {
 
 export default function App() {
     const tabs = [
-        { name: 'Products', component: ProductGenerator },
-        { name: 'Customers', component: CustomerGenerator },
-        { name: 'Orders', component: OrderGenerator },
-        { name: 'Coupons', component: CouponGenerator },
+        // Core generators
+        { name: 'Products', component: ProductGenerator, category: 'core' },
+        { name: 'Customers', component: CustomerGenerator, category: 'core' },
+        { name: 'Orders', component: OrderGenerator, category: 'core' },
+        { name: 'Coupons', component: CouponGenerator, category: 'core' },
+        
+        // Enhanced generators (Version 2.0)
+        { name: 'Product Variations', component: ProductVariationGenerator, category: 'enhanced' },
+        { name: 'Shipping Plans', component: ShippingPlanGenerator, category: 'enhanced' },
+        { name: 'Tax Classes', component: TaxGenerator, category: 'enhanced' },
+        { name: 'Transactions', component: TransactionGenerator, category: 'enhanced' },
+        { name: 'Cart Sessions', component: CartSessionGenerator, category: 'enhanced' },
+        { name: 'Locations', component: LocationGenerator, category: 'enhanced' },
     ];
 
     return (
