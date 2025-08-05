@@ -1,9 +1,9 @@
 <?php
 
-namespace EasyCommerceFakerPress\Tests\REST\Controllers;
+namespace EasyCommerceFakerPress\Tests\Controllers;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\REST\Controllers\Customer_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Customer_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -11,7 +11,7 @@ use WP_Error;
 /**
  * Test class for Customer REST Controller
  *
- * @covers \EasyCommerceFakerPress\REST\Controllers\Customer_REST_Controller
+ * @covers \EasyCommerceFakerPress\Controllers\Customer_REST_Controller
  */
 class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
@@ -69,9 +69,9 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_route_registration(): void {
 		$routes = $this->server->get_routes();
 		$namespace = '/' . $this->namespace;
-		
+
 		$this->assertArrayHasKey( $namespace . '/customers/generate', $routes );
-		
+
 		$route = $routes[ $namespace . '/customers/generate' ];
 		$this->assertCount( 1, $route );
 		$this->assertEquals( 'POST', $route[0]['methods']['POST'] );
@@ -149,7 +149,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		if ( ! empty( $data['customers'] ) ) {
 			$customer = $data['customers'][0];
 			$this->assertIsArray( $customer );
-			
+
 			// Check for common customer fields
 			$expected_fields = array( 'id', 'first_name', 'last_name', 'email', 'status' );
 			foreach ( $expected_fields as $field ) {
@@ -311,7 +311,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$data = $response->get_data();
 
 		// Should return validation error or ignore invalid tier
-		$this->assertTrue( 
+		$this->assertTrue(
 			$response->get_status() === 400 || $response->get_status() === 200,
 			'Should handle invalid loyalty tier gracefully'
 		);
@@ -440,10 +440,10 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 			if ( ! empty( $emails ) ) {
 				$unique_emails = array_unique( $emails );
-				$this->assertCount( 
-					count( $emails ), 
-					$unique_emails, 
-					'All customer emails should be unique' 
+				$this->assertCount(
+					count( $emails ),
+					$unique_emails,
+					'All customer emails should be unique'
 				);
 			}
 		}
@@ -472,7 +472,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 				if ( isset( $customer['billing_address'] ) ) {
 					$billing = $customer['billing_address'];
 					$required_fields = array( 'street', 'city', 'country' );
-					
+
 					foreach ( $required_fields as $field ) {
 						$this->assertArrayHasKey( $field, $billing );
 						$this->assertIsString( $billing[ $field ] );
@@ -491,7 +491,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 				if ( isset( $customer['shipping_address'] ) ) {
 					$shipping = $customer['shipping_address'];
 					$required_fields = array( 'street', 'city', 'country' );
-					
+
 					foreach ( $required_fields as $field ) {
 						$this->assertArrayHasKey( $field, $shipping );
 						$this->assertIsString( $shipping[ $field ] );
@@ -520,7 +520,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 			foreach ( $data['customers'] as $customer ) {
 				if ( isset( $customer['demographics'] ) ) {
 					$demographics = $customer['demographics'];
-					
+
 					if ( isset( $demographics['age_group'] ) ) {
 						$valid_age_groups = array( '18-24', '25-34', '35-44', '45-54', '55-64', '65+' );
 						$this->assertContains( $demographics['age_group'], $valid_age_groups );

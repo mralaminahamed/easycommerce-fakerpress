@@ -1,25 +1,25 @@
 <?php
 /**
- * Transaction REST Controller
+ * Location REST Controller
  *
  * @since   1.0.0
- * @package EasyCommerceFakerPress\REST\Controllers
+ * @package EasyCommerceFakerPress\Controllers
  */
 
-namespace EasyCommerceFakerPress\REST\Controllers;
+namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Transaction_Generator;
+use EasyCommerceFakerPress\Generators\Location_Generator;
 
 /**
- * Transaction REST Controller Class
+ * Location REST Controller Class
  *
- * Handles REST API endpoints for transaction generation
+ * Handles REST API endpoints for location data generation
  *
  * @since 1.0.0
  */
-class Transaction_REST_Controller extends REST_Controller {
+class Location_REST_Controller extends REST_Controller {
 
 	/**
 	 * Get REST base for the endpoint
@@ -29,7 +29,7 @@ class Transaction_REST_Controller extends REST_Controller {
 	 * @return string REST base.
 	 */
 	protected function get_rest_base(): string {
-		return 'transactions';
+		return 'locations';
 	}
 
 	/**
@@ -39,8 +39,8 @@ class Transaction_REST_Controller extends REST_Controller {
 	 *
 	 * @return Generator Generator instance.
 	 */
-	protected function get_generator_instance(): Transaction_Generator {
-		return new Transaction_Generator();
+	protected function get_generator_instance(): Location_Generator {
+		return new Location_Generator();
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Transaction_REST_Controller extends REST_Controller {
 	 * @return string Resource type.
 	 */
 	protected function get_resource_type(): string {
-		return 'transaction';
+		return 'location';
 	}
 
 	/**
@@ -63,39 +63,27 @@ class Transaction_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_properties(): array {
 		return array(
-			'transactions' => array(
-				'description' => __( 'Generated payment transactions with realistic data.', 'easycommerce-fakerpress' ),
+			'locations' => array(
+				'description' => __( 'Generated location hierarchy with countries, states, and cities.', 'easycommerce-fakerpress' ),
 				'type'        => 'array',
 				'context'     => array( 'view' ),
 				'readonly'    => true,
 				'items'       => array(
 					'type'       => 'object',
 					'properties' => array(
-						'id'              => array(
+						'countries_created' => array(
 							'type' => 'integer',
 						),
-						'order_id'        => array(
+						'total_states'      => array(
 							'type' => 'integer',
 						),
-						'customer_id'     => array(
+						'total_cities'      => array(
 							'type' => 'integer',
 						),
-						'transaction_id'  => array(
+						'data_file_path'    => array(
 							'type' => 'string',
 						),
-						'payment_gateway' => array(
-							'type' => 'string',
-						),
-						'amount'          => array(
-							'type' => 'number',
-						),
-						'currency'        => array(
-							'type' => 'string',
-						),
-						'status'          => array(
-							'type' => 'string',
-						),
-						'type'            => array(
+						'created_date'      => array(
 							'type' => 'string',
 						),
 					),

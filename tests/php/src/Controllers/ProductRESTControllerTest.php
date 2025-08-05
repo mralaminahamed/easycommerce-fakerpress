@@ -1,9 +1,9 @@
 <?php
 
-namespace EasyCommerceFakerPress\Tests\REST\Controllers;
+namespace EasyCommerceFakerPress\Tests\Controllers;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\REST\Controllers\Product_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Product_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -11,7 +11,7 @@ use WP_Error;
 /**
  * Test class for Product REST Controller
  *
- * @covers \EasyCommerceFakerPress\REST\Controllers\Product_REST_Controller
+ * @covers \EasyCommerceFakerPress\Controllers\Product_REST_Controller
  */
 class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
@@ -69,9 +69,9 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_route_registration(): void {
 		$routes = $this->server->get_routes();
 		$namespace = '/' . $this->namespace;
-		
+
 		$this->assertArrayHasKey( $namespace . '/products/generate', $routes );
-		
+
 		$route = $routes[ $namespace . '/products/generate' ];
 		$this->assertCount( 1, $route );
 		$this->assertEquals( 'POST', $route[0]['methods']['POST'] );
@@ -388,7 +388,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		if ( ! empty( $data['products'] ) ) {
 			$product = $data['products'][0];
 			$this->assertIsArray( $product );
-			
+
 			// Check for common product fields
 			$expected_fields = array( 'id', 'name', 'price', 'status' );
 			foreach ( $expected_fields as $field ) {

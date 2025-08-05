@@ -317,7 +317,7 @@ easycommerce-fakerpress/
 ├── includes/
 │   ├── Abstracts/                        # Abstract base classes
 │   ├── Generators/                       # Data generators with EasyCommerce integration
-│   └── REST/Controllers/                 # REST API controllers
+│   └── Controllers/                      # REST API controllers
 ├── src/admin/                            # React components and modern UI
 ├── build/                                # Compiled assets
 ├── vendor/                               # Composer dependencies

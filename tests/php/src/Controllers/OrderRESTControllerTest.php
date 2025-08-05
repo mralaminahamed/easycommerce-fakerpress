@@ -1,9 +1,9 @@
 <?php
 
-namespace EasyCommerceFakerPress\Tests\REST\Controllers;
+namespace EasyCommerceFakerPress\Tests\Controllers;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\REST\Controllers\Order_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Order_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -11,7 +11,7 @@ use WP_Error;
 /**
  * Test class for Order REST Controller
  *
- * @covers \EasyCommerceFakerPress\REST\Controllers\Order_REST_Controller
+ * @covers \EasyCommerceFakerPress\Controllers\Order_REST_Controller
  */
 class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
@@ -69,9 +69,9 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_route_registration(): void {
 		$routes = $this->server->get_routes();
 		$namespace = '/' . $this->namespace;
-		
+
 		$this->assertArrayHasKey( $namespace . '/orders/generate', $routes );
-		
+
 		$route = $routes[ $namespace . '/orders/generate' ];
 		$this->assertCount( 1, $route );
 		$this->assertEquals( 'POST', $route[0]['methods']['POST'] );
@@ -149,7 +149,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		if ( ! empty( $data['orders'] ) ) {
 			$order = $data['orders'][0];
 			$this->assertIsArray( $order );
-			
+
 			// Check for common order fields
 			$expected_fields = array( 'id', 'order_number', 'customer_id', 'status', 'total', 'currency' );
 			foreach ( $expected_fields as $field ) {
@@ -445,13 +445,13 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 			foreach ( $data['orders'] as $order ) {
 				if ( isset( $order['subtotal'], $order['tax_amount'], $order['shipping_amount'], $order['discount_amount'], $order['total'] ) ) {
 					$calculated_total = $order['subtotal'] + $order['tax_amount'] + $order['shipping_amount'] - $order['discount_amount'];
-					
+
 					// Allow for small floating point differences
-					$this->assertEqualsWithDelta( 
-						$calculated_total, 
-						$order['total'], 
-						0.01, 
-						'Order total should equal subtotal + tax + shipping - discount' 
+					$this->assertEqualsWithDelta(
+						$calculated_total,
+						$order['total'],
+						0.01,
+						'Order total should equal subtotal + tax + shipping - discount'
 					);
 				}
 			}
@@ -482,10 +482,10 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 			if ( ! empty( $order_numbers ) ) {
 				$unique_numbers = array_unique( $order_numbers );
-				$this->assertCount( 
-					count( $order_numbers ), 
-					$unique_numbers, 
-					'All order numbers should be unique' 
+				$this->assertCount(
+					count( $order_numbers ),
+					$unique_numbers,
+					'All order numbers should be unique'
 				);
 			}
 		}
@@ -563,7 +563,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 				if ( isset( $order['billing_address'] ) ) {
 					$billing = $order['billing_address'];
 					$this->assertIsArray( $billing );
-					
+
 					$required_fields = array( 'first_name', 'last_name', 'email', 'street', 'city', 'country' );
 					foreach ( $required_fields as $field ) {
 						$this->assertArrayHasKey( $field, $billing );
@@ -579,7 +579,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 				if ( isset( $order['shipping_address'] ) ) {
 					$shipping = $order['shipping_address'];
 					$this->assertIsArray( $shipping );
-					
+
 					$required_fields = array( 'first_name', 'last_name', 'street', 'city', 'country' );
 					foreach ( $required_fields as $field ) {
 						$this->assertArrayHasKey( $field, $shipping );

@@ -10,16 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use EasyCommerceFakerPress\REST\Controllers\Product_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Customer_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Order_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Coupon_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Product_Variation_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Shipping_Plan_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Tax_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Transaction_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Cart_Session_REST_Controller;
-use EasyCommerceFakerPress\REST\Controllers\Location_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Product_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Customer_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Order_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Coupon_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Product_Variation_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Shipping_Plan_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Tax_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Transaction_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Cart_Session_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
 
 /**
  * Main Plugin Class

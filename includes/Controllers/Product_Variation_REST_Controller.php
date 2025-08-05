@@ -3,10 +3,10 @@
  * Product Variation REST Controller
  *
  * @since   1.0.0
- * @package EasyCommerceFakerPress\REST\Controllers
+ * @package EasyCommerceFakerPress\Controllers
  */
 
-namespace EasyCommerceFakerPress\REST\Controllers;
+namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerceFakerPress\Abstracts\REST_Controller;

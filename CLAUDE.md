@@ -30,7 +30,7 @@ includes/
 ├── Abstracts/
 │   ├── Generator.php              # Base generator with common functionality
 │   └── REST_Controller.php        # Base REST controller
-├── REST/Controllers/
+├── Controllers/
 │   ├── Product_REST_Controller.php           # REST endpoints for product generation
 │   ├── Customer_REST_Controller.php          # REST endpoints for customer generation
 │   ├── Order_REST_Controller.php             # REST endpoints for order generation
@@ -322,7 +322,7 @@ define('WP_DEBUG_LOG', true);
 
 ### Controller Development
 - All REST controllers MUST extend `EasyCommerceFakerPress\Abstracts\REST_Controller`
-- Place in `includes/REST/Controllers/` directory
+- Place in `includes/Controllers/` directory
 - Use `_REST_Controller` suffix in class names
 - Implement required abstract methods:
   - `get_rest_base()`
