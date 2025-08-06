@@ -114,26 +114,28 @@ class Order_REST_Controller extends REST_Controller {
 				),
 			),
 			'payment_methods'           => array(
-				'description' => __( 'Payment methods to use.', 'easycommerce-fakerpress' ),
-				'type'        => 'array',
-				'items'       => array(
+				'description'       => __( 'Payment methods to use.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
 					'type' => 'string',
 					'enum' => array( 'stripe', 'paypal', 'bank_transfer', 'cash_on_delivery', 'credit_card' ),
 				),
-				'default'     => array( 'stripe', 'paypal', 'bank_transfer' ),
+				'default'           => array( 'stripe', 'paypal', 'bank_transfer' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
 			'geographical_distribution' => array(
 				'description' => __( 'Geographic distribution of orders.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
 					'countries' => array(
-						'description' => __( 'Countries to generate orders from.', 'easycommerce-fakerpress' ),
-						'type'        => 'array',
-						'items'       => array(
+						'description'       => __( 'Countries to generate orders from.', 'easycommerce-fakerpress' ),
+						'type'              => 'array',
+						'items'             => array(
 							'type' => 'string',
 							'enum' => array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR' ),
 						),
-						'default'     => array( 'US', 'CA', 'GB' ),
+						'default'           => array( 'US', 'CA', 'GB' ),
+						'sanitize_callback' => array( $this, 'sanitize_array' ),
 					),
 				),
 			),

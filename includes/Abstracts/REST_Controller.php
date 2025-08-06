@@ -331,4 +331,23 @@ abstract class REST_Controller extends WP_REST_Controller {
 	protected function get_resource_specific_params(): array {
 		return array();
 	}
+
+	/**
+	 * Sanitize array parameter
+	 *
+	 * Sanitizes array parameters for API requests.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $value Parameter value.
+	 *
+	 * @return array Sanitized array.
+	 */
+	protected function sanitize_array( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		return array_map( 'sanitize_text_field', $value );
+	}
 }

@@ -63,26 +63,28 @@ class Customer_REST_Controller extends REST_Controller {
 	protected function get_resource_specific_params(): array {
 		return array(
 			'customer_types'      => array(
-				'description' => __( 'Types of customers to generate.', 'easycommerce-fakerpress' ),
-				'type'        => 'array',
-				'items'       => array(
+				'description'       => __( 'Types of customers to generate.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
 					'type' => 'string',
 					'enum' => array( 'regular', 'vip', 'wholesale', 'guest', 'returning' ),
 				),
-				'default'     => array( 'regular', 'returning' ),
+				'default'           => array( 'regular', 'returning' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
 			'demographics'        => array(
 				'description' => __( 'Demographic distribution.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
 					'age_groups'          => array(
-						'description' => __( 'Age group distribution.', 'easycommerce-fakerpress' ),
-						'type'        => 'array',
-						'items'       => array(
+						'description'       => __( 'Age group distribution.', 'easycommerce-fakerpress' ),
+						'type'              => 'array',
+						'items'             => array(
 							'type' => 'string',
 							'enum' => array( '18-25', '26-35', '36-45', '46-55', '56-65', '65+' ),
 						),
-						'default'     => array( '26-35', '36-45', '46-55' ),
+						'default'           => array( '26-35', '36-45', '46-55' ),
+						'sanitize_callback' => array( $this, 'sanitize_array' ),
 					),
 					'gender_distribution' => array(
 						'description' => __( 'Gender distribution weight.', 'easycommerce-fakerpress' ),

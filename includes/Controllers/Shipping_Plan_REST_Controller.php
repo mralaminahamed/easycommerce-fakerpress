@@ -64,13 +64,14 @@ class Shipping_Plan_REST_Controller extends REST_Controller {
 	protected function get_resource_specific_params(): array {
 		return array(
 			'shipping_types'      => array(
-				'description' => __( 'Types of shipping methods to generate.', 'easycommerce-fakerpress' ),
-				'type'        => 'array',
-				'items'       => array(
+				'description'       => __( 'Types of shipping methods to generate.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
 					'type' => 'string',
 					'enum' => array( 'standard', 'express', 'overnight', 'pickup', 'free', 'weight_based', 'flat_rate' ),
 				),
-				'default'     => array( 'standard', 'express', 'free' ),
+				'default'           => array( 'standard', 'express', 'free' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
 			'cost_range'          => array(
 				'description' => __( 'Shipping cost range.', 'easycommerce-fakerpress' ),
@@ -91,22 +92,24 @@ class Shipping_Plan_REST_Controller extends REST_Controller {
 				),
 			),
 			'coverage_areas'      => array(
-				'description' => __( 'Geographic coverage areas.', 'easycommerce-fakerpress' ),
-				'type'        => 'array',
-				'items'       => array(
+				'description'       => __( 'Geographic coverage areas.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
 					'type' => 'string',
 					'enum' => array( 'domestic', 'international', 'regional', 'worldwide' ),
 				),
-				'default'     => array( 'domestic', 'international' ),
+				'default'           => array( 'domestic', 'international' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
 			'calculation_methods' => array(
-				'description' => __( 'Shipping calculation methods.', 'easycommerce-fakerpress' ),
-				'type'        => 'array',
-				'items'       => array(
+				'description'       => __( 'Shipping calculation methods.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
 					'type' => 'string',
 					'enum' => array( 'flat_rate', 'weight_based', 'price_based', 'quantity_based' ),
 				),
-				'default'     => array( 'flat_rate', 'weight_based' ),
+				'default'           => array( 'flat_rate', 'weight_based' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
 			'delivery_timeframes' => array(
 				'description' => __( 'Delivery time ranges.', 'easycommerce-fakerpress' ),
