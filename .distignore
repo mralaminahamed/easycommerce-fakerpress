@@ -51,7 +51,6 @@ phpunit.xml.dist
 Thumbs.db
 
 # Build and release directories
-build/
 release/
 dist/
 
