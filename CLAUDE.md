@@ -54,26 +54,51 @@ includes/
     └── Cart_Session_Generator.php      # Shopping cart sessions and abandoned carts
 ```
 
-### Frontend (React)
-- React 18 components in `src/admin/components/`
-- Modern tab-based interface using Headless UI
-- Tailwind CSS for styling with WordPress-compatible design
-- Webpack 5 build system with Babel for JSX/ES6+ support
+### Frontend (React) - Current Structure
+```
+src/admin/components/
+├── App.jsx                    # Main router configuration with createHashRouter
+├── GeneratorBase.jsx          # Shared base component for all generators
+├── Pages/                     # Route-based page components
+│   ├── RootLayout.jsx        # Main layout wrapper with header and Outlet
+│   ├── HomePage.jsx          # Generator selection grid with categories
+│   └── GeneratorPage.jsx     # Individual generator page with sidebar
+└── Generators/               # Data generation components
+    ├── ProductGenerator.jsx
+    ├── CustomerGenerator.jsx
+    ├── OrderGenerator.jsx
+    ├── CouponGenerator.jsx
+    ├── ProductVariationGenerator.jsx
+    ├── ShippingPlanGenerator.jsx
+    ├── TaxGenerator.jsx
+    ├── TransactionGenerator.jsx
+    ├── CartSessionGenerator.jsx
+    └── LocationGenerator.jsx
+```
+
+#### Modern React Architecture Features
+- **React 18** with modern hooks and concurrent features
+- **React Router v7** with createHashRouter for optimal WordPress compatibility
+- **Component-Based Architecture** with clear separation of concerns
+- **Route-Based Code Splitting** for improved performance
+- **Headless UI Components** for accessible, unstyled UI primitives
+- **Tailwind CSS** for utility-first styling with WordPress design system
+- **Webpack 5** build system with Babel for modern JavaScript features
 
 ## Development Commands
 
 ```bash
 # Install dependencies
 composer install
-npm install
+yarn install         # Always use yarn as package manager
 
 # Development
-npm run dev          # Watch mode for development
-npm run build        # Production build
+yarn dev             # Watch mode for development
+yarn build           # Production build
 
 # Code quality
-npm run lint         # Lint JS and CSS with ESLint and Stylelint
-npm run fix          # Auto-fix linting issues
+yarn lint            # Lint JS and CSS with ESLint and Stylelint
+yarn fix             # Auto-fix linting issues
 composer run lint    # PHP CodeSniffer (WPCS) with PHPStan
 composer run fix     # PHP Code Beautifier
 ```
@@ -91,6 +116,8 @@ composer run fix     # PHP Code Beautifier
 - **ESLint**: JavaScript linting with WordPress and React rulesets
 - **Prettier**: Code formatting consistency
 - **React Best Practices**: Hooks, component patterns, and performance optimization
+- **React Router v7**: Modern data router patterns with createHashRouter
+- **Component Architecture**: Clear separation between Pages, Generators, and Base components
 
 ### CSS/SCSS Standards
 - **Stylelint**: CSS/SCSS linting with WordPress standards
@@ -145,6 +172,42 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 ### React Component Best Practices
 - **Localization Best Practices**:
   - Use WordPress native component for localize text in React component
+  - Always add translator comments for sprintf functions: `/* translators: %s: description */`
+- **Component Organization**:
+  - Pages: Route-based components that handle specific URLs
+  - Generators: Data generation components that extend GeneratorBase
+  - Base Components: Shared/reusable components across the application
+
+### React Router v7 Architecture
+- **createHashRouter**: Used for WordPress admin compatibility with hash-based routing
+- **RouterProvider**: Top-level router provider wrapping the entire application
+- **Nested Routes**: Layout routes with child pages using Outlet component
+- **Route Object Pattern**: Declarative route configuration over component-based routing
+
+#### Router Structure Pattern
+```javascript
+const router = createHashRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'generator/:route',
+        element: <GeneratorPage />,
+      },
+    ],
+  },
+]);
+```
+
+#### Component Import Strategy
+- **Pages Components**: Import from `./Pages/` directory for route components
+- **Generator Components**: Import from `./Generators/` for data generation
+- **Shared Logic**: Export/import generators array between HomePage and GeneratorPage
 
 
 ## Data Generation Features
@@ -236,16 +299,37 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 
 ## Development Workflow
 
-1. **Setup**: Install dependencies with `composer install` and `npm install`
-2. **Development**: Use `npm run dev` for hot reloading during development
+1. **Setup**: Install dependencies with `composer install` and `yarn install`
+2. **Development**: Use `yarn dev` for hot reloading during development
 3. **Code Quality**: Run linting and static analysis before commits
 4. **Testing**: Generate test data and validate with EasyCommerce interface
-5. **Build**: Use `npm run build` for production deployment
+5. **Build**: Use `yarn build` for production deployment
 6. **Documentation**: Update PHPDoc and inline documentation
+
+## Recent Architectural Improvements (v2.1.0)
+
+### Frontend Modernization
+- **Component Extraction**: Separated App.jsx into focused Page components
+- **React Router v7**: Migrated from HashRouter to createHashRouter with data router patterns
+- **Pages Directory**: Organized route-based components into logical directory structure
+- **Improved Maintainability**: Reduced App.jsx from 310+ lines to 29 lines
+- **Better Code Organization**: Clear separation between Pages, Generators, and Base components
+
+### Performance Enhancements
+- **Route-Based Code Splitting**: Components loaded on-demand for better performance
+- **Optimized Bundle Size**: Removed unused imports and dependencies
+- **Modern React Patterns**: Leveraged React 18 features and concurrent rendering
+- **Improved Tree Shaking**: Better elimination of unused code in production builds
+
+### Developer Experience
+- **Cleaner Architecture**: More predictable file organization and component structure
+- **Better IDE Support**: Improved IntelliSense and auto-completion
+- **Easier Debugging**: Smaller, focused components for easier troubleshooting
+- **Enhanced Testability**: Components can be tested in isolation
 
 ### Pre-Commit Checklist
 - [ ] Run `composer run lint` (PHPCS + PHPStan)
-- [ ] Run `npm run lint` (ESLint + Stylelint)
+- [ ] Run `yarn lint` (ESLint + Stylelint)
 - [ ] Test data generation functionality
 - [ ] Verify REST API endpoints
 - [ ] Check error handling and validation
@@ -258,9 +342,13 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 - `EasyCommerce Plugin`: Data models and business logic (required dependency)
 - `WordPress`: 5.0+ with proper database abstraction
 
-### JavaScript Dependencies (NPM)
-- `react`: UI component library with hooks
-- `@headlessui/react`: Accessible UI components
+### JavaScript Dependencies (Yarn)
+- `react`: UI component library with hooks and concurrent features
+- `react-router-dom`: Modern routing library with data router patterns
+- `@headlessui/react`: Accessible, unstyled UI components
+- `@heroicons/react`: Beautiful hand-crafted SVG icons
+- `@wordpress/i18n`: WordPress internationalization utilities
+- `@wordpress/api-fetch`: WordPress REST API fetch wrapper
 - `tailwindcss`: Utility-first CSS framework
 - `webpack`: Module bundler with optimization
 - `babel`: JavaScript compiler with modern syntax support
@@ -331,6 +419,41 @@ define('WP_DEBUG_LOG', true);
   - `get_generator_instance()`
   - `get_resource_type()`
 - Follow WordPress REST API standards
+
+### Frontend Component Development
+#### Page Components (src/admin/components/Pages/)
+- **RootLayout.jsx**: Contains shared layout elements, uses Outlet for child routes
+- **HomePage.jsx**: Generator selection grid, contains generators configuration array
+- **GeneratorPage.jsx**: Individual generator pages with sidebar navigation
+- All page components should be route-focused and handle specific URL patterns
+
+#### Generator Components (src/admin/components/Generators/)
+- All generator components MUST extend or use `GeneratorBase` component
+- Place in `src/admin/components/Generators/` directory
+- Use descriptive names ending with `Generator` (e.g., `ProductGenerator.jsx`)
+- Implement data generation logic with proper error handling
+- Follow WordPress i18n best practices for all user-facing strings
+
+#### Component Architecture Guidelines
+- **Single Responsibility**: Each component should have one clear purpose
+- **Props Interface**: Use clear, descriptive prop names with proper TypeScript-style comments
+- **State Management**: Use React hooks for local state, avoid prop drilling
+- **Error Boundaries**: Implement proper error handling for data generation failures
+- **Loading States**: Always provide loading indicators during API calls
+- **Accessibility**: Ensure all components are keyboard navigable and screen reader friendly
+
+#### Import/Export Patterns
+```javascript
+// Page components - default export
+export default function HomePage() { ... }
+
+// Shared data - named export
+export { generators };
+
+// Import patterns
+import HomePage from './Pages/HomePage';
+import { generators } from './Pages/HomePage';
+```
 
 ### Testing Strategy
 - Generate small batches first to validate data structure
