@@ -1,18 +1,22 @@
 <?php
+/**
+ * Cart Session Generator Class
+ *
+ * @package EasyCommerceFakerPress\Generators
+ * @since   1.0.0
+ */
+
 namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Cart;
 use EasyCommerce\Models\Product;
-use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Helpers\Utility;
 use Exception;
 use RuntimeException;
-use WP_Error;
 
 /**
  * Cart Session Generator Class

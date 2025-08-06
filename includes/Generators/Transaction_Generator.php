@@ -1,4 +1,12 @@
 <?php
+/**
+ * Transaction Generator Class for EasyCommerce FakerPress Plugin
+ *
+ * @package EasyCommerceFakerPress
+ * @subpackage Generators
+ * @since 2.0.0
+ */
+
 namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
@@ -32,6 +40,7 @@ class Transaction_Generator extends Generator {
 	 * Generate a single transaction
 	 *
 	 * @return array|WP_Error|bool Single transaction data, error, or false on failure.
+	 * @throws RuntimeException When no orders are found.
 	 */
 	protected function generate_single_item() {
 		try {
@@ -71,8 +80,8 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate multiple transactions.
 	 *
-	 * @param int   $count Number of transactions to generate
-	 * @param array $args Additional arguments
+	 * @param int   $count Number of transactions to generate.
+	 * @param array $args Additional arguments.
 	 * @return array Generated transaction data
 	 */
 	public function generate_multiple( int $count = 20, array $args = array() ): array {
@@ -92,7 +101,7 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction data.
 	 *
-	 * @param object $order Order data
+	 * @param object $order Order data.
 	 * @return array Transaction data
 	 */
 	private function generate_transaction_data( $order ): array {
@@ -115,7 +124,7 @@ class Transaction_Generator extends Generator {
 		$gateway_key     = $this->faker->randomElement( array_keys( $payment_gateways ) );
 		$payment_gateway = $payment_gateways[ $gateway_key ];
 
-		// Generate transaction amount based on type
+		// Generate transaction amount based on type.
 		$amount = $this->generate_transaction_amount( $order->total, $transaction_type );
 
 		return array(
@@ -133,34 +142,34 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction amount based on type.
 	 *
-	 * @param float  $order_total Order total amount
-	 * @param string $type Transaction type
+	 * @param float  $order_total Order total amount.
+	 * @param string $type Transaction type.
 	 * @return float Transaction amount
 	 */
 	private function generate_transaction_amount( float $order_total, string $type ): float {
 		switch ( $type ) {
 			case 'payment':
-				// Full payment or partial payment
+				// Full payment or partial payment.
 				return $this->faker->boolean( 80 )
 					? $order_total
 					: $this->faker->randomFloat( 2, $order_total * 0.1, $order_total * 0.9 );
 
 			case 'refund':
-				// Partial or full refund
+				// Partial or full refund.
 				return $this->faker->boolean( 60 )
 					? $order_total * $this->faker->randomFloat( 2, 0.1, 0.5 )
 					: $order_total;
 
 			case 'adjustment':
-				// Small positive or negative adjustment
+				// Small positive or negative adjustment.
 				return $this->faker->randomFloat( 2, -50, 50 );
 
 			case 'fee':
-				// Processing or transaction fees
+				// Processing or transaction fees.
 				return $this->faker->randomFloat( 2, 0.99, $order_total * 0.05 );
 
 			case 'commission':
-				// Commission amounts
+				// Commission amounts.
 				return $this->faker->randomFloat( 2, $order_total * 0.02, $order_total * 0.15 );
 
 			default:
@@ -171,7 +180,7 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction status based on type.
 	 *
-	 * @param string $type Transaction type
+	 * @param string $type Transaction type.
 	 * @return string Transaction status
 	 */
 	private function generate_transaction_status( string $type ): string {
@@ -259,7 +268,7 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Create transaction in database.
 	 *
-	 * @param array $data Transaction data
+	 * @param array $data Transaction data.
 	 * @return int|null Created transaction ID
 	 */
 	private function create_transaction( array $data ): ?int {
@@ -274,18 +283,18 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction history for specific order.
 	 *
-	 * @param int $order_id          Order ID
-	 * @param int $transaction_count Number of transactions to generate
+	 * @param int $order_id          Order ID.
+	 * @param int $transaction_count Number of transactions to generate.
 	 *
-	 * @return array Generated transactions
-	 * @throws Exception Throws exception if order not found or transaction creation fails
+	 * @return array Generated transactions.
+	 * @throws RuntimeException When order is not found.
 	 */
 	public function generate_for_order( int $order_id, int $transaction_count = 3 ): array {
 		$order_db   = new Database( 'orders' );
 		$order_data = $order_db->get_by_id( $order_id );
 
 		if ( ! $order_data ) {
-			throw new RuntimeException( "Order with ID {$order_id} not found." );
+			throw new RuntimeException( 'Order not found.' );
 		}
 
 		$results          = array();

@@ -173,7 +173,7 @@ class Tax_Generator extends Generator {
 				'city'     => $location['city'],
 				'rate'     => $base_rate,
 				'priority' => $this->faker->numberBetween( 1, 5 ),
-				'compound' => false, // Reduced rates typically aren't compound
+				'compound' => false, // Reduced rates typically aren't compound.
 			);
 		}
 
@@ -298,7 +298,7 @@ class Tax_Generator extends Generator {
 				'city'     => $location['city'],
 				'rate'     => $base_rate,
 				'priority' => $this->faker->numberBetween( 1, 8 ),
-				'compound' => false, // Digital taxes typically aren't compound
+				'compound' => false, // Digital taxes typically aren't compound.
 			);
 		}
 

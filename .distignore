@@ -1,0 +1,73 @@
+# Development and build files
+node_modules/
+src/
+webpack.config.js
+package.json
+package-lock.json
+yarn.lock
+.babelrc
+.eslintrc.js
+postcss.config.js
+tailwind.config.js
+
+# Composer development files
+composer.json
+composer.lock
+vendor/
+
+# Development tools
+.ncurc.json
+.stylelintrc.js
+.yarnrc.yml
+.editorconfig
+.gitignore
+.distignore
+phpcs.xml
+phpcs.plugin-review.xml
+phpstan.neon
+phpunit.xml
+
+# Documentation and project files
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+docs/
+drafts/
+
+# Testing and CI
+tests/
+.github/
+.travis.yml
+.circleci/
+phpunit.xml.dist
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Build and release directories
+build/
+release/
+dist/
+
+# Git files
+.git/
+.gitattributes
+.gitignore
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+*.swp
+*.swo
+*~
+
+# Claude AI files
+.claude/
+CLAUDE.md

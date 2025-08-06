@@ -81,6 +81,15 @@
         "test": "phpunit",
         "test:coverage": "phpunit --coverage-html=tests/coverage/html",
         "makepot": "wp i18n make-pot . languages/easycommerce-fakerpress.pot --exclude=node_modules,vendor,drafts,docs,build,release,tests",
+        "release": [
+            "@lint",
+            "@analyse",
+            "npm run build",
+            "@makepot",
+            "mkdir -p release",
+            "rsync -av --exclude-from=.distignore . release/easycommerce-fakerpress/",
+            "cd release && zip -r easycommerce-fakerpress.zip easycommerce-fakerpress/"
+        ],
         "format": "@phpcbf",
         "lint": "@phpcs",
         "analyse": "@phpstan",

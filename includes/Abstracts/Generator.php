@@ -68,7 +68,7 @@ abstract class Generator {
 	 *
 	 * @param int $count Number of items to generate.
 	 *
-	 * @return array|WP_Error Generation results or error.
+	 * @return array<string, mixed>|WP_Error Generation results or error.
 	 */
 	public function generate( int $count ) {
 		// Validate count.
@@ -113,7 +113,7 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|WP_Error|false Single item data, error, or false on failure.
+	 * @return array<string, mixed>|WP_Error|false Single item data, error, or false on failure.
 	 */
 	abstract protected function generate_single_item();
 
@@ -149,7 +149,7 @@ abstract class Generator {
 	 * @return true|WP_Error True if valid, WP_Error otherwise.
 	 */
 	protected function validate_count( int $count ) {
-		if ( ! is_numeric( $count ) || $count <= 0 ) {
+		if ( $count <= 0 ) {
 			return new WP_Error(
 				'invalid_count',
 				__( 'Count must be a positive number.', 'easycommerce-fakerpress' )
@@ -175,9 +175,9 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $results Generated items data.
+	 * @param array<int, mixed> $results Generated items data.
 	 *
-	 * @return array Formatted results.
+	 * @return array<string, mixed> Formatted results.
 	 */
 	protected function format_results( array $results ): array {
 		return array(
@@ -191,9 +191,9 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $message Log message.
-	 * @param string $level   Log level (info, warning, error).
-	 * @param array  $context Additional context data.
+	 * @param string               $message Log message.
+	 * @param string               $level   Log level (info, warning, error).
+	 * @param array<string, mixed> $context Additional context data.
 	 *
 	 * @return void
 	 */
@@ -205,9 +205,9 @@ abstract class Generator {
 				strtoupper( $level ),
 				$this->get_resource_type(),
 				$message,
-				empty( $context ) ? '' : '- Context: ' . wp_json_encode( $context )
+				! empty( $context ) ? '- Context: ' . wp_json_encode( $context ) : ''
 			);
-			error_log( $log_message );
+			error_log( $log_message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 }

@@ -11,6 +11,7 @@ namespace EasyCommerceFakerPress\Generators;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Customer;
 use Exception;
+use RuntimeException;
 use WP_Error;
 
 /**
@@ -127,7 +128,7 @@ class Customer_Generator extends Generator {
 	 * @param string $last_name  Last name.
 	 *
 	 * @return string Unique username.
-	 * @throws \RuntimeException If unable to generate a unique username after 10 attempts.
+	 * @throws RuntimeException If unable to generate a unique username after 10 attempts.
 	 */
 	private function generate_unique_username( string $first_name, string $last_name ): string {
 		$base_username = strtolower( $first_name . '.' . $last_name );
@@ -140,7 +141,7 @@ class Customer_Generator extends Generator {
 		}
 
 		if ( username_exists( $username ) ) {
-			throw new \RuntimeException( 'Unable to generate unique username after 10 attempts.' );
+			throw new RuntimeException( 'Unable to generate unique username after 10 attempts.' );
 		}
 
 		return $username;
@@ -151,11 +152,11 @@ class Customer_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return ?string Photo URL or empty string.
+	 * @return string Photo URL or empty string.
 	 */
-	private function generate_customer_photo(): ?string {
+	private function generate_customer_photo(): string {
 		// Placeholder for WordPress media library integration.
-		return $this->faker->optional( 0.3 )->imageUrl( 200, 200, 'people' );
+		return (string) $this->faker->optional( 0.3 )->imageUrl( 200, 200, 'people' );
 	}
 
 	/**
@@ -254,7 +255,7 @@ class Customer_Generator extends Generator {
 
 				// Customer statistics.
 				'customer_since'       => $join_date->format( 'Y-m-d H:i:s' ),
-				'last_login'           => $last_login ? $last_login->format( 'Y-m-d H:i:s' ) : null,
+				'last_login'           => null !== $last_login ? $last_login->format( 'Y-m-d H:i:s' ) : null,
 
 				// Loyalty and engagement.
 				'referral_code'        => strtoupper( $this->faker->lexify( '????' ) . $this->faker->numerify( '###' ) ),
@@ -280,7 +281,6 @@ class Customer_Generator extends Generator {
 				'account_status'       => $this->faker->randomElement( array( 'active', 'inactive', 'pending' ) ),
 				'email_verified'       => $this->faker->boolean( 90 ),
 				'phone_verified'       => $this->faker->boolean( 65 ),
-				// 'last_contacted'       => $this->faker->optional( 0.3 )->dateTimeThisYear()->format( 'Y-m-d H:i:s' ),
 			),
 			$customer_history
 		);

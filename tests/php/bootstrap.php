@@ -69,7 +69,7 @@ function install_easycommerce() {
 	echo 'Installing EasyCommerce...' . PHP_EOL;
 
 	// Install EasyCommerce if it has an installation method.
-	easycommerce_install();
+	\EasyCommerce\easycommerce_install();
 
 	// Reload capabilities after install.
 	if ( version_compare( $GLOBALS['wp_version'], '4.7', '<' ) ) {

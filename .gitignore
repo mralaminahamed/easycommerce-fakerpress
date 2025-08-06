@@ -11,3 +11,5 @@ yarn-error.log*
 *.zip
 wp-config.php
 /.yarn/
+/.phpstan-cache/
+/release/

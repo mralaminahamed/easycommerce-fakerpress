@@ -64,7 +64,7 @@ class Location_Generator extends Generator {
 				'data_file_path'    => $this->get_location_file_path(),
 				'created_date'      => current_time( 'Y-m-d H:i:s' ),
 			);
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Location creation failed: ' . $e->getMessage(), 'error' );
 
 			return new WP_Error( 'location_creation_failed', $e->getMessage() );
@@ -238,7 +238,8 @@ class Location_Generator extends Generator {
 		$state_names = $this->get_realistic_state_names( $config['iso2'] );
 		$name_count  = count( $state_names );
 
-		for ( $i = 1; $i <= min( $config['states_count'], $name_count ); $i++ ) {
+		$max_count = min( $config['states_count'], $name_count );
+		for ( $i = 1; $i <= $max_count; $i++ ) {
 			$state_name = $state_names[ $i - 1 ];
 			$state      = array(
 				'id'         => $i,
@@ -559,7 +560,7 @@ class Location_Generator extends Generator {
 			}
 
 			return $wp_filesystem->put_contents( $json_path, $json_data, FS_CHMOD_FILE );
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Failed to save location data: ' . $e->getMessage(), 'error' );
 			return false;
 		}
