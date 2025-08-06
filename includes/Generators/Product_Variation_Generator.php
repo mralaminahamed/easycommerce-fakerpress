@@ -314,7 +314,7 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int    $attribute_id Attribute ID.
 	 * @param string $value_slug Value slug.
-	 * @return Attribute_Value|object|null Attribute value data object.
+	 * @return object|null Attribute value data object.
 	 */
 	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ) {
 		$attribute_value_model = new Attribute_Value();

@@ -74,7 +74,7 @@ class Order_Generator extends Generator {
 			$created = $order->create(
 				array(
 					// Required fields.
-					'customer_id'    => $customer->ID,
+					'customer_id'    => $customer['id'],
 					'total'          => $total,
 
 					// Optional core fields.
@@ -95,12 +95,12 @@ class Order_Generator extends Generator {
 			}
 
 			// Update customer statistics.
-			$this->update_customer_stats( $customer->ID, $total );
+			$this->update_customer_stats( $customer['id'], $total );
 
 			return array(
 				'id'             => $order->get_id(),
-				'customer'       => $customer->display_name,
-				'customer_email' => $customer->user_email,
+				'customer'       => $customer['name'],
+				'customer_email' => $customer['email'],
 				'total'          => '$' . number_format( $total, 2 ),
 				'status'         => $order->get_status(),
 				'payment_method' => $order_meta['payment_details']['method'],
@@ -115,45 +115,23 @@ class Order_Generator extends Generator {
 	}
 
 	/**
-	 * Get a random customer for order generation
+	 * Get a random customer for order generation using EasyCommerce Customer model
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return WP_User|false Random customer user object or false if none found.
+	 * @return array|false Random customer user object or false if none found.
 	 */
 	private function get_random_customer() {
-		// First try to get users with customer role.
-		$customers = get_users(
-			array(
-				'role'    => 'customer',
-				'number'  => 1,
-				'orderby' => 'rand',
-				'fields'  => 'all',
-			)
-		);
+		// Use EasyCommerce Customer model to get existing customers.
+		$customer_data = Customer::list( 'customer', null, 1, 50 );
+		$customers     = $customer_data['users'] ?? array();
 
-		if ( ! empty( $customers ) ) {
-			return $customers[0];
+		if ( empty( $customers ) ) {
+			return false;
 		}
 
-		// If no customers found, get any user except admin.
-		$users = get_users(
-			array(
-				'role__not_in' => array( 'administrator' ),
-				'number'       => 1,
-				'orderby'      => 'rand',
-				'fields'       => 'all',
-			)
-		);
-
-		if ( ! empty( $users ) ) {
-			// Assign customer role to this user.
-			$user = $users[0];
-			$user->add_role( 'customer' );
-			return $user;
-		}
-
-		return false;
+		// Use faker to randomly select from available customers.
+		return $this->faker->randomElement( $customers );
 	}
 
 	/**
@@ -164,17 +142,32 @@ class Order_Generator extends Generator {
 	 * @return array Array of Product_Variation objects.
 	 */
 	private function get_random_product_variations(): array {
+		// Get a larger pool of available variations to choose from.
 		$db              = new Database( 'product_variations' );
 		$variations_data = $db->get_rows(
 			array( 'status' => 'in_stock' ),
-			$this->faker->numberBetween( 1, 5 ),
+			100, // Get more variations for better randomization.
 			0,
 			'RAND()'
 		);
 
+		if ( empty( $variations_data ) ) {
+			return array();
+		}
+
+		// Use faker to randomly select variations (1-5 items per order).
+		$selected_count           = $this->faker->numberBetween( 1, 5 );
+		$selected_variations_data = $this->faker->randomElements(
+			$variations_data,
+			min( $selected_count, count( $variations_data ) )
+		);
+
 		$variations = array();
-		foreach ( $variations_data as $variation_data ) {
-			$variations[] = new Product_Variation( $variation_data->id );
+		foreach ( $selected_variations_data as $variation_data ) {
+			$variation = new Product_Variation( $variation_data->id );
+			if ( $variation->exists() ) {
+				$variations[] = $variation;
+			}
 		}
 
 		return $variations;
@@ -248,15 +241,15 @@ class Order_Generator extends Generator {
 	/**
 	 * Generate comprehensive order metadata
 	 *
-	 * @since 1.0.0
-	 *
-	 * @param WP_User $customer Customer user object.
-	 * @param float   $subtotal Order subtotal.
+	 * @param array $customer Customer user object.
+	 * @param float $subtotal Order subtotal.
 	 *
 	 * @return array Order metadata.
+	 * @since 1.0.0
+	 *
 	 */
-	private function generate_order_meta( WP_User $customer, float $subtotal ): array {
-		$customer_model   = new Customer( $customer->ID );
+	private function generate_order_meta( array $customer, float $subtotal ): array {
+		$customer_model   = new Customer( $customer['id'] );
 		$billing_address  = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
 		$shipping_address = $customer_model->get_shipping_address() ? $customer_model->get_shipping_address() : $billing_address;
 
@@ -622,11 +615,11 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_User $customer Customer user object.
+	 * @param array $customer Customer user object.
 	 *
 	 * @return array Address data.
 	 */
-	private function generate_fallback_address( WP_User $customer ): array {
+	private function generate_fallback_address( array $customer ): array {
 		// Use Location model for realistic geographic data.
 		$countries = Location::get_countries();
 		if ( empty( $countries ) ) {
@@ -657,24 +650,24 @@ class Order_Generator extends Generator {
 		// Get states for the selected country.
 		$states     = Location::get_states( $country_code );
 		$state_data = $this->faker->randomElement( $states );
-		$state_name = isset( $state_data['name'] ) ? $state_data['name'] : $this->faker->state;
-		$state_code = isset( $state_data['state_code'] ) ? $state_data['state_code'] : $this->faker->stateAbbr;
+		$state_name = $state_data['name'] ?? $this->faker->state;
+		$state_code = $state_data['state_code'] ?? $this->faker->stateAbbr;
 
 		// Get cities for the selected state.
 		$cities    = Location::get_cities( $country_code, $state_code );
 		$city_data = $this->faker->randomElement( $cities );
-		$city_name = isset( $city_data['name'] ) ? $city_data['name'] : $this->faker->city;
+		$city_name = $city_data['name'] ?? $this->faker->city;
 
 		// Get country details.
 		$country_data = array_filter( $countries, fn( $c ) => $c['iso2'] === $country_code );
 		$country_info = reset( $country_data );
-		$country_name = isset( $country_info['name'] ) ? $country_info['name'] : $country_code;
-		$phone_code   = isset( $country_info['phone_code'] ) ? $country_info['phone_code'] : '+1';
+		$country_name = $country_info['name'] ?? $country_code;
+		$phone_code   = $country_info['phone_code'] ?? '+1';
 
 		return array(
-			'first_name'   => $customer->first_name ? $customer->first_name : $this->faker->firstName,
-			'last_name'    => $customer->last_name ? $customer->last_name : $this->faker->lastName,
-			'email'        => $customer->user_email,
+			'first_name'   => get_user_meta( $customer['id'], 'first_name', true ) ?? $this->faker->firstName,
+			'last_name'    => get_user_meta( $customer['id'], 'last_name', true ) ?? $this->faker->lastName,
+			'email'        => $customer['email'],
 			'phone'        => $phone_code . ' ' . $this->generate_phone_for_country( $country_code ),
 			'company'      => $this->faker->optional( 0.3 )->company,
 			'address_1'    => $this->faker->streetAddress,
@@ -698,19 +691,31 @@ class Order_Generator extends Generator {
 	 * @return array Array of coupon data.
 	 */
 	private function get_random_coupons(): array {
-		$db      = new Database( 'coupons' );
-		$coupons = $db->get_rows(
+		// Get a larger pool of available coupons.
+		$db           = new Database( 'coupons' );
+		$coupons_data = $db->get_rows(
 			array( 'active' => 1 ),
-			$this->faker->numberBetween( 1, 2 ),
+			20, // Get more coupons for better randomization.
 			0,
 			'RAND()'
+		);
+
+		if ( empty( $coupons_data ) ) {
+			return array();
+		}
+
+		// Use faker to randomly select 1-2 coupons.
+		$selected_count   = $this->faker->numberBetween( 1, 2 );
+		$selected_coupons = $this->faker->randomElements(
+			$coupons_data,
+			min( $selected_count, count( $coupons_data ) )
 		);
 
 		return array_map(
 			function ( $coupon ) {
 				return (array) $coupon;
 			},
-			$coupons
+			$selected_coupons
 		);
 	}
 
@@ -847,15 +852,15 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_User $customer Customer user object.
+	 * @param array $customer Customer user object.
 	 *
 	 * @return array Static address data.
 	 */
-	private function generate_static_fallback_address( WP_User $customer ): array {
+	private function generate_static_fallback_address( array $customer ): array {
 		return array(
-			'first_name' => $customer->first_name ? $customer->first_name : $this->faker->firstName,
-			'last_name'  => $customer->last_name ? $customer->last_name : $this->faker->lastName,
-			'email'      => $customer->user_email,
+			'first_name' => get_user_meta( $customer['id'], 'first_name', true ) ?? $this->faker->firstName,
+			'last_name'  => get_user_meta( $customer['id'], 'last_name', true ) ?? $this->faker->lastName,
+			'email'      => $customer['email'],
 			'phone'      => $this->faker->phoneNumber,
 			'company'    => $this->faker->optional( 0.3 )->company,
 			'address_1'  => $this->faker->streetAddress,

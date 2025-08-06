@@ -8,7 +8,6 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerceFakerPress\Abstracts\REST_Controller;
 use EasyCommerceFakerPress\Generators\Location_Generator;
 

@@ -343,7 +343,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return array Sanitized array.
 	 */
-	protected function sanitize_array( $value ): array {
+	public function sanitize_array( $value ): array {
 		if ( ! is_array( $value ) ) {
 			return array();
 		}

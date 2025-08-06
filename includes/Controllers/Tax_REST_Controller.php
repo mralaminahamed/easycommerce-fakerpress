@@ -8,7 +8,6 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerceFakerPress\Abstracts\REST_Controller;
 use EasyCommerceFakerPress\Generators\Tax_Generator;
 
@@ -63,7 +62,7 @@ class Tax_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_properties(): array {
 		return array(
-			'tax_classs' => array(
+			'tax_classes' => array(
 				'description' => __( 'Generated tax classes with location-based rates.', 'easycommerce-fakerpress' ),
 				'type'        => 'array',
 				'context'     => array( 'view' ),
