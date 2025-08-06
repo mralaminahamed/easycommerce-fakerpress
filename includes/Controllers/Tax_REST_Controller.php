@@ -36,7 +36,7 @@ class Tax_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Tax_Generator Generator instance.
 	 */
 	protected function get_generator_instance(): Tax_Generator {
 		return new Tax_Generator();

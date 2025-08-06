@@ -36,7 +36,7 @@ class Shipping_Plan_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Shipping_Plan_Generator Generator instance.
 	 */
 	protected function get_generator_instance(): Shipping_Plan_Generator {
 		return new Shipping_Plan_Generator();

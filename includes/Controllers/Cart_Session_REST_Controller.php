@@ -36,7 +36,7 @@ class Cart_Session_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Cart_Session_Generator Generator instance.
 	 */
 	protected function get_generator_instance(): Cart_Session_Generator {
 		return new Cart_Session_Generator();

@@ -36,7 +36,7 @@ class Transaction_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Transaction_Generator Generator instance.
 	 */
 	protected function get_generator_instance(): Transaction_Generator {
 		return new Transaction_Generator();

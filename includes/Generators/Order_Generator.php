@@ -246,7 +246,6 @@ class Order_Generator extends Generator {
 	 *
 	 * @return array Order metadata.
 	 * @since 1.0.0
-	 *
 	 */
 	private function generate_order_meta( array $customer, float $subtotal ): array {
 		$customer_model   = new Customer( $customer['id'] );

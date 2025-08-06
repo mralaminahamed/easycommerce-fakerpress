@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-06T09:46:20+00:00\n"
+"POT-Creation-Date: 2025-08-06T11:15:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: easycommerce-fakerpress\n"
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Number of items generated."
 msgstr ""
 
-#: includes/Controllers/Cart_Session_REST_Controller.php:67
+#: includes/Controllers/Cart_Session_REST_Controller.php:66
 msgid "Generated cart sessions with items and customer data."
 msgstr ""
 
@@ -171,63 +171,63 @@ msgstr ""
 msgid "Types of customers to generate."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:75
+#: includes/Controllers/Customer_REST_Controller.php:76
 msgid "Demographic distribution."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:79
+#: includes/Controllers/Customer_REST_Controller.php:80
 msgid "Age group distribution."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:88
+#: includes/Controllers/Customer_REST_Controller.php:90
 msgid "Gender distribution weight."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:114
+#: includes/Controllers/Customer_REST_Controller.php:116
 msgid "Address generation preferences."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:118
+#: includes/Controllers/Customer_REST_Controller.php:120
 msgid "Include billing addresses."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:123
+#: includes/Controllers/Customer_REST_Controller.php:125
 msgid "Include shipping addresses."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:128
+#: includes/Controllers/Customer_REST_Controller.php:130
 msgid "Percentage with different billing/shipping (0-100)."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:137
+#: includes/Controllers/Customer_REST_Controller.php:139
 msgid "Purchase history simulation."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:141
+#: includes/Controllers/Customer_REST_Controller.php:143
 msgid "Generate purchase history metadata."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:146
+#: includes/Controllers/Customer_REST_Controller.php:148
 msgid "Include loyalty tier assignments."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:153
+#: includes/Controllers/Customer_REST_Controller.php:155
 msgid "Contact and communication preferences."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:157
+#: includes/Controllers/Customer_REST_Controller.php:159
 msgid "Include phone numbers."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:162
+#: includes/Controllers/Customer_REST_Controller.php:164
 msgid "Percentage opted in for marketing (0-100)."
 msgstr ""
 
-#: includes/Controllers/Customer_REST_Controller.php:183
+#: includes/Controllers/Customer_REST_Controller.php:185
 msgid "Generated customers data."
 msgstr ""
 
-#: includes/Controllers/Location_REST_Controller.php:67
+#: includes/Controllers/Location_REST_Controller.php:66
 msgid "Generated location hierarchy with countries, states, and cities."
 msgstr ""
 
@@ -267,15 +267,15 @@ msgstr ""
 msgid "Payment methods to use."
 msgstr ""
 
-#: includes/Controllers/Order_REST_Controller.php:126
+#: includes/Controllers/Order_REST_Controller.php:127
 msgid "Geographic distribution of orders."
 msgstr ""
 
-#: includes/Controllers/Order_REST_Controller.php:130
+#: includes/Controllers/Order_REST_Controller.php:131
 msgid "Countries to generate orders from."
 msgstr ""
 
-#: includes/Controllers/Order_REST_Controller.php:153
+#: includes/Controllers/Order_REST_Controller.php:155
 msgid "Generated orders data."
 msgstr ""
 
@@ -347,11 +347,11 @@ msgstr ""
 msgid "Generated products data."
 msgstr ""
 
-#: includes/Controllers/Product_Variation_REST_Controller.php:67
+#: includes/Controllers/Product_Variation_REST_Controller.php:66
 msgid "Generated product variations with attributes."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan_REST_Controller.php:67
+#: includes/Controllers/Shipping_Plan_REST_Controller.php:66
 msgid "Types of shipping methods to generate."
 msgstr ""
 
@@ -371,31 +371,31 @@ msgstr ""
 msgid "Geographic coverage areas."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan_REST_Controller.php:103
+#: includes/Controllers/Shipping_Plan_REST_Controller.php:104
 msgid "Shipping calculation methods."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan_REST_Controller.php:112
+#: includes/Controllers/Shipping_Plan_REST_Controller.php:114
 msgid "Delivery time ranges."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan_REST_Controller.php:116
+#: includes/Controllers/Shipping_Plan_REST_Controller.php:118
 msgid "Minimum delivery days."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan_REST_Controller.php:122
+#: includes/Controllers/Shipping_Plan_REST_Controller.php:124
 msgid "Maximum delivery days."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan_REST_Controller.php:142
+#: includes/Controllers/Shipping_Plan_REST_Controller.php:144
 msgid "Generated shipping plans with methods and regions."
 msgstr ""
 
-#: includes/Controllers/Tax_REST_Controller.php:67
+#: includes/Controllers/Tax_REST_Controller.php:66
 msgid "Generated tax classes with location-based rates."
 msgstr ""
 
-#: includes/Controllers/Transaction_REST_Controller.php:67
+#: includes/Controllers/Transaction_REST_Controller.php:66
 msgid "Generated payment transactions with realistic data."
 msgstr ""
 

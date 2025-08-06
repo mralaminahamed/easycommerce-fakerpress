@@ -36,7 +36,7 @@ class Location_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Location_Generator Generator instance.
 	 */
 	protected function get_generator_instance(): Location_Generator {
 		return new Location_Generator();

@@ -36,7 +36,7 @@ class Product_Variation_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Product_Variation_Generator Generator instance.
 	 */
 	protected function get_generator_instance(): Product_Variation_Generator {
 		return new Product_Variation_Generator();
