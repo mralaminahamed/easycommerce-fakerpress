@@ -2249,6 +2249,7 @@ __metadata:
     prettier: "npm:^3.6.2"
     react: "npm:18"
     react-dom: "npm:18"
+    react-router-dom: "npm:^7.7.1"
     sass: "npm:^1.89.2"
     sass-loader: "npm:^16.0.5"
     stylelint: "npm:^16.23.0"
@@ -3073,19 +3074,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:9.44.1":
-  version: 9.44.1
-  resolution: "@sentry/core@npm:9.44.1"
-  checksum: 10c0/27e2a7fef9b6e5d93944306ca1d488f55bd0a9e683d9355d4ded8324d5e45c6f2bf240f5d2b3380a25b6dbbefc837fb4117fee399ec14db05fa2cfedd911ff05
+"@sentry/core@npm:9.44.2":
+  version: 9.44.2
+  resolution: "@sentry/core@npm:9.44.2"
+  checksum: 10c0/fe3bfb8dc34a01f0f5b4b5fb509910d5758d97baa8273813a8fbbbd15dd1c72398f2f221e74968670cb8a8dd95e2e67140a58fe708d39070c6eab6fcabfe4b8c
   languageName: node
   linkType: hard
 
-"@sentry/node-core@npm:9.44.1":
-  version: 9.44.1
-  resolution: "@sentry/node-core@npm:9.44.1"
+"@sentry/node-core@npm:9.44.2":
+  version: 9.44.2
+  resolution: "@sentry/node-core@npm:9.44.2"
   dependencies:
-    "@sentry/core": "npm:9.44.1"
-    "@sentry/opentelemetry": "npm:9.44.1"
+    "@sentry/core": "npm:9.44.2"
+    "@sentry/opentelemetry": "npm:9.44.2"
     import-in-the-middle: "npm:^1.14.2"
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
@@ -3095,13 +3096,13 @@ __metadata:
     "@opentelemetry/resources": ^1.30.1 || ^2.0.0
     "@opentelemetry/sdk-trace-base": ^1.30.1 || ^2.0.0
     "@opentelemetry/semantic-conventions": ^1.34.0
-  checksum: 10c0/5798053ab3f5ddf48beedc7eba1c5ba6bf09988cfdd0b17fe55ed90978e08970a7e0848421da6b02ebe98d1b9b701b72bf3c2d67a5d791084a5dc0ed93e9756e
+  checksum: 10c0/31941fd992a293885453d52b959e7368cafdb1774cd3464210d597f30c347a87a69a1da8ffb7c68d9841f8ba20a2d02af63518b5125207bcae8b970d87a38b88
   languageName: node
   linkType: hard
 
 "@sentry/node@npm:^9.28.1":
-  version: 9.44.1
-  resolution: "@sentry/node@npm:9.44.1"
+  version: 9.44.2
+  resolution: "@sentry/node@npm:9.44.2"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/context-async-hooks": "npm:^1.30.1"
@@ -3133,27 +3134,27 @@ __metadata:
     "@opentelemetry/sdk-trace-base": "npm:^1.30.1"
     "@opentelemetry/semantic-conventions": "npm:^1.34.0"
     "@prisma/instrumentation": "npm:6.11.1"
-    "@sentry/core": "npm:9.44.1"
-    "@sentry/node-core": "npm:9.44.1"
-    "@sentry/opentelemetry": "npm:9.44.1"
+    "@sentry/core": "npm:9.44.2"
+    "@sentry/node-core": "npm:9.44.2"
+    "@sentry/opentelemetry": "npm:9.44.2"
     import-in-the-middle: "npm:^1.14.2"
     minimatch: "npm:^9.0.0"
-  checksum: 10c0/cc114acedefeecc4f851d85da02265acb7961b73b9d00154974ac0996af0c0664b40ed28bb6596df6cfced84af3bfc63dbf4624ce362bdd47060d760cc4a69d3
+  checksum: 10c0/a6bc9252dd8b6f11e98bc6299506d2fdafa68ebba2d51cfe45d7a76a0490825144f630f0c93d91336123ee7e76888e2049e314d88d7cf82f95bd6f302e2bc6c9
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:9.44.1":
-  version: 9.44.1
-  resolution: "@sentry/opentelemetry@npm:9.44.1"
+"@sentry/opentelemetry@npm:9.44.2":
+  version: 9.44.2
+  resolution: "@sentry/opentelemetry@npm:9.44.2"
   dependencies:
-    "@sentry/core": "npm:9.44.1"
+    "@sentry/core": "npm:9.44.2"
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1 || ^2.0.0
     "@opentelemetry/core": ^1.30.1 || ^2.0.0
     "@opentelemetry/sdk-trace-base": ^1.30.1 || ^2.0.0
     "@opentelemetry/semantic-conventions": ^1.34.0
-  checksum: 10c0/d1f53bace6fe98ba746f4de1982a57e99ba72cd00a6b4229e4a539c745c80d1a02c40be3a55e6f0108c3e30df8700fb2f4b60ce761ce1d58e041fad8d1c4183f
+  checksum: 10c0/6d0f2580ba02332d398bb763aba8165b724ff1736c5f2f5ef8731c30c0f3604fa74076bcfac0d76e94b8fb48531d2f2780470eb1b7545380a134e39d78ce4d52
   languageName: node
   linkType: hard
 
@@ -6208,6 +6209,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cookie@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "cookie@npm:1.0.2"
+  checksum: 10c0/fd25fe79e8fbcfcaf6aa61cd081c55d144eeeba755206c058682257cb38c4bd6795c6620de3f064c740695bb65b7949ebb1db7a95e4636efb8357a335ad3f54b
+  languageName: node
+  linkType: hard
+
 "copy-webpack-plugin@npm:^10.2.0":
   version: 10.2.4
   resolution: "copy-webpack-plugin@npm:10.2.4"
@@ -6225,25 +6233,25 @@ __metadata:
   linkType: hard
 
 "core-js-compat@npm:^3.38.0, core-js-compat@npm:^3.38.1, core-js-compat@npm:^3.43.0":
-  version: 3.44.0
-  resolution: "core-js-compat@npm:3.44.0"
+  version: 3.45.0
+  resolution: "core-js-compat@npm:3.45.0"
   dependencies:
     browserslist: "npm:^4.25.1"
-  checksum: 10c0/5de4b042b8bb232b8390be3079030de5c7354610f136ed3eb91310a44455a78df02cfcf49b2fd05d5a5aa2695460620abf1b400784715f7482ed4770d40a68b2
+  checksum: 10c0/3515955d2c83846f0bf8c4a0f96fc514a6b711e9b3ee19a8df3683a6b0720d762fef60a63bb5c07907f9d18aa00c5904ef690dd4150bc39e2d47e01f05154fda
   languageName: node
   linkType: hard
 
 "core-js-pure@npm:^3.23.3":
-  version: 3.44.0
-  resolution: "core-js-pure@npm:3.44.0"
-  checksum: 10c0/543d4743edcdf2371289c202a373a81ad30f78082999b464e787760f13c5b05cf2c6c99a134b73ffe0ac3c5086df8cd9c5ab575a29a8d40b1d85f6b3cafbca37
+  version: 3.45.0
+  resolution: "core-js-pure@npm:3.45.0"
+  checksum: 10c0/93f686d4f59e33701aba0762fc3742ececc36c843fb4621dfc7329b800e82782aecb0b8190b4c8bc997d7f8bf896af08707a3d1ddcb37d5544a68a0526232836
   languageName: node
   linkType: hard
 
 "core-js@npm:^3.31.0":
-  version: 3.44.0
-  resolution: "core-js@npm:3.44.0"
-  checksum: 10c0/759bf3dc5f75068e9425dddf895fd5531c38794a11ea1c2b65e5ef7c527fe3652d59e8c287e574a211af9bab3c057c5c3fa6f6a773f4e142af895106efad38a4
+  version: 3.45.0
+  resolution: "core-js@npm:3.45.0"
+  checksum: 10c0/118350f9f1d81f42a1276590d6c217dca04c789fdb8074c82e53056b1a784948769a62b16b98493fd73e8a988545432f302bca798571e56ad881b9c039a5a83c
   languageName: node
   linkType: hard
 
@@ -6989,9 +6997,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.173":
-  version: 1.5.194
-  resolution: "electron-to-chromium@npm:1.5.194"
-  checksum: 10c0/7d72617857055d54552380b34be411933966fa1156dc8653e321d14e82e2af84114bac607e9e2926f885d560b2697a324981e4204d3da4e0f9604d4a468eeba1
+  version: 1.5.197
+  resolution: "electron-to-chromium@npm:1.5.197"
+  checksum: 10c0/2e48557a78bb17f1becdbcb4352ac570025cf7e304e5ad4657548a020c16646d1d5b00ffa149db3ebffb42a72981431305c566e7d7f971adaf5d15b9cb4c744a
   languageName: node
   linkType: hard
 
@@ -11053,14 +11061,14 @@ __metadata:
   linkType: hard
 
 "mini-css-extract-plugin@npm:^2.9.2":
-  version: 2.9.2
-  resolution: "mini-css-extract-plugin@npm:2.9.2"
+  version: 2.9.3
+  resolution: "mini-css-extract-plugin@npm:2.9.3"
   dependencies:
     schema-utils: "npm:^4.0.0"
     tapable: "npm:^2.2.1"
   peerDependencies:
     webpack: ^5.0.0
-  checksum: 10c0/5d3218dbd7db48b572925ddac05162a7415bf81b321f1a0c07016ec643cb5720c8a836ae68d45f5de826097a3013b601706c9c5aacb7f610dc2041b271de2ce0
+  checksum: 10c0/2e661aeba2ffd6f8b8d618de3498c495f1e1628b76a8e3fb31f3685586d12ba7d166788b1d57912becff5a0f700c74625e4fe9d54874176d7a218af0c6f7c24f
   languageName: node
   linkType: hard
 
@@ -12930,6 +12938,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "react-router-dom@npm:7.7.1"
+  dependencies:
+    react-router: "npm:7.7.1"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10c0/292455db6991d8559a9e94857440393d9fd011471ff231f8c3a40be6749f74347f20c183a2e9b52830ec54d2bf3b2e1310c006e709e66b27206b0c36ab54def6
+  languageName: node
+  linkType: hard
+
+"react-router@npm:7.7.1":
+  version: 7.7.1
+  resolution: "react-router@npm:7.7.1"
+  dependencies:
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10c0/e55fe74a2947939526c79e496ab1fc501fd8e89a191a20157d94cfe712d4d9d84f68627811cf1d477a36b98250fcad958bf1237fc41ff0a8b2de00ddc8c53e3b
+  languageName: node
+  linkType: hard
+
 "react@npm:18, react@npm:^18.3.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
@@ -13442,8 +13478,8 @@ __metadata:
   linkType: hard
 
 "sass@npm:^1.54.0, sass@npm:^1.89.2":
-  version: 1.89.2
-  resolution: "sass@npm:1.89.2"
+  version: 1.90.0
+  resolution: "sass@npm:1.90.0"
   dependencies:
     "@parcel/watcher": "npm:^2.4.1"
     chokidar: "npm:^4.0.0"
@@ -13454,7 +13490,7 @@ __metadata:
       optional: true
   bin:
     sass: sass.js
-  checksum: 10c0/752ccc7581b0c6395f63918116c20924e99943a86d79e94f5c4a0d41b1e981fe1f0ecd1ee82fff21496f81dbc91f68fb35a498166562ec8ec53e7aad7c3dbd9d
+  checksum: 10c0/cd882a61811447c079cdc78b41f3be8164f2a2ced56e0b256b33da2de383a5f10e11ed15f8080bd832e6df302238e11649b07eb5f6e7d257d9b6982a8325d269
   languageName: node
   linkType: hard
 
@@ -13608,6 +13644,13 @@ __metadata:
     parseurl: "npm:~1.3.3"
     send: "npm:0.19.0"
   checksum: 10c0/528fff6f5e12d0c5a391229ad893910709bc51b5705962b09404a1d813857578149b8815f35d3ee5752f44cd378d0f31669d4b1d7e2d11f41e08283d5134bd1f
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.1
+  resolution: "set-cookie-parser@npm:2.7.1"
+  checksum: 10c0/060c198c4c92547ac15988256f445eae523f57f2ceefeccf52d30d75dedf6bff22b9c26f756bd44e8e560d44ff4ab2130b178bd2e52ef5571bf7be3bd7632d9a
   languageName: node
   linkType: hard
 
@@ -15843,11 +15886,11 @@ __metadata:
   linkType: hard
 
 "yaml@npm:^2.3.4":
-  version: 2.8.0
-  resolution: "yaml@npm:2.8.0"
+  version: 2.8.1
+  resolution: "yaml@npm:2.8.1"
   bin:
     yaml: bin.mjs
-  checksum: 10c0/f6f7310cf7264a8107e72c1376f4de37389945d2fb4656f8060eca83f01d2d703f9d1b925dd8f39852a57034fafefde6225409ddd9f22aebfda16c6141b71858
+  checksum: 10c0/7c587be00d9303d2ae1566e03bc5bc7fe978ba0d9bf39cc418c3139d37929dfcb93a230d9749f2cb578b6aa5d9ebebc322415e4b653cb83acd8bc0bc321707f3
   languageName: node
   linkType: hard
 

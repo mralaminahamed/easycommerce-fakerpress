@@ -13,6 +13,8 @@ EasyCommerce FakerPress is a modernized WordPress plugin that generates realisti
 - Local by Flywheel development setup
 - PHP 7.4+ required
 - Node.js 16+ for frontend development
+- **Package Manager Guidelines**:
+  - Always use yarn as package manager instead of npm
 
 ## Architecture Overview
 

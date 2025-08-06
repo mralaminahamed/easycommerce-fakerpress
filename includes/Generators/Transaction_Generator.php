@@ -98,11 +98,11 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction data.
 	 *
-	 * @param Order $order Order data.
+	 * @param array $order Order data.
 	 *
 	 * @return array Transaction data
 	 */
-	private function generate_transaction_data( Order $order ): array {
+	private function generate_transaction_data( $order ): array {
 		$transaction_types = array( 'payment', 'refund', 'adjustment', 'fee', 'commission' );
 		$transaction_type  = $this->faker->randomElement( $transaction_types );
 
@@ -123,11 +123,11 @@ class Transaction_Generator extends Generator {
 		$payment_gateway = $payment_gateways[ $gateway_key ];
 
 		// Generate transaction amount based on type.
-		$amount = $this->generate_transaction_amount( $order->get_total(), $transaction_type );
+		$amount = $this->generate_transaction_amount( $order['total'], $transaction_type );
 
 		return array(
-			'order_id'        => $order->get_id(),
-			'customer_id'     => $order->get_customer_id(),
+			'order_id'        => $order['id'],
+			'customer_id'     => $order['customer'],
 			'transaction_id'  => $this->generate_transaction_id( $gateway_key ),
 			'payment_gateway' => $payment_gateway,
 			'amount'          => $amount,
