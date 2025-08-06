@@ -38,7 +38,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|WP_Error|false Single location data, error, or false on failure.
+	 * @return array|WP_Error Single location data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		try {

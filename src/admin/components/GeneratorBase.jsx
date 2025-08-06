@@ -365,7 +365,7 @@ export default function GeneratorBase({title, description, type, onGenerate, isL
                         </div>
                         <div className="ml-3">
                             <h3 className="text-sm font-medium text-red-800">{__('Error', 'easycommerce-fakerpress')}</h3>
-                            <RawHTML className="mt-2 text-sm text-red-700">{error}</RawHTML>
+                            <RawHTML className="mt-2 text-sm text-red-700 [a]:text-bold">{error}</RawHTML>
                         </div>
                     </div>
                 </div>

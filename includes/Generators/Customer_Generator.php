@@ -236,7 +236,7 @@ class Customer_Generator extends Generator {
 
 		// Generate realistic customer history based on how long they've been a customer.
 		$customer_age_days = $join_date->diff( new \DateTime() )->days;
-		$customer_history  = $this->generate_realistic_customer_history( $customer_age_days );
+		$customer_history  = $this->generate_realistic_customer_history( (int) $customer_age_days );
 
 		return array_merge(
 			array(

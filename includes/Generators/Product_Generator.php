@@ -86,7 +86,7 @@ class Product_Generator extends Generator {
 						'featured'        => $this->faker->boolean( 25 ),
 						'seo_title'       => $product_title . ' | ' . $this->faker->company,
 						'seo_description' => $this->faker->sentence( 15, true ),
-						'seo_keywords'    => implode( ', ', $this->faker->words( 5 ) ),
+						'seo_keywords'    => implode( ', ', (array) $this->faker->words( 5 ) ),
 						'sku_prefix'      => strtoupper( $this->faker->lexify( '???' ) ),
 						'release_date'    => $this->faker->dateTimeThisYear()->format( 'Y-m-d' ),
 						'warranty'        => 'physical' === $product_type ? $this->faker->randomElement( array( '1 year', '2 years', 'Limited Lifetime' ) ) : null,

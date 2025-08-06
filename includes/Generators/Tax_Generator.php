@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Tax;
-use EasyCommerce\Models\Database;
+use Exception;
 
 /**
  * Tax Generator Class
@@ -33,7 +33,7 @@ class Tax_Generator extends Generator {
 	/**
 	 * Generate a single tax class
 	 *
-	 * @return array|WP_Error Single tax class data, error, or false on failure.
+	 * @return array|bool Single tax class data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		try {
@@ -52,7 +52,7 @@ class Tax_Generator extends Generator {
 			}
 
 			return false;
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate tax class: ' . $e->getMessage(), 'error' );
 			return false;
 		}
@@ -130,9 +130,8 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_standard_tax_rates(): array {
-		$locations          = $this->get_global_tax_locations();
 		$selected_locations = $this->faker->randomElements(
-			$locations,
+			$this->get_global_tax_locations(),
 			$this->faker->numberBetween( 3, 8 )
 		);
 
@@ -158,9 +157,8 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_reduced_tax_rates(): array {
-		$locations          = $this->get_global_tax_locations();
 		$selected_locations = $this->faker->randomElements(
-			$locations,
+			$this->get_global_tax_locations(),
 			$this->faker->numberBetween( 2, 6 )
 		);
 
@@ -186,9 +184,8 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_zero_tax_rates(): array {
-		$locations          = $this->get_global_tax_locations();
 		$selected_locations = $this->faker->randomElements(
-			$locations,
+			$this->get_global_tax_locations(),
 			$this->faker->numberBetween( 1, 4 )
 		);
 
@@ -213,9 +210,8 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_luxury_tax_rates(): array {
-		$locations          = $this->get_global_tax_locations();
 		$selected_locations = $this->faker->randomElements(
-			$locations,
+			$this->get_global_tax_locations(),
 			$this->faker->numberBetween( 2, 5 )
 		);
 

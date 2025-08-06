@@ -11,14 +11,11 @@ namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
 
+use EasyCommerce\Models\Order;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Transaction;
-use EasyCommerce\Models\Order;
-use EasyCommerce\Models\Customer;
-use EasyCommerce\Models\Database;
 use Exception;
 use RuntimeException;
-use WP_Error;
 
 /**
  * Transaction Generator Class
@@ -39,14 +36,14 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate a single transaction
 	 *
-	 * @return array|WP_Error|bool Single transaction data, error, or false on failure.
+	 * @return array|bool Single transaction data, error, or false on failure.
 	 * @throws RuntimeException When no orders are found.
 	 */
 	protected function generate_single_item() {
 		try {
 			// Get existing orders to create transactions for.
-			$order_db = new Database( 'orders' );
-			$orders   = $order_db->exec( "SELECT id, customer_id, total FROM {$order_db->get_table()} ORDER BY RAND() LIMIT 50" );
+			$orders_data = Order::list( array( 'per_page' => 50 ) );
+			$orders      = $orders_data['orders'] ?? array();
 
 			if ( empty( $orders ) ) {
 				throw new RuntimeException( 'No orders found. Please generate orders first.' );
@@ -101,10 +98,11 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction data.
 	 *
-	 * @param object $order Order data.
+	 * @param Order $order Order data.
+	 *
 	 * @return array Transaction data
 	 */
-	private function generate_transaction_data( $order ): array {
+	private function generate_transaction_data( Order $order ): array {
 		$transaction_types = array( 'payment', 'refund', 'adjustment', 'fee', 'commission' );
 		$transaction_type  = $this->faker->randomElement( $transaction_types );
 
@@ -125,11 +123,11 @@ class Transaction_Generator extends Generator {
 		$payment_gateway = $payment_gateways[ $gateway_key ];
 
 		// Generate transaction amount based on type.
-		$amount = $this->generate_transaction_amount( $order->total, $transaction_type );
+		$amount = $this->generate_transaction_amount( $order->get_total(), $transaction_type );
 
 		return array(
-			'order_id'        => $order->id,
-			'customer_id'     => $order->customer_id,
+			'order_id'        => $order->get_id(),
+			'customer_id'     => $order->get_customer_id(),
 			'transaction_id'  => $this->generate_transaction_id( $gateway_key ),
 			'payment_gateway' => $payment_gateway,
 			'amount'          => $amount,
@@ -277,7 +275,7 @@ class Transaction_Generator extends Generator {
 		// Don't update order status automatically for fake data.
 		$transaction_id = $transaction->add( $data['order_id'], $data, false );
 
-		return $transaction_id ? $transaction_id : null;
+		return $transaction_id ?? null;
 	}
 
 	/**
@@ -290,22 +288,21 @@ class Transaction_Generator extends Generator {
 	 * @throws RuntimeException When order is not found.
 	 */
 	public function generate_for_order( int $order_id, int $transaction_count = 3 ): array {
-		$order_db   = new Database( 'orders' );
-		$order_data = $order_db->get_by_id( $order_id );
+		$order   = new Order( $order_id );
 
-		if ( ! $order_data ) {
+		if ( ! $order->exists() ) {
 			throw new RuntimeException( 'Order not found.' );
 		}
 
 		$results          = array();
-		$remaining_amount = $order_data->total;
+		$remaining_amount = $order->get_total();
 
 		for ( $i = 0; $i < $transaction_count; $i++ ) {
 			try {
 				// First transaction is usually a payment.
 				$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement( array( 'payment', 'refund', 'adjustment', 'fee' ) );
 
-				$transaction_data         = $this->generate_transaction_data( $order_data );
+				$transaction_data         = $this->generate_transaction_data( $order );
 				$transaction_data['type'] = $transaction_type;
 
 				// Adjust amount for subsequent transactions.

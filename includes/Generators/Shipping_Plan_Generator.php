@@ -12,8 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Shipping_Plan;
-use EasyCommerce\Models\Database;
-use WP_Error;
+use Exception;
 
 /**
  * Shipping Plan Generator Class
@@ -55,7 +54,7 @@ class Shipping_Plan_Generator extends Generator {
 			}
 
 			return false;
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate shipping plan: ' . $e->getMessage(), 'error' );
 			return false;
 		}
@@ -366,12 +365,10 @@ class Shipping_Plan_Generator extends Generator {
 		);
 
 		// Select random regions (2-8 regions per shipping plan).
-		$selected_regions = $this->faker->randomElements(
+		return $this->faker->randomElements(
 			$regions,
 			$this->faker->numberBetween( 2, 8 )
 		);
-
-		return $selected_regions;
 	}
 
 	/**

@@ -14,11 +14,9 @@ use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Models\Location;
-use EasyCommerce\Models\Order_Item;
-use EasyCommerce\Models\Order_Item_Meta;
+use Exception;
 use WP_Error;
 use WP_User;
-use Exception;
 
 /**
  * Order Generator Class
@@ -45,7 +43,7 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|WP_Error|false Single order data, error, or false on failure.
+	 * @return array|WP_Error Single order data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		try {
@@ -109,7 +107,7 @@ class Order_Generator extends Generator {
 				'items_count'    => $this->count_order_items( $order_items ),
 				'created_date'   => current_time( 'Y-m-d H:i:s' ),
 			);
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->log( 'Order creation failed: ' . $e->getMessage(), 'error' );
 
 			return new WP_Error( 'order_creation_failed', $e->getMessage() );

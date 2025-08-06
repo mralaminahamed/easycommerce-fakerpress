@@ -14,15 +14,11 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Product_Variation;
-use EasyCommerce\Models\Product_Variation_Meta;
-use EasyCommerce\Models\Product_Variation_Attribute;
 use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Attribute;
 use EasyCommerce\Models\Attribute_Value;
-use EasyCommerce\Models\Database;
 use Exception;
 use RuntimeException;
-use WP_Error;
 
 /**
  * Product Variation Generator Class
@@ -292,9 +288,9 @@ class Product_Variation_Generator extends Generator {
 	 * Get or create attribute.
 	 *
 	 * @param string $slug Attribute slug.
-	 * @return object|null Attribute data object.
+	 * @return Attribute|object|null Attribute data object.
 	 */
-	private function get_or_create_attribute( string $slug ): ?object {
+	private function get_or_create_attribute( string $slug ) {
 		$attribute_model = new Attribute();
 		$existing        = $attribute_model->get_by_slug( $slug );
 
@@ -318,9 +314,9 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int    $attribute_id Attribute ID.
 	 * @param string $value_slug Value slug.
-	 * @return object|null Attribute value data object.
+	 * @return Attribute_Value|object|null Attribute value data object.
 	 */
-	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ): ?object {
+	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ) {
 		$attribute_value_model = new Attribute_Value();
 		$existing              = $attribute_value_model->get_by_slug( $value_slug );
 
@@ -396,7 +392,7 @@ class Product_Variation_Generator extends Generator {
 
 		// SEO and marketing meta.
 		$variation->update_meta( 'meta_description', $this->faker->sentence( 20 ) );
-		$variation->update_meta( 'meta_keywords', implode( ', ', $this->faker->words( 5 ) ) );
+		$variation->update_meta( 'meta_keywords', implode( ', ', (array) $this->faker->words( 5 ) ) );
 
 		// Thumbnail URL.
 		$variation->update_meta( 'thumbnail', $this->faker->imageUrl( 300, 300, 'products' ) );
