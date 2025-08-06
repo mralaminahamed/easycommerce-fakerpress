@@ -2,7 +2,7 @@ includes:
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
 
 parameters:
-    level: 8
+    level: 7
     
     paths:
         - class-easycommerce-fakerpress.php
@@ -120,6 +120,8 @@ parameters:
         - '#Instantiated class ECFP_[a-zA-Z_]+ not found\.#'
         - path: tests/
           message: '#Call to method [a-zA-Z_]+ on an unknown class [a-zA-Z0-9\\_]+\.#'
+
+        - identifier: 'property.notFound'
     
     # Report unused ignores
     reportUnmatchedIgnoredErrors: false

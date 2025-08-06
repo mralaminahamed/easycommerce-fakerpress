@@ -9,14 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-06T04:07:22+00:00\n"
+"POT-Creation-Date: 2025-08-06T09:03:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: easycommerce-fakerpress\n"
 
 #. Plugin Name of the plugin
 #: class-easycommerce-fakerpress.php:97
-#: src/admin/components/App.jsx:49
+#: src/admin/components/Pages/RootLayout.jsx:10
 msgid "EasyCommerce FakerPress"
 msgstr ""
 
@@ -399,209 +399,98 @@ msgstr ""
 msgid "Generated payment transactions with realistic data."
 msgstr ""
 
-#: src/admin/components/App.jsx:19
-msgid "Products"
-msgstr ""
-
-#: src/admin/components/App.jsx:19
-#: src/admin/components/App.jsx:20
-#: src/admin/components/App.jsx:21
-#: src/admin/components/App.jsx:22
-msgid "Core"
-msgstr ""
-
-#: src/admin/components/App.jsx:19
-msgid "Generate fake product data for testing."
-msgstr ""
-
-#: src/admin/components/App.jsx:20
-msgid "Customers"
-msgstr ""
-
-#: src/admin/components/App.jsx:20
-msgid "Generate fake customer data for testing."
-msgstr ""
-
-#: src/admin/components/App.jsx:21
-msgid "Orders"
-msgstr ""
-
-#: src/admin/components/App.jsx:21
-msgid "Generate fake order data for testing."
-msgstr ""
-
-#: src/admin/components/App.jsx:22
-msgid "Coupons"
-msgstr ""
-
-#: src/admin/components/App.jsx:22
-msgid "Generate fake coupon data for testing."
-msgstr ""
-
-#: src/admin/components/App.jsx:23
-msgid "Product Variations"
-msgstr ""
-
-#: src/admin/components/App.jsx:23
-#: src/admin/components/App.jsx:24
-#: src/admin/components/App.jsx:25
-#: src/admin/components/App.jsx:26
-#: src/admin/components/App.jsx:27
-#: src/admin/components/App.jsx:28
-msgid "Enhanced"
-msgstr ""
-
-#: src/admin/components/App.jsx:23
-msgid "Generate fake product variation data."
-msgstr ""
-
-#: src/admin/components/App.jsx:24
-msgid "Shipping Plans"
-msgstr ""
-
-#: src/admin/components/App.jsx:24
-msgid "Generate fake shipping plan data."
-msgstr ""
-
-#: src/admin/components/App.jsx:25
-msgid "Tax Classes"
-msgstr ""
-
-#: src/admin/components/App.jsx:25
-msgid "Generate fake tax class data."
-msgstr ""
-
-#: src/admin/components/App.jsx:26
-msgid "Transactions"
-msgstr ""
-
-#: src/admin/components/App.jsx:26
-msgid "Generate fake transaction data."
-msgstr ""
-
-#: src/admin/components/App.jsx:27
-msgid "Cart Sessions"
-msgstr ""
-
-#: src/admin/components/App.jsx:27
-msgid "Generate fake cart session data."
-msgstr ""
-
-#: src/admin/components/App.jsx:28
-msgid "Locations"
-msgstr ""
-
-#: src/admin/components/App.jsx:28
-msgid "Generate fake location data."
-msgstr ""
-
-#: src/admin/components/App.jsx:51
-msgid "Generate fake ecommerce data for testing and development with a seamless and intuitive interface."
-msgstr ""
-
-#: src/admin/components/App.jsx:59
-msgid "Other Generators"
-msgstr ""
-
-#: src/admin/components/App.jsx:84
-msgid "Back to Generators"
-msgstr ""
-
-#: src/admin/components/App.jsx:93
-msgid "Home"
-msgstr ""
-
-#: src/admin/components/App.jsx:114
-msgid "%s Generators"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:77
-#: src/admin/components/GeneratorBase.jsx:85
+#. translators: %s: Field description (e.g., status, type)
+#: src/admin/components/GeneratorBase.jsx:78
+#: src/admin/components/GeneratorBase.jsx:87
 msgid "Select %s"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:231
+#: src/admin/components/GeneratorBase.jsx:233
 msgid "Basic Settings"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:236
+#. translators: %s: Resource type (e.g., products, customers, orders)
+#: src/admin/components/GeneratorBase.jsx:239
 msgid "Number of %s to generate"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:251
+#: src/admin/components/GeneratorBase.jsx:254
 msgid "Locale"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:259
+#: src/admin/components/GeneratorBase.jsx:262
 msgid "Select Locale"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:272
+#: src/admin/components/GeneratorBase.jsx:275
 msgid "English (US)"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:273
+#: src/admin/components/GeneratorBase.jsx:276
 msgid "English (UK)"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:274
+#: src/admin/components/GeneratorBase.jsx:277
 msgid "French"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:275
+#: src/admin/components/GeneratorBase.jsx:278
 msgid "German"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:276
+#: src/admin/components/GeneratorBase.jsx:279
 msgid "Spanish"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:277
+#: src/admin/components/GeneratorBase.jsx:280
 msgid "Italian"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:287
+#: src/admin/components/GeneratorBase.jsx:290
 msgid "Random Seed (optional)"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:292
+#: src/admin/components/GeneratorBase.jsx:295
 msgid "For reproducible data"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:307
+#: src/admin/components/GeneratorBase.jsx:310
 msgid "Include additional metadata"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:319
+#: src/admin/components/GeneratorBase.jsx:322
 msgid "Advanced Parameters"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:350
-msgid "Generating..."
+#: src/admin/components/GeneratorBase.jsx:353
+msgid "Generating…"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:353
+#. translators: %s: Resource type (e.g., products, customers, orders)
+#: src/admin/components/GeneratorBase.jsx:357
 msgid "Generate %s"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:367
+#: src/admin/components/GeneratorBase.jsx:371
 msgid "Error"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:383
+#: src/admin/components/GeneratorBase.jsx:387
 msgid "Success!"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:385
+#. translators: %1$d: Number of items generated, %2$s: Resource type (e.g., products, customers, orders)
+#: src/admin/components/GeneratorBase.jsx:390
 msgid "Generated %1$d %2$s."
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:389
+#: src/admin/components/GeneratorBase.jsx:394
 msgid "Generated items:"
 msgstr ""
 
-#: src/admin/components/GeneratorBase.jsx:401
-msgid "... and %d more"
+#. translators: %d: Number of additional items not shown in the list
+#: src/admin/components/GeneratorBase.jsx:407
+msgid "… and %d more"
 msgstr ""
 
 #: src/admin/components/Generators/CartSessionGenerator.jsx:26
@@ -902,4 +791,121 @@ msgstr ""
 
 #: src/admin/components/Generators/TransactionGenerator.jsx:73
 msgid "Create realistic payment transaction history with different gateways, amounts, and status distributions."
+msgstr ""
+
+#: src/admin/components/Pages/GeneratorPage.jsx:36
+msgid "Other Generators"
+msgstr ""
+
+#: src/admin/components/Pages/GeneratorPage.jsx:65
+msgid "Back to Generators"
+msgstr ""
+
+#: src/admin/components/Pages/GeneratorPage.jsx:74
+msgid "Home"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:18
+msgid "Products"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:20
+#: src/admin/components/Pages/HomePage.jsx:31
+#: src/admin/components/Pages/HomePage.jsx:42
+#: src/admin/components/Pages/HomePage.jsx:53
+msgid "Core"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:22
+msgid "Generate fake product data for testing."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:29
+msgid "Customers"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:33
+msgid "Generate fake customer data for testing."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:40
+msgid "Orders"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:44
+msgid "Generate fake order data for testing."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:51
+msgid "Coupons"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:55
+msgid "Generate fake coupon data for testing."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:62
+msgid "Product Variations"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:64
+#: src/admin/components/Pages/HomePage.jsx:75
+#: src/admin/components/Pages/HomePage.jsx:86
+#: src/admin/components/Pages/HomePage.jsx:97
+#: src/admin/components/Pages/HomePage.jsx:108
+#: src/admin/components/Pages/HomePage.jsx:119
+msgid "Enhanced"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:66
+msgid "Generate fake product variation data."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:73
+msgid "Shipping Plans"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:77
+msgid "Generate fake shipping plan data."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:84
+msgid "Tax Classes"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:88
+msgid "Generate fake tax class data."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:95
+msgid "Transactions"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:99
+msgid "Generate fake transaction data."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:106
+msgid "Cart Sessions"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:110
+msgid "Generate fake cart session data."
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:117
+msgid "Locations"
+msgstr ""
+
+#: src/admin/components/Pages/HomePage.jsx:121
+msgid "Generate fake location data."
+msgstr ""
+
+#. translators: %s: Category name (e.g., Core, Enhanced)
+#: src/admin/components/Pages/HomePage.jsx:146
+msgid "%s Generators"
+msgstr ""
+
+#: src/admin/components/Pages/RootLayout.jsx:13
+msgid "Generate fake ecommerce data for testing and development with a seamless and intuitive interface."
 msgstr ""

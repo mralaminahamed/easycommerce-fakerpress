@@ -44,8 +44,7 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         },
-        "optimize-autoloader": true,
-        "classmap-authoritative": true
+        "optimize-autoloader": true
     },
     "autoload": {
         "classmap": [
@@ -87,10 +86,10 @@
             "npm run build",
             "@makepot",
             "mkdir -p release",
-            "composer update --no-dev --optimize-autoloader",
+            "composer install --no-dev --optimize-autoloader",
             "rsync -av --exclude-from=.distignore . release/easycommerce-fakerpress/",
             "cd release && zip -r easycommerce-fakerpress.zip easycommerce-fakerpress/",
-            "composer update --with-all-dependencies"
+            "composer install"
         ],
         "format": "@phpcbf",
         "lint": "@phpcs",

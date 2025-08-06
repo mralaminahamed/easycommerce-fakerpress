@@ -1,6 +1,6 @@
 # Development and build files
-node_modules/
-src/
+/node_modules/
+/src/
 webpack.config.js
 package.json
 package-lock.json
@@ -11,10 +11,11 @@ postcss.config.js
 tailwind.config.js
 
 # Composer development files
-composer.json
-composer.lock
+# composer.json - Needed for production dependencies
+# composer.lock - Needed for production dependencies
 
 # Development tools
+/.yarn
 .ncurc.json
 .stylelintrc.js
 .yarnrc.yml
@@ -32,8 +33,8 @@ CHANGELOG.md
 CONTRIBUTING.md
 SECURITY.md
 LICENSE
-docs/
-drafts/
+/docs/
+/drafts/
 
 # Testing and CI
 tests/
@@ -41,21 +42,22 @@ tests/
 .travis.yml
 .circleci/
 phpunit.xml.dist
+/.phpstan-cache
 
 # IDE and editor files
-.vscode/
-.idea/
+/.vscode/
+/.idea/
 *.sublime-project
 *.sublime-workspace
 .DS_Store
 Thumbs.db
 
 # Build and release directories
-release/
-dist/
+/release/
+/dist/
 
 # Git files
-.git/
+/.git/
 .gitattributes
 
 # Temporary files
@@ -67,8 +69,8 @@ dist/
 *~
 
 # Claude AI files
-.claude/
+/.claude/
 CLAUDE.md
-.yarn
-.phpstan-cache
-.wordpress-org
+
+# WordPress specific files
+/.wordpress-org

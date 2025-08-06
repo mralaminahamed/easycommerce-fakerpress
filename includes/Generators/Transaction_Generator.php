@@ -11,6 +11,7 @@ namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
 
+use EasyCommerce\Models\Database;
 use EasyCommerce\Models\Order;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Transaction;
@@ -288,21 +289,22 @@ class Transaction_Generator extends Generator {
 	 * @throws RuntimeException When order is not found.
 	 */
 	public function generate_for_order( int $order_id, int $transaction_count = 3 ): array {
-		$order   = new Order( $order_id );
+		$order_db   = new Database( 'orders' );
+		$order_data = $order_db->get_by_id( $order_id );
 
-		if ( ! $order->exists() ) {
+		if ( ! $order_data ) {
 			throw new RuntimeException( 'Order not found.' );
 		}
 
 		$results          = array();
-		$remaining_amount = $order->get_total();
+		$remaining_amount = $order_data->total;
 
 		for ( $i = 0; $i < $transaction_count; $i++ ) {
 			try {
 				// First transaction is usually a payment.
 				$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement( array( 'payment', 'refund', 'adjustment', 'fee' ) );
 
-				$transaction_data         = $this->generate_transaction_data( $order );
+				$transaction_data         = $this->generate_transaction_data( $order_data );
 				$transaction_data['type'] = $transaction_type;
 
 				// Adjust amount for subsequent transactions.
