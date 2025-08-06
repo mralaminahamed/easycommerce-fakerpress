@@ -13,7 +13,6 @@ tailwind.config.js
 # Composer development files
 composer.json
 composer.lock
-vendor/
 
 # Development tools
 .ncurc.json
@@ -31,6 +30,7 @@ phpunit.xml
 README.md
 CHANGELOG.md
 CONTRIBUTING.md
+SECURITY.md
 LICENSE
 docs/
 drafts/
@@ -58,7 +58,6 @@ dist/
 # Git files
 .git/
 .gitattributes
-.gitignore
 
 # Temporary files
 *.tmp
@@ -71,3 +70,6 @@ dist/
 # Claude AI files
 .claude/
 CLAUDE.md
+.yarn
+.phpstan-cache
+.wordpress-org

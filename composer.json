@@ -87,8 +87,10 @@
             "npm run build",
             "@makepot",
             "mkdir -p release",
+            "composer update --no-dev --optimize-autoloader",
             "rsync -av --exclude-from=.distignore . release/easycommerce-fakerpress/",
-            "cd release && zip -r easycommerce-fakerpress.zip easycommerce-fakerpress/"
+            "cd release && zip -r easycommerce-fakerpress.zip easycommerce-fakerpress/",
+            "composer update --with-all-dependencies"
         ],
         "format": "@phpcbf",
         "lint": "@phpcs",
