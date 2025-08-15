@@ -72,6 +72,8 @@
         "phpcs":  "phpcs --standard=phpcs.xml",
         "phpcs:plugin-review":  "phpcs --standard=phpcs.plugin-review.xml",
         "phpstan": "phpstan analyse --memory-limit 2G",
+        "lint": "@phpcs",
+        "analyse": "@phpstan",
         "release": [
             "@lint",
             "@analyse",
