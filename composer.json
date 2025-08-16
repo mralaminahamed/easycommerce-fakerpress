@@ -10,6 +10,15 @@
             "homepage": "https://github.com/mralaminahamed/"
         }
     ],
+    "keywords": [
+        "wordpress",
+        "woocommerce",
+        "easycommerce",
+        "faker",
+        "test-data",
+        "sample-data",
+        "generator"
+    ],
     "homepage": "https://github.com/mralaminahamed/easycommerce-fakerpress",
     "support": {
         "issues": "https://github.com/mralaminahamed/easycommerce-fakerpress/issues",
