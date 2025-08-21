@@ -8,15 +8,15 @@
     "start": "wp-scripts start",
     "dev": "wp-scripts start",
     "watch": "wp-scripts start",
-    "lint:css": "wp-scripts lint-style src/**/*.scss",
-    "lint:js": "wp-scripts lint-js src/**/*.js",
+    "lint:css": "wp-scripts lint-style 'src/**/*.{css,scss}'",
+    "lint:js": "wp-scripts lint-js 'src/**/*.{js,jsx}'",
     "lint:php": "phpcs",
     "lint:php:fix": "phpcbf",
     "phpstan": "phpstan analyse",
     "format": "wp-scripts format src/**/*.js",
     "packages-update": "wp-scripts packages-update",
-    "lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-    "fix": "wp-scripts format src/**/*.js && npm run lint:php:fix"
+    "lint": "yarn lint:js && yarn lint:css && yarn lint:php",
+    "fix": "wp-scripts format 'src/**/*.{js,jsx}' && yarn lint:php:fix"
   },
   "keywords": [
     "wordpress",

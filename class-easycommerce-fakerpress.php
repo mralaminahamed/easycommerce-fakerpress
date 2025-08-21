@@ -28,7 +28,7 @@ use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
  *
  * @since 1.0.0
  */
-class EasyCommerce_FakerPress {
+class EasyCommerceFakerPress {
 
 	/**
 	 * Single instance of the class
@@ -44,7 +44,7 @@ class EasyCommerce_FakerPress {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	public string $version = ECFP_VERSION;
+	public string $version = EASYCOMMERCE_FAKERPRESS_VERSION;
 
 	/**
 	 * Get single instance of the class
@@ -70,8 +70,8 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function init(): void {
-		register_activation_hook( ECFP_PLUGIN_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( ECFP_PLUGIN_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'deactivate' ) );
 
 		if ( ! $this->check_dependencies() ) {
 			add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
@@ -136,7 +136,7 @@ class EasyCommerce_FakerPress {
 			return;
 		}
 
-		$asset_file = ECFP_PLUGIN_PATH . 'build/admin.asset.php';
+		$asset_file = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'build/admin.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
@@ -158,7 +158,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_script(
 			'easycommerce-fakerpress-admin',
-			ECFP_PLUGIN_URL . 'build/admin.js',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/admin.js',
 			$deps,
 			$version,
 			true
@@ -166,7 +166,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_style(
 			'easycommerce-fakerpress-admin',
-			ECFP_PLUGIN_URL . 'build/admin.css',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/admin.css',
 			array(),
 			$version
 		);

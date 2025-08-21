@@ -42,10 +42,10 @@ parameters:
         - WP_DEBUG_DISPLAY
         - SCRIPT_DEBUG
         - WP_CACHE
-        - ECFP_VERSION
-        - ECFP_PLUGIN_FILE
-        - ECFP_PLUGIN_URL
-        - ECFP_PLUGIN_PATH
+        - EASYCOMMERCE_FAKERPRESS_VERSION
+        - EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE
+        - EASYCOMMERCE_FAKERPRESS_PLUGIN_URL
+        - EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH
     
     # Ignore errors
     ignoreErrors:

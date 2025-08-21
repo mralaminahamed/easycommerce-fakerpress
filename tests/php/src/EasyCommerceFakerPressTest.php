@@ -2,18 +2,18 @@
 
 namespace EasyCommerceFakerPress\Tests;
 
-use EasyCommerce_FakerPress;
+use EasyCommerceFakerPress;
 use ReflectionClass;
 
 /**
  * Test class for the main EasyCommerce FakerPress plugin
  *
- * @covers \EasyCommerce_FakerPress
+ * @covers \EasyCommerceFakerPress
  */
 class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var EasyCommerce_FakerPress
+	 * @var EasyCommerceFakerPress
 	 */
 	private $plugin;
 
@@ -38,10 +38,10 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_instance(): void {
 		// Check if instance returns the correct class
-		$this->assertInstanceOf( EasyCommerce_FakerPress::class, EasyCommerce_FakerPress::get_instance() );
+		$this->assertInstanceOf( EasyCommerceFakerPress::class, EasyCommerceFakerPress::get_instance() );
 
 		// Check if instance returns the same object
-		$this->assertSame( EasyCommerce_FakerPress::get_instance(), EasyCommerce_FakerPress::get_instance() );
+		$this->assertSame( EasyCommerceFakerPress::get_instance(), EasyCommerceFakerPress::get_instance() );
 	}
 
 	/**
@@ -236,7 +236,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_check_dependencies(): void {
 		// Mock is_easycommerce_active to return true
-		$plugin = $this->getMockBuilder( EasyCommerce_FakerPress::class )
+		$plugin = $this->getMockBuilder( EasyCommerceFakerPress::class )
 			->onlyMethods( array( 'is_easycommerce_active' ) )
 			->getMock();
 
@@ -255,7 +255,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_activate(): void {
 		// Mock check_dependencies to return true
-		$plugin = $this->getMockBuilder( EasyCommerce_FakerPress::class )
+		$plugin = $this->getMockBuilder( EasyCommerceFakerPress::class )
 			->onlyMethods( array( 'check_dependencies' ) )
 			->getMock();
 
@@ -273,7 +273,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_activate_with_missing_dependencies(): void {
 		// Mock check_dependencies to return false
-		$plugin = $this->getMockBuilder( EasyCommerce_FakerPress::class )
+		$plugin = $this->getMockBuilder( EasyCommerceFakerPress::class )
 			->onlyMethods( array( 'check_dependencies' ) )
 			->getMock();
 
@@ -302,7 +302,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_dependency_notice(): void {
 		// Mock is_easycommerce_active to return false
-		$plugin = $this->getMockBuilder( EasyCommerce_FakerPress::class )
+		$plugin = $this->getMockBuilder( EasyCommerceFakerPress::class )
 			->onlyMethods( array( 'is_easycommerce_active' ) )
 			->getMock();
 
