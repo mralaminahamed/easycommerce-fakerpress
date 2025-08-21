@@ -42,6 +42,52 @@ A comprehensive WordPress plugin that generates realistic fake ecommerce data fo
 - **WordPress Standards**: Full WPCS compliance with security best practices
 - **Extensible Design**: Hook system and abstract patterns for easy customization
 
+## 📸 Screenshots
+
+### Main Interface
+![EasyCommerce FakerPress Admin Interface](.wordpress-org/screenshot-1.png)
+*The modern, tabbed interface with WordPress admin color integration*
+
+### Product Generator
+![Product Generator](.wordpress-org/screenshot-2.png)
+*Advanced product generation with attributes, variations, and inventory settings*
+
+### Customer Generator  
+![Customer Generator](.wordpress-org/screenshot-3.png)
+*Comprehensive customer profile generation with demographics and loyalty tiers*
+
+### Order Generator
+![Order Generator](.wordpress-org/screenshot-4.png)
+*Complete order generation with payment processing and shipping calculations*
+
+### Coupon Generator
+![Coupon Generator](.wordpress-org/screenshot-5.png)
+*Sophisticated discount coupon system with advanced rule configurations*
+
+### Advanced Generators
+![Advanced Generators](.wordpress-org/screenshot-6.png)
+*Product variations, shipping plans, tax management, and transaction generators*
+
+### Cart & Location Features
+![Cart & Location Features](.wordpress-org/screenshot-7.png)
+*Shopping cart sessions and comprehensive location data management*
+
+### Parameter Configuration
+![Parameter Configuration](.wordpress-org/screenshot-8.png)
+*Advanced parameter controls with nested object configurations and validation*
+
+### Real-time Progress
+![Generation Progress](.wordpress-org/screenshot-9.png)
+*Live generation progress with detailed status updates and error handling*
+
+### WordPress Integration
+![WordPress Integration](.wordpress-org/screenshot-10.png)
+*Seamless WordPress admin integration with color scheme adaptation*
+
+### Generated Data Preview
+![Generated Data Preview](.wordpress-org/screenshot-11.png)
+*Preview of realistic generated data with proper EasyCommerce integration*
+
 ## 📋 Requirements
 
 - **WordPress**: 5.0 or higher  
