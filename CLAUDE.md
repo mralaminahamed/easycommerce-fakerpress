@@ -8,23 +8,24 @@ EasyCommerce FakerPress is a modernized WordPress plugin that generates realisti
 
 ## Development Environment
 
-- WordPress installation path: `/home/alamin/Local Sites/easy-commerce-development/app/public/`
+- WordPress installation path: `/Users/alamin/Sites/easy-commerce-development/wp-content/plugins/easycommerce-fakerpress/`
 - Plugin path: `wp-content/plugins/easycommerce-fakerpress/`
 - Local by Flywheel development setup
-- PHP 7.4+ required
+- PHP 7.4+ required (8.0+ recommended)
 - Node.js 16+ for frontend development
 - **Package Manager Guidelines**:
-  - Always use yarn as package manager instead of npm
+  - Always use yarn as package manager instead of npm (version 4.9.2 specified in packageManager field)
 
 ## Architecture Overview
 
-### Version 2.0.0 Architecture
+### Version 1.0.0 Architecture (Current)
 The plugin has been completely modernized with:
 - **PSR-4 Namespace Structure**: All classes use `EasyCommerceFakerPress` namespace
 - **Composer Autoloading**: Automatic class loading via Composer PSR-4 autoloader
 - **REST API Controllers**: WordPress REST API endpoints replacing legacy AJAX
 - **Abstract Base Classes**: Uniform patterns reducing code duplication by ~70%
 - **EasyCommerce Model Integration**: Uses EasyCommerce plugin's data models instead of direct database queries
+- **WordPress Scripts Integration**: Uses @wordpress/scripts for modern build tooling
 
 ### Backend (PHP) - Current Structure
 ```
@@ -93,12 +94,19 @@ composer install
 yarn install         # Always use yarn as package manager
 
 # Development
-yarn dev             # Watch mode for development
+yarn dev             # Watch mode for development (alias for yarn start)
+yarn start           # Start development server with hot reloading
 yarn build           # Production build
+yarn watch           # Alias for yarn start
 
 # Code quality
-yarn lint            # Lint JS and CSS with ESLint and Stylelint
-yarn fix             # Auto-fix linting issues
+yarn lint            # Lint JS, CSS, and PHP (runs all linters)
+yarn lint:js         # ESLint for JavaScript files
+yarn lint:css        # Stylelint for CSS/SCSS files  
+yarn lint:php        # PHPCS for PHP files
+yarn fix             # Auto-fix JS formatting and PHP code style
+yarn format          # Format JS files with wp-scripts
+yarn phpstan         # Run PHPStan static analysis
 composer run lint    # PHP CodeSniffer (WPCS) with PHPStan
 composer run fix     # PHP Code Beautifier
 ```
@@ -135,7 +143,7 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 - **Order Model**: Orders with items, payment methods, shipping, and taxes
 - **Coupon Model**: Discount coupons with advanced rules and restrictions
 
-#### Advanced Models (New in v2.0.0)
+#### Advanced Models
 - **Product_Variation Model**: Product variations with attributes and pricing
 - **Attribute/Attribute_Value Models**: Product attribute system management
 - **Shipping_Plan Model**: Shipping methods with regional coverage and pricing tiers
@@ -154,7 +162,7 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
   - `POST /customers/generate` - Generate customer profiles
   - `POST /orders/generate` - Generate orders with comprehensive data
   - `POST /coupons/generate` - Generate discount coupons
-- **Advanced Endpoints** (New in v2.0.0):
+- **Advanced Endpoints**:
   - `POST /product-variations/generate` - Generate product variations
   - `POST /shipping-plans/generate` - Generate shipping configurations
   - `POST /taxes/generate` - Generate tax classes and rates
@@ -306,30 +314,33 @@ const router = createHashRouter([
 5. **Build**: Use `yarn build` for production deployment
 6. **Documentation**: Update PHPDoc and inline documentation
 
-## Recent Architectural Improvements (v2.1.0)
+## Current Architectural Features (v1.0.0)
 
-### Frontend Modernization
-- **Component Extraction**: Separated App.jsx into focused Page components
-- **React Router v7**: Migrated from HashRouter to createHashRouter with data router patterns
-- **Pages Directory**: Organized route-based components into logical directory structure
-- **Improved Maintainability**: Reduced App.jsx from 310+ lines to 29 lines
-- **Better Code Organization**: Clear separation between Pages, Generators, and Base components
+### Modern Frontend Architecture
+- **Component Separation**: Clean App.jsx with focused Page components (29 lines)
+- **React Router v7**: Uses createHashRouter with data router patterns for WordPress compatibility
+- **Pages Directory**: Organized route-based components (RootLayout, HomePage, GeneratorPage)
+- **Generators Directory**: Dedicated generator components with consistent naming
+- **WordPress Scripts**: Integrated @wordpress/scripts for optimal WordPress development
 
-### Performance Enhancements
-- **Route-Based Code Splitting**: Components loaded on-demand for better performance
-- **Optimized Bundle Size**: Removed unused imports and dependencies
-- **Modern React Patterns**: Leveraged React 18 features and concurrent rendering
-- **Improved Tree Shaking**: Better elimination of unused code in production builds
+### Performance Features
+- **WordPress Scripts Optimization**: Built-in code splitting and optimization
+- **Modern React 18**: Concurrent features and improved rendering
+- **Tailwind CSS**: Utility-first CSS framework with purging for smaller bundles
+- **Sass Support**: Advanced CSS preprocessing capabilities
+- **PostCSS**: Advanced CSS processing with Autoprefixer
 
 ### Developer Experience
-- **Cleaner Architecture**: More predictable file organization and component structure
-- **Better IDE Support**: Improved IntelliSense and auto-completion
-- **Easier Debugging**: Smaller, focused components for easier troubleshooting
-- **Enhanced Testability**: Components can be tested in isolation
+- **WordPress Standards**: Full compliance with WordPress coding standards
+- **TypeScript Support**: Optional static typing for enhanced development
+- **Playwright Testing**: Modern end-to-end testing capabilities
+- **Multiple Linting**: ESLint, Stylelint, and PHPCS integration
+- **PHPStan Analysis**: Advanced PHP static analysis with WordPress stubs
 
 ### Pre-Commit Checklist
 - [ ] Run `composer run lint` (PHPCS + PHPStan)
-- [ ] Run `yarn lint` (ESLint + Stylelint)
+- [ ] Run `yarn lint` (ESLint + Stylelint + PHPCS)
+- [ ] Run `yarn build` to ensure production build works
 - [ ] Test data generation functionality
 - [ ] Verify REST API endpoints
 - [ ] Check error handling and validation
@@ -337,28 +348,45 @@ const router = createHashRouter([
 
 ## Dependencies
 
-### PHP Dependencies (Composer)
-- `fakerphp/faker`: Realistic fake data generation with localization
+### PHP Dependencies (Production)
+- `fakerphp/faker`: 1.23+ - Realistic fake data generation with localization
+- `bluemmb/faker-picsum-photos-provider`: 2.0+ - Lorem Picsum image provider for Faker
 - `EasyCommerce Plugin`: Data models and business logic (required dependency)
 - `WordPress`: 5.0+ with proper database abstraction
+- `PHP`: 7.4+ (8.0+ recommended)
 
-### JavaScript Dependencies (Yarn)
-- `react`: UI component library with hooks and concurrent features
-- `react-router-dom`: Modern routing library with data router patterns
-- `@headlessui/react`: Accessible, unstyled UI components
-- `@heroicons/react`: Beautiful hand-crafted SVG icons
-- `@wordpress/i18n`: WordPress internationalization utilities
-- `@wordpress/api-fetch`: WordPress REST API fetch wrapper
-- `tailwindcss`: Utility-first CSS framework
-- `webpack`: Module bundler with optimization
-- `babel`: JavaScript compiler with modern syntax support
+### PHP Development Dependencies
+- `phpstan/phpstan`: 2.1+ - PHP static analysis tool
+- `squizlabs/php_codesniffer`: 3.7+ - PHP code style checking
+- `wp-coding-standards/wpcs`: 3.1+ - WordPress coding standards
+- `phpunit/phpunit`: 9.6+ - PHP unit testing framework
+- `wp-phpunit/wp-phpunit`: 6.8+ - WordPress-specific PHPUnit utilities
+- `php-stubs/wordpress-stubs`: 6.4+ - WordPress function stubs for static analysis
 
-### Development Dependencies
-- `phpstan/phpstan`: PHP static analysis
-- `squizlabs/php_codesniffer`: PHP code style checking
-- `wp-coding-standards/wpcs`: WordPress coding standards
-- `eslint`: JavaScript linting
-- `stylelint`: CSS/SCSS linting
+### JavaScript Dependencies (Production)
+- `react`: 18.x - UI component library with hooks and concurrent features
+- `react-router-dom`: 7.7.1 - Modern routing library with data router patterns
+- `@headlessui/react`: 2.2.7 - Accessible, unstyled UI components
+- `@heroicons/react`: 2.2.0 - Beautiful hand-crafted SVG icons
+- `@wordpress/i18n`: 6.0.0 - WordPress internationalization utilities
+- `@wordpress/api-fetch`: 7.27.0 - WordPress REST API fetch wrapper
+- `@wordpress/element`: 6.27.0 - WordPress React element wrapper
+- `@wordpress/dom-ready`: 4.27.0 - WordPress DOM ready utility
+
+### JavaScript Development Dependencies
+- `@wordpress/scripts`: 30.20.0 - WordPress build tooling and configuration
+- `tailwindcss`: 3.3.5 - Utility-first CSS framework
+- `@playwright/test`: 1.54.2 - End-to-end testing framework
+- `sass`: 1.89.2 - CSS preprocessor
+- `typescript`: 5.9.2 - Static type checking
+
+### Integrated Development Tools
+- `@wordpress/scripts`: Complete WordPress development toolchain
+- `@wordpress/eslint-plugin`: WordPress-specific ESLint rules
+- `@wordpress/stylelint-config`: WordPress CSS standards
+- `phpstan/phpstan`: Advanced PHP static analysis
+- `wp-coding-standards/wpcs`: WordPress PHP coding standards
+- `@playwright/test`: Modern end-to-end testing
 
 ## Plugin Requirements
 
@@ -375,7 +403,7 @@ const router = createHashRouter([
 - **Model Not Found**: Ensure EasyCommerce plugin is active and properly configured
 - **Permission Denied**: Verify user has `manage_options` capability
 - **Generation Fails**: Check database connectivity and plugin dependencies
-- **Frontend Not Loading**: Run `npm run build` and check browser console
+- **Frontend Not Loading**: Run `yarn build` and check browser console
 - **Memory Issues**: Increase PHP memory limit for large batch operations
 
 ### Debug Mode

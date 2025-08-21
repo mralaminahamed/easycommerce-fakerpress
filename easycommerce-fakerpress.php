@@ -27,10 +27,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ECFP_VERSION', '1.0.0' );
-define( 'ECFP_PLUGIN_FILE', __FILE__ );
-define( 'ECFP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'ECFP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'EASYCOMMERCE_FAKERPRESS_VERSION', '1.0.0' );
+define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE', __FILE__ );
+define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 // Load Composer autoloader.
 if ( ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
@@ -43,10 +43,10 @@ require_once __DIR__ . '/vendor/autoload.php';
  * Get main plugin instance
  *
  * @since 1.0.0
- * @return EasyCommerce_FakerPress Plugin instance.
+ * @return EasyCommerceFakerPress Plugin instance.
  */
-function easycommerce_fakerpress(): EasyCommerce_FakerPress {
-	return EasyCommerce_FakerPress::get_instance();
+function easycommerce_fakerpress(): EasyCommerceFakerPress {
+	return EasyCommerceFakerPress::get_instance();
 }
 
 easycommerce_fakerpress()->init();

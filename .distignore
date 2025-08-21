@@ -72,5 +72,9 @@ Thumbs.db
 /.claude/
 CLAUDE.md
 
-# WordPress specific files
-/.wordpress-org
+# WordPress.org plugin directory assets (should not be in plugin zip)
+/.wordpress-org/
+assets/
+
+# Plugin review and submission files
+plugin-submission-review.md

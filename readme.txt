@@ -101,9 +101,17 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 **Development Setup:**
 
 1. Clone: `git clone https://github.com/mralaminahamed/easycommerce-fakerpress.git`
-2. Install: `composer install && npm install`
-3. Build: `npm run build`
+2. Install: `composer install && yarn install`
+3. Build: `yarn build`
 4. Activate the plugin
+
+**Source Code:**
+
+This plugin uses compiled JavaScript and CSS files. The source code for all compiled assets is available at:
+* **GitHub Repository**: https://github.com/mralaminahamed/easycommerce-fakerpress
+* **Source Files Location**: All JavaScript source files are in `/src/admin/` directory
+* **Build Process**: Uses @wordpress/scripts for compilation - run `yarn build` to rebuild assets
+* **Development**: Use `yarn start` for development mode with hot reloading
 
 == Requirements ==
 
