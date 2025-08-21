@@ -52,7 +52,7 @@ A comprehensive WordPress plugin that generates realistic fake ecommerce data fo
 ![Product Generator](.wordpress-org/screenshot-2.png)
 *Advanced product generation with attributes, variations, and inventory settings*
 
-### Customer Generator  
+### Customer Generator
 ![Customer Generator](.wordpress-org/screenshot-3.png)
 *Comprehensive customer profile generation with demographics and loyalty tiers*
 
