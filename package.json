@@ -44,22 +44,22 @@
     "url": "https://github.com/mralaminahamed/easycommerce-fakerpress/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@playwright/test": "^1.54.2",
-    "@wordpress/eslint-plugin": "^22.13.0",
-    "@wordpress/scripts": "^30.20.0",
-    "@wordpress/stylelint-config": "^23.19.0",
+    "@babel/core": "^7.28.3",
+    "@playwright/test": "^1.55.0",
+    "@wordpress/eslint-plugin": "^22.15.0",
+    "@wordpress/scripts": "^30.22.0",
+    "@wordpress/stylelint-config": "^23.21.0",
     "autoprefixer": "^10.4.21",
     "eslint": "8",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "react": "18",
     "react-dom": "18",
-    "sass": "^1.89.2",
+    "sass": "^1.90.0",
     "sass-loader": "^16.0.5",
-    "stylelint": "^16.23.0",
+    "stylelint": "^16.23.1",
     "stylelint-config-prettier-scss": "^1.0.0",
-    "stylelint-config-recess-order": "^7.1.0",
+    "stylelint-config-recess-order": "^7.2.0",
     "stylelint-config-tailwindcss": "^1.0.0",
     "stylelint-order": "^7.0.0",
     "stylelint-scss": "^6.12.1",
@@ -69,11 +69,11 @@
   "dependencies": {
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
-    "@wordpress/api-fetch": "^7.27.0",
-    "@wordpress/dom-ready": "^4.27.0",
-    "@wordpress/element": "^6.27.0",
-    "@wordpress/i18n": "^6.0.0",
-    "react-router-dom": "^7.7.1"
+    "@wordpress/api-fetch": "^7.29.0",
+    "@wordpress/dom-ready": "^4.29.0",
+    "@wordpress/element": "^6.29.0",
+    "@wordpress/i18n": "^6.2.0",
+    "react-router-dom": "^7.8.2"
   },
   "browserslist": [
     "extends @wordpress/browserslist-config"
