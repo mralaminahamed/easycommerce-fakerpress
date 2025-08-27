@@ -4,8 +4,8 @@
  *
  * Generates fake product variation data for testing purposes.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -110,6 +110,7 @@ class Product_Variation_Generator extends Generator {
 			return false;
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate variation: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -123,18 +124,19 @@ class Product_Variation_Generator extends Generator {
 	 */
 	private function get_product_for_variation() {
 		$specific_product_id = $this->generation_params['specific_product_id'] ?? null;
-		$product_types = $this->generation_params['product_types'] ?? array();
-		$exclude_products = $this->generation_params['exclude_products'] ?? array();
+		$product_types       = $this->generation_params['product_types'] ?? array();
+		$exclude_products    = $this->generation_params['exclude_products'] ?? array();
 
 		// If specific product is requested.
 		if ( $specific_product_id ) {
 			$product = new Product( $specific_product_id );
+
 			return $product->exists() ? $product : null;
 		}
 
 		// Get products with filters.
 		$query_params = array( 'per_page' => 50 );
-		
+
 		// Add product type filter.
 		if ( ! empty( $product_types ) ) {
 			$query_params['type'] = $product_types;
@@ -186,9 +188,9 @@ class Product_Variation_Generator extends Generator {
 	 */
 	private function can_product_have_variations( Product $product ): bool {
 		// Check if product has attributes or is already a variable product type.
-		$product_type = $product->get_type();
+		$product_type   = $product->get_type();
 		$has_attributes = ! empty( $product->get_attributes() );
-		
+
 		return $product_type === 'variable' || $has_attributes || $product_type === 'simple';
 	}
 
@@ -197,6 +199,7 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int   $count Number of variations to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated variation data.
 	 */
 	public function generate_multiple( int $count = 10, array $args = array() ): array {
@@ -217,13 +220,14 @@ class Product_Variation_Generator extends Generator {
 	 * Generate variation data.
 	 *
 	 * @param Product $product Parent product.
+	 *
 	 * @return array Variation data.
 	 */
 	private function generate_variation_data( Product $product ): array {
 		$prices = $product->get_prices( false );
 
 		$base_price      = (float) ( $prices[0]['regular_price'] ?? $this->faker->randomFloat( 2, 10, 500 ) );
-		$price_variation = $this->faker->randomFloat( 2, -0.2 * $base_price, 0.3 * $base_price );
+		$price_variation = $this->faker->randomFloat( 2, - 0.2 * $base_price, 0.3 * $base_price );
 		$regular_price   = max( 1, $base_price + $price_variation );
 
 		// Generate sale price with 30% probability.
@@ -253,6 +257,7 @@ class Product_Variation_Generator extends Generator {
 	 * Create variation in database.
 	 *
 	 * @param array $data Variation data.
+	 *
 	 * @return Product_Variation|null Created variation instance.
 	 */
 	private function create_variation( array $data ): ?Product_Variation {
@@ -284,22 +289,65 @@ class Product_Variation_Generator extends Generator {
 			// Clothing variations.
 			array(
 				'size'  => $this->faker->randomElement( array( 'XS', 'S', 'M', 'L', 'XL', 'XXL' ) ),
-				'color' => $this->faker->randomElement( array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Navy', 'Beige' ) ),
+				'color' => $this->faker->randomElement(
+					array(
+						'Red',
+						'Blue',
+						'Green',
+						'Black',
+						'White',
+						'Gray',
+						'Navy',
+						'Beige',
+					)
+				),
 			),
 			// Electronics variations.
 			array(
 				'storage' => $this->faker->randomElement( array( '64GB', '128GB', '256GB', '512GB', '1TB' ) ),
-				'color'   => $this->faker->randomElement( array( 'Space Gray', 'Silver', 'Gold', 'Rose Gold', 'Midnight', 'Blue' ) ),
+				'color'   => $this->faker->randomElement(
+					array(
+						'Space Gray',
+						'Silver',
+						'Gold',
+						'Rose Gold',
+						'Midnight',
+						'Blue',
+					)
+				),
 			),
 			// Shoe variations.
 			array(
-				'size'  => $this->faker->randomElement( array( '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '12' ) ),
+				'size'  => $this->faker->randomElement(
+					array(
+						'6',
+						'6.5',
+						'7',
+						'7.5',
+						'8',
+						'8.5',
+						'9',
+						'9.5',
+						'10',
+						'10.5',
+						'11',
+						'12',
+					)
+				),
 				'color' => $this->faker->randomElement( array( 'Black', 'White', 'Brown', 'Navy', 'Gray', 'Red' ) ),
 			),
 			// Book variations.
 			array(
 				'format'   => $this->faker->randomElement( array( 'Hardcover', 'Paperback', 'eBook', 'Audiobook' ) ),
-				'language' => $this->faker->randomElement( array( 'English', 'Spanish', 'French', 'German', 'Italian' ) ),
+				'language' => $this->faker->randomElement(
+					array(
+						'English',
+						'Spanish',
+						'French',
+						'German',
+						'Italian',
+					)
+				),
 			),
 			// Watch variations.
 			array(
@@ -316,6 +364,7 @@ class Product_Variation_Generator extends Generator {
 	 * Generate variation name from attributes.
 	 *
 	 * @param array $attributes Variation attributes.
+	 *
 	 * @return string Generated name.
 	 */
 	private function generate_variation_name( array $attributes ): string {
@@ -333,6 +382,7 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param string $base_sku Parent product SKU.
 	 * @param array  $attributes Variation attributes.
+	 *
 	 * @return string Generated SKU.
 	 */
 	private function generate_variation_sku( string $base_sku, array $attributes ): string {
@@ -384,6 +434,7 @@ class Product_Variation_Generator extends Generator {
 	 * Get or create attribute.
 	 *
 	 * @param string $slug Attribute slug.
+	 *
 	 * @return object|null Attribute data object.
 	 */
 	private function get_or_create_attribute( string $slug ) {
@@ -410,6 +461,7 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int    $attribute_id Attribute ID.
 	 * @param string $value_slug Value slug.
+	 *
 	 * @return object|null Attribute value data object.
 	 */
 	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ) {

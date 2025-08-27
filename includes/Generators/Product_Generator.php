@@ -2,8 +2,8 @@
 /**
  * Product Generator.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -82,15 +82,33 @@ class Product_Generator extends Generator {
 					// Additional meta data.
 					'meta'        => array(
 						'gallery'         => $this->generate_gallery_images(),
-						'template'        => $this->faker->randomElement( array( 'template-standard', 'template-premium', 'template-minimal' ) ),
+						'template'        => $this->faker->randomElement(
+							array(
+								'template-standard',
+								'template-premium',
+								'template-minimal',
+							)
+						),
 						'featured'        => $this->faker->boolean( 25 ),
 						'seo_title'       => $product_title . ' | ' . $this->faker->company,
 						'seo_description' => $this->faker->sentence( 15, true ),
 						'seo_keywords'    => implode( ', ', (array) $this->faker->words( 5 ) ),
 						'sku_prefix'      => strtoupper( $this->faker->lexify( '???' ) ),
 						'release_date'    => $this->faker->dateTimeThisYear()->format( 'Y-m-d' ),
-						'warranty'        => 'physical' === $product_type ? $this->faker->randomElement( array( '1 year', '2 years', 'Limited Lifetime' ) ) : null,
-						'shipping_class'  => 'physical' === $product_type ? $this->faker->randomElement( array( 'standard', 'expedited', 'fragile' ) ) : null,
+						'warranty'        => 'physical' === $product_type ? $this->faker->randomElement(
+							array(
+								'1 year',
+								'2 years',
+								'Limited Lifetime',
+							)
+						) : null,
+						'shipping_class'  => 'physical' === $product_type ? $this->faker->randomElement(
+							array(
+								'standard',
+								'expedited',
+								'fragile',
+							)
+						) : null,
 					),
 				)
 			);
@@ -206,20 +224,51 @@ class Product_Generator extends Generator {
 
 		// Introduction paragraph.
 		$paragraphs[] = 'Discover the ultimate ' . ( 'physical' === $product_type ? 'product' : 'digital solution' ) . ' designed to ' .
-						$this->faker->randomElement( array( 'elevate your experience', 'enhance your productivity', 'simplify your daily tasks', 'redefine convenience' ) ) . '. ' .
+						$this->faker->randomElement(
+							array(
+								'elevate your experience',
+								'enhance your productivity',
+								'simplify your daily tasks',
+								'redefine convenience',
+							)
+						) . '. ' .
 						$this->faker->sentence( 50, true );
 
 		// Features paragraph.
 		$features     = 'physical' === $product_type ?
-			array( 'durable construction', 'sleek design', 'advanced technology', 'ergonomic comfort', 'long-lasting battery', 'water-resistant coating' ) :
-			array( 'user-friendly interface', 'cross-platform compatibility', 'regular updates', 'cloud integration', 'secure encryption', 'customizable features' );
+			array(
+				'durable construction',
+				'sleek design',
+				'advanced technology',
+				'ergonomic comfort',
+				'long-lasting battery',
+				'water-resistant coating',
+			) :
+			array(
+				'user-friendly interface',
+				'cross-platform compatibility',
+				'regular updates',
+				'cloud integration',
+				'secure encryption',
+				'customizable features',
+			);
 		$paragraphs[] = 'Key features include: ' . implode( ', ', $this->faker->randomElements( $features, 3 ) ) . '. ' .
 						$this->faker->sentence( 50, true );
 
 		// Use case paragraph.
 		$use_cases    = 'physical' === $product_type ?
-			array( 'perfect for home, office, or travel', 'ideal for professionals and hobbyists', 'designed for everyday use', 'great for outdoor adventures' ) :
-			array( 'perfect for remote work', 'ideal for creative professionals', 'designed for seamless integration', 'great for educational purposes' );
+			array(
+				'perfect for home, office, or travel',
+				'ideal for professionals and hobbyists',
+				'designed for everyday use',
+				'great for outdoor adventures',
+			) :
+			array(
+				'perfect for remote work',
+				'ideal for creative professionals',
+				'designed for seamless integration',
+				'great for educational purposes',
+			);
 		$paragraphs[] = $this->faker->randomElement( $use_cases ) . '. ' . $this->faker->sentence( 15, true );
 
 		// Technical specifications.
@@ -240,8 +289,25 @@ class Product_Generator extends Generator {
 	 */
 	private function generate_short_description( string $product_type ): string {
 		$use_case = 'physical' === $product_type ?
-			$this->faker->randomElement( array( 'professionals', 'students', 'gamers', 'home use', 'outdoor enthusiasts' ) ) :
-			$this->faker->randomElement( array( 'creatives', 'developers', 'educators', 'remote workers', 'businesses' ) );
+			$this->faker->randomElement(
+				array(
+					'professionals',
+					'students',
+					'gamers',
+					'home use',
+					'outdoor enthusiasts',
+				)
+			) :
+			$this->faker->randomElement(
+				array(
+					'creatives',
+					'developers',
+					'educators',
+					'remote workers',
+					'businesses',
+				)
+			);
+
 		return $this->faker->sentence( 10, true ) . ' Perfect for ' . $use_case . '.';
 	}
 
@@ -322,7 +388,18 @@ class Product_Generator extends Generator {
 			'color'    => array(
 				'name'   => 'Color',
 				'type'   => 'text',
-				'values' => array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Silver', 'Gold', 'Navy', 'Purple' ),
+				'values' => array(
+					'Red',
+					'Blue',
+					'Green',
+					'Black',
+					'White',
+					'Gray',
+					'Silver',
+					'Gold',
+					'Navy',
+					'Purple',
+				),
 			),
 			'size'     => array(
 				'name'   => 'Size',
@@ -332,7 +409,17 @@ class Product_Generator extends Generator {
 			'material' => array(
 				'name'   => 'Material',
 				'type'   => 'text',
-				'values' => array( 'Cotton', 'Polyester', 'Aluminum', 'Stainless Steel', 'Leather', 'Wood', 'Glass', 'Ceramic', 'Silicone' ),
+				'values' => array(
+					'Cotton',
+					'Polyester',
+					'Aluminum',
+					'Stainless Steel',
+					'Leather',
+					'Wood',
+					'Glass',
+					'Ceramic',
+					'Silicone',
+				),
 			),
 			'finish'   => array(
 				'name'   => 'Finish',
@@ -440,6 +527,7 @@ class Product_Generator extends Generator {
 			return $attribute_model->add( $name, $type, $slug );
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to create attribute: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -450,8 +538,8 @@ class Product_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param int    $attribute_id Attribute ID.
-	 * @param string $name         Value name.
-	 * @param string $value        Value slug/value.
+	 * @param string $name Value name.
+	 * @param string $value Value slug/value.
 	 *
 	 * @return int|false Attribute value ID or false on failure.
 	 */
@@ -470,6 +558,7 @@ class Product_Generator extends Generator {
 			return $value_model->add( $attribute_id, $name, $value, $value_slug );
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to create attribute value: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -479,7 +568,7 @@ class Product_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array  $attributes   Product attributes.
+	 * @param array  $attributes Product attributes.
 	 * @param string $product_type Product type (physical/digital).
 	 *
 	 * @return array Array of product variations with pricing and stock information.
@@ -514,7 +603,7 @@ class Product_Generator extends Generator {
 			}
 
 			$variation_name = implode( ' - ', $variation_name_parts );
-			$price_modifier = $this->faker->randomFloat( 2, -$price_range, $price_range );
+			$price_modifier = $this->faker->randomFloat( 2, - $price_range, $price_range );
 			$regular_price  = max( 1, $base_price + $price_modifier );
 			$sale_price     = $this->faker->boolean( 40 ) ? $regular_price * $this->faker->randomFloat( 2, 0.6, 0.9 ) : null;
 			$stock_quantity = 'physical' === $product_type ? $this->faker->optional( 0.85 )->numberBetween( 0, 150 ) : null;
@@ -610,7 +699,16 @@ class Product_Generator extends Generator {
 					'requires_shipping' => false,
 					'download_limit'    => $this->faker->optional( 0.8 )->numberBetween( 1, 20 ),
 					'download_expiry'   => $this->faker->optional( 0.6 )->numberBetween( 7, 365 ),
-					'file_format'       => $this->faker->randomElement( array( 'PDF', 'MP4', 'MP3', 'ZIP', 'EXE', 'DMG' ) ),
+					'file_format'       => $this->faker->randomElement(
+						array(
+							'PDF',
+							'MP4',
+							'MP3',
+							'ZIP',
+							'EXE',
+							'DMG',
+						)
+					),
 				)
 			);
 		}

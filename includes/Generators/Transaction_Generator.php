@@ -2,9 +2,9 @@
 /**
  * Transaction Generator Class for EasyCommerce FakerPress Plugin
  *
- * @package EasyCommerceFakerPress
- * @subpackage Generators
  * @since 2.0.0
+ * @subpackage Generators
+ * @package EasyCommerceFakerPress
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -90,6 +90,7 @@ class Transaction_Generator extends Generator {
 			return false;
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate transaction: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -102,9 +103,9 @@ class Transaction_Generator extends Generator {
 	 * @return array Array of orders.
 	 */
 	private function get_orders_for_transactions(): array {
-		$customer_type = $this->generation_params['customer_type'] ?? 'all';
+		$customer_type        = $this->generation_params['customer_type'] ?? 'all';
 		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
-		$order_status_filter = $this->generation_params['order_status_filter'] ?? array();
+		$order_status_filter  = $this->generation_params['order_status_filter'] ?? array();
 
 		$query_params = array( 'per_page' => 100 );
 
@@ -120,17 +121,17 @@ class Transaction_Generator extends Generator {
 					$query_params['customer_id'] = $specific_customer_id;
 				}
 				break;
-			
+
 			case 'existing_customers_only':
 				// Only orders from customers who have more than 1 order.
 				$query_params['customer_type'] = 'returning';
 				break;
-			
+
 			case 'new_customers_only':
 				// Only orders from first-time customers.
 				$query_params['customer_type'] = 'new';
 				break;
-			
+
 			case 'all':
 			default:
 				// No additional customer filtering.
@@ -138,6 +139,7 @@ class Transaction_Generator extends Generator {
 		}
 
 		$orders_data = Order::list( $query_params );
+
 		return $orders_data['orders'] ?? array();
 	}
 
@@ -146,6 +148,7 @@ class Transaction_Generator extends Generator {
 	 *
 	 * @param int   $count Number of transactions to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated transaction data
 	 */
 	public function generate_multiple( int $count = 20, array $args = array() ): array {
@@ -198,7 +201,17 @@ class Transaction_Generator extends Generator {
 			'transaction_id'  => $this->generate_transaction_id( $gateway_key ),
 			'payment_gateway' => $payment_gateway,
 			'amount'          => $amount,
-			'currency'        => $this->faker->randomElement( array( 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR' ) ),
+			'currency'        => $this->faker->randomElement(
+				array(
+					'USD',
+					'EUR',
+					'GBP',
+					'CAD',
+					'AUD',
+					'JPY',
+					'INR',
+				)
+			),
 			'status'          => $this->generate_transaction_status( $transaction_type ),
 			'type'            => $transaction_type,
 		);
@@ -209,6 +222,7 @@ class Transaction_Generator extends Generator {
 	 *
 	 * @param float  $order_total Order total amount.
 	 * @param string $type Transaction type.
+	 *
 	 * @return float Transaction amount
 	 */
 	private function generate_transaction_amount( float $order_total, string $type ): float {
@@ -227,7 +241,7 @@ class Transaction_Generator extends Generator {
 
 			case 'adjustment':
 				// Small positive or negative adjustment.
-				return $this->faker->randomFloat( 2, -50, 50 );
+				return $this->faker->randomFloat( 2, - 50, 50 );
 
 			case 'fee':
 				// Processing or transaction fees.
@@ -246,6 +260,7 @@ class Transaction_Generator extends Generator {
 	 * Generate transaction status based on type.
 	 *
 	 * @param string $type Transaction type.
+	 *
 	 * @return string Transaction status
 	 */
 	private function generate_transaction_status( string $type ): string {
@@ -276,6 +291,7 @@ class Transaction_Generator extends Generator {
 		);
 
 		$statuses = $status_weights[ $type ] ?? array( 'completed' => 100 );
+
 		return $this->faker->randomElement(
 			array_merge(
 				...array_map(
@@ -291,6 +307,7 @@ class Transaction_Generator extends Generator {
 	 * Generate realistic transaction ID based on gateway.
 	 *
 	 * @param string $gateway Payment gateway key.
+	 *
 	 * @return string Transaction ID
 	 */
 	private function generate_transaction_id( string $gateway ): string {
@@ -304,6 +321,8 @@ class Transaction_Generator extends Generator {
 			case 'square':
 				return $this->faker->regexify( '[a-zA-Z0-9\-]{22}' );
 
+			case 'wepay':
+			case '2checkout':
 			case 'authorize_net':
 				return $this->faker->numerify( '##########' );
 
@@ -315,12 +334,6 @@ class Transaction_Generator extends Generator {
 
 			case 'mollie':
 				return 'tr_' . $this->faker->regexify( '[a-zA-Z0-9]{10}' );
-
-			case 'wepay':
-				return $this->faker->numerify( '##########' );
-
-			case '2checkout':
-				return $this->faker->numerify( '##########' );
 
 			case 'payu':
 				return $this->faker->regexify( '[A-Z0-9]{15}' );
@@ -334,6 +347,7 @@ class Transaction_Generator extends Generator {
 	 * Create transaction in database.
 	 *
 	 * @param array $data Transaction data.
+	 *
 	 * @return int|null Created transaction ID
 	 */
 	private function create_transaction( array $data ): ?int {
@@ -348,7 +362,7 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate transaction history for specific order.
 	 *
-	 * @param int $order_id          Order ID.
+	 * @param int $order_id Order ID.
 	 * @param int $transaction_count Number of transactions to generate.
 	 *
 	 * @return array Generated transactions.
@@ -368,7 +382,14 @@ class Transaction_Generator extends Generator {
 		for ( $i = 0; $i < $transaction_count; $i++ ) {
 			try {
 				// First transaction is usually a payment.
-				$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement( array( 'payment', 'refund', 'adjustment', 'fee' ) );
+				$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement(
+					array(
+						'payment',
+						'refund',
+						'adjustment',
+						'fee',
+					)
+				);
 
 				$transaction_data         = $this->generate_transaction_data( $order_data );
 				$transaction_data['type'] = $transaction_type;

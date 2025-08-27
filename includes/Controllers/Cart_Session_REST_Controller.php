@@ -62,20 +62,20 @@ class Cart_Session_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
-			'customer_type'         => array(
+			'customer_type'        => array(
 				'description'       => __( 'Type of customers for cart sessions.', 'easycommerce-fakerpress' ),
 				'type'              => 'string',
 				'enum'              => array( 'existing', 'new', 'mixed', 'specific', 'guest_only' ),
 				'default'           => 'mixed',
 				'sanitize_callback' => 'sanitize_text_field',
 			),
-			'specific_customer_id'  => array(
+			'specific_customer_id' => array(
 				'description'       => __( 'Specific customer ID for cart sessions (when customer_type is "specific").', 'easycommerce-fakerpress' ),
 				'type'              => 'integer',
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
 			),
-			'guest_cart_ratio'      => array(
+			'guest_cart_ratio'     => array(
 				'description'       => __( 'Percentage of guest carts (0-100) when customer_type is "mixed".', 'easycommerce-fakerpress' ),
 				'type'              => 'integer',
 				'minimum'           => 0,
@@ -83,7 +83,7 @@ class Cart_Session_REST_Controller extends REST_Controller {
 				'default'           => 40,
 				'sanitize_callback' => 'absint',
 			),
-			'abandonment_rate'      => array(
+			'abandonment_rate'     => array(
 				'description'       => __( 'Cart abandonment rate percentage (0-100).', 'easycommerce-fakerpress' ),
 				'type'              => 'integer',
 				'minimum'           => 0,
@@ -91,7 +91,7 @@ class Cart_Session_REST_Controller extends REST_Controller {
 				'default'           => 30,
 				'sanitize_callback' => 'absint',
 			),
-			'status_distribution'   => array(
+			'status_distribution'  => array(
 				'description' => __( 'Custom cart status distribution.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
@@ -121,7 +121,7 @@ class Cart_Session_REST_Controller extends REST_Controller {
 					),
 				),
 			),
-			'cart_value_range'      => array(
+			'cart_value_range'     => array(
 				'description' => __( 'Cart value range for generated sessions.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
@@ -139,7 +139,7 @@ class Cart_Session_REST_Controller extends REST_Controller {
 					),
 				),
 			),
-			'items_per_cart'        => array(
+			'items_per_cart'       => array(
 				'description' => __( 'Number of items per cart session.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
@@ -158,7 +158,7 @@ class Cart_Session_REST_Controller extends REST_Controller {
 					),
 				),
 			),
-			'abandonment_tracking'  => array(
+			'abandonment_tracking' => array(
 				'description' => __( 'Abandonment tracking settings.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(

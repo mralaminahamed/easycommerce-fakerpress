@@ -4,21 +4,21 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * Data Validation Hook
- * 
+ *
  * Validates data availability and dependencies for generators
  */
 export function useDataValidation() {
 	const [ validationCache, setValidationCache ] = useState( new Map() );
-	
+
 	/**
 	 * Check data availability for a generator type
-	 * 
+	 *
 	 * @param {string} generatorType Generator type to check
-	 * @returns {Promise<Object>} Validation status
+	 * @return {Promise<Object>} Validation status
 	 */
 	const checkDataAvailability = async ( generatorType ) => {
 		// Check cache first
-		const cacheKey = `availability_${generatorType}`;
+		const cacheKey = `availability_${ generatorType }`;
 		if ( validationCache.has( cacheKey ) ) {
 			const cached = validationCache.get( cacheKey );
 			// Return cached result if less than 5 minutes old
@@ -29,12 +29,12 @@ export function useDataValidation() {
 
 		try {
 			const response = await apiFetch( {
-				path: `/easycommerce-fakerpress/v1/validation/check-data/${generatorType}`,
+				path: `/easycommerce-fakerpress/v1/validation/check-data/${ generatorType }`,
 				method: 'GET',
 			} );
 
 			// Cache the result
-			setValidationCache( prev => new Map( prev ).set( cacheKey, {
+			setValidationCache( ( prev ) => new Map( prev ).set( cacheKey, {
 				data: response,
 				timestamp: Date.now(),
 			} ) );
@@ -53,12 +53,12 @@ export function useDataValidation() {
 
 	/**
 	 * Check dependencies for a generator
-	 * 
+	 *
 	 * @param {string} generatorType Generator type to check dependencies for
-	 * @returns {Promise<Object>} Dependency status
+	 * @return {Promise<Object>} Dependency status
 	 */
 	const checkDependencies = async ( generatorType ) => {
-		const cacheKey = `dependencies_${generatorType}`;
+		const cacheKey = `dependencies_${ generatorType }`;
 		if ( validationCache.has( cacheKey ) ) {
 			const cached = validationCache.get( cacheKey );
 			if ( Date.now() - cached.timestamp < 300000 ) {
@@ -68,11 +68,11 @@ export function useDataValidation() {
 
 		try {
 			const response = await apiFetch( {
-				path: `/easycommerce-fakerpress/v1/validation/check-dependencies/${generatorType}`,
+				path: `/easycommerce-fakerpress/v1/validation/check-dependencies/${ generatorType }`,
 				method: 'GET',
 			} );
 
-			setValidationCache( prev => new Map( prev ).set( cacheKey, {
+			setValidationCache( ( prev ) => new Map( prev ).set( cacheKey, {
 				data: response,
 				timestamp: Date.now(),
 			} ) );
@@ -105,8 +105,11 @@ export function useDataValidation() {
 
 /**
  * Data Validation Status Component
- * 
+ *
  * Shows validation status and recommendations for a generator
+ * @param root0
+ * @param root0.generatorType
+ * @param root0.onValidationComplete
  */
 export function DataValidationStatus( { generatorType, onValidationComplete } ) {
 	const [ status, setStatus ] = useState( null );
@@ -117,7 +120,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 	useEffect( () => {
 		const validateData = async () => {
 			setIsChecking( true );
-			
+
 			try {
 				const [ availabilityStatus, dependencyStatus ] = await Promise.all( [
 					checkDataAvailability( generatorType ),
@@ -126,7 +129,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 
 				setStatus( availabilityStatus );
 				setDependencies( dependencyStatus );
-				
+
 				// Notify parent component
 				if ( onValidationComplete ) {
 					onValidationComplete( {
@@ -152,7 +155,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 			<div className="flex items-center p-3 bg-gray-50 border border-gray-200 rounded-lg">
 				<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
 				<span className="text-sm text-gray-600">
-					{ __( 'Checking data availability...', 'easycommerce-fakerpress' ) }
+					{ __( 'Checking data availability…', 'easycommerce-fakerpress' ) }
 				</span>
 			</div>
 		);
@@ -166,18 +169,18 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 	const allRecommendations = [ ...status.recommendations, ...dependencies.recommendations ];
 
 	return (
-		<div className={ `p-4 rounded-lg border ${allReady ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}` }>
+		<div className={ `p-4 rounded-lg border ${ allReady ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200' }` }>
 			<div className="flex items-center mb-2">
-				<div className={ `w-3 h-3 rounded-full mr-2 ${allReady ? 'bg-green-500' : 'bg-yellow-500'}` }></div>
+				<div className={ `w-3 h-3 rounded-full mr-2 ${ allReady ? 'bg-green-500' : 'bg-yellow-500' }` }></div>
 				<h4 className="font-medium text-gray-900">
-					{ allReady 
+					{ allReady
 						? __( 'Ready to Generate', 'easycommerce-fakerpress' )
 						: __( 'Setup Required', 'easycommerce-fakerpress' )
 					}
 				</h4>
 			</div>
 
-			{/* Data Counts */}
+			{ /* Data Counts */ }
 			{ Object.keys( status.counts ).length > 0 && (
 				<div className="mb-3">
 					<h5 className="text-sm font-medium text-gray-700 mb-1">
@@ -198,7 +201,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 				</div>
 			) }
 
-			{/* Missing Data */}
+			{ /* Missing Data */ }
 			{ status.missing_data && status.missing_data.length > 0 && (
 				<div className="mb-3">
 					<h5 className="text-sm font-medium text-red-700 mb-1">
@@ -214,7 +217,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 				</div>
 			) }
 
-			{/* Missing Dependencies */}
+			{ /* Missing Dependencies */ }
 			{ dependencies.missing_dependencies && dependencies.missing_dependencies.length > 0 && (
 				<div className="mb-3">
 					<h5 className="text-sm font-medium text-yellow-700 mb-1">
@@ -230,7 +233,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 				</div>
 			) }
 
-			{/* Recommendations */}
+			{ /* Recommendations */ }
 			{ allRecommendations.length > 0 && (
 				<div>
 					<h5 className="text-sm font-medium text-gray-700 mb-2">
@@ -252,9 +255,9 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 
 /**
  * Format data type for display
- * 
+ *
  * @param {string} type Data type
- * @returns {string} Formatted type
+ * @return {string} Formatted type
  */
 function formatDataType( type ) {
 	const formatMap = {
@@ -267,13 +270,16 @@ function formatDataType( type ) {
 		shipping_plan: __( 'Shipping Plans', 'easycommerce-fakerpress' ),
 	};
 
-	return formatMap[ type ] || type.replace( /_/g, ' ' ).replace( /\b\w/g, l => l.toUpperCase() );
+	return formatMap[ type ] || type.replace( /_/g, ' ' ).replace( /\b\w/g, ( l ) => l.toUpperCase() );
 }
 
 /**
  * Quick Setup Component
- * 
+ *
  * Shows quick setup buttons for missing dependencies
+ * @param root0
+ * @param root0.generatorType
+ * @param root0.missingDependencies
  */
 export function QuickSetup( { generatorType, missingDependencies } ) {
 	if ( ! missingDependencies || missingDependencies.length === 0 ) {
@@ -302,10 +308,10 @@ export function QuickSetup( { generatorType, missingDependencies } ) {
 						className="inline-flex items-center px-3 py-1 rounded-md text-sm bg-blue-600 text-white hover:bg-blue-700"
 						onClick={ () => {
 							// Navigate to the appropriate generator
-							const route = dependency === 'location' ? 'locations' : 
-										 dependency === 'product_variation' ? 'product-variations' :
-										 `${dependency}s`;
-							window.location.hash = `#/generator/${route}`;
+							const route = dependency === 'location' ? 'locations'
+										 : dependency === 'product_variation' ? 'product-variations'
+										 : `${ dependency }s`;
+							window.location.hash = `#/generator/${ route }`;
 						} }
 					>
 						{ index + 1 }. { __( 'Generate', 'easycommerce-fakerpress' ) } { formatDataType( dependency ) }

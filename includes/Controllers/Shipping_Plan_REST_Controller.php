@@ -67,7 +67,15 @@ class Shipping_Plan_REST_Controller extends REST_Controller {
 				'type'              => 'array',
 				'items'             => array(
 					'type' => 'string',
-					'enum' => array( 'standard', 'express', 'overnight', 'pickup', 'free', 'weight_based', 'flat_rate' ),
+					'enum' => array(
+						'standard',
+						'express',
+						'overnight',
+						'pickup',
+						'free',
+						'weight_based',
+						'flat_rate',
+					),
 				),
 				'default'           => array( 'standard', 'express', 'free' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),

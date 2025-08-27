@@ -2,8 +2,8 @@
 /**
  * Coupon Generator.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -101,6 +101,7 @@ class Coupon_Generator extends Generator {
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Coupon creation failed: ' . $e->getMessage(), 'error' );
+
 			return new WP_Error( 'coupon_creation_failed', $e->getMessage() );
 		}
 	}
@@ -224,7 +225,17 @@ class Coupon_Generator extends Generator {
 		);
 
 		// Prioritize names matching the discount type, but allow fallback to other categories.
-		$preferred_category = in_array( $discount_type, array( 'percentage', 'fixed', 'fixed_product', 'buy_x_get_y' ), true ) ? $discount_type : $this->faker->randomElement( array( 'seasonal', 'event', 'product', 'customer' ) );
+		$preferred_category = in_array(
+			$discount_type,
+			array(
+				'percentage',
+				'fixed',
+				'fixed_product',
+				'buy_x_get_y',
+			),
+			true
+		) ? $discount_type : $this->faker->randomElement( array( 'seasonal', 'event', 'product', 'customer' ) );
+
 		return $this->faker->randomElement( $name_types[ $preferred_category ] );
 	}
 
@@ -266,7 +277,15 @@ class Coupon_Generator extends Generator {
 	private function generate_coupon_meta(): array {
 		return array(
 			'created_by'    => $this->faker->userName(),
-			'campaign_name' => $this->faker->randomElement( array( 'Summer Campaign', 'Holiday Promo', 'Loyalty Program', 'Flash Sale', 'New User Acquisition' ) ),
+			'campaign_name' => $this->faker->randomElement(
+				array(
+					'Summer Campaign',
+					'Holiday Promo',
+					'Loyalty Program',
+					'Flash Sale',
+					'New User Acquisition',
+				)
+			),
 			'priority'      => $this->faker->randomElement( array( 'low', 'medium', 'high' ) ),
 			'last_updated'  => $this->faker->dateTimeThisYear()->format( 'Y-m-d H:i:s' ),
 		);
@@ -330,6 +349,7 @@ class Coupon_Generator extends Generator {
 		);
 
 		$pattern = $this->faker->randomElement( $code_patterns );
+
 		return strtoupper( $this->faker->bothify( $pattern ) );
 	}
 
@@ -346,6 +366,7 @@ class Coupon_Generator extends Generator {
 		if ( 'percentage' === $discount_type ) {
 			$percentages = array( 5, 10, 15, 20, 25, 30, 40, 50, 60, 70 );
 			$weights     = array( 10, 20, 15, 15, 10, 10, 8, 5, 3, 2 );
+
 			return $this->faker->randomElement(
 				array_merge(
 					...array_map(
@@ -360,6 +381,7 @@ class Coupon_Generator extends Generator {
 		if ( 'fixed' === $discount_type ) {
 			$amounts = array( 5, 10, 15, 20, 25, 30, 50, 75, 100, 200 );
 			$weights = array( 15, 20, 15, 15, 10, 10, 8, 5, 3, 2 );
+
 			return $this->faker->randomElement(
 				array_merge(
 					...array_map(
@@ -374,6 +396,7 @@ class Coupon_Generator extends Generator {
 		if ( 'fixed_product' === $discount_type ) {
 			$amounts = array( 2, 5, 10, 15, 20, 25 );
 			$weights = array( 20, 20, 15, 10, 10, 5 );
+
 			return $this->faker->randomElement(
 				array_merge(
 					...array_map(
@@ -541,7 +564,14 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Minimum quantity requirement (20% chance for fixed_product/buy_x_get_y).
-		if ( in_array( $discount_type, array( 'fixed_product', 'buy_x_get_y' ), true ) && $this->faker->boolean( 20 ) ) {
+		if ( in_array(
+			$discount_type,
+			array(
+				'fixed_product',
+				'buy_x_get_y',
+			),
+			true
+		) && $this->faker->boolean( 20 ) ) {
 			$min_quantities = array( 2, 3, 4, 5, 10 );
 			$weights        = array( 20, 15, 10, 5, 2 );
 			$rules[]        = array(
@@ -664,7 +694,7 @@ class Coupon_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param array  $rules Rules array.
-	 * @param string $type  Rule type to find.
+	 * @param string $type Rule type to find.
 	 *
 	 * @return mixed Rule value or null if not found.
 	 */

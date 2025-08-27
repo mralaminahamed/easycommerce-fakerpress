@@ -2,8 +2,8 @@
 /**
  * Data Validation Helper for Cross-Generator Relationships
  *
- * @package EasyCommerceFakerPress\Helpers
  * @since   2.1.0
+ * @package EasyCommerceFakerPress\Helpers
  */
 
 namespace EasyCommerceFakerPress\Helpers;
@@ -39,6 +39,7 @@ class Data_Validator {
 
 		try {
 			$customer = new Customer( $customer_id );
+
 			return $customer->exists() && $customer->get_role() === 'customer';
 		} catch ( \Exception $e ) {
 			return false;
@@ -61,10 +62,11 @@ class Data_Validator {
 
 		try {
 			$product = new Product( $product_id );
-			return $product->exists() && in_array( 
-				$product->get_status(), 
-				array( 'publish', 'private' ), 
-				true 
+
+			return $product->exists() && in_array(
+				$product->get_status(),
+				array( 'publish', 'private' ),
+				true
 			);
 		} catch ( \Exception $e ) {
 			return false;
@@ -88,14 +90,15 @@ class Data_Validator {
 		);
 
 		$query_params = array_merge( $defaults, $filters );
-		
+
 		try {
-			$customer_data = Customer::list( 
-				$query_params['role'], 
-				null, 
-				1, 
-				$query_params['per_page'] 
+			$customer_data = Customer::list(
+				$query_params['role'],
+				null,
+				1,
+				$query_params['per_page']
 			);
+
 			return $customer_data['users'] ?? array();
 		} catch ( \Exception $e ) {
 			return array();
@@ -118,9 +121,10 @@ class Data_Validator {
 		);
 
 		$query_params = array_merge( $defaults, $filters );
-		
+
 		try {
 			$product_data = Product::list( $query_params );
+
 			return $product_data['products'] ?? array();
 		} catch ( \Exception $e ) {
 			return array();
@@ -143,9 +147,10 @@ class Data_Validator {
 		);
 
 		$query_params = array_merge( $defaults, $filters );
-		
+
 		try {
 			$order_data = Order::list( $query_params );
+
 			return $order_data['orders'] ?? array();
 		} catch ( \Exception $e ) {
 			return array();
@@ -158,8 +163,8 @@ class Data_Validator {
 	 * @since 2.1.0
 	 *
 	 * @param string $country_code Country ISO code.
-	 * @param string $state_code   Optional state code.
-	 * @param string $city         Optional city name.
+	 * @param string $state_code Optional state code.
+	 * @param string $city Optional city name.
 	 *
 	 * @return bool True if location is valid.
 	 */
@@ -205,19 +210,19 @@ class Data_Validator {
 				// Orders need customers and products.
 				$customers = self::get_available_customers();
 				$products  = self::get_available_products();
-				
+
 				$status['counts']['customers'] = count( $customers );
 				$status['counts']['products']  = count( $products );
 
 				if ( empty( $customers ) ) {
-					$status['ready'] = false;
-					$status['missing_data'][] = 'customers';
+					$status['ready']             = false;
+					$status['missing_data'][]    = 'customers';
 					$status['recommendations'][] = 'Generate customers first using the Customer Generator';
 				}
 
 				if ( empty( $products ) ) {
-					$status['ready'] = false;
-					$status['missing_data'][] = 'products';
+					$status['ready']             = false;
+					$status['missing_data'][]    = 'products';
 					$status['recommendations'][] = 'Generate products first using the Product Generator';
 				}
 				break;
@@ -225,12 +230,12 @@ class Data_Validator {
 			case 'transaction':
 				// Transactions need orders.
 				$orders = self::get_available_orders();
-				
+
 				$status['counts']['orders'] = count( $orders );
 
 				if ( empty( $orders ) ) {
-					$status['ready'] = false;
-					$status['missing_data'][] = 'orders';
+					$status['ready']             = false;
+					$status['missing_data'][]    = 'orders';
 					$status['recommendations'][] = 'Generate orders first using the Order Generator';
 				}
 				break;
@@ -239,13 +244,13 @@ class Data_Validator {
 				// Cart sessions need products, customers are optional.
 				$products  = self::get_available_products();
 				$customers = self::get_available_customers();
-				
+
 				$status['counts']['products']  = count( $products );
 				$status['counts']['customers'] = count( $customers );
 
 				if ( empty( $products ) ) {
-					$status['ready'] = false;
-					$status['missing_data'][] = 'products';
+					$status['ready']             = false;
+					$status['missing_data'][]    = 'products';
 					$status['recommendations'][] = 'Generate products first using the Product Generator';
 				}
 
@@ -257,12 +262,12 @@ class Data_Validator {
 			case 'product_variation':
 				// Product variations need products.
 				$products = self::get_available_products();
-				
+
 				$status['counts']['products'] = count( $products );
 
 				if ( empty( $products ) ) {
-					$status['ready'] = false;
-					$status['missing_data'][] = 'products';
+					$status['ready']             = false;
+					$status['missing_data'][]    = 'products';
 					$status['recommendations'][] = 'Generate products first using the Product Generator';
 				}
 				break;
@@ -276,8 +281,8 @@ class Data_Validator {
 	 *
 	 * @since 2.1.0
 	 *
-	 * @param array  $params      Parameters to validate.
-	 * @param string $context     Context for validation (generator type).
+	 * @param array  $params Parameters to validate.
+	 * @param string $context Context for validation (generator type).
 	 *
 	 * @return array Sanitized and validated parameters.
 	 */
@@ -291,17 +296,17 @@ class Data_Validator {
 					break;
 
 				case 'specific_customer_id':
-					$customer_id = (int) $value;
+					$customer_id       = (int) $value;
 					$sanitized[ $key ] = self::validate_customer( $customer_id ) ? $customer_id : null;
 					break;
 
 				case 'specific_product_id':
-					$product_id = (int) $value;
+					$product_id        = (int) $value;
 					$sanitized[ $key ] = self::validate_product( $product_id ) ? $product_id : null;
 					break;
 
 				case 'customer_type':
-					$valid_types = array( 'existing', 'new', 'mixed', 'specific', 'guest_only' );
+					$valid_types       = array( 'existing', 'new', 'mixed', 'specific', 'guest_only' );
 					$sanitized[ $key ] = in_array( $value, $valid_types, true ) ? $value : 'mixed';
 					break;
 
@@ -346,9 +351,9 @@ class Data_Validator {
 	 *
 	 * @since 2.1.0
 	 *
-	 * @param string $message  Log message.
-	 * @param string $context  Context (generator type).
-	 * @param array  $data     Additional data to log.
+	 * @param string $message Log message.
+	 * @param string $context Context (generator type).
+	 * @param array  $data Additional data to log.
 	 *
 	 * @return void
 	 */
@@ -360,7 +365,7 @@ class Data_Validator {
 				$message,
 				! empty( $data ) ? '- Data: ' . wp_json_encode( $data ) : ''
 			);
-			
+
 			error_log( $log_entry ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}

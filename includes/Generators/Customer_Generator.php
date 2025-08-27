@@ -2,8 +2,8 @@
 /**
  * Customer Generator.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -115,6 +115,7 @@ class Customer_Generator extends Generator {
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Customer creation failed: ' . $e->getMessage(), 'error' );
+
 			return new WP_Error( 'customer_creation_failed', $e->getMessage() );
 		}
 	}
@@ -125,7 +126,7 @@ class Customer_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param string $first_name First name.
-	 * @param string $last_name  Last name.
+	 * @param string $last_name Last name.
 	 *
 	 * @return string Unique username.
 	 * @throws RuntimeException If unable to generate a unique username after 10 attempts.
@@ -165,8 +166,8 @@ class Customer_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param string $first_name First name.
-	 * @param string $last_name  Last name.
-	 * @param string $email      Email address.
+	 * @param string $last_name Last name.
+	 * @param string $email Email address.
 	 *
 	 * @return array Billing address data.
 	 */
@@ -195,7 +196,7 @@ class Customer_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param string $first_name First name.
-	 * @param string $last_name  Last name.
+	 * @param string $last_name Last name.
 	 * @param string $billing_country Billing country code for consistency.
 	 *
 	 * @return array Shipping address data (empty if same as billing).
@@ -207,7 +208,24 @@ class Customer_Generator extends Generator {
 		}
 
 		// 80% chance shipping address is in the same country
-		$country = $this->faker->boolean( 80 ) ? $billing_country : $this->faker->randomElement( array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
+		$country = $this->faker->boolean( 80 ) ? $billing_country : $this->faker->randomElement(
+			array(
+				'US',
+				'CA',
+				'GB',
+				'AU',
+				'DE',
+				'FR',
+				'IT',
+				'ES',
+				'NL',
+				'BE',
+				'JP',
+				'IN',
+				'BR',
+				'MX',
+			)
+		);
 
 		return array(
 			'first_name'   => $first_name,
@@ -246,11 +264,44 @@ class Customer_Generator extends Generator {
 					'sms_notifications'    => $this->faker->boolean( 40 ),
 					'email_notifications'  => $this->faker->boolean( 85 ),
 					'marketing_opt_in'     => $this->faker->boolean( 60 ),
-					'preferred_language'   => $this->faker->randomElement( array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' ) ),
-					'currency'             => $this->faker->randomElement( array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' ) ),
+					'preferred_language'   => $this->faker->randomElement(
+						array(
+							'en_US',
+							'es_ES',
+							'fr_FR',
+							'de_DE',
+							'it_IT',
+							'ja_JP',
+							'pt_BR',
+							'hi_IN',
+						)
+					),
+					'currency'             => $this->faker->randomElement(
+						array(
+							'USD',
+							'CAD',
+							'GBP',
+							'AUD',
+							'EUR',
+							'JPY',
+							'INR',
+							'BRL',
+							'MXN',
+						)
+					),
 					'timezone'             => $this->faker->timezone,
 					'communication_method' => $this->faker->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
-					'preferred_categories' => $this->faker->randomElements( array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ), $this->faker->numberBetween( 1, 3 ) ),
+					'preferred_categories' => $this->faker->randomElements(
+						array(
+							'Electronics',
+							'Fashion',
+							'Books',
+							'Home',
+							'Sports',
+							'Beauty',
+						),
+						$this->faker->numberBetween( 1, 3 )
+					),
 				),
 
 				// Customer statistics.
@@ -264,15 +315,56 @@ class Customer_Generator extends Generator {
 
 				// Personal information.
 				'birth_date'           => $this->faker->optional( 0.65 )->date( 'Y-m-d', '-18 years' ),
-				'gender'               => $this->faker->optional( 0.55 )->randomElement( array( 'male', 'female', 'non_binary', 'prefer_not_to_say' ) ),
+				'gender'               => $this->faker->optional( 0.55 )->randomElement(
+					array(
+						'male',
+						'female',
+						'non_binary',
+						'prefer_not_to_say',
+					)
+				),
 				'occupation'           => $this->faker->optional( 0.45 )->jobTitle,
-				'marital_status'       => $this->faker->optional( 0.4 )->randomElement( array( 'single', 'married', 'divorced', 'widowed' ) ),
+				'marital_status'       => $this->faker->optional( 0.4 )->randomElement(
+					array(
+						'single',
+						'married',
+						'divorced',
+						'widowed',
+					)
+				),
 
 				// Marketing and engagement.
-				'source'               => $this->faker->randomElement( array( 'organic', 'google_ads', 'facebook_ads', 'instagram', 'referral', 'email_campaign', 'direct', 'affiliate' ) ),
+				'source'               => $this->faker->randomElement(
+					array(
+						'organic',
+						'google_ads',
+						'facebook_ads',
+						'instagram',
+						'referral',
+						'email_campaign',
+						'direct',
+						'affiliate',
+					)
+				),
 				'utm_campaign'         => $this->faker->optional( 0.35 )->words( 3, true ),
-				'utm_source'           => $this->faker->optional( 0.35 )->randomElement( array( 'google', 'facebook', 'twitter', 'linkedin', 'email' ) ),
-				'utm_medium'           => $this->faker->optional( 0.35 )->randomElement( array( 'cpc', 'social', 'email', 'referral', 'organic' ) ),
+				'utm_source'           => $this->faker->optional( 0.35 )->randomElement(
+					array(
+						'google',
+						'facebook',
+						'twitter',
+						'linkedin',
+						'email',
+					)
+				),
+				'utm_medium'           => $this->faker->optional( 0.35 )->randomElement(
+					array(
+						'cpc',
+						'social',
+						'email',
+						'referral',
+						'organic',
+					)
+				),
 				'tags'                 => $this->generate_customer_tags(),
 
 				// Customer service.
@@ -345,6 +437,7 @@ class Customer_Generator extends Generator {
 		);
 
 		$pattern = $patterns[ $country ] ?? '+1-###-###-####';
+
 		return $this->faker->numerify( $pattern );
 	}
 
@@ -363,24 +456,67 @@ class Customer_Generator extends Generator {
 				return $this->faker->stateAbbr;
 			case 'CA':
 				$provinces = array( 'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT' );
+
 				return $this->faker->randomElement( $provinces );
 			case 'AU':
 				$states = array( 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT' );
+
 				return $this->faker->randomElement( $states );
 			case 'GB':
-				$counties = array( 'Greater London', 'Manchester', 'West Midlands', 'West Yorkshire', 'Glasgow', 'Merseyside', 'South Yorkshire', 'Hampshire' );
+				$counties = array(
+					'Greater London',
+					'Manchester',
+					'West Midlands',
+					'West Yorkshire',
+					'Glasgow',
+					'Merseyside',
+					'South Yorkshire',
+					'Hampshire',
+				);
+
 				return $this->faker->randomElement( $counties );
 			case 'JP':
-				$prefectures = array( 'Tokyo', 'Osaka', 'Kyoto', 'Hokkaido', 'Aichi', 'Fukuoka', 'Kanagawa', 'Saitama' );
+				$prefectures = array(
+					'Tokyo',
+					'Osaka',
+					'Kyoto',
+					'Hokkaido',
+					'Aichi',
+					'Fukuoka',
+					'Kanagawa',
+					'Saitama',
+				);
+
 				return $this->faker->randomElement( $prefectures );
 			case 'IN':
-				$states = array( 'Maharashtra', 'Delhi', 'Karnataka', 'Tamil Nadu', 'Gujarat', 'West Bengal', 'Rajasthan', 'Uttar Pradesh' );
+				$states = array(
+					'Maharashtra',
+					'Delhi',
+					'Karnataka',
+					'Tamil Nadu',
+					'Gujarat',
+					'West Bengal',
+					'Rajasthan',
+					'Uttar Pradesh',
+				);
+
 				return $this->faker->randomElement( $states );
 			case 'BR':
 				$states = array( 'SP', 'RJ', 'MG', 'RS', 'BA', 'PE', 'CE', 'PR' );
+
 				return $this->faker->randomElement( $states );
 			case 'MX':
-				$states = array( 'CDMX', 'Jalisco', 'Nuevo León', 'Puebla', 'Guanajuato', 'Veracruz', 'Yucatán', 'Chihuahua' );
+				$states = array(
+					'CDMX',
+					'Jalisco',
+					'Nuevo León',
+					'Puebla',
+					'Guanajuato',
+					'Veracruz',
+					'Yucatán',
+					'Chihuahua',
+				);
+
 				return $this->faker->randomElement( $states );
 			default:
 				return $this->faker->state;
@@ -523,7 +659,7 @@ class Customer_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param Customer $customer      Customer object.
+	 * @param Customer $customer Customer object.
 	 * @param array    $customer_meta Customer metadata.
 	 *
 	 * @return void

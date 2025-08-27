@@ -2,8 +2,8 @@
 /**
  * Abstract Generator Class.
  *
- * @package EasyCommerceFakerPress\Abstracts
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Abstracts
  */
 
 namespace EasyCommerceFakerPress\Abstracts;
@@ -197,7 +197,7 @@ abstract class Generator {
 	 * @since 1.0.0
 	 *
 	 * @param string               $message Log message.
-	 * @param string               $level   Log level (info, warning, error).
+	 * @param string               $level Log level (info, warning, error).
 	 * @param array<string, mixed> $context Additional context data.
 	 *
 	 * @return void
