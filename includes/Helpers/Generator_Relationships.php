@@ -2,8 +2,8 @@
 /**
  * Generator Relationships Helper
  *
- * @package EasyCommerceFakerPress\Helpers
  * @since   2.1.0
+ * @package EasyCommerceFakerPress\Helpers
  */
 
 namespace EasyCommerceFakerPress\Helpers;
@@ -59,8 +59,8 @@ class Generator_Relationships {
 	 */
 	public static function check_dependencies( string $generator_type ): array {
 		$dependencies = self::get_dependencies( $generator_type );
-		$status = array(
-			'ready'              => true,
+		$status       = array(
+			'ready'                => true,
 			'missing_dependencies' => array(),
 			'dependency_counts'    => array(),
 			'recommendations'      => array(),
@@ -68,12 +68,13 @@ class Generator_Relationships {
 
 		foreach ( $dependencies as $dependency ) {
 			$count = self::count_available_items( $dependency );
+
 			$status['dependency_counts'][ $dependency ] = $count;
 
 			if ( $count === 0 ) {
-				$status['ready'] = false;
+				$status['ready']                  = false;
 				$status['missing_dependencies'][] = $dependency;
-				$status['recommendations'][] = sprintf(
+				$status['recommendations'][]      = sprintf(
 					'Generate %s first using the %s Generator',
 					self::get_dependency_display_name( $dependency ),
 					self::get_generator_display_name( $dependency )
@@ -95,8 +96,8 @@ class Generator_Relationships {
 	 */
 	public static function get_generation_order( array $generator_types ): array {
 		// Topological sort of generators based on dependencies.
-		$sorted = array();
-		$visited = array();
+		$sorted       = array();
+		$visited      = array();
 		$temp_visited = array();
 
 		foreach ( $generator_types as $generator ) {
@@ -113,10 +114,10 @@ class Generator_Relationships {
 	 *
 	 * @since 2.1.0
 	 *
-	 * @param string $generator     Generator to visit.
-	 * @param array  $visited       Visited nodes.
-	 * @param array  $temp_visited  Temporarily visited nodes.
-	 * @param array  $sorted        Sorted result array.
+	 * @param string $generator Generator to visit.
+	 * @param array  $visited Visited nodes.
+	 * @param array  $temp_visited Temporarily visited nodes.
+	 * @param array  $sorted Sorted result array.
 	 *
 	 * @return void
 	 */
@@ -153,10 +154,12 @@ class Generator_Relationships {
 		switch ( $dependency_type ) {
 			case 'customer':
 				$customers = Data_Validator::get_available_customers();
+
 				return count( $customers );
 
 			case 'product':
 				$products = Data_Validator::get_available_products();
+
 				return count( $products );
 
 			case 'product_variation':
@@ -165,10 +168,12 @@ class Generator_Relationships {
 				$count = $wpdb->get_var(
 					"SELECT COUNT(*) FROM {$wpdb->prefix}ec_product_variations WHERE status != 'trash'"
 				);
+
 				return (int) $count;
 
 			case 'order':
 				$orders = Data_Validator::get_available_orders();
+
 				return count( $orders );
 
 			case 'location':
@@ -177,6 +182,7 @@ class Generator_Relationships {
 				$count = $wpdb->get_var(
 					"SELECT COUNT(*) FROM {$wpdb->prefix}ec_locations WHERE type = 'country'"
 				);
+
 				return (int) $count;
 
 			case 'tax_class':
@@ -185,6 +191,7 @@ class Generator_Relationships {
 				$count = $wpdb->get_var(
 					"SELECT COUNT(*) FROM {$wpdb->prefix}ec_tax_classes"
 				);
+
 				return (int) $count;
 
 			case 'shipping_plan':
@@ -193,6 +200,7 @@ class Generator_Relationships {
 				$count = $wpdb->get_var(
 					"SELECT COUNT(*) FROM {$wpdb->prefix}ec_shipping_plans WHERE active = 1"
 				);
+
 				return (int) $count;
 
 			default:
@@ -257,19 +265,63 @@ class Generator_Relationships {
 	 */
 	public static function get_suggested_batch_sizes( string $generator_type ): array {
 		$suggestions = array(
-			'customer'          => array( 'small' => 10, 'medium' => 25, 'large' => 50 ),
-			'product'           => array( 'small' => 5, 'medium' => 15, 'large' => 30 ),
-			'product_variation' => array( 'small' => 15, 'medium' => 40, 'large' => 100 ),
-			'order'             => array( 'small' => 10, 'medium' => 30, 'large' => 75 ),
-			'transaction'       => array( 'small' => 20, 'medium' => 50, 'large' => 100 ),
-			'cart_session'      => array( 'small' => 15, 'medium' => 40, 'large' => 80 ),
-			'location'          => array( 'small' => 1, 'medium' => 1, 'large' => 1 ),
-			'tax_class'         => array( 'small' => 3, 'medium' => 6, 'large' => 10 ),
-			'shipping_plan'     => array( 'small' => 3, 'medium' => 6, 'large' => 12 ),
-			'coupon'            => array( 'small' => 5, 'medium' => 15, 'large' => 30 ),
+			'customer'          => array(
+				'small'  => 10,
+				'medium' => 25,
+				'large'  => 50,
+			),
+			'product'           => array(
+				'small'  => 5,
+				'medium' => 15,
+				'large'  => 30,
+			),
+			'product_variation' => array(
+				'small'  => 15,
+				'medium' => 40,
+				'large'  => 100,
+			),
+			'order'             => array(
+				'small'  => 10,
+				'medium' => 30,
+				'large'  => 75,
+			),
+			'transaction'       => array(
+				'small'  => 20,
+				'medium' => 50,
+				'large'  => 100,
+			),
+			'cart_session'      => array(
+				'small'  => 15,
+				'medium' => 40,
+				'large'  => 80,
+			),
+			'location'          => array(
+				'small'  => 1,
+				'medium' => 1,
+				'large'  => 1,
+			),
+			'tax_class'         => array(
+				'small'  => 3,
+				'medium' => 6,
+				'large'  => 10,
+			),
+			'shipping_plan'     => array(
+				'small'  => 3,
+				'medium' => 6,
+				'large'  => 12,
+			),
+			'coupon'            => array(
+				'small'  => 5,
+				'medium' => 15,
+				'large'  => 30,
+			),
 		);
 
-		return $suggestions[ $generator_type ] ?? array( 'small' => 5, 'medium' => 15, 'large' => 30 );
+		return $suggestions[ $generator_type ] ?? array(
+			'small'  => 5,
+			'medium' => 15,
+			'large'  => 30,
+		);
 	}
 
 	/**
@@ -283,28 +335,28 @@ class Generator_Relationships {
 	 */
 	public static function validate_cross_generator_params( array $generators_config ): array {
 		$validation = array(
-			'valid'        => true,
-			'warnings'     => array(),
-			'conflicts'    => array(),
-			'suggestions'  => array(),
+			'valid'       => true,
+			'warnings'    => array(),
+			'conflicts'   => array(),
+			'suggestions' => array(),
 		);
 
 		// Check for parameter conflicts.
 		foreach ( $generators_config as $generator_type => $config ) {
-			$count = $config['count'] ?? 10;
+			$count        = $config['count'] ?? 10;
 			$dependencies = self::get_dependencies( $generator_type );
 
 			// Check if requested count is reasonable given dependencies.
 			foreach ( $dependencies as $dependency ) {
-				$available_count = self::count_available_items( $dependency );
+				$available_count   = self::count_available_items( $dependency );
 				$dependency_config = $generators_config[ $dependency ] ?? array();
-				$dependency_count = $dependency_config['count'] ?? $available_count;
+				$dependency_count  = $dependency_config['count'] ?? $available_count;
 
 				// Warn if requesting more child items than parents.
 				if ( $generator_type === 'product_variation' && $dependency === 'product' ) {
 					$max_variations_per_product = 5; // Reasonable default.
-					$max_possible = $dependency_count * $max_variations_per_product;
-					
+					$max_possible               = $dependency_count * $max_variations_per_product;
+
 					if ( $count > $max_possible ) {
 						$validation['warnings'][] = sprintf(
 							'Requested %d product variations but only %d products available. Consider generating more products first.',
@@ -316,8 +368,8 @@ class Generator_Relationships {
 
 				if ( $generator_type === 'order' && $dependency === 'customer' ) {
 					$max_orders_per_customer = 10; // Reasonable default.
-					$max_possible = $dependency_count * $max_orders_per_customer;
-					
+					$max_possible            = $dependency_count * $max_orders_per_customer;
+
 					if ( $count > $max_possible ) {
 						$validation['warnings'][] = sprintf(
 							'Requested %d orders but only %d customers available. Some customers will have many orders.',

@@ -2,8 +2,8 @@
 /**
  * Order Generator.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -142,23 +142,24 @@ class Order_Generator extends Generator {
 	 * @return array|false Customer data or false if none found.
 	 */
 	private function get_customer_for_order() {
-		$customer_type = $this->generation_params['customer_type'] ?? 'mixed';
+		$customer_type        = $this->generation_params['customer_type'] ?? 'mixed';
 		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
 
 		switch ( $customer_type ) {
 			case 'existing':
 				return $this->get_random_customer();
-			
+
 			case 'new':
 				return $this->create_new_customer();
-			
+
 			case 'specific':
 				if ( $specific_customer_id ) {
 					return $this->get_specific_customer( $specific_customer_id );
 				}
+
 				// Fallback to random if no specific ID provided.
 				return $this->get_random_customer();
-			
+
 			case 'mixed':
 			default:
 				// 70% existing customers, 30% new customers for realistic distribution.
@@ -211,7 +212,7 @@ class Order_Generator extends Generator {
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to get specific customer: ' . $e->getMessage(), 'warning' );
 		}
-		
+
 		return false;
 	}
 
@@ -226,7 +227,7 @@ class Order_Generator extends Generator {
 		try {
 			// Use Customer_Generator to create a new customer.
 			$customer_generator = new Customer_Generator();
-			$result = $customer_generator->generate_single_item();
+			$result             = $customer_generator->generate_single_item();
 
 			if ( is_wp_error( $result ) || ! $result ) {
 				return false;
@@ -243,6 +244,7 @@ class Order_Generator extends Generator {
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to create new customer: ' . $e->getMessage(), 'warning' );
+
 			return false;
 		}
 	}
@@ -354,11 +356,13 @@ class Order_Generator extends Generator {
 	/**
 	 * Generate comprehensive order metadata
 	 *
-	 * @param array $customer Customer user object.
+	 * @since 1.0.0
+	 *
 	 * @param float $subtotal Order subtotal.
 	 *
+	 * @param array $customer Customer user object.
+	 *
 	 * @return array Order metadata.
-	 * @since 1.0.0
 	 */
 	private function generate_order_meta( array $customer, float $subtotal ): array {
 		$customer_model   = new Customer( $customer['id'] );
@@ -380,7 +384,15 @@ class Order_Generator extends Generator {
 				'status'             => $this->generate_fulfillment_status(),
 				'tracking_number'    => $this->faker->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
 				'estimated_delivery' => $this->faker->dateTimeBetween( 'now', '+2 weeks' )->format( 'Y-m-d' ),
-				'carrier'            => $this->faker->randomElement( array( 'UPS', 'FedEx', 'USPS', 'DHL', 'Local Delivery' ) ),
+				'carrier'            => $this->faker->randomElement(
+					array(
+						'UPS',
+						'FedEx',
+						'USPS',
+						'DHL',
+						'Local Delivery',
+					)
+				),
 			),
 		);
 	}
@@ -463,7 +475,14 @@ class Order_Generator extends Generator {
 			case 'stripe':
 				$details['stripe_charge_id'] = 'ch_' . $this->faker->regexify( '[a-zA-Z0-9]{24}' );
 				$details['last4']            = $this->faker->numerify( '####' );
-				$details['brand']            = $this->faker->randomElement( array( 'visa', 'mastercard', 'amex', 'discover' ) );
+				$details['brand']            = $this->faker->randomElement(
+					array(
+						'visa',
+						'mastercard',
+						'amex',
+						'discover',
+					)
+				);
 				break;
 			case 'paypal':
 				$details['paypal_transaction_id'] = $this->faker->regexify( '[A-Z0-9]{15}' );
@@ -678,8 +697,22 @@ class Order_Generator extends Generator {
 			'user_agent'   => $this->faker->userAgent,
 			'ip_address'   => $this->faker->ipv4,
 			'referrer'     => $this->faker->optional( 0.4 )->url,
-			'utm_source'   => $this->faker->optional( 0.3 )->randomElement( array( 'google', 'facebook', 'email', 'direct' ) ),
-			'utm_medium'   => $this->faker->optional( 0.3 )->randomElement( array( 'cpc', 'social', 'email', 'organic' ) ),
+			'utm_source'   => $this->faker->optional( 0.3 )->randomElement(
+				array(
+					'google',
+					'facebook',
+					'email',
+					'direct',
+				)
+			),
+			'utm_medium'   => $this->faker->optional( 0.3 )->randomElement(
+				array(
+					'cpc',
+					'social',
+					'email',
+					'organic',
+				)
+			),
 			'utm_campaign' => $this->faker->optional( 0.2 )->words( 2, true ),
 		);
 	}
@@ -689,7 +722,7 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param float $subtotal   Order subtotal.
+	 * @param float $subtotal Order subtotal.
 	 * @param array $order_meta Order metadata.
 	 *
 	 * @return float Total order amount.
@@ -718,6 +751,7 @@ class Order_Generator extends Generator {
 				$count += $item['quantity'];
 			}
 		}
+
 		return $count;
 	}
 
@@ -879,9 +913,9 @@ class Order_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param Product_Variation $variation Product variation object.
-	 * @param int               $quantity  Item quantity.
-	 * @param float             $rate      Item rate.
-	 * @param float             $subtotal  Item subtotal.
+	 * @param int               $quantity Item quantity.
+	 * @param float             $rate Item rate.
+	 * @param float             $subtotal Item subtotal.
 	 *
 	 * @return array Enhanced order item metadata.
 	 */

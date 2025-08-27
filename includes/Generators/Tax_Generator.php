@@ -74,6 +74,7 @@ class Tax_Generator extends Generator {
 			return false;
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate tax class: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -83,6 +84,7 @@ class Tax_Generator extends Generator {
 	 *
 	 * @param int   $count Number of tax classes to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated tax class data
 	 */
 	public function generate_multiple( int $count = 5, array $args = array() ): array {
@@ -582,6 +584,7 @@ class Tax_Generator extends Generator {
 	 * Create tax class in database.
 	 *
 	 * @param array $data Tax class data.
+	 *
 	 * @return array|null Created tax class data
 	 */
 	private function create_tax_class( array $data ): ?array {
@@ -600,6 +603,7 @@ class Tax_Generator extends Generator {
 	 * Get tax class regions from rates.
 	 *
 	 * @param array $rates Tax rates.
+	 *
 	 * @return string Comma-separated regions
 	 */
 	private function get_tax_class_regions( array $rates ): string {

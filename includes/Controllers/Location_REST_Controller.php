@@ -62,16 +62,34 @@ class Location_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
-			'regions'         => array(
+			'regions'          => array(
 				'description'       => __( 'Geographic regions to generate locations for.', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
 					'type' => 'string',
-					'enum' => array( 'Americas', 'Europe', 'Asia', 'Africa', 'Oceania', 'Northern America', 'Western Europe', 'Eastern Europe', 'Southern Europe', 'Northern Europe', 'Southeast Asia', 'East Asia', 'South Asia', 'Western Asia', 'North Africa', 'Sub-Saharan Africa', 'Australia and New Zealand' ),
+					'enum' => array(
+						'Americas',
+						'Europe',
+						'Asia',
+						'Africa',
+						'Oceania',
+						'Northern America',
+						'Western Europe',
+						'Eastern Europe',
+						'Southern Europe',
+						'Northern Europe',
+						'Southeast Asia',
+						'East Asia',
+						'South Asia',
+						'Western Asia',
+						'North Africa',
+						'Sub-Saharan Africa',
+						'Australia and New Zealand',
+					),
 				),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'countries'       => array(
+			'countries'        => array(
 				'description'       => __( 'Specific countries to generate (ISO2, ISO3, or full names).', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
@@ -79,7 +97,7 @@ class Location_REST_Controller extends REST_Controller {
 				),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'max_countries'   => array(
+			'max_countries'    => array(
 				'description'       => __( 'Maximum number of countries to generate.', 'easycommerce-fakerpress' ),
 				'type'              => 'integer',
 				'minimum'           => 1,
@@ -87,12 +105,12 @@ class Location_REST_Controller extends REST_Controller {
 				'default'           => 10,
 				'sanitize_callback' => 'absint',
 			),
-			'include_states'  => array(
+			'include_states'   => array(
 				'description' => __( 'Include states/provinces for countries.', 'easycommerce-fakerpress' ),
 				'type'        => 'boolean',
 				'default'     => true,
 			),
-			'include_cities'  => array(
+			'include_cities'   => array(
 				'description' => __( 'Include cities for states/provinces.', 'easycommerce-fakerpress' ),
 				'type'        => 'boolean',
 				'default'     => true,

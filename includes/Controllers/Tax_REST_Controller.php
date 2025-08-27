@@ -62,7 +62,7 @@ class Tax_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
-			'tax_types'       => array(
+			'tax_types'         => array(
 				'description'       => __( 'Types of tax classes to generate.', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
@@ -72,7 +72,7 @@ class Tax_REST_Controller extends REST_Controller {
 				'default'           => array( 'standard', 'reduced', 'zero' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'jurisdictions'   => array(
+			'jurisdictions'     => array(
 				'description'       => __( 'Tax jurisdictions to generate rates for.', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
@@ -82,7 +82,7 @@ class Tax_REST_Controller extends REST_Controller {
 				'default'           => array( 'country', 'state' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'rate_ranges'     => array(
+			'rate_ranges'       => array(
 				'description' => __( 'Tax rate ranges by type.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
@@ -128,7 +128,7 @@ class Tax_REST_Controller extends REST_Controller {
 				'description' => __( 'Geographic coverage for tax rates.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
-					'countries' => array(
+					'countries'        => array(
 						'description'       => __( 'Countries to generate tax rates for.', 'easycommerce-fakerpress' ),
 						'type'              => 'array',
 						'items'             => array(

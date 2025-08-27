@@ -62,13 +62,13 @@ class Product_Variation_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
-			'specific_product_id' => array(
+			'specific_product_id'  => array(
 				'description'       => __( 'Specific product ID to generate variations for.', 'easycommerce-fakerpress' ),
 				'type'              => 'integer',
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
 			),
-			'product_types'       => array(
+			'product_types'        => array(
 				'description'       => __( 'Product types to consider for variation generation.', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
@@ -78,7 +78,7 @@ class Product_Variation_REST_Controller extends REST_Controller {
 				'default'           => array( 'simple', 'variable' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'exclude_products'    => array(
+			'exclude_products'     => array(
 				'description'       => __( 'Product IDs to exclude from variation generation.', 'easycommerce-fakerpress' ),
 				'type'              => 'array',
 				'items'             => array(
@@ -86,27 +86,27 @@ class Product_Variation_REST_Controller extends REST_Controller {
 				),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
-			'price_variance'      => array(
+			'price_variance'       => array(
 				'description' => __( 'Price variance settings for variations.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
 					'min_percentage' => array(
 						'description' => __( 'Minimum price variance percentage from base product.', 'easycommerce-fakerpress' ),
 						'type'        => 'number',
-						'minimum'     => -50,
+						'minimum'     => - 50,
 						'maximum'     => 50,
-						'default'     => -20,
+						'default'     => - 20,
 					),
 					'max_percentage' => array(
 						'description' => __( 'Maximum price variance percentage from base product.', 'easycommerce-fakerpress' ),
 						'type'        => 'number',
-						'minimum'     => -50,
+						'minimum'     => - 50,
 						'maximum'     => 100,
 						'default'     => 30,
 					),
 				),
 			),
-			'stock_settings'      => array(
+			'stock_settings'       => array(
 				'description' => __( 'Stock management settings for variations.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
@@ -137,7 +137,7 @@ class Product_Variation_REST_Controller extends REST_Controller {
 				'description' => __( 'Attribute generation settings.', 'easycommerce-fakerpress' ),
 				'type'        => 'object',
 				'properties'  => array(
-					'create_missing_attributes' => array(
+					'create_missing_attributes'    => array(
 						'description' => __( 'Create missing attributes if needed.', 'easycommerce-fakerpress' ),
 						'type'        => 'boolean',
 						'default'     => true,

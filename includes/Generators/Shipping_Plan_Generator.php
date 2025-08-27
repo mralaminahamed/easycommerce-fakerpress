@@ -2,8 +2,8 @@
 /**
  * Shipping Plan Generator.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -56,6 +56,7 @@ class Shipping_Plan_Generator extends Generator {
 			return false;
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to generate shipping plan: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -65,6 +66,7 @@ class Shipping_Plan_Generator extends Generator {
 	 *
 	 * @param int   $count Number of shipping plans to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated shipping plan data
 	 */
 	public function generate_multiple( int $count = 5, array $args = array() ): array {
@@ -375,6 +377,7 @@ class Shipping_Plan_Generator extends Generator {
 	 * Create shipping plan in database.
 	 *
 	 * @param array $data Shipping plan data.
+	 *
 	 * @return Shipping_Plan|null Created shipping plan instance
 	 */
 	private function create_shipping_plan( array $data ): ?Shipping_Plan {

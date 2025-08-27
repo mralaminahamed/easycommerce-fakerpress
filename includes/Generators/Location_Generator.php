@@ -123,10 +123,10 @@ class Location_Generator extends Generator {
 	 */
 	private function get_country_configurations(): array {
 		// Get filtering parameters.
-		$regions = $this->generation_params['regions'] ?? array();
-		$countries = $this->generation_params['countries'] ?? array();
+		$regions       = $this->generation_params['regions'] ?? array();
+		$countries     = $this->generation_params['countries'] ?? array();
 		$max_countries = $this->generation_params['max_countries'] ?? 10;
-		
+
 		// Full country configurations.
 		$all_countries = array(
 			array(
@@ -230,7 +230,7 @@ class Location_Generator extends Generator {
 				$filtered_countries,
 				function ( $country ) use ( $regions ) {
 					return in_array( $country['region'], $regions, true ) ||
-						   in_array( $country['subregion'], $regions, true );
+							in_array( $country['subregion'], $regions, true );
 				}
 			);
 		}
@@ -241,8 +241,8 @@ class Location_Generator extends Generator {
 				$filtered_countries,
 				function ( $country ) use ( $countries ) {
 					return in_array( $country['iso2'], $countries, true ) ||
-						   in_array( $country['iso3'], $countries, true ) ||
-						   in_array( $country['name'], $countries, true );
+							in_array( $country['iso3'], $countries, true ) ||
+							in_array( $country['name'], $countries, true );
 				}
 			);
 		}
@@ -320,7 +320,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $state_id    State ID.
+	 * @param int $state_id State ID.
 	 * @param int $cities_count Number of cities to generate.
 	 *
 	 * @return array Cities data.
@@ -478,7 +478,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $state_name   State name.
+	 * @param string $state_name State name.
 	 * @param string $country_code ISO2 country code.
 	 *
 	 * @return string State code.
@@ -497,6 +497,7 @@ class Location_Generator extends Generator {
 					'Ohio'         => 'OH',
 					'Georgia'      => 'GA',
 				);
+
 				return $state_codes[ $state_name ] ?? strtoupper( substr( $state_name, 0, 2 ) );
 			case 'CA':
 				$state_codes = array(
@@ -505,6 +506,7 @@ class Location_Generator extends Generator {
 					'British Columbia' => 'BC',
 					'Alberta'          => 'AB',
 				);
+
 				return $state_codes[ $state_name ] ?? strtoupper( substr( $state_name, 0, 2 ) );
 			default:
 				return strtoupper( substr( $state_name, 0, 2 ) );
@@ -621,6 +623,7 @@ class Location_Generator extends Generator {
 			return $wp_filesystem->put_contents( $json_path, $json_data, FS_CHMOD_FILE );
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to save location data: ' . $e->getMessage(), 'error' );
+
 			return false;
 		}
 	}
@@ -639,6 +642,7 @@ class Location_Generator extends Generator {
 		foreach ( $location_data as $country ) {
 			$count += count( $country['states'] );
 		}
+
 		return $count;
 	}
 
@@ -658,6 +662,7 @@ class Location_Generator extends Generator {
 				$count += count( $state['cities'] );
 			}
 		}
+
 		return $count;
 	}
 
@@ -670,6 +675,7 @@ class Location_Generator extends Generator {
 	 */
 	private function get_location_file_path(): string {
 		$upload_dir = wp_upload_dir();
+
 		return $upload_dir['basedir'] . '/easycommerce/locations.json';
 	}
 }

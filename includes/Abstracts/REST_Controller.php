@@ -2,8 +2,8 @@
 /**
  * Abstract REST Controller Class.
  *
- * @package EasyCommerceFakerPress\Abstracts
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Abstracts
  */
 
 namespace EasyCommerceFakerPress\Abstracts;
@@ -223,9 +223,9 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|string|mixed $value   Parameter value.
+	 * @param int|string|mixed $value Parameter value.
 	 * @param WP_REST_Request  $request Request object.
-	 * @param string           $param   Parameter name.
+	 * @param string           $param Parameter name.
 	 *
 	 * @return bool|WP_Error True if valid, WP_Error otherwise.
 	 */

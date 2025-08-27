@@ -65,7 +65,15 @@ class Order_REST_Controller extends REST_Controller {
 			'order_status'              => array(
 				'description'       => __( 'Order status distribution.', 'easycommerce-fakerpress' ),
 				'type'              => 'string',
-				'enum'              => array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded', 'mixed' ),
+				'enum'              => array(
+					'pending',
+					'processing',
+					'completed',
+					'cancelled',
+					'on_hold',
+					'refunded',
+					'mixed',
+				),
 				'default'           => 'mixed',
 				'sanitize_callback' => 'sanitize_text_field',
 			),
