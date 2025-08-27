@@ -3,11 +3,13 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 import GeneratorBase from '../GeneratorBase';
+import { useDataValidation } from '../DataValidator';
 
 export default function CustomerGenerator() {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ result, setResult ] = useState( null );
 	const [ error, setError ] = useState( null );
+	const validationStatus = useDataValidation( 'customers' );
 
 	const handleGenerate = async ( params ) => {
 		setIsLoading( true );
@@ -40,7 +42,7 @@ export default function CustomerGenerator() {
 			default: [ 'regular', 'returning' ],
 		},
 		demographics: {
-			description: __( 'Demographic distribution', 'easycommerce-fakerpress' ),
+			description: __( 'Demographic distribution and customer characteristics', 'easycommerce-fakerpress' ),
 			type: 'object',
 			properties: {
 				age_groups: {
@@ -84,7 +86,40 @@ export default function CustomerGenerator() {
 			properties: {
 				phone_numbers: { type: 'boolean', default: true },
 				marketing_opt_in_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 65 },
+				email_verification_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 90 },
+				phone_verification_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 65 },
 			},
+		},
+		loyalty_settings: {
+			description: __( 'Customer loyalty and engagement settings', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				vip_ratio: { type: 'integer', minimum: 0, maximum: 25, default: 8 },
+				referral_program: { type: 'boolean', default: true },
+				loyalty_point_system: { type: 'boolean', default: true },
+			},
+		},
+		customer_segments: {
+			description: __( 'Customer segmentation and targeting', 'easycommerce-fakerpress' ),
+			type: 'array',
+			items: {
+				type: 'string',
+				enum: [
+					'high_value_customer',
+					'frequent_shopper',
+					'bargain_seeker',
+					'early_adopter',
+					'loyal_customer',
+					'gift_shopper',
+					'bulk_purchaser',
+					'international_customer',
+					'mobile_shopper',
+					'social_media_engaged',
+					'product_reviewer',
+					'seasonal_shopper'
+				],
+			},
+			default: [ 'loyal_customer', 'frequent_shopper', 'bargain_seeker' ],
 		},
 	};
 
@@ -98,6 +133,7 @@ export default function CustomerGenerator() {
 			result={ result }
 			error={ error }
 			parameterConfig={ parameterConfig }
+			validationStatus={ validationStatus }
 		/>
 	);
 }

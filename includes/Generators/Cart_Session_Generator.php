@@ -26,6 +26,26 @@ use RuntimeException;
 class Cart_Session_Generator extends Generator {
 
 	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array
+	 */
+	private array $generation_params = array();
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
+	}
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @return string Resource type name.
@@ -42,18 +62,18 @@ class Cart_Session_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
-			// Get existing products and customers.
-			$product_data  = Product::list( array(), 50 );
-			$customer_data = Customer::list( 'customer', null, 1, 30 );
-
-			$products  = $product_data['products'] ?? array();
-			$customers = $customer_data['users'] ?? array();
+			// Get existing products.
+			$product_data = Product::list( array(), 50 );
+			$products     = $product_data['products'] ?? array();
 
 			if ( empty( $products ) ) {
 				throw new RuntimeException( 'No products found. Please generate products first.' );
 			}
 
-			$cart_data    = $this->generate_cart_session_data( $products, $customers );
+			// Get customer for cart session.
+			$customer = $this->get_customer_for_cart();
+
+			$cart_data    = $this->generate_cart_session_data( $products, $customer );
 			$cart_session = $this->create_cart_session( $cart_data );
 
 			if ( $cart_session ) {
@@ -81,6 +101,131 @@ class Cart_Session_Generator extends Generator {
 	}
 
 	/**
+	 * Get customer for cart session based on parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array|null Customer data or null for guest.
+	 */
+	private function get_customer_for_cart() {
+		$customer_type = $this->generation_params['customer_type'] ?? 'mixed';
+		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
+		$guest_ratio = $this->generation_params['guest_cart_ratio'] ?? 40;
+
+		switch ( $customer_type ) {
+			case 'existing':
+				return $this->get_random_existing_customer();
+			
+			case 'new':
+				return $this->create_new_customer_for_cart();
+			
+			case 'specific':
+				if ( $specific_customer_id ) {
+					return $this->get_specific_customer_for_cart( $specific_customer_id );
+				}
+				// Fallback to random.
+				return $this->get_random_existing_customer();
+			
+			case 'guest_only':
+				return null; // Guest cart.
+			
+			case 'mixed':
+			default:
+				// Use guest ratio parameter.
+				if ( $this->faker->boolean( $guest_ratio ) ) {
+					return null; // Guest cart.
+				}
+				// 50/50 between existing and new customers.
+				return $this->faker->boolean( 50 ) ? 
+					$this->get_random_existing_customer() : 
+					$this->create_new_customer_for_cart();
+		}
+	}
+
+	/**
+	 * Get random existing customer
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array|null Customer data or null if none found.
+	 */
+	private function get_random_existing_customer() {
+		$customer_data = Customer::list( 'customer', null, 1, 30 );
+		$customers     = $customer_data['users'] ?? array();
+
+		if ( empty( $customers ) ) {
+			return null;
+		}
+
+		$customer = $this->faker->randomElement( $customers );
+		
+		return array(
+			'id'         => $customer['id'],
+			'name'       => $customer['name'],
+			'email'      => $customer['email'],
+			'first_name' => $customer['first_name'] ?? '',
+			'last_name'  => $customer['last_name'] ?? '',
+		);
+	}
+
+	/**
+	 * Get specific customer for cart
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $customer_id Customer ID.
+	 *
+	 * @return array|null Customer data or null if not found.
+	 */
+	private function get_specific_customer_for_cart( int $customer_id ) {
+		try {
+			$customer = new Customer( $customer_id );
+			if ( $customer->exists() ) {
+				return array(
+					'id'         => $customer->get_id(),
+					'name'       => $customer->get_name(),
+					'email'      => $customer->get_email(),
+					'first_name' => $customer->get_first_name(),
+					'last_name'  => $customer->get_last_name(),
+				);
+			}
+		} catch ( Exception $e ) {
+			$this->log( 'Failed to get specific customer for cart: ' . $e->getMessage(), 'warning' );
+		}
+		
+		return null;
+	}
+
+	/**
+	 * Create new customer for cart session
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array|null New customer data or null on failure.
+	 */
+	private function create_new_customer_for_cart() {
+		try {
+			$customer_generator = new Customer_Generator();
+			$result = $customer_generator->generate_single_item();
+
+			if ( is_wp_error( $result ) || ! $result ) {
+				return null;
+			}
+
+			return array(
+				'id'         => $result['id'],
+				'name'       => $result['name'],
+				'email'      => $result['email'],
+				'first_name' => $result['first_name'] ?? '',
+				'last_name'  => $result['last_name'] ?? '',
+			);
+		} catch ( Exception $e ) {
+			$this->log( 'Failed to create new customer for cart: ' . $e->getMessage(), 'warning' );
+			return null;
+		}
+	}
+
+	/**
 	 * Generate multiple cart sessions.
 	 *
 	 * @param int   $count Number of cart sessions to generate.
@@ -104,17 +249,24 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart session data.
 	 *
-	 * @param Product[] $products Available products.
-	 * @param array     $customers Available customers.
+	 * @param array      $products Available products.
+	 * @param array|null $customer Selected customer or null for guest.
 	 * @return array Cart session data
 	 */
-	private function generate_cart_session_data( array $products, array $customers ): array {
-		$cart_statuses = array(
-			'pending'   => 60,    // 60% pending (active carts)
-			'abandoned' => 30,  // 30% abandoned
-			'completed' => 8,   // 8% completed
-			'cancelled' => 2,   // 2% cancelled
+	private function generate_cart_session_data( array $products, $customer ): array {
+		// Get abandonment settings from parameters.
+		$abandonment_rate = $this->generation_params['abandonment_rate'] ?? 30;
+		$status_distribution = $this->generation_params['status_distribution'] ?? array();
+
+		// Default status distribution.
+		$default_statuses = array(
+			'pending'   => 60 - $abandonment_rate,
+			'abandoned' => $abandonment_rate,
+			'completed' => 8,
+			'cancelled' => 2,
 		);
+
+		$cart_statuses = ! empty( $status_distribution ) ? $status_distribution : $default_statuses;
 
 		$status = $this->faker->randomElement(
 			array_merge(
@@ -126,10 +278,7 @@ class Cart_Session_Generator extends Generator {
 			)
 		);
 
-		// Select customer (70% have customer accounts).
-		$customer = $this->faker->boolean( 70 ) && ! empty( $customers )
-			? $this->faker->randomElement( $customers )
-			: null;
+		// Customer is already selected by get_customer_for_cart() method.
 
 		// Generate cart items.
 		$items        = $this->generate_cart_items( $products );

@@ -54,6 +54,100 @@ class Tax_REST_Controller extends REST_Controller {
 	}
 
 	/**
+	 * Get resource-specific generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Resource-specific parameters.
+	 */
+	protected function get_resource_specific_params(): array {
+		return array(
+			'tax_types'       => array(
+				'description'       => __( 'Types of tax classes to generate.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
+					'type' => 'string',
+					'enum' => array( 'standard', 'reduced', 'zero', 'exempt', 'digital' ),
+				),
+				'default'           => array( 'standard', 'reduced', 'zero' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
+			),
+			'jurisdictions'   => array(
+				'description'       => __( 'Tax jurisdictions to generate rates for.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
+					'type' => 'string',
+					'enum' => array( 'country', 'state', 'city', 'county', 'postcode' ),
+				),
+				'default'           => array( 'country', 'state' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
+			),
+			'rate_ranges'     => array(
+				'description' => __( 'Tax rate ranges by type.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'standard' => array(
+						'description' => __( 'Standard tax rate range.', 'easycommerce-fakerpress' ),
+						'type'        => 'object',
+						'properties'  => array(
+							'min' => array(
+								'type'    => 'number',
+								'minimum' => 0,
+								'maximum' => 50,
+								'default' => 5,
+							),
+							'max' => array(
+								'type'    => 'number',
+								'minimum' => 0,
+								'maximum' => 50,
+								'default' => 25,
+							),
+						),
+					),
+					'reduced'  => array(
+						'description' => __( 'Reduced tax rate range.', 'easycommerce-fakerpress' ),
+						'type'        => 'object',
+						'properties'  => array(
+							'min' => array(
+								'type'    => 'number',
+								'minimum' => 0,
+								'maximum' => 20,
+								'default' => 1,
+							),
+							'max' => array(
+								'type'    => 'number',
+								'minimum' => 0,
+								'maximum' => 20,
+								'default' => 10,
+							),
+						),
+					),
+				),
+			),
+			'location_coverage' => array(
+				'description' => __( 'Geographic coverage for tax rates.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'countries' => array(
+						'description'       => __( 'Countries to generate tax rates for.', 'easycommerce-fakerpress' ),
+						'type'              => 'array',
+						'items'             => array(
+							'type' => 'string',
+						),
+						'default'           => array( 'US', 'CA', 'GB', 'AU', 'DE' ),
+						'sanitize_callback' => array( $this, 'sanitize_array' ),
+					),
+					'include_compound' => array(
+						'description' => __( 'Include compound tax rates.', 'easycommerce-fakerpress' ),
+						'type'        => 'boolean',
+						'default'     => true,
+					),
+				),
+			),
+		);
+	}
+
+	/**
 	 * Get resource-specific schema properties
 	 *
 	 * @since 1.0.0

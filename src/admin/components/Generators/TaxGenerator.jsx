@@ -35,26 +35,79 @@ export default function TaxGenerator() {
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: [ 'standard', 'reduced', 'luxury', 'digital', 'zero_rate' ],
+				enum: [ 'standard', 'reduced', 'zero', 'exempt', 'digital' ],
 			},
-			default: [ 'standard', 'reduced', 'luxury' ],
-		},
-		rate_ranges: {
-			description: __( 'Tax rate ranges', 'easycommerce-fakerpress' ),
-			type: 'object',
-			properties: {
-				min_rate: { type: 'number', minimum: 0, maximum: 50, default: 0 },
-				max_rate: { type: 'number', minimum: 0, maximum: 50, default: 25 },
-			},
+			default: [ 'standard', 'reduced', 'zero' ],
 		},
 		jurisdictions: {
-			description: __( 'Tax jurisdictions', 'easycommerce-fakerpress' ),
+			description: __( 'Tax jurisdictions to generate rates for', 'easycommerce-fakerpress' ),
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: [ 'federal', 'state', 'county', 'city', 'special_district' ],
+				enum: [ 'country', 'state', 'city', 'county', 'postcode' ],
 			},
-			default: [ 'federal', 'state', 'city' ],
+			default: [ 'country', 'state' ],
+		},
+		rate_ranges: {
+			description: __( 'Tax rate ranges by type', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				standard: {
+					description: __( 'Standard tax rate range', 'easycommerce-fakerpress' ),
+					type: 'object',
+					properties: {
+						min: {
+							type: 'number',
+							minimum: 0,
+							maximum: 50,
+							default: 5,
+						},
+						max: {
+							type: 'number',
+							minimum: 0,
+							maximum: 50,
+							default: 25,
+						},
+					},
+				},
+				reduced: {
+					description: __( 'Reduced tax rate range', 'easycommerce-fakerpress' ),
+					type: 'object',
+					properties: {
+						min: {
+							type: 'number',
+							minimum: 0,
+							maximum: 20,
+							default: 1,
+						},
+						max: {
+							type: 'number',
+							minimum: 0,
+							maximum: 20,
+							default: 10,
+						},
+					},
+				},
+			},
+		},
+		location_coverage: {
+			description: __( 'Geographic coverage for tax rates', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				countries: {
+					description: __( 'Countries to generate tax rates for', 'easycommerce-fakerpress' ),
+					type: 'array',
+					items: {
+						type: 'string',
+					},
+					default: [ 'US', 'CA', 'GB', 'AU', 'DE' ],
+				},
+				include_compound: {
+					description: __( 'Include compound tax rates', 'easycommerce-fakerpress' ),
+					type: 'boolean',
+					default: true,
+				},
+			},
 		},
 	};
 

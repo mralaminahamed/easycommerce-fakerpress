@@ -23,6 +23,26 @@ use Exception;
 class Location_Generator extends Generator {
 
 	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array
+	 */
+	private array $generation_params = array();
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
+	}
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @since 1.0.0
@@ -81,7 +101,7 @@ class Location_Generator extends Generator {
 	private function create_location_data_structure(): array {
 		$countries = array();
 
-		// Generate major countries with realistic data.
+		// Generate countries based on parameters.
 		$country_configs = $this->get_country_configurations();
 
 		foreach ( $country_configs as $config ) {
@@ -95,14 +115,20 @@ class Location_Generator extends Generator {
 	}
 
 	/**
-	 * Get predefined country configurations
+	 * Get filtered country configurations based on parameters
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Country configuration data.
 	 */
 	private function get_country_configurations(): array {
-		return array(
+		// Get filtering parameters.
+		$regions = $this->generation_params['regions'] ?? array();
+		$countries = $this->generation_params['countries'] ?? array();
+		$max_countries = $this->generation_params['max_countries'] ?? 10;
+		
+		// Full country configurations.
+		$all_countries = array(
 			array(
 				'id'               => 1,
 				'name'             => 'United States',
@@ -194,6 +220,39 @@ class Location_Generator extends Generator {
 				'cities_per_state' => 6,
 			),
 		);
+
+		// Apply filters based on parameters.
+		$filtered_countries = $all_countries;
+
+		// Filter by regions if specified.
+		if ( ! empty( $regions ) ) {
+			$filtered_countries = array_filter(
+				$filtered_countries,
+				function ( $country ) use ( $regions ) {
+					return in_array( $country['region'], $regions, true ) ||
+						   in_array( $country['subregion'], $regions, true );
+				}
+			);
+		}
+
+		// Filter by specific countries if specified.
+		if ( ! empty( $countries ) ) {
+			$filtered_countries = array_filter(
+				$filtered_countries,
+				function ( $country ) use ( $countries ) {
+					return in_array( $country['iso2'], $countries, true ) ||
+						   in_array( $country['iso3'], $countries, true ) ||
+						   in_array( $country['name'], $countries, true );
+				}
+			);
+		}
+
+		// Limit number of countries.
+		if ( count( $filtered_countries ) > $max_countries ) {
+			$filtered_countries = array_slice( $filtered_countries, 0, $max_countries );
+		}
+
+		return $filtered_countries;
 	}
 
 	/**

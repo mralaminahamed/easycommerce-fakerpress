@@ -26,6 +26,26 @@ use RuntimeException;
 class Transaction_Generator extends Generator {
 
 	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array
+	 */
+	private array $generation_params = array();
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
+	}
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @return string Resource type name.
@@ -42,9 +62,8 @@ class Transaction_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
-			// Get existing orders to create transactions for.
-			$orders_data = Order::list( array( 'per_page' => 50 ) );
-			$orders      = $orders_data['orders'] ?? array();
+			// Get orders based on customer parameters.
+			$orders = $this->get_orders_for_transactions();
 
 			if ( empty( $orders ) ) {
 				throw new RuntimeException( 'No orders found. Please generate orders first.' );
@@ -73,6 +92,53 @@ class Transaction_Generator extends Generator {
 			$this->log( 'Failed to generate transaction: ' . $e->getMessage(), 'error' );
 			return false;
 		}
+	}
+
+	/**
+	 * Get orders for transaction generation based on customer parameters
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array Array of orders.
+	 */
+	private function get_orders_for_transactions(): array {
+		$customer_type = $this->generation_params['customer_type'] ?? 'all';
+		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
+		$order_status_filter = $this->generation_params['order_status_filter'] ?? array();
+
+		$query_params = array( 'per_page' => 100 );
+
+		// Add status filter if specified.
+		if ( ! empty( $order_status_filter ) ) {
+			$query_params['status'] = $order_status_filter;
+		}
+
+		// Add customer filter based on type.
+		switch ( $customer_type ) {
+			case 'specific':
+				if ( $specific_customer_id ) {
+					$query_params['customer_id'] = $specific_customer_id;
+				}
+				break;
+			
+			case 'existing_customers_only':
+				// Only orders from customers who have more than 1 order.
+				$query_params['customer_type'] = 'returning';
+				break;
+			
+			case 'new_customers_only':
+				// Only orders from first-time customers.
+				$query_params['customer_type'] = 'new';
+				break;
+			
+			case 'all':
+			default:
+				// No additional customer filtering.
+				break;
+		}
+
+		$orders_data = Order::list( $query_params );
+		return $orders_data['orders'] ?? array();
 	}
 
 	/**
