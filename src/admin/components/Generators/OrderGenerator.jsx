@@ -39,8 +39,35 @@ export default function OrderGenerator() {
 		customer_type: {
 			description: __( 'Type of customers for orders', 'easycommerce-fakerpress' ),
 			type: 'string',
-			enum: [ 'existing', 'new', 'mixed' ],
+			enum: [ 'existing', 'new', 'mixed', 'specific' ],
 			default: 'mixed',
+		},
+		specific_customer_id: {
+			description: __( 'Specific customer ID to use for all orders (when customer_type is "specific")', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 1,
+			dependsOn: { customer_type: 'specific' },
+		},
+		customer_distribution: {
+			description: __( 'Customer type distribution for mixed mode', 'easycommerce-fakerpress' ),
+			type: 'object',
+			dependsOn: { customer_type: 'mixed' },
+			properties: {
+				existing_ratio: {
+					description: __( 'Percentage of existing customers (0-100)', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+					default: 70,
+				},
+				new_ratio: {
+					description: __( 'Percentage of new customers (0-100)', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+					default: 30,
+				},
+			},
 		},
 		order_value: {
 			description: __( 'Order value configuration', 'easycommerce-fakerpress' ),

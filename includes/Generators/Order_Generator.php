@@ -28,6 +28,26 @@ use WP_User;
 class Order_Generator extends Generator {
 
 	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array
+	 */
+	private array $generation_params = array();
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
+	}
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @since 1.0.0
@@ -52,7 +72,7 @@ class Order_Generator extends Generator {
 				return new WP_Error( 'missing_model', 'EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.' );
 			}
 
-			$customer   = $this->get_random_customer();
+			$customer   = $this->get_customer_for_order();
 			$variations = $this->get_random_product_variations();
 
 			if ( ! $customer ) {
@@ -115,6 +135,38 @@ class Order_Generator extends Generator {
 	}
 
 	/**
+	 * Get customer for order based on generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array|false Customer data or false if none found.
+	 */
+	private function get_customer_for_order() {
+		$customer_type = $this->generation_params['customer_type'] ?? 'mixed';
+		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
+
+		switch ( $customer_type ) {
+			case 'existing':
+				return $this->get_random_customer();
+			
+			case 'new':
+				return $this->create_new_customer();
+			
+			case 'specific':
+				if ( $specific_customer_id ) {
+					return $this->get_specific_customer( $specific_customer_id );
+				}
+				// Fallback to random if no specific ID provided.
+				return $this->get_random_customer();
+			
+			case 'mixed':
+			default:
+				// 70% existing customers, 30% new customers for realistic distribution.
+				return $this->faker->boolean( 70 ) ? $this->get_random_customer() : $this->create_new_customer();
+		}
+	}
+
+	/**
 	 * Get a random customer for order generation using EasyCommerce Customer model
 	 *
 	 * @since 1.0.0
@@ -132,6 +184,67 @@ class Order_Generator extends Generator {
 
 		// Use faker to randomly select from available customers.
 		return $this->faker->randomElement( $customers );
+	}
+
+	/**
+	 * Get a specific customer by ID
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $customer_id Customer ID.
+	 *
+	 * @return array|false Customer data or false if not found.
+	 */
+	private function get_specific_customer( int $customer_id ) {
+		try {
+			$customer = new Customer( $customer_id );
+			if ( $customer->exists() ) {
+				return array(
+					'id'         => $customer->get_id(),
+					'name'       => $customer->get_name(),
+					'email'      => $customer->get_email(),
+					'first_name' => $customer->get_first_name(),
+					'last_name'  => $customer->get_last_name(),
+					'role'       => $customer->get_role(),
+				);
+			}
+		} catch ( Exception $e ) {
+			$this->log( 'Failed to get specific customer: ' . $e->getMessage(), 'warning' );
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Create a new customer for order generation
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array|false New customer data or false on failure.
+	 */
+	private function create_new_customer() {
+		try {
+			// Use Customer_Generator to create a new customer.
+			$customer_generator = new Customer_Generator();
+			$result = $customer_generator->generate_single_item();
+
+			if ( is_wp_error( $result ) || ! $result ) {
+				return false;
+			}
+
+			// Return customer in expected format.
+			return array(
+				'id'         => $result['id'],
+				'name'       => $result['name'],
+				'email'      => $result['email'],
+				'first_name' => $result['first_name'] ?? '',
+				'last_name'  => $result['last_name'] ?? '',
+				'role'       => 'customer',
+			);
+		} catch ( Exception $e ) {
+			$this->log( 'Failed to create new customer: ' . $e->getMessage(), 'warning' );
+			return false;
+		}
 	}
 
 	/**

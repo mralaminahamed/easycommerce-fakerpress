@@ -223,13 +223,13 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed           $value   Parameter value.
-	 * @param WP_REST_Request $request Request object.
-	 * @param string          $param   Parameter name.
+	 * @param int|string|mixed $value   Parameter value.
+	 * @param WP_REST_Request  $request Request object.
+	 * @param string           $param   Parameter name.
 	 *
 	 * @return bool|WP_Error True if valid, WP_Error otherwise.
 	 */
-	public function validate_count( $value, WP_REST_Request $request, string $param ) {
+	public function validate_count( $value, WP_REST_Request $request, string $param ): bool|WP_Error {
 		if ( ! is_numeric( $value ) || $value <= 0 || $value > 100 ) {
 			return new WP_Error(
 				'invalid_count',

@@ -53,10 +53,15 @@ abstract class Generator {
 	public function __construct() {
 		global $wpdb;
 
-		$this->wpdb  = $wpdb;
-		$this->faker = Factory::create( get_locale() );
+		$this->wpdb = $wpdb;
 
-		// Add addtional providers.
+		// Sanitize locale to prevent potential security issues.
+		$locale = get_locale();
+		$locale = preg_match( '/^[a-z]{2}_[A-Z]{2}$/', $locale ) ? $locale : 'en_US';
+
+		$this->faker = Factory::create( $locale );
+
+		// Add additional providers.
 		$this->faker->addProvider( new DateTime( $this->faker ) );
 		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
 	}

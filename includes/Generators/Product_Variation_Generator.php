@@ -28,6 +28,26 @@ use RuntimeException;
 class Product_Variation_Generator extends Generator {
 
 	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array
+	 */
+	private array $generation_params = array();
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
+	}
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @return string Resource type name.
@@ -44,14 +64,12 @@ class Product_Variation_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
-			$data     = Product::list( array(), 20 );
-			$products = $data['products'] ?? array();
+			// Get product for variation generation.
+			$product = $this->get_product_for_variation();
 
-			if ( empty( $products ) ) {
-				throw new RuntimeException( 'No products found. Please generate products first.' );
+			if ( ! $product ) {
+				throw new RuntimeException( 'No suitable products found. Please generate products first.' );
 			}
-
-			$product = $this->faker->randomElement( $products );
 			if ( ! $product->exists() ) {
 				return false;
 			}
@@ -94,6 +112,84 @@ class Product_Variation_Generator extends Generator {
 			$this->log( 'Failed to generate variation: ' . $e->getMessage(), 'error' );
 			return false;
 		}
+	}
+
+	/**
+	 * Get product for variation generation based on parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return Product|null Product instance or null if none found.
+	 */
+	private function get_product_for_variation() {
+		$specific_product_id = $this->generation_params['specific_product_id'] ?? null;
+		$product_types = $this->generation_params['product_types'] ?? array();
+		$exclude_products = $this->generation_params['exclude_products'] ?? array();
+
+		// If specific product is requested.
+		if ( $specific_product_id ) {
+			$product = new Product( $specific_product_id );
+			return $product->exists() ? $product : null;
+		}
+
+		// Get products with filters.
+		$query_params = array( 'per_page' => 50 );
+		
+		// Add product type filter.
+		if ( ! empty( $product_types ) ) {
+			$query_params['type'] = $product_types;
+		}
+
+		// Get products.
+		$data     = Product::list( $query_params );
+		$products = $data['products'] ?? array();
+
+		if ( empty( $products ) ) {
+			return null;
+		}
+
+		// Filter out excluded products.
+		if ( ! empty( $exclude_products ) ) {
+			$products = array_filter(
+				$products,
+				function ( $product ) use ( $exclude_products ) {
+					return ! in_array( $product->get_id(), $exclude_products, true );
+				}
+			);
+		}
+
+		// Filter to products that can have variations.
+		$variable_products = array_filter(
+			$products,
+			function ( $product ) {
+				// Check if product can have variations (has attributes or is variable type).
+				return $this->can_product_have_variations( $product );
+			}
+		);
+
+		if ( empty( $variable_products ) ) {
+			// If no variable products, use any available product.
+			return ! empty( $products ) ? $this->faker->randomElement( $products ) : null;
+		}
+
+		return $this->faker->randomElement( $variable_products );
+	}
+
+	/**
+	 * Check if product can have variations
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param Product $product Product to check.
+	 *
+	 * @return bool True if product can have variations.
+	 */
+	private function can_product_have_variations( Product $product ): bool {
+		// Check if product has attributes or is already a variable product type.
+		$product_type = $product->get_type();
+		$has_attributes = ! empty( $product->get_attributes() );
+		
+		return $product_type === 'variable' || $has_attributes || $product_type === 'simple';
 	}
 
 	/**

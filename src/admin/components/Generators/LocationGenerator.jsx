@@ -30,25 +30,64 @@ export default function LocationGenerator() {
 	};
 
 	const parameterConfig = {
-		coverage_scope: {
-			description: __( 'Geographic coverage scope', 'easycommerce-fakerpress' ),
-			type: 'string',
-			enum: [ 'minimal', 'regional', 'national', 'international' ],
-			default: 'international',
+		regions: {
+			description: __( 'Geographic regions to generate locations for', 'easycommerce-fakerpress' ),
+			type: 'array',
+			items: {
+				type: 'string',
+				enum: [ 
+					'Americas', 'Europe', 'Asia', 'Africa', 'Oceania', 
+					'Northern America', 'Western Europe', 'Eastern Europe', 'Southern Europe', 'Northern Europe',
+					'Southeast Asia', 'East Asia', 'South Asia', 'Western Asia',
+					'North Africa', 'Sub-Saharan Africa', 'Australia and New Zealand'
+				],
+			},
 		},
-		data_completeness: {
-			description: __( 'Location data completeness level', 'easycommerce-fakerpress' ),
-			type: 'string',
-			enum: [ 'basic', 'standard', 'comprehensive' ],
-			default: 'standard',
+		countries: {
+			description: __( 'Specific countries to generate (ISO2, ISO3, or full names)', 'easycommerce-fakerpress' ),
+			type: 'array',
+			items: {
+				type: 'string',
+			},
 		},
-		include_coordinates: {
-			description: __( 'Include latitude/longitude coordinates', 'easycommerce-fakerpress' ),
+		max_countries: {
+			description: __( 'Maximum number of countries to generate', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 1,
+			maximum: 50,
+			default: 10,
+		},
+		include_states: {
+			description: __( 'Include states/provinces for countries', 'easycommerce-fakerpress' ),
 			type: 'boolean',
 			default: true,
 		},
-		include_timezones: {
-			description: __( 'Include timezone information', 'easycommerce-fakerpress' ),
+		include_cities: {
+			description: __( 'Include cities for states/provinces', 'easycommerce-fakerpress' ),
+			type: 'boolean',
+			default: true,
+		},
+		cities_per_state: {
+			description: __( 'Maximum cities per state/province', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				min: {
+					description: __( 'Minimum cities per state', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 1,
+					default: 3,
+				},
+				max: {
+					description: __( 'Maximum cities per state', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 1,
+					maximum: 50,
+					default: 15,
+				},
+			},
+		},
+		include_coordinates: {
+			description: __( 'Include latitude/longitude coordinates', 'easycommerce-fakerpress' ),
 			type: 'boolean',
 			default: true,
 		},

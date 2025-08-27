@@ -30,33 +30,91 @@ export default function ProductVariationGenerator() {
 	};
 
 	const parameterConfig = {
-		variation_type: {
-			description: __( 'Type of variations to generate', 'easycommerce-fakerpress' ),
-			type: 'string',
-			enum: [ 'color', 'size', 'material', 'style', 'mixed' ],
-			default: 'mixed',
+		specific_product_id: {
+			description: __( 'Specific product ID to generate variations for', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 1,
 		},
-		price_variation: {
-			description: __( 'Price variation settings', 'easycommerce-fakerpress' ),
-			type: 'object',
-			properties: {
-				enable_variation: { type: 'boolean', default: true },
-				variation_percentage: { type: 'integer', minimum: 5, maximum: 50, default: 20 },
+		product_types: {
+			description: __( 'Product types to consider for variation generation', 'easycommerce-fakerpress' ),
+			type: 'array',
+			items: {
+				type: 'string',
+				enum: [ 'simple', 'variable', 'grouped', 'external', 'digital' ],
+			},
+			default: [ 'simple', 'variable' ],
+		},
+		exclude_products: {
+			description: __( 'Product IDs to exclude from variation generation', 'easycommerce-fakerpress' ),
+			type: 'array',
+			items: {
+				type: 'integer',
 			},
 		},
-		stock_distribution: {
-			description: __( 'Stock quantity distribution', 'easycommerce-fakerpress' ),
+		price_variance: {
+			description: __( 'Price variance settings for variations', 'easycommerce-fakerpress' ),
 			type: 'object',
 			properties: {
-				low_stock_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 10 },
-				out_of_stock_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 5 },
+				min_percentage: {
+					description: __( 'Minimum price variance percentage from base product', 'easycommerce-fakerpress' ),
+					type: 'number',
+					minimum: -50,
+					maximum: 50,
+					default: -20,
+				},
+				max_percentage: {
+					description: __( 'Maximum price variance percentage from base product', 'easycommerce-fakerpress' ),
+					type: 'number',
+					minimum: -50,
+					maximum: 100,
+					default: 30,
+				},
 			},
 		},
-		attribute_complexity: {
-			description: __( 'Attribute complexity level', 'easycommerce-fakerpress' ),
-			type: 'string',
-			enum: [ 'simple', 'moderate', 'complex' ],
-			default: 'moderate',
+		stock_settings: {
+			description: __( 'Stock management settings for variations', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				manage_stock: {
+					description: __( 'Enable stock management for variations', 'easycommerce-fakerpress' ),
+					type: 'boolean',
+					default: true,
+				},
+				stock_range: {
+					description: __( 'Stock quantity range', 'easycommerce-fakerpress' ),
+					type: 'object',
+					properties: {
+						min: {
+							type: 'integer',
+							minimum: 0,
+							default: 0,
+						},
+						max: {
+							type: 'integer',
+							minimum: 1,
+							default: 100,
+						},
+					},
+				},
+			},
+		},
+		variation_attributes: {
+			description: __( 'Attribute generation settings', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				create_missing_attributes: {
+					description: __( 'Create missing attributes if needed', 'easycommerce-fakerpress' ),
+					type: 'boolean',
+					default: true,
+				},
+				max_attributes_per_variation: {
+					description: __( 'Maximum attributes per variation', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 1,
+					maximum: 10,
+					default: 3,
+				},
+			},
 		},
 	};
 

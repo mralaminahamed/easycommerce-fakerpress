@@ -3,11 +3,13 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 import GeneratorBase from '../GeneratorBase';
+import { useDataValidation } from '../DataValidator';
 
 export default function ShippingPlanGenerator() {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ result, setResult ] = useState( null );
 	const [ error, setError ] = useState( null );
+	const validationStatus = useDataValidation( 'shipping-plans' );
 
 	const handleGenerate = async ( params ) => {
 		setIsLoading( true );
@@ -31,11 +33,11 @@ export default function ShippingPlanGenerator() {
 
 	const parameterConfig = {
 		shipping_types: {
-			description: __( 'Types of shipping methods to generate', 'easycommerce-fakerpress' ),
+			description: __( 'Types of shipping plans to generate', 'easycommerce-fakerpress' ),
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: [ 'standard', 'express', 'overnight', 'pickup', 'free', 'weight_based', 'flat_rate' ],
+				enum: [ 'standard', 'express', 'overnight', 'free', 'weight' ],
 			},
 			default: [ 'standard', 'express', 'free' ],
 		},
@@ -48,13 +50,13 @@ export default function ShippingPlanGenerator() {
 			},
 		},
 		coverage_areas: {
-			description: __( 'Geographic coverage areas', 'easycommerce-fakerpress' ),
+			description: __( 'Geographic coverage areas and regional scope', 'easycommerce-fakerpress' ),
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: [ 'domestic', 'international', 'regional', 'worldwide' ],
+				enum: [ 'north_america', 'europe', 'asia_pacific', 'international', 'worldwide' ],
 			},
-			default: [ 'domestic', 'international' ],
+			default: [ 'north_america', 'europe' ],
 		},
 		calculation_methods: {
 			description: __( 'Shipping calculation methods', 'easycommerce-fakerpress' ),
@@ -66,11 +68,26 @@ export default function ShippingPlanGenerator() {
 			default: [ 'flat_rate', 'weight_based' ],
 		},
 		delivery_timeframes: {
-			description: __( 'Delivery time ranges', 'easycommerce-fakerpress' ),
+			description: __( 'Delivery time ranges and scheduling', 'easycommerce-fakerpress' ),
 			type: 'object',
 			properties: {
 				min_days: { type: 'integer', minimum: 0, default: 1 },
 				max_days: { type: 'integer', minimum: 1, default: 14 },
+			},
+		},
+		plan_settings: {
+			description: __( 'Shipping plan configuration settings', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				active_ratio: { type: 'integer', minimum: 50, maximum: 100, default: 85 },
+				taxable_ratio: { type: 'integer', minimum: 0, maximum: 100, default: 60 },
+				regions_per_plan: {
+					type: 'object',
+					properties: {
+						min: { type: 'integer', minimum: 1, maximum: 5, default: 2 },
+						max: { type: 'integer', minimum: 3, maximum: 15, default: 8 },
+					},
+				},
 			},
 		},
 	};
@@ -85,6 +102,7 @@ export default function ShippingPlanGenerator() {
 			result={ result }
 			error={ error }
 			parameterConfig={ parameterConfig }
+			validationStatus={ validationStatus }
 		/>
 	);
 }

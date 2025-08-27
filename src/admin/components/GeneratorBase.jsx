@@ -4,7 +4,9 @@ import { Button, Disclosure, DisclosureButton, DisclosurePanel, Field, Input, La
 import { RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
-export default function GeneratorBase( { title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children } ) {
+import DataValidationStatus, { QuickSetup } from './DataValidator';
+
+export default function GeneratorBase( { title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, validationStatus, children } ) {
 	const [ count, setCount ] = useState( 10 );
 	const [ showAdvanced, setShowAdvanced ] = useState( false );
 	const [ parameters, setParameters ] = useState( {} );
@@ -227,6 +229,24 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 				<p className="mt-1 text-sm text-gray-500 leading-6">{ description }</p>
 			</div>
 
+			{ /* Data Validation Status */ }
+			{ validationStatus && (
+				<DataValidationStatus 
+					generatorType={ type } 
+					validationStatus={ validationStatus }
+				/>
+			) }
+			
+			{ validationStatus && ! validationStatus.ready && (
+				<QuickSetup 
+					generatorType={ type }
+					missingDependencies={ [
+						...( validationStatus.availability?.missing_data || [] ),
+						...( validationStatus.dependencies?.missing_dependencies || [] )
+					] }
+				/>
+			) }
+
 			<div className="space-y-6">
 				{ /* Basic Parameters */ }
 				<div className="rounded-lg bg-gray-50 p-6 shadow-sm">
@@ -340,7 +360,7 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 				{ children }
 
 				<Button
-					disabled={ isLoading }
+					disabled={ isLoading || ( validationStatus && ! validationStatus.ready ) }
 					onClick={ handleSubmit }
 					className="inline-flex items-center px-4 py-2 rounded-md bg-wp-admin-primary text-white font-medium text-sm hover:bg-wp-admin-secondary data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[focus]:ring-offset-2 data-[disabled]:bg-wp-admin-accent data-[disabled]:cursor-not-allowed transition-colors"
 				>

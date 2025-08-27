@@ -494,7 +494,8 @@ class Product_Generator extends Generator {
 		$attribute_values = array_values( $attributes );
 
 		// Limit to a reasonable number of variations (max 10).
-		$max_variations = min( 10, array_product( array_map( 'count', $attribute_values ) ) );
+		$counts         = array_map( 'count', $attribute_values );
+		$max_variations = empty( $counts ) ? 0 : min( 10, array_product( $counts ) );
 		$generated      = 0;
 
 		// Generate cartesian product of attributes.
@@ -664,6 +665,18 @@ class Product_Generator extends Generator {
 	 * @return array Cartesian product.
 	 */
 	private function cartesian_product( array $arrays ): array {
+		// Handle empty input arrays.
+		if ( empty( $arrays ) ) {
+			return array();
+		}
+
+		// Handle arrays containing empty sub-arrays.
+		foreach ( $arrays as $array ) {
+			if ( empty( $array ) ) {
+				return array();
+			}
+		}
+
 		$result = array( array() );
 
 		foreach ( $arrays as $array ) {

@@ -72,9 +72,35 @@ class Order_REST_Controller extends REST_Controller {
 			'customer_type'             => array(
 				'description'       => __( 'Type of customers for orders.', 'easycommerce-fakerpress' ),
 				'type'              => 'string',
-				'enum'              => array( 'existing', 'new', 'mixed' ),
+				'enum'              => array( 'existing', 'new', 'mixed', 'specific' ),
 				'default'           => 'mixed',
 				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'specific_customer_id'      => array(
+				'description'       => __( 'Specific customer ID to use for all orders (when customer_type is "specific").', 'easycommerce-fakerpress' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+			),
+			'customer_distribution'     => array(
+				'description' => __( 'Customer type distribution for mixed mode.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'existing_ratio' => array(
+						'description' => __( 'Percentage of existing customers (0-100).', 'easycommerce-fakerpress' ),
+						'type'        => 'integer',
+						'minimum'     => 0,
+						'maximum'     => 100,
+						'default'     => 70,
+					),
+					'new_ratio'      => array(
+						'description' => __( 'Percentage of new customers (0-100).', 'easycommerce-fakerpress' ),
+						'type'        => 'integer',
+						'minimum'     => 0,
+						'maximum'     => 100,
+						'default'     => 30,
+					),
+				),
 			),
 			'order_value'               => array(
 				'description' => __( 'Order value configuration.', 'easycommerce-fakerpress' ),
