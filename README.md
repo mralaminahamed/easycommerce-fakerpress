@@ -341,7 +341,7 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 ## 👨‍💻 Author
 
 **Al Amin Ahamed**
-- Website: [alaminahamed.com](https://alaminahamed.com)
+- Website: [alaminahamed.com](https://github.com/mralaminahamed/)
 - GitHub: [@mralaminahamed](https://github.com/mralaminahamed)
 - Email: me@alaminahamed.com
 

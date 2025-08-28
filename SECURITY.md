@@ -275,7 +275,7 @@ Security researchers who responsibly disclose vulnerabilities will be:
 
 ### Security Team
 - **Primary Email**: security@alaminahamed.com
-- **Website**: https://alaminahamed.com/security
+- **Website**: https://github.com/mralaminahamed//security
 - **Response Time**: Within 48 hours
 
 ### Encrypted Communication

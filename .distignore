@@ -3,6 +3,7 @@
 /src/
 webpack.config.js
 package.json
+composer.lock
 package-lock.json
 yarn.lock
 .babelrc
@@ -32,6 +33,7 @@ README.md
 CHANGELOG.md
 CONTRIBUTING.md
 SECURITY.md
+plugin-submission-review.md
 LICENSE
 /docs/
 /drafts/
