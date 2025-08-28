@@ -33,9 +33,9 @@
     "orders",
     "coupons"
   ],
-  "author": "Al Amin Ahamed <me@alaminahamed.com> (https://alaminahamed.com)",
+  "author": "Al Amin Ahamed <me@alaminahamed.com> (https://github.com/mralaminahamed/)",
   "license": "GPL-2.0-or-later",
-  "homepage": "https://alaminahamed.com/projects/easycommerce-fakerpress",
+  "homepage": "https://github.com/mralaminahamed/easycommerce-fakerpress",
   "repository": {
     "type": "git",
     "url": "https://github.com/mralaminahamed/easycommerce-fakerpress.git"

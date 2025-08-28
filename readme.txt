@@ -259,7 +259,7 @@ Initial release of EasyCommerce FakerPress! Complete EasyCommerce data generatio
 
 **Generated Content:**
 * Uses Faker library to create fictional but realistic-looking data
-* All customer data includes fake names, addresses, and contact information  
+* All customer data includes fake names, addresses, and contact information
 * Generated content is clearly test data, not real customer information
 * Complies with privacy regulations as no actual personal data is involved
 
@@ -298,7 +298,7 @@ class Product_Generator extends Generator {
 // Modify product generation
 add_filter('ecfp_product_data', 'custom_product_data');
 
-// Customize customer creation  
+// Customize customer creation
 add_action('ecfp_after_customer_created', 'custom_customer_setup');
 
 // Modify order generation
@@ -312,7 +312,7 @@ add_filter('ecfp_coupon_rules', 'custom_coupon_rules');
 
 ```
 POST /wp-json/ecfp/v1/products/generate
-POST /wp-json/ecfp/v1/customers/generate  
+POST /wp-json/ecfp/v1/customers/generate
 POST /wp-json/ecfp/v1/orders/generate
 POST /wp-json/ecfp/v1/coupons/generate
 ```
@@ -321,7 +321,7 @@ POST /wp-json/ecfp/v1/coupons/generate
 ```
 easycommerce-fakerpress/
 ├── easycommerce-fakerpress.php           # Main plugin file
-├── class-easycommerce-fakerpress.php     # Main plugin class  
+├── class-easycommerce-fakerpress.php     # Main plugin class
 ├── includes/
 │   ├── Abstracts/                        # Abstract base classes
 │   ├── Generators/                       # Data generators with EasyCommerce integration
@@ -358,8 +358,8 @@ easycommerce-fakerpress/
 Developed by **Al Amin Ahamed** - Senior Full-Stack Developer specializing in WordPress, EasyCommerce, React, and modern web technologies with 10+ years of experience in ecommerce solutions.
 
 **Expertise:**
-* 🌐 **Website**: https://alaminahamed.com
-* 💼 **GitHub**: https://github.com/mralaminahamed  
+* 🌐 **Website**: https://github.com/mralaminahamed/
+* 💼 **GitHub**: https://github.com/mralaminahamed
 * 📧 **Contact**: me@alaminahamed.com
 * 💼 **Services**: Enterprise WordPress development, EasyCommerce solutions, React applications, performance optimization
 
