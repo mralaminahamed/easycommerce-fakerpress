@@ -7,6 +7,9 @@
     <file>./class-easycommerce-fakerpress.php</file>
     <file>./easycommerce-fakerpress.php</file>
 
+    <!-- Only scan PHP files -->
+    <arg name="extensions" value="php"/>
+
     <!-- Exclude vendor and node_modules -->
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
