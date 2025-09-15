@@ -3,11 +3,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 /**
- * Data Validation Hook
+ * Base Data Validation Hook
  *
- * Validates data availability and dependencies for generators
+ * Provides validation methods for data availability and dependencies
  */
-export function useDataValidation() {
+export function useBaseDataValidation() {
 	const [ validationCache, setValidationCache ] = useState( new Map() );
 
 	/**
@@ -44,8 +44,8 @@ export function useDataValidation() {
 			console.error( 'Data validation error:', error );
 			return {
 				ready: false,
-				missing_data: [ 'unknown' ],
-				recommendations: [ __( 'Unable to check data availability. Please try again.', 'easycommerce-fakerpress' ) ],
+				missing_data: [],
+				recommendations: [ __( 'Unable to check data availability. Please try refreshing the page or check your connection.', 'easycommerce-fakerpress' ) ],
 				counts: {},
 			};
 		}
@@ -104,6 +104,68 @@ export function useDataValidation() {
 }
 
 /**
+ * Simplified Data Validation Hook for individual generators
+ *
+ * Returns validation status directly for a specific generator type
+ *
+ * @param {string} generatorType Generator type to validate
+ * @return {Object|null} Validation status object or null if still loading
+ */
+export function useDataValidation( generatorType ) {
+	const [ validationStatus, setValidationStatus ] = useState( null );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const baseValidator = useBaseDataValidation();
+
+	useEffect( () => {
+		if ( ! generatorType ) {
+			return;
+		}
+
+		const validateData = async () => {
+			setIsLoading( true );
+
+			try {
+				const [ availabilityStatus, dependencyStatus ] = await Promise.all( [
+					baseValidator.checkDataAvailability( generatorType ),
+					baseValidator.checkDependencies( generatorType ),
+				] );
+
+				const combinedStatus = {
+					ready: availabilityStatus.ready && dependencyStatus.ready,
+					availability: availabilityStatus,
+					dependencies: dependencyStatus,
+				};
+
+				setValidationStatus( combinedStatus );
+			} catch ( error ) {
+				console.error( 'Validation error:', error );
+				setValidationStatus( {
+					ready: false,
+					availability: {
+						ready: false,
+						missing_data: [],
+						recommendations: [ __( 'Unable to check data availability. Please try refreshing the page or check your connection.', 'easycommerce-fakerpress' ) ],
+						counts: {},
+					},
+					dependencies: {
+						ready: true,
+						missing_dependencies: [],
+						dependency_counts: {},
+						recommendations: [],
+					},
+				} );
+			} finally {
+				setIsLoading( false );
+			}
+		};
+
+		validateData();
+	}, [ generatorType ] );
+
+	return isLoading ? null : validationStatus;
+}
+
+/**
  * Data Validation Status Component
  *
  * Shows validation status and recommendations for a generator
@@ -115,7 +177,7 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 	const [ status, setStatus ] = useState( null );
 	const [ dependencies, setDependencies ] = useState( null );
 	const [ isChecking, setIsChecking ] = useState( true );
-	const { checkDataAvailability, checkDependencies } = useDataValidation();
+	const { checkDataAvailability, checkDependencies } = useBaseDataValidation();
 
 	useEffect( () => {
 		const validateData = async () => {
@@ -202,17 +264,20 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
 			) }
 
 			{ /* Missing Data */ }
-			{ status.missing_data && status.missing_data.length > 0 && (
+			{ status.missing_data && status.missing_data.filter( ( missing ) => missing && missing !== 'unknown' ).length > 0 && (
 				<div className="mb-3">
 					<h5 className="text-sm font-medium text-red-700 mb-1">
 						{ __( 'Missing Data:', 'easycommerce-fakerpress' ) }
 					</h5>
 					<div className="flex flex-wrap gap-2">
-						{ status.missing_data.map( ( missing ) => (
-							<span key={ missing } className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
-								{ formatDataType( missing ) }
-							</span>
-						) ) }
+						{ status.missing_data.filter( ( missing ) => missing && missing !== 'unknown' ).map( ( missing ) => {
+							const formattedType = formatDataType( missing );
+							return formattedType ? (
+								<span key={ missing } className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+									{ formattedType }
+								</span>
+							) : null;
+						} ) }
 					</div>
 				</div>
 			) }
@@ -260,6 +325,11 @@ export function DataValidationStatus( { generatorType, onValidationComplete } ) 
  * @return {string} Formatted type
  */
 function formatDataType( type ) {
+	// Skip formatting for "unknown" - it should not appear now
+	if ( type === 'unknown' ) {
+		return '';
+	}
+
 	const formatMap = {
 		customers: __( 'Customers', 'easycommerce-fakerpress' ),
 		products: __( 'Products', 'easycommerce-fakerpress' ),
@@ -282,7 +352,10 @@ function formatDataType( type ) {
  * @param root0.missingDependencies
  */
 export function QuickSetup( { generatorType, missingDependencies } ) {
-	if ( ! missingDependencies || missingDependencies.length === 0 ) {
+	// Filter out empty, unknown, or invalid dependencies
+	const validDependencies = ( missingDependencies || [] ).filter( ( dep ) => dep && dep !== 'unknown' && dep.trim() !== '' );
+	
+	if ( validDependencies.length === 0 ) {
 		return null;
 	}
 
@@ -291,7 +364,7 @@ export function QuickSetup( { generatorType, missingDependencies } ) {
 		return dependencies.sort( ( a, b ) => order.indexOf( a ) - order.indexOf( b ) );
 	};
 
-	const orderedDependencies = getSetupOrder( missingDependencies );
+	const orderedDependencies = getSetupOrder( validDependencies );
 
 	return (
 		<div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
