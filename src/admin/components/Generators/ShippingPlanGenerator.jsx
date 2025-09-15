@@ -3,13 +3,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 import GeneratorBase from '../GeneratorBase';
-import { useDataValidation } from '../DataValidator';
 
 export default function ShippingPlanGenerator() {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ result, setResult ] = useState( null );
 	const [ error, setError ] = useState( null );
-	const validationStatus = useDataValidation( 'shipping-plans' );
 
 	const handleGenerate = async ( params ) => {
 		setIsLoading( true );
@@ -102,7 +100,6 @@ export default function ShippingPlanGenerator() {
 			result={ result }
 			error={ error }
 			parameterConfig={ parameterConfig }
-			validationStatus={ validationStatus }
 		/>
 	);
 }

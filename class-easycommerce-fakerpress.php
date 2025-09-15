@@ -20,7 +20,6 @@ use EasyCommerceFakerPress\Controllers\Tax_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Transaction_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Cart_Session_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Validation_REST_Controller;
 
 /**
  * Main Plugin Class
@@ -224,9 +223,6 @@ class EasyCommerce_FakerPress {
 			new Transaction_REST_Controller(),
 			new Cart_Session_REST_Controller(),
 			new Location_REST_Controller(),
-
-			// Utility endpoints.
-			new Validation_REST_Controller(),
 		);
 
 		foreach ( $controllers as $controller ) {
