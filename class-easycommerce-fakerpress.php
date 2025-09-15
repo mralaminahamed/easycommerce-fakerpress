@@ -25,9 +25,12 @@ use EasyCommerceFakerPress\Controllers\Validation_REST_Controller;
 /**
  * Main Plugin Class
  *
- * Handles plugin initialization, dependencies, admin interface, and REST API registration.
+ * Comprehensive EasyCommerce test data generator featuring 10 specialized generators,
+ * real-time validation system, modern React Router v7 interface, WordPress admin
+ * color integration, and advanced parameter configuration.
  *
  * @since 1.0.0
+ * @version 2.1.0
  */
 class EasyCommerce_FakerPress {
 
@@ -45,7 +48,7 @@ class EasyCommerce_FakerPress {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	public string $version = '1.0.0';
+	public string $version = '2.1.0';
 
 	/**
 	 * Get single instance of the class
@@ -71,8 +74,8 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function init(): void {
-		register_activation_hook( ECFP_PLUGIN_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( ECFP_PLUGIN_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'deactivate' ) );
 
 		if ( ! $this->check_dependencies() ) {
 			add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
@@ -137,7 +140,7 @@ class EasyCommerce_FakerPress {
 			return;
 		}
 
-		$asset_file = ECFP_PLUGIN_PATH . 'build/admin.asset.php';
+		$asset_file = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'build/admin.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
@@ -159,7 +162,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_script(
 			'easycommerce-fakerpress-admin',
-			ECFP_PLUGIN_URL . 'build/admin.js',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/admin.js',
 			$deps,
 			$version,
 			true
@@ -167,7 +170,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_style(
 			'easycommerce-fakerpress-admin',
-			ECFP_PLUGIN_URL . 'build/admin.css',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/admin.css',
 			array(),
 			$version
 		);
@@ -184,7 +187,7 @@ class EasyCommerce_FakerPress {
 
 		wp_localize_script(
 			'easycommerce-fakerpress-admin',
-			'ecfpApi',
+			'easycommerceFakerpressApi',
 			array(
 				'restUrl'     => rest_url( 'easycommerce-fakerpress/v1/' ),
 				'restNonce'   => wp_create_nonce( 'wp_rest' ),

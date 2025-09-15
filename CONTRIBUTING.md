@@ -344,7 +344,7 @@ We encourage adding tests for new functionality:
 // Example PHPUnit test
 class Test_Product_Generator extends WP_UnitTestCase {
     public function test_generate_products() {
-        $generator = new ECFP_Product_Generator();
+        $generator = new \EasyCommerceFakerPress\Generators\Product_Generator();
         $result = $generator->generate(5);
         
         $this->assertCount(5, $result);
@@ -432,7 +432,7 @@ Product generation fails when generating more than 50 products
 ## Environment
 - WordPress: 6.4.1
 - PHP: 8.1.0
-- Plugin Version: 1.0.0
+- Plugin Version: 2.1.0
 - EasyCommerce: 1.0.0
 
 ## Steps to Reproduce
@@ -489,7 +489,7 @@ $input = sanitize_text_field( $_POST['input'] ?? '' );
 echo esc_html( $output );
 
 // Nonce verification
-check_ajax_referer( 'ecfp_nonce', 'nonce' );
+check_ajax_referer( 'easycommerce_fakerpress_nonce', 'nonce' );
 
 // Capability checks
 if ( ! current_user_can( 'manage_options' ) ) {

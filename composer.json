@@ -1,6 +1,6 @@
 {
     "name": "mralaminahamed/easycommerce-fakerpress",
-    "description": "Generate fake ecommerce data (orders, products, customers, coupons) for EasyCommerce plugin using PHPFaker library with modern React-based admin interface.",
+    "description": "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [

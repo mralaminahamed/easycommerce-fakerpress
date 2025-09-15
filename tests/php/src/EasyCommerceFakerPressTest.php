@@ -48,7 +48,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test version property
 	 */
 	public function test_version(): void {
-		$this->assertEquals( ECFP_VERSION, $this->plugin->version );
+		$this->assertEquals( EASYCOMMERCE_FAKERPRESS_VERSION, $this->plugin->version );
 	}
 
 	/**
@@ -61,10 +61,10 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 		// Verify the correct hooks were registered with proper priority
 		$this->assertEquals( 10, has_action( 'admin_menu', array( $this->plugin, 'add_admin_menu' ) ) );
 		$this->assertEquals( 10, has_action( 'admin_enqueue_scripts', array( $this->plugin, 'enqueue_admin_assets' ) ) );
-		$this->assertEquals( 10, has_action( 'wp_ajax_ecfp_generate_data', array( $this->plugin, 'handle_ajax_request' ) ) );
+		$this->assertEquals( 10, has_action( 'wp_ajax_easycommerce_fakerpress_generate_data', array( $this->plugin, 'handle_ajax_request' ) ) );
 
 		// Verify activation and deactivation hooks
-		$file = plugin_basename( ECFP_PLUGIN_FILE );
+		$file = plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE );
 		$this->assertTrue( has_action( "activate_{$file}" ) !== false );
 		$this->assertTrue( has_action( "deactivate_{$file}" ) !== false );
 	}
@@ -158,7 +158,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 		wp_set_current_user( $user_id );
 
 		// Set up valid nonce
-		$_POST['nonce'] = wp_create_nonce( 'ecfp_nonce' );
+		$_POST['nonce'] = wp_create_nonce( 'easycommerce_fakerpress_nonce' );
 
 		// Expect wp_die to be called
 		$this->expectException( \WPDieException::class );
@@ -176,12 +176,12 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 		wp_set_current_user( $admin_id );
 
 		// Set up valid request
-		$_POST['nonce'] = wp_create_nonce( 'ecfp_nonce' );
+		$_POST['nonce'] = wp_create_nonce( 'easycommerce_fakerpress_nonce' );
 		$_POST['type'] = 'products';
 		$_POST['count'] = 5;
 
 		// Mock the generator
-		$mock_generator = $this->createMock( \ECFP_Product_Generator::class );
+		$mock_generator = $this->createMock( \EasyCommerceFakerPress\Generators\Product_Generator::class );
 		$mock_generator->method( 'generate' )->willReturn( array( 'success' => true, 'products_created' => 5 ) );
 
 		// We can't easily test the full method without actual generators, so we test parameter validation

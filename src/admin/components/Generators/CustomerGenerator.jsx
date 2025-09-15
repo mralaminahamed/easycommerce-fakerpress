@@ -116,7 +116,7 @@ export default function CustomerGenerator() {
 					'mobile_shopper',
 					'social_media_engaged',
 					'product_reviewer',
-					'seasonal_shopper'
+					'seasonal_shopper',
 				],
 			},
 			default: [ 'loyal_customer', 'frequent_shopper', 'bargain_seeker' ],

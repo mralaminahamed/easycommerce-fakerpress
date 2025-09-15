@@ -3,7 +3,7 @@
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-8892BF.svg)](https://php.net/)
-[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-2.1.0-green.svg)]()
 
 A comprehensive WordPress plugin that generates realistic fake ecommerce data for EasyCommerce stores. Features 10 specialized generators, advanced parameter configuration, WordPress admin color integration, and modern React interface with comprehensive business logic modeling.
 
@@ -20,6 +20,7 @@ A comprehensive WordPress plugin that generates realistic fake ecommerce data fo
 - 💳 **Transactions**: Payment transaction history with multiple gateways and status distributions
 - 🛒 **Cart Sessions**: Shopping cart sessions with abandonment scenarios and recovery simulation
 - 🌍 **Location Data**: Comprehensive location hierarchy (countries, states, cities) with coordinates
+- ✅ **Data Validation**: Real-time validation endpoints for data availability and dependency checks
 
 ### 🎛️ Advanced Parameter System
 - **Dynamic Parameter Configuration**: Each generator has extensive customization options
@@ -30,16 +31,18 @@ A comprehensive WordPress plugin that generates realistic fake ecommerce data fo
 
 ### 🎨 Modern User Interface
 - **WordPress Admin Color Integration**: Automatically adapts to user's chosen admin color scheme
-- **React 18 + Tailwind CSS**: Modern, responsive interface with excellent performance
-- **Tabbed Navigation**: Organized generator access with progress tracking
+- **React 18 + React Router v7**: Modern, responsive interface with data router patterns
+- **Component-Based Architecture**: Clean separation between Pages, Generators, and Base components
 - **Enhanced Form Controls**: Smart form fields with proper labeling and validation
 - **Real-time Feedback**: Live generation progress with detailed status updates
+- **Data Validation UI**: Real-time dependency checking and data availability indicators
 
 ### 🏗️ Technical Excellence
 - **PSR-4 Architecture**: Modern PHP with namespacing, autoloading, and abstract base classes
-- **REST API Controllers**: Clean API design replacing legacy AJAX endpoints
+- **REST API Controllers**: 11 specialized controllers including validation endpoints
 - **EasyCommerce Integration**: Native model usage with proper business logic enforcement
 - **WordPress Standards**: Full WPCS compliance with security best practices
+- **Code Quality**: PHPStan level 8, ESLint, Stylelint with comprehensive validation
 - **Extensible Design**: Hook system and abstract patterns for easy customization
 
 ## 📸 Screenshots
@@ -191,9 +194,10 @@ npm run fix              # Auto-fix JS/CSS issues
 - **Cart Sessions**: Create shopping cart sessions with abandonment scenarios
 - **Location Data**: Populate location hierarchy for geographic functionality
 
-3. **Configure Parameters**: Use advanced parameter controls for customized data generation
-4. **Monitor Progress**: Watch real-time generation progress with detailed feedback
-5. **Adaptive UI**: Interface automatically matches your WordPress admin color scheme
+3. **Validate Dependencies**: Check data availability and dependencies in real-time
+4. **Configure Parameters**: Use advanced parameter controls for customized data generation
+5. **Monitor Progress**: Watch real-time generation progress with detailed feedback
+6. **Adaptive UI**: Interface automatically matches your WordPress admin color scheme
 
 ### Generated Data Quality
 
@@ -248,23 +252,27 @@ easycommerce-fakerpress/
 │   │   ├── Transaction_Generator.php     # Payment transaction history
 │   │   ├── Cart_Session_Generator.php    # Cart sessions & abandonment
 │   │   └── Location_Generator.php        # Geographic location hierarchy
-│   └── REST/
-│       └── Controllers/                  # REST API controllers with parameters
-│           ├── Product_REST_Controller.php
-│           ├── Customer_REST_Controller.php
-│           ├── Order_REST_Controller.php
-│           ├── Coupon_REST_Controller.php
-│           ├── Product_Variation_REST_Controller.php
-│           ├── Shipping_Plan_REST_Controller.php
-│           ├── Tax_REST_Controller.php
-│           ├── Transaction_REST_Controller.php
-│           ├── Cart_Session_REST_Controller.php
-│           └── Location_REST_Controller.php
+│   └── Controllers/                      # REST API controllers with parameters
+│       ├── Product_REST_Controller.php
+│       ├── Customer_REST_Controller.php
+│       ├── Order_REST_Controller.php
+│       ├── Coupon_REST_Controller.php
+│       ├── Product_Variation_REST_Controller.php
+│       ├── Shipping_Plan_REST_Controller.php
+│       ├── Tax_REST_Controller.php
+│       ├── Transaction_REST_Controller.php
+│       ├── Cart_Session_REST_Controller.php
+│       ├── Location_REST_Controller.php
+│       └── Validation_REST_Controller.php
 ├── src/
 │   └── admin/
 │       ├── components/                   # React components with advanced UX
-│       │   ├── App.jsx                   # Main app with 10-tab navigation
+│       │   ├── App.jsx                   # Main router with createHashRouter
 │       │   ├── GeneratorBase.jsx         # Enhanced form controls & validation
+│       │   ├── Pages/                    # Route-based page components
+│       │   │   ├── RootLayout.jsx        # Main layout wrapper with Outlet
+│       │   │   ├── HomePage.jsx          # Generator selection grid
+│       │   │   └── GeneratorPage.jsx     # Individual generator pages
 │       │   └── Generators/               # Individual generator components
 │       │       ├── ProductGenerator.jsx  # Core generators
 │       │       ├── CustomerGenerator.jsx
@@ -293,11 +301,12 @@ easycommerce-fakerpress/
 ### Technology Stack
 
 - **Backend**: PHP 7.4+, WordPress REST API, EasyCommerce Models
-- **Frontend**: React 18, Tailwind CSS, Headless UI
+- **Frontend**: React 18, React Router v7, Tailwind CSS, Headless UI
 - **Build Tools**: Webpack 5, Babel, PostCSS, Sass
 - **Data Generation**: Faker PHP library with realistic patterns
-- **Code Quality**: ESLint, Stylelint, PHPCS, PHPStan
+- **Code Quality**: ESLint, Stylelint, PHPCS, PHPStan level 8
 - **Architecture**: PSR-4 autoloading, dependency injection, abstract patterns
+- **Validation**: Real-time data availability and dependency validation
 
 ### EasyCommerce Integration
 
@@ -350,6 +359,33 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 For support and bug reports, please use the [GitHub Issues](https://github.com/mralaminahamed/easycommerce-fakerpress/issues) page.
 
 ## 🔄 Changelog
+
+### v2.1.0 - Enhanced Architecture & Validation
+**Release Date: September 15, 2025**
+
+#### 🔧 Frontend Modernization
+- **React Router v7**: Migrated from HashRouter to createHashRouter with data router patterns
+- **Component Architecture**: Separated App.jsx into focused Page components (RootLayout, HomePage, GeneratorPage)
+- **Improved Organization**: Clear separation between Pages, Generators, and Base components
+- **Performance**: Route-based code splitting and optimized bundle size
+
+#### ✅ Data Validation System
+- **Validation Controller**: New REST controller for real-time data availability checks
+- **Dependency Validation**: Smart dependency checking with user-friendly recommendations
+- **UI Integration**: Real-time validation indicators in the generator interface
+- **Error Handling**: Comprehensive error handling with graceful degradation
+
+#### 🏗️ Code Quality Improvements
+- **Controller Schema**: Fixed schema property structures across all REST controllers
+- **PHPDoc Compliance**: Enhanced documentation and parameter validation
+- **WordPress Standards**: Improved WPCS compliance with proper inline comment formatting
+- **Abstract Methods**: Added missing abstract method implementations
+
+#### 🛠️ Development Experience
+- **Build System**: Enhanced Webpack configuration with better asset optimization
+- **Code Standards**: Implemented PHPStan level 8 compliance
+- **File Organization**: Improved .gitignore and .distignore for cleaner builds
+- **Documentation**: Updated comprehensive development guides
 
 ### v1.0.0 - Initial Release
 **Release Date: August 5, 2025**

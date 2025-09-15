@@ -11,7 +11,7 @@ export default function RootLayout() {
 				</h1>
 				<p className="mt-2 text-sm text-gray-500 leading-6">
 					{ __(
-						'Generate fake ecommerce data for testing and development with a seamless and intuitive interface.',
+						'Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, and modern interface.',
 						'easycommerce-fakerpress',
 					) }
 				</p>

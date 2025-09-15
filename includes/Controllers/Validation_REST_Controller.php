@@ -10,8 +10,6 @@ namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\REST_Controller;
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerceFakerPress\Helpers\Data_Validator;
-use EasyCommerceFakerPress\Helpers\Generator_Relationships;
 use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Order;
@@ -19,6 +17,7 @@ use EasyCommerce\Models\Location;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
+use WP_REST_Server;
 
 /**
  * Validation REST Controller Class
@@ -48,12 +47,12 @@ class Validation_REST_Controller extends REST_Controller {
 	 * @return void
 	 */
 	public function register_routes(): void {
-		// Check data availability endpoint
+		// Check data availability endpoint.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->get_rest_base() . '/check-data/(?P<generator_type>[a-zA-Z0-9-_]+)',
 			array(
-				'methods'             => \WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'check_data_availability' ),
 				'permission_callback' => array( $this, 'get_item_permissions_check' ),
 				'args'                => array(
@@ -66,12 +65,12 @@ class Validation_REST_Controller extends REST_Controller {
 			)
 		);
 
-		// Check dependencies endpoint
+		// Check dependencies endpoint.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->get_rest_base() . '/check-dependencies/(?P<generator_type>[a-zA-Z0-9-_]+)',
 			array(
-				'methods'             => \WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'check_dependencies' ),
 				'permission_callback' => array( $this, 'get_item_permissions_check' ),
 				'args'                => array(
@@ -94,7 +93,7 @@ class Validation_REST_Controller extends REST_Controller {
 	 *
 	 * @return bool|WP_Error True if permission granted, error otherwise.
 	 */
-	public function get_item_permissions_check( WP_REST_Request $request ) {
+	public function get_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
@@ -123,7 +122,7 @@ class Validation_REST_Controller extends REST_Controller {
 
 			return new WP_REST_Response( $availability_data, 200 );
 		} catch ( \Exception $e ) {
-			// Return a more user-friendly error without "unknown" data
+			// Return a more user-friendly error without "unknown" data.
 			$error_response = array(
 				'ready'           => false,
 				'missing_data'    => array(),
@@ -154,7 +153,7 @@ class Validation_REST_Controller extends REST_Controller {
 
 			return new WP_REST_Response( $dependency_data, 200 );
 		} catch ( \Exception $e ) {
-			// Return a more user-friendly error for dependencies
+			// Return a more user-friendly error for dependencies.
 			$error_response = array(
 				'ready'                => true, // Dependencies are optional, so we can still proceed
 				'missing_dependencies' => array(),
@@ -181,7 +180,7 @@ class Validation_REST_Controller extends REST_Controller {
 		$recommendations = array();
 		$ready           = true;
 
-		// Normalize generator type (handle plurals and variations)
+		// Normalize generator type (handle plurals and variations).
 		$normalized_type = $this->normalize_generator_type( $generator_type );
 
 		switch ( $normalized_type ) {
@@ -230,7 +229,7 @@ class Validation_REST_Controller extends REST_Controller {
 				break;
 
 			default:
-				// For other generator types, assume they're ready unless specific checks are needed
+				// For other generator types, assume they're ready unless specific checks are needed.
 				$ready = true;
 		}
 
@@ -259,7 +258,7 @@ class Validation_REST_Controller extends REST_Controller {
 
 		$normalized_type = $this->normalize_generator_type( $generator_type );
 
-		// Get dependencies from the relationships helper
+		// Get dependencies from the relationships helper.
 		$dependencies = $this->get_type_dependencies( $normalized_type );
 
 		foreach ( $dependencies as $dependency ) {
@@ -441,7 +440,6 @@ class Validation_REST_Controller extends REST_Controller {
 	 *
 	 * @since 2.1.0
 	 *
-	 * @return Generator This method never returns normally.
 	 * @throws \BadMethodCallException Always throws exception.
 	 */
 	protected function get_generator_instance(): Generator {
@@ -457,5 +455,27 @@ class Validation_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_type(): string {
 		return 'validation';
+	}
+
+	/**
+	 * Get resource-specific generation parameters (not applicable for validation)
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array Empty array as validation doesn't use generation parameters.
+	 */
+	protected function get_resource_specific_params(): array {
+		return array();
+	}
+
+	/**
+	 * Get resource-specific schema properties (not applicable for validation)
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array Empty array as validation doesn't use schema properties.
+	 */
+	protected function get_resource_specific_properties(): array {
+		return array();
 	}
 }

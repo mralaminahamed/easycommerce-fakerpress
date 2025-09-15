@@ -4,11 +4,11 @@
  */
 
 // Define plugin directories..
-define( 'TEST_ECFP_DIR', dirname( __DIR__, 2 ) );
+define( 'TEST_EASYCOMMERCE_FAKERPRESS_DIR', dirname( __DIR__, 2 ) );
 define( 'TEST_EC_DIR', dirname( __DIR__, 3 ) . '/easycommerce' );
 
 // Composer autoloader must be loaded before WP_PHPUNIT__DIR will be available.
-require_once TEST_ECFP_DIR . '/vendor/autoload.php';
+require_once TEST_EASYCOMMERCE_FAKERPRESS_DIR . '/vendor/autoload.php';
 
 // Define WordPress test environment path
 $_tests_dir = getenv( 'WP_TESTS_DIR' ) ?: getenv( 'WP_PHPUNIT__DIR' );
@@ -25,9 +25,9 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 /**
  * Truncate EasyCommerce FakerPress tables for clean test runs
  */
-function ecfp_truncate_table_data(): void {
+function easycommerce_fakerpress_truncate_table_data(): void {
 	$tables = array(
-		'ecfp_generated_data',
+		'easycommerce_fakerpress_generated_data',
 		// Add other tables as needed.
 	);
 
@@ -51,7 +51,7 @@ function _manually_load_plugin() {
 	require TEST_EC_DIR . '/easycommerce.php';
 
 	// Load our plugin.
-	require TEST_ECFP_DIR . '/easycommerce-fakerpress.php';
+	require TEST_EASYCOMMERCE_FAKERPRESS_DIR . '/easycommerce-fakerpress.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
@@ -83,11 +83,11 @@ function install_easycommerce() {
 /**
  * Install EasyCommerce FakerPress for testing
  */
-function install_ecfp() {
+function install_easycommerce_fakerpress() {
 	echo 'Installing EasyCommerce FakerPress...' . PHP_EOL;
 
 	// Clean up existing tables.
-	ecfp_truncate_table_data();
+	easycommerce_fakerpress_truncate_table_data();
 
 	// Activate the plugin.
 	if ( function_exists( 'easycommerce_fakerpress' ) ) {
@@ -97,7 +97,7 @@ function install_ecfp() {
 
 // Install dependencies and our plugin.
 tests_add_filter( 'setup_theme', 'install_easycommerce' );
-tests_add_filter( 'setup_theme', 'install_ecfp' );
+tests_add_filter( 'setup_theme', 'install_easycommerce_fakerpress' );
 
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';

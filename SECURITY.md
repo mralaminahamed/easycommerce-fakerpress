@@ -131,7 +131,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 #### Nonce Verification
 ```php
 // Good - CSRF protection
-check_ajax_referer( 'ecfp_nonce', 'nonce' );
+check_ajax_referer( 'easycommerce_fakerpress_nonce', 'nonce' );
 ```
 
 ### React Component Security

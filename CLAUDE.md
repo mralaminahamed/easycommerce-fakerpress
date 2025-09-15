@@ -164,7 +164,7 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 ### Admin Interface
 - **Page**: `admin.php?page=easycommerce-fakerpress`
 - **React Mount Point**: `#easycommerce-fakerpress-root`
-- **Security**: `ecfp_nonce` for REST API authentication
+- **Security**: `easycommerce_fakerpress_nonce` for REST API authentication
 - **Permissions**: `manage_options` capability required
 
 ## Code Patterns and Best Practices
@@ -504,3 +504,4 @@ import { generators } from './Pages/HomePage';
 - Respect inventory management rules and constraints
 - Handle shipping calculation integration properly
 - Maintain coupon usage tracking and validation
+- use composer commands to check code qualityand linting
