@@ -199,7 +199,7 @@ class Order_Generator extends Generator {
 	private function get_specific_customer( int $customer_id ) {
 		try {
 			$customer = new Customer( $customer_id );
-			if ( $customer->exists() ) {
+			if ( $customer->get_id() && $customer->get_id() > 0 ) {
 				return array(
 					'id'         => $customer->get_id(),
 					'name'       => $customer->get_name(),

@@ -153,7 +153,7 @@ class Cart_Session_Generator extends Generator {
 	 * @return array|null Customer data or null if none found.
 	 */
 	private function get_random_existing_customer() {
-		$customer_data = Customer::list( 'customer', null, 1, 30 );
+		$customer_data = Customer::customer_list( null, 1, 30 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {
@@ -183,7 +183,7 @@ class Cart_Session_Generator extends Generator {
 	private function get_specific_customer_for_cart( int $customer_id ) {
 		try {
 			$customer = new Customer( $customer_id );
-			if ( $customer->exists() ) {
+			if ( $customer->get_id() && $customer->get_id() > 0 ) {
 				return array(
 					'id'         => $customer->get_id(),
 					'name'       => $customer->get_name(),
@@ -569,7 +569,7 @@ class Cart_Session_Generator extends Generator {
 
 		// Get existing products and customers.
 		$product_data  = Product::list( array(), 30 );
-		$customer_data = Customer::list( 'customer', null, 1, 20 );
+		$customer_data = Customer::customer_list( null, 1, 20 );
 
 		$products  = $product_data['products'] ?? array();
 		$customers = $customer_data['users'] ?? array();
