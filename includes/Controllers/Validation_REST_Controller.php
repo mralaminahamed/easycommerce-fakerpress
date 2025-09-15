@@ -188,10 +188,6 @@ class Validation_REST_Controller extends REST_Controller {
 				$customer_count = $this->get_model_count( Customer::class );
 				if ( $customer_count > 0 ) {
 					$data_counts['customers'] = $customer_count;
-				} else {
-					$missing_data[]    = 'customers';
-					$recommendations[] = __( 'Generate some customers first to enable customer-related features', 'easycommerce-fakerpress' );
-					$ready             = false;
 				}
 				break;
 
@@ -199,10 +195,6 @@ class Validation_REST_Controller extends REST_Controller {
 				$product_count = $this->get_model_count( Product::class );
 				if ( $product_count > 0 ) {
 					$data_counts['products'] = $product_count;
-				} else {
-					$missing_data[]    = 'products';
-					$recommendations[] = __( 'Generate some products first to enable product-related features', 'easycommerce-fakerpress' );
-					$ready             = false;
 				}
 				break;
 
@@ -210,10 +202,6 @@ class Validation_REST_Controller extends REST_Controller {
 				$order_count = $this->get_model_count( Order::class );
 				if ( $order_count > 0 ) {
 					$data_counts['orders'] = $order_count;
-				} else {
-					$missing_data[]    = 'orders';
-					$recommendations[] = __( 'Generate some orders first to enable order-related features', 'easycommerce-fakerpress' );
-					$ready             = false;
 				}
 				break;
 
@@ -221,10 +209,6 @@ class Validation_REST_Controller extends REST_Controller {
 				$location_count = $this->get_model_count( Location::class );
 				if ( $location_count > 0 ) {
 					$data_counts['locations'] = $location_count;
-				} else {
-					$missing_data[]    = 'locations';
-					$recommendations[] = __( 'Generate location data first to enable geographic features', 'easycommerce-fakerpress' );
-					$ready             = false;
 				}
 				break;
 
