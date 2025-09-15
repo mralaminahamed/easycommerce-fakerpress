@@ -175,8 +175,8 @@ class Order_Generator extends Generator {
 	 * @return array|false Random customer user object or false if none found.
 	 */
 	private function get_random_customer() {
-		// Use EasyCommerce Customer model to get existing customers.
-		$customer_data = Customer::list( 'customer', null, 1, 50 );
+		// Use EasyCommerce Customer model's customer_list method to get customers with proper capabilities.
+		$customer_data = Customer::customer_list( null, 1, 50 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {

@@ -56,8 +56,12 @@ class Product_Generator extends Generator {
 			$attributes    = $this->get_or_create_product_attributes( $product_type );
 			$variations    = $this->generate_product_variations( $attributes, $product_type );
 
-			// Use EasyCommerce Product model with complete data structure.
-			$product    = new Product();
+			// Use EasyCommerce Product model with compatible data structure.
+			$product = new Product();
+
+			// Prepare variations with proper structure for EasyCommerce model.
+			$formatted_variations = $this->format_variations_for_model( $variations, $attributes );
+
 			$product_id = $product->create(
 				array(
 					// Required fields.
@@ -77,7 +81,7 @@ class Product_Generator extends Generator {
 
 					// Product attributes and variations.
 					'attributes'  => $attributes,
-					'variations'  => $variations,
+					'variations'  => $formatted_variations,
 
 					// Additional meta data.
 					'meta'        => array(
@@ -894,6 +898,70 @@ class Product_Generator extends Generator {
 		}
 
 		return $this->faker->randomElements( $brand_ids, $this->faker->numberBetween( 1, 2 ) );
+	}
+
+	/**
+	 * Format variations for EasyCommerce model compatibility
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $variations Generated variations.
+	 * @param array $attributes Product attributes.
+	 *
+	 * @return array Formatted variations.
+	 */
+	private function format_variations_for_model( array $variations, array $attributes ): array {
+		$formatted_variations = array();
+
+		foreach ( $variations as $variation ) {
+			$formatted_attributes = array();
+
+			// Format attributes to match EasyCommerce model expectations.
+			foreach ( $variation['attributes'] as $attr_slug => $attr_value ) {
+				$attribute_model = new Attribute();
+				$attribute_value_model = new Attribute_Value();
+
+				// Get or create attribute.
+				$attribute = $attribute_model->get_by_slug( $attr_slug );
+				if ( ! $attribute ) {
+					continue; // Skip if attribute doesn't exist.
+				}
+
+				// Get or create attribute value.
+				$value_slug = sanitize_title( $attr_value );
+				$attribute_value = $attribute_value_model->get_by_slug( $value_slug );
+				if ( ! $attribute_value ) {
+					continue; // Skip if value doesn't exist.
+				}
+
+				$formatted_attributes[ $attr_slug ] = array(
+					'id'     => $attribute->id,
+					'slug'   => $attribute->slug,
+					'values' => array(
+						array(
+							'id'   => $attribute_value->id,
+							'slug' => $attribute_value->slug,
+						),
+					),
+				);
+			}
+
+			$formatted_variations[] = array(
+				'name'           => $variation['name'],
+				'sku'            => $variation['sku'],
+				'type'           => $variation['type'],
+				'regular_price'  => $variation['regular_price'],
+				'sale_price'     => $variation['sale_price'],
+				'stock_quantity' => $variation['stock_quantity'],
+				'stock_limit'    => $variation['stock_limit'],
+				'status'         => $variation['status'],
+				'attributes'     => $formatted_attributes,
+				'meta'           => $variation['meta'],
+				'downloads'      => $variation['downloads'],
+			);
+		}
+
+		return $formatted_variations;
 	}
 
 	/**

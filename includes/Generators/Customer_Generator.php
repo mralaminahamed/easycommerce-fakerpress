@@ -63,9 +63,23 @@ class Customer_Generator extends Generator {
 				return new WP_Error( 'email_exists', 'A user with this email address already exists.' );
 			}
 
-			// Use EasyCommerce Customer model with complete data structure.
+			// Use EasyCommerce Customer model with proper data structure.
 			$customer = new Customer();
-			$created  = $customer->create(
+			$username = $this->generate_unique_username( $first_name, $last_name );
+
+			// Prepare complete meta data for customer creation.
+			$complete_meta = array_merge(
+				array(
+					'phone'            => $billing_address['phone'],
+					'photo'            => $this->generate_customer_photo(),
+					'billing_address'  => $billing_address,
+					'shipping_address' => ! empty( $shipping_address ) ? $shipping_address : $billing_address,
+				),
+				$customer_meta
+			);
+
+			// Create customer using EasyCommerce Customer model.
+			$created = $customer->create(
 				array(
 					// Required fields.
 					'email'      => $email,
@@ -75,25 +89,24 @@ class Customer_Generator extends Generator {
 					'first_name' => $first_name,
 					'last_name'  => $last_name,
 					'role'       => 'customer',
-					'username'   => $this->generate_unique_username( $first_name, $last_name ),
+					'username'   => $username,
 					'password'   => wp_generate_password( 16, true, true ),
 
 					// Customer meta data.
-					'meta'       => array_merge(
-						array(
-							'phone'            => $billing_address['phone'],
-							'photo'            => $this->generate_customer_photo(),
-							'billing_address'  => $billing_address,
-							'shipping_address' => ! empty( $shipping_address ) ? $shipping_address : $billing_address,
-						),
-						$customer_meta
-					),
+					'meta'       => $complete_meta,
 				)
 			);
 
 			if ( ! $created ) {
 				return new WP_Error( 'customer_creation_failed', 'Failed to create customer using EasyCommerce model.' );
 			}
+
+			// Ensure the user has the proper EasyCommerce customer role.
+			$user = new \WP_User( $customer->get_id() );
+
+			// Remove default role and set EasyCommerce customer role.
+			$user->remove_role( 'subscriber' ); // Remove default role if assigned.
+			$user->set_role( 'customer' ); // Set EasyCommerce customer role with proper capabilities.
 
 			// Initialize customer statistics based on customer age.
 			$this->initialize_customer_history( $customer, $customer_meta );
@@ -102,7 +115,7 @@ class Customer_Generator extends Generator {
 				'id'              => $customer->get_id(),
 				'name'            => $full_name,
 				'email'           => $email,
-				'username'        => $customer->get_meta( 'username' ),
+				'username'        => $username,
 				'phone'           => $billing_address['phone'],
 				'billing_city'    => $billing_address['city'],
 				'billing_country' => $billing_address['country'],
@@ -665,6 +678,10 @@ class Customer_Generator extends Generator {
 	 * @return void
 	 */
 	private function initialize_customer_history( Customer $customer, array $customer_meta ): void {
+		if ( ! $customer->exists() ) {
+			return;
+		}
+
 		$customer->update_meta( 'total_orders', $customer_meta['total_orders'] );
 		$customer->update_meta( 'total_spent', number_format( $customer_meta['total_spent'], 2, '.', '' ) );
 		$customer->update_meta( 'average_order_value', number_format( $customer_meta['average_order_value'], 2, '.', '' ) );
@@ -673,8 +690,5 @@ class Customer_Generator extends Generator {
 		$customer->update_meta( 'loyalty_points', $customer_meta['loyalty_points'] );
 		$customer->update_meta( 'cart_abandonments', $customer_meta['cart_abandonments'] );
 		$customer->update_meta( 'coupon_usage', $customer_meta['coupon_usage'] );
-		$customer->update_meta( 'first_name', $customer->get_meta( 'first_name' ) );
-		$customer->update_meta( 'last_name', $customer->get_meta( 'last_name' ) );
-		$customer->update_meta( 'username', $customer->get_meta( 'username' ) );
 	}
 }
