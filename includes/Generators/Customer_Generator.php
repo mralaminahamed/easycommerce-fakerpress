@@ -678,7 +678,7 @@ class Customer_Generator extends Generator {
 	 * @return void
 	 */
 	private function initialize_customer_history( Customer $customer, array $customer_meta ): void {
-		if ( ! $customer->exists() ) {
+		if ( ! $customer->get_id() || $customer->get_id() <= 0 ) {
 			return;
 		}
 
