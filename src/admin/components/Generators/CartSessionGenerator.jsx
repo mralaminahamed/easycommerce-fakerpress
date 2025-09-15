@@ -43,7 +43,7 @@ export default function CartSessionGenerator() {
 			dependsOn: { customer_type: 'specific' },
 		},
 		guest_cart_ratio: {
-			description: __( 'Percentage of guest carts (0-100) when customer_type is "mixed"', 'easycommerce-fakerpress' ),
+			description: __( 'Percentage of guest carts (0–100) when customer_type is "mixed"', 'easycommerce-fakerpress' ),
 			type: 'integer',
 			minimum: 0,
 			maximum: 100,
@@ -51,7 +51,7 @@ export default function CartSessionGenerator() {
 			dependsOn: { customer_type: 'mixed' },
 		},
 		abandonment_rate: {
-			description: __( 'Cart abandonment rate percentage (0-100)', 'easycommerce-fakerpress' ),
+			description: __( 'Cart abandonment rate percentage (0–100)', 'easycommerce-fakerpress' ),
 			type: 'integer',
 			minimum: 0,
 			maximum: 100,
@@ -141,7 +141,7 @@ export default function CartSessionGenerator() {
 					default: 3,
 				},
 				recovery_rate: {
-					description: __( 'Cart recovery rate percentage (0-100)', 'easycommerce-fakerpress' ),
+					description: __( 'Cart recovery rate percentage (0–100)', 'easycommerce-fakerpress' ),
 					type: 'integer',
 					minimum: 0,
 					maximum: 100,

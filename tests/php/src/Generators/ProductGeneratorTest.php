@@ -8,7 +8,7 @@ use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
 /**
  * Test class for Product Generator
  *
- * @covers \ECFP_Product_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Product_Generator
  */
 class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
@@ -38,19 +38,19 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
-		$this->assertInstanceOf( ECFP_Product_Generator::class, $this->generator );
+		$this->assertInstanceOf( Product_Generator::class, $this->generator );
 	}
 
 	/**
 	 * Test generate method with valid count
 	 */
 	public function test_generate_with_valid_count(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$count = 3;
@@ -68,8 +68,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with zero count
 	 */
 	public function test_generate_with_zero_count(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$result = $this->generator->generate( 0 );
@@ -84,8 +84,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with negative count
 	 */
 	public function test_generate_with_negative_count(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$result = $this->generator->generate( -1 );
@@ -100,8 +100,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with large count
 	 */
 	public function test_generate_with_large_count(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		// Test with maximum allowed count
@@ -122,8 +122,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test that generated products have required fields
 	 */
 	public function test_generated_products_have_required_fields(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$result = $this->generator->generate( 1 );
@@ -144,8 +144,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test product generation with categories
 	 */
 	public function test_product_generation_with_categories(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		// Create some test categories first
@@ -174,8 +174,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test product generation performance
 	 */
 	public function test_product_generation_performance(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$start_time = microtime( true );
@@ -196,8 +196,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test memory usage during generation
 	 */
 	public function test_memory_usage_during_generation(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$memory_before = memory_get_usage();
@@ -218,8 +218,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test that generated products are unique
 	 */
 	public function test_generated_products_are_unique(): void {
-		if ( ! class_exists( 'ECFP_Product_Generator' ) ) {
-			$this->markTestSkipped( 'ECFP_Product_Generator class not found' );
+		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Product_Generator' ) ) {
+			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
 		$result = $this->generator->generate( 5 );

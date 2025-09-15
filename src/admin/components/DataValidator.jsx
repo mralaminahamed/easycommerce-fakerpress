@@ -354,7 +354,7 @@ function formatDataType( type ) {
 export function QuickSetup( { generatorType, missingDependencies } ) {
 	// Filter out empty, unknown, or invalid dependencies
 	const validDependencies = ( missingDependencies || [] ).filter( ( dep ) => dep && dep !== 'unknown' && dep.trim() !== '' );
-	
+
 	if ( validDependencies.length === 0 ) {
 		return null;
 	}

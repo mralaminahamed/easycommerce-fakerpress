@@ -14,8 +14,8 @@ tailwind.config.js
 # composer.json - Needed for production dependencies
 # composer.lock - Needed for production dependencies
 
-# Development tools
-/.yarn
+# Development tools and configuration
+/.yarn/
 .ncurc.json
 .stylelintrc.js
 .yarnrc.yml
@@ -26,6 +26,8 @@ phpcs.xml
 phpcs.plugin-review.xml
 phpstan.neon
 phpunit.xml
+.eslintcache
+.stylelintcache
 
 # Documentation and project files
 README.md
@@ -42,7 +44,9 @@ tests/
 .travis.yml
 .circleci/
 phpunit.xml.dist
-/.phpstan-cache
+/.phpstan-cache/
+/coverage/
+/test-results/
 
 # IDE and editor files
 /.vscode/
@@ -50,15 +54,28 @@ phpunit.xml.dist
 *.sublime-project
 *.sublime-workspace
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Build and release directories
 /release/
 /dist/
+/build/
 
 # Git files
 /.git/
 .gitattributes
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Temporary files
 *.tmp
@@ -68,9 +85,20 @@ Thumbs.db
 *.swo
 *~
 
+# Archives (development)
+*.zip
+*.tar.gz
+*.rar
+
 # Claude AI files
 /.claude/
 CLAUDE.md
 
 # WordPress specific files
-/.wordpress-org
+/.wordpress-org/
+wp-config.php
+wp-config-local.php
+
+# Cache directories
+/.cache/
+/tmp/

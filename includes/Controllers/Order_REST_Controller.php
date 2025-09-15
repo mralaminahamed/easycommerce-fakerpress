@@ -188,6 +188,8 @@ class Order_REST_Controller extends REST_Controller {
 			'orders' => array(
 				'description' => __( 'Generated orders data.', 'easycommerce-fakerpress' ),
 				'type'        => 'array',
+				'context'     => array( 'view' ),
+				'readonly'    => true,
 				'items'       => array(
 					'type'       => 'object',
 					'properties' => array(

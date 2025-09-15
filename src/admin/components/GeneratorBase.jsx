@@ -231,18 +231,18 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 
 			{ /* Data Validation Status */ }
 			{ validationStatus && (
-				<DataValidationStatus 
-					generatorType={ type } 
+				<DataValidationStatus
+					generatorType={ type }
 					validationStatus={ validationStatus }
 				/>
 			) }
-			
+
 			{ validationStatus && ! validationStatus.ready && (
-				<QuickSetup 
+				<QuickSetup
 					generatorType={ type }
 					missingDependencies={ [
 						...( validationStatus.availability?.missing_data || [] ),
-						...( validationStatus.dependencies?.missing_dependencies || [] )
+						...( validationStatus.dependencies?.missing_dependencies || [] ),
 					] }
 				/>
 			) }

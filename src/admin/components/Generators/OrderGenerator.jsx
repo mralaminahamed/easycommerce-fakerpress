@@ -54,14 +54,14 @@ export default function OrderGenerator() {
 			dependsOn: { customer_type: 'mixed' },
 			properties: {
 				existing_ratio: {
-					description: __( 'Percentage of existing customers (0-100)', 'easycommerce-fakerpress' ),
+					description: __( 'Percentage of existing customers (0–100)', 'easycommerce-fakerpress' ),
 					type: 'integer',
 					minimum: 0,
 					maximum: 100,
 					default: 70,
 				},
 				new_ratio: {
-					description: __( 'Percentage of new customers (0-100)', 'easycommerce-fakerpress' ),
+					description: __( 'Percentage of new customers (0–100)', 'easycommerce-fakerpress' ),
 					type: 'integer',
 					minimum: 0,
 					maximum: 100,

@@ -35,11 +35,11 @@ export default function LocationGenerator() {
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: [ 
-					'Americas', 'Europe', 'Asia', 'Africa', 'Oceania', 
+				enum: [
+					'Americas', 'Europe', 'Asia', 'Africa', 'Oceania',
 					'Northern America', 'Western Europe', 'Eastern Europe', 'Southern Europe', 'Northern Europe',
 					'Southeast Asia', 'East Asia', 'South Asia', 'Western Asia',
-					'North Africa', 'Sub-Saharan Africa', 'Australia and New Zealand'
+					'North Africa', 'Sub-Saharan Africa', 'Australia and New Zealand',
 				],
 			},
 		},

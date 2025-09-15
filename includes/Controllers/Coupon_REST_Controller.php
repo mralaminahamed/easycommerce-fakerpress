@@ -177,6 +177,8 @@ class Coupon_REST_Controller extends REST_Controller {
 			'coupons' => array(
 				'description' => __( 'Generated coupons data.', 'easycommerce-fakerpress' ),
 				'type'        => 'array',
+				'context'     => array( 'view' ),
+				'readonly'    => true,
 				'items'       => array(
 					'type'       => 'object',
 					'properties' => array(

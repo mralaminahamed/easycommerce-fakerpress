@@ -1,22 +1,11 @@
 {
   "name": "@mralaminahamed/easycommerce-fakerpress",
-  "version": "1.0.0",
-  "description": "Generate fake ecommerce data (orders, products, customers, coupons) for EasyCommerce plugin using PHPFaker library with modern React-based admin interface.",
-  "main": "src/index.js",
+  "version": "2.1.0",
+  "description": "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",
-    "dev": "wp-scripts start",
-    "watch": "wp-scripts start",
-    "lint:css": "wp-scripts lint-style src/**/*.scss",
-    "lint:js": "wp-scripts lint-js src/**/*.js",
-    "lint:php": "phpcs",
-    "lint:php:fix": "phpcbf",
-    "phpstan": "phpstan analyse",
-    "format": "wp-scripts format src/**/*.js",
-    "packages-update": "wp-scripts packages-update",
-    "lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-    "fix": "wp-scripts format src/**/*.js && npm run lint:php:fix"
+    "packages-update": "wp-scripts packages-update"
   },
   "keywords": [
     "wordpress",
