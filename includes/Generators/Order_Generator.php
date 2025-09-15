@@ -358,9 +358,8 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param float $subtotal Order subtotal.
-	 *
 	 * @param array $customer Customer user object.
+	 * @param float $subtotal Order subtotal.
 	 *
 	 * @return array Order metadata.
 	 */

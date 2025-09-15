@@ -3,13 +3,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 import GeneratorBase from '../GeneratorBase';
-import { useDataValidation } from '../DataValidator';
 
 export default function CouponGenerator() {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ result, setResult ] = useState( null );
 	const [ error, setError ] = useState( null );
-	const validationStatus = useDataValidation( 'coupons' );
 
 	const handleGenerate = async ( params ) => {
 		setIsLoading( true );
@@ -224,7 +222,6 @@ export default function CouponGenerator() {
 			result={ result }
 			error={ error }
 			parameterConfig={ parameterConfig }
-			validationStatus={ validationStatus }
 		/>
 	);
 }
