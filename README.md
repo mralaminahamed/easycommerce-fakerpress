@@ -7,43 +7,23 @@
 
 A comprehensive WordPress plugin that generates realistic fake ecommerce data for EasyCommerce stores. Features 10 specialized generators, advanced parameter configuration, WordPress admin color integration, and modern React interface with comprehensive business logic modeling.
 
-## ✨ Features
+## 🚀 Quick Start
 
-### 🗂️ 10 Specialized Generators
-- 🛍️ **Products**: Advanced products with attributes, variations, categories, and pricing strategies
-- 👥 **Customers**: Comprehensive customer profiles with demographics, purchase history, and loyalty tiers
-- 📦 **Orders**: Complete orders with payment processing, shipping, tax calculations, and item metadata
-- 🎫 **Coupons**: Sophisticated discount coupons with usage limits, restrictions, and validity periods
-- 🔄 **Product Variations**: Detailed product variations with attribute systems and inventory tracking
-- 🚚 **Shipping Plans**: Shipping methods with regional coverage, carrier selection, and cost calculations
-- 💰 **Tax Management**: Multi-jurisdiction tax classes with location-based rates and rule systems
-- 💳 **Transactions**: Payment transaction history with multiple gateways and status distributions
-- 🛒 **Cart Sessions**: Shopping cart sessions with abandonment scenarios and recovery simulation
-- 🌍 **Location Data**: Comprehensive location hierarchy (countries, states, cities) with coordinates
-- ✅ **Data Validation**: Real-time validation endpoints for data availability and dependency checks
+1. **Install Dependencies**: `composer install && npm install`
+2. **Build Assets**: `npm run build`
+3. **Activate Plugin**: WordPress Admin → Plugins → Activate "EasyCommerce FakerPress"
+4. **Access Interface**: WordPress Admin → EC FakerPress
 
-### 🎛️ Advanced Parameter System
-- **Dynamic Parameter Configuration**: Each generator has extensive customization options
-- **Nested Object Parameters**: Complex parameter structures with proper state management
-- **Smart Defaults**: Intelligent default values based on EasyCommerce best practices
-- **Parameter Validation**: Client-side and server-side validation with proper error handling
-- **Conditional Logic**: Parameters that adapt based on other selections
+For detailed installation instructions, see our [Installation Guide](docs/installation.md).
 
-### 🎨 Modern User Interface
-- **WordPress Admin Color Integration**: Automatically adapts to user's chosen admin color scheme
-- **React 18 + React Router v7**: Modern, responsive interface with data router patterns
-- **Component-Based Architecture**: Clean separation between Pages, Generators, and Base components
-- **Enhanced Form Controls**: Smart form fields with proper labeling and validation
-- **Real-time Feedback**: Live generation progress with detailed status updates
-- **Data Validation UI**: Real-time dependency checking and data availability indicators
+## ✨ Key Features
 
-### 🏗️ Technical Excellence
-- **PSR-4 Architecture**: Modern PHP with namespacing, autoloading, and abstract base classes
-- **REST API Controllers**: 11 specialized controllers including validation endpoints
-- **EasyCommerce Integration**: Native model usage with proper business logic enforcement
-- **WordPress Standards**: Full WPCS compliance with security best practices
-- **Code Quality**: PHPStan level 8, ESLint, Stylelint with comprehensive validation
-- **Extensible Design**: Hook system and abstract patterns for easy customization
+- 🗂️ **10 Specialized Generators** - Products, Customers, Orders, Coupons, and more
+- 🎛️ **Advanced Parameter System** - Dynamic configuration with smart defaults
+- 🎨 **Modern Interface** - React 18 with WordPress admin color integration
+- 🏗️ **Enterprise Architecture** - PSR-4, REST API, EasyCommerce integration
+
+See the complete [Features Overview](docs/features.md) for detailed information.
 
 ## 📸 Screenshots
 
@@ -63,285 +43,58 @@ A comprehensive WordPress plugin that generates realistic fake ecommerce data fo
 ![Order Generator](.wordpress-org/screenshot-4.png)
 *Complete order generation with payment processing and shipping calculations*
 
-### Coupon Generator
-![Coupon Generator](.wordpress-org/screenshot-5.png)
-*Sophisticated discount coupon system with advanced rule configurations*
+## 📚 Documentation
 
-### Advanced Generators
-![Advanced Generators](.wordpress-org/screenshot-6.png)
-*Product variations, shipping plans, tax management, and transaction generators*
-
-### Cart & Location Features
-![Cart & Location Features](.wordpress-org/screenshot-7.png)
-*Shopping cart sessions and comprehensive location data management*
-
-### Parameter Configuration
-![Parameter Configuration](.wordpress-org/screenshot-8.png)
-*Advanced parameter controls with nested object configurations and validation*
-
-### Real-time Progress
-![Generation Progress](.wordpress-org/screenshot-9.png)
-*Live generation progress with detailed status updates and error handling*
-
-### WordPress Integration
-![WordPress Integration](.wordpress-org/screenshot-10.png)
-*Seamless WordPress admin integration with color scheme adaptation*
-
-### Generated Data Preview
-![Generated Data Preview](.wordpress-org/screenshot-11.png)
-*Preview of realistic generated data with proper EasyCommerce integration*
+| Document | Description |
+|----------|-------------|
+| [Installation Guide](docs/installation.md) | Setup instructions and requirements |
+| [Usage Guide](docs/usage.md) | How to use the generators and interface |
+| [Features Overview](docs/features.md) | Complete feature list and capabilities |
+| [Architecture](docs/architecture.md) | Technical architecture and design patterns |
+| [Development Guide](docs/development.md) | Contributing and development workflow |
+| [Changelog](docs/changelog.md) | Version history and release notes |
 
 ## 📋 Requirements
 
-- **WordPress**: 5.0 or higher  
+- **WordPress**: 5.0 or higher
 - **PHP**: 7.4 or higher
 - **EasyCommerce Plugin**: Required for ecommerce functionality
 - **Node.js**: 14+ (for development)
 - **Composer**: For PHP dependency management
 
-## 🚀 Installation
-
-### Manual Installation
-
-1. **Download**: Clone or download this plugin to your WordPress plugins directory
-   ```bash
-   cd /path/to/wp-content/plugins/
-   git clone https://github.com/mralaminahamed/easycommerce-fakerpress.git
-   ```
-
-2. **Install Dependencies**: 
-   ```bash
-   cd easycommerce-fakerpress
-   composer install          # Install PHP dependencies
-   npm install              # Install Node.js dependencies
-   ```
-
-3. **Build Assets**:
-   ```bash
-   npm run build            # Build production assets
-   ```
-
-4. **Activate**: Go to WordPress Admin → Plugins and activate "EasyCommerce FakerPress"
-
-### Development Setup
-
-For development work on this plugin:
+## 🛠️ Quick Commands
 
 ```bash
-# Clone the repository
-git clone https://github.com/mralaminahamed/easycommerce-fakerpress.git
-cd easycommerce-fakerpress
-
 # Install dependencies
-composer install
-npm install
+composer install && npm install
 
-# Start development server with hot reload
-npm run dev
-```
+# Development
+npm run dev              # Watch mode for development
+npm run build            # Production build
 
-## 🛠️ Development
-
-### Build Commands
-
-```bash
-# Development build with watch mode
-npm run dev
-npm run start
-
-# Production build
-npm run build
-
-# Linting and code quality
+# Code quality
 npm run lint             # Lint JS and CSS
-npm run fix              # Auto-fix linting issues
 composer run lint        # PHP CodeSniffer
-composer run fix         # PHP Code Beautifier
 ```
 
-### Code Quality & Standards
+See the [Development Guide](docs/development.md) for complete build instructions.
 
-```bash
-# PHP Quality Tools
-composer run lint        # PHPCS linting
-composer run fix         # PHPCBF auto-fix
-composer run phpstan     # Static analysis
-
-# JavaScript/CSS Tools  
-npm run lint:js          # ESLint
-npm run lint:css         # Stylelint
-npm run fix              # Auto-fix JS/CSS issues
-```
-
-## 📖 Usage
-
-### Admin Interface
-
-1. Navigate to **WordPress Admin → EC FakerPress**
-2. Choose from the comprehensive tabbed interface:
-
-#### Core Generators
-- **Products**: Generate products with attributes, variations, categories, pricing, and inventory
-- **Customers**: Create customer accounts with demographics, purchase history, and loyalty tiers
-- **Orders**: Generate complete orders with payment processing, shipping, and tax calculations
-- **Coupons**: Create discount coupons with usage limits, restrictions, and validity periods
-
-#### Enhanced Generators
-- **Product Variations**: Create detailed product variations with attribute systems
-- **Shipping Plans**: Generate shipping methods with regional coverage and cost calculations
-- **Tax Management**: Create tax classes with multi-jurisdiction rates and rules
-- **Transactions**: Generate payment transaction history with multiple gateways
-- **Cart Sessions**: Create shopping cart sessions with abandonment scenarios
-- **Location Data**: Populate location hierarchy for geographic functionality
-
-3. **Validate Dependencies**: Check data availability and dependencies in real-time
-4. **Configure Parameters**: Use advanced parameter controls for customized data generation
-5. **Monitor Progress**: Watch real-time generation progress with detailed feedback
-6. **Adaptive UI**: Interface automatically matches your WordPress admin color scheme
-
-### Generated Data Quality
-
-#### Products
-- **Realistic Product Data**: Names, descriptions, pricing, and SKUs
-- **Product Variations**: Size, color, material attributes with proper inventory
-- **Categories & Brands**: WordPress taxonomy integration
-- **Gallery Images**: Placeholder images with proper metadata
-- **Inventory Management**: Stock quantities, low stock limits, and status tracking
-
-#### Customers  
-- **Complete Profiles**: Names, emails, addresses, and phone numbers
-- **International Support**: Multi-country addresses with proper formatting
-- **Purchase History**: Realistic order counts and spending patterns based on customer age
-- **Loyalty Systems**: Bronze/Silver/Gold/Platinum tiers with points
-- **Behavioral Data**: Marketing preferences, communication settings, and segmentation tags
-
-#### Orders
-- **Complete Transactions**: Customer selection, product variations, and pricing
-- **Payment Processing**: Multiple payment methods with realistic transaction data
-- **Shipping Calculations**: Carrier selection, costs, and delivery estimates
-- **Tax Management**: Multi-rate tax calculations with proper breakdowns
-- **Order Fulfillment**: Status tracking, shipping labels, and delivery updates
-
-#### Coupons
-- **Discount Types**: Percentage and fixed amount discounts with realistic values
-- **Rule Systems**: Spending limits, date ranges, usage restrictions, and customer targeting
-- **Product Restrictions**: Include/exclude specific products or categories
-- **Advanced Features**: Free shipping, stackable coupons, and first-time customer offers
-- **Business Logic**: Comprehensive validation and application rules
-
-## 🏗️ Architecture
-
-### Modern Plugin Structure
-
-```
-easycommerce-fakerpress/
-├── easycommerce-fakerpress.php           # Main plugin file
-├── class-easycommerce-fakerpress.php     # Main plugin class with color integration
-├── includes/
-│   ├── Abstracts/                        # Abstract base classes
-│   │   ├── Generator.php                 # Base generator with parameter handling
-│   │   └── REST_Controller.php           # Base REST controller with validation
-│   ├── Generators/                       # 10 Specialized generators
-│   │   ├── Product_Generator.php         # Products with attributes & variations
-│   │   ├── Customer_Generator.php        # Comprehensive customer profiles
-│   │   ├── Order_Generator.php           # Orders with item metadata & locations
-│   │   ├── Coupon_Generator.php          # Coupons with advanced rule systems
-│   │   ├── Product_Variation_Generator.php # Product variations & attributes
-│   │   ├── Shipping_Plan_Generator.php   # Shipping methods & regional coverage
-│   │   ├── Tax_Generator.php             # Tax classes & location-based rates
-│   │   ├── Transaction_Generator.php     # Payment transaction history
-│   │   ├── Cart_Session_Generator.php    # Cart sessions & abandonment
-│   │   └── Location_Generator.php        # Geographic location hierarchy
-│   └── Controllers/                      # REST API controllers with parameters
-│       ├── Product_REST_Controller.php
-│       ├── Customer_REST_Controller.php
-│       ├── Order_REST_Controller.php
-│       ├── Coupon_REST_Controller.php
-│       ├── Product_Variation_REST_Controller.php
-│       ├── Shipping_Plan_REST_Controller.php
-│       ├── Tax_REST_Controller.php
-│       ├── Transaction_REST_Controller.php
-│       ├── Cart_Session_REST_Controller.php
-│       ├── Location_REST_Controller.php
-│       └── Validation_REST_Controller.php
-├── src/
-│   └── admin/
-│       ├── components/                   # React components with advanced UX
-│       │   ├── App.jsx                   # Main router with createHashRouter
-│       │   ├── GeneratorBase.jsx         # Enhanced form controls & validation
-│       │   ├── Pages/                    # Route-based page components
-│       │   │   ├── RootLayout.jsx        # Main layout wrapper with Outlet
-│       │   │   ├── HomePage.jsx          # Generator selection grid
-│       │   │   └── GeneratorPage.jsx     # Individual generator pages
-│       │   └── Generators/               # Individual generator components
-│       │       ├── ProductGenerator.jsx  # Core generators
-│       │       ├── CustomerGenerator.jsx
-│       │       ├── OrderGenerator.jsx
-│       │       ├── CouponGenerator.jsx
-│       │       ├── ProductVariationGenerator.jsx # Enhanced generators
-│       │       ├── ShippingPlanGenerator.jsx
-│       │       ├── TaxGenerator.jsx
-│       │       ├── TransactionGenerator.jsx
-│       │       ├── CartSessionGenerator.jsx
-│       │       └── LocationGenerator.jsx
-│       ├── styles.css                   # Tailwind with WordPress color integration
-│       └── index.js                     # Entry point with color scheme support
-├── build/                               # Compiled assets with CSS variables
-├── vendor/                              # Composer dependencies
-├── node_modules/                        # NPM dependencies
-├── composer.json                        # PSR-4 autoloading & dependencies
-├── package.json                         # Modern build tools & dependencies
-├── webpack.config.js                    # Advanced build configuration
-├── tailwind.config.js                   # WordPress admin color integration
-├── phpcs.xml.dist                       # PHP CodeSniffer rules
-├── CLAUDE.md                            # Comprehensive development guide
-└── README.md                            # This file
-```
-
-### Technology Stack
+## 🏗️ Technology Stack
 
 - **Backend**: PHP 7.4+, WordPress REST API, EasyCommerce Models
 - **Frontend**: React 18, React Router v7, Tailwind CSS, Headless UI
 - **Build Tools**: Webpack 5, Babel, PostCSS, Sass
 - **Data Generation**: Faker PHP library with realistic patterns
 - **Code Quality**: ESLint, Stylelint, PHPCS, PHPStan level 8
-- **Architecture**: PSR-4 autoloading, dependency injection, abstract patterns
-- **Validation**: Real-time data availability and dependency validation
-
-### EasyCommerce Integration
-
-The plugin seamlessly integrates with EasyCommerce through:
-
-- **Model Integration**: Uses EasyCommerce Product, Customer, Order, and Coupon models
-- **Database Abstraction**: Leverages EasyCommerce Database class for consistent data access
-- **Business Logic**: Implements EasyCommerce business rules and validation
-- **Relationship Management**: Maintains proper data relationships and integrity
-- **Attribute System**: Creates proper product attributes and variations
-- **Meta Data**: Uses EasyCommerce meta systems for extended data storage
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Please read our [Development Guide](docs/development.md) for:
 
-### Development Workflow
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Install dependencies (`composer install && npm install`)
-4. Make your changes following the coding standards
-5. Run tests and linting (`npm run lint && composer run lint`)
-6. Build assets (`npm run build`)
-7. Commit your changes (`git commit -m 'Add amazing feature'`)
-8. Push to the branch (`git push origin feature/amazing-feature`)
-9. Open a Pull Request
-
-### Coding Standards
-
-- **PHP**: WordPress Coding Standards (WPCS) with PSR-4 autoloading
-- **JavaScript**: ESLint with WordPress standards
-- **CSS**: Stylelint with Tailwind CSS best practices
-- **Documentation**: PHPDoc blocks and inline comments
-- **Testing**: Unit tests for critical functionality
+- Development workflow and setup
+- Coding standards and quality tools
+- Pull request process
+- Testing guidelines
 
 ## 📝 License
 
@@ -358,70 +111,8 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 
 For support and bug reports, please use the [GitHub Issues](https://github.com/mralaminahamed/easycommerce-fakerpress/issues) page.
 
-## 🔄 Changelog
+---
 
-### v2.1.0 - Enhanced Architecture & Validation
-**Release Date: September 15, 2025**
+**Current Version**: v2.1.0 | **Last Updated**: September 23, 2025
 
-#### 🔧 Frontend Modernization
-- **React Router v7**: Migrated from HashRouter to createHashRouter with data router patterns
-- **Component Architecture**: Separated App.jsx into focused Page components (RootLayout, HomePage, GeneratorPage)
-- **Improved Organization**: Clear separation between Pages, Generators, and Base components
-- **Performance**: Route-based code splitting and optimized bundle size
-
-#### ✅ Data Validation System
-- **Validation Controller**: New REST controller for real-time data availability checks
-- **Dependency Validation**: Smart dependency checking with user-friendly recommendations
-- **UI Integration**: Real-time validation indicators in the generator interface
-- **Error Handling**: Comprehensive error handling with graceful degradation
-
-#### 🏗️ Code Quality Improvements
-- **Controller Schema**: Fixed schema property structures across all REST controllers
-- **PHPDoc Compliance**: Enhanced documentation and parameter validation
-- **WordPress Standards**: Improved WPCS compliance with proper inline comment formatting
-- **Abstract Methods**: Added missing abstract method implementations
-
-#### 🛠️ Development Experience
-- **Build System**: Enhanced Webpack configuration with better asset optimization
-- **Code Standards**: Implemented PHPStan level 8 compliance
-- **File Organization**: Improved .gitignore and .distignore for cleaner builds
-- **Documentation**: Updated comprehensive development guides
-
-### v1.0.0 - Initial Release
-**Release Date: August 5, 2025**
-
-#### 🎉 Complete EasyCommerce Data Generation Solution
-
-**🗂️ 10 Specialized Generators:**
-- **Products**: Advanced generation with attributes, variations, categories, pricing, and inventory management
-- **Customers**: Comprehensive profiles with demographics, purchase history, and loyalty tier progression
-- **Orders**: Complete orders with payment processing, shipping, tax calculations, and item metadata
-- **Coupons**: Sophisticated discount system with usage limits, restrictions, and validity periods
-- **Product Variations**: Detailed variations with attribute systems and inventory tracking
-- **Shipping Plans**: Methods with regional coverage, carrier selection, and cost calculations
-- **Tax Management**: Multi-jurisdiction tax classes with location-based rates and rule systems
-- **Transactions**: Payment transaction history with multiple gateways and status distributions
-- **Cart Sessions**: Shopping cart abandonment scenarios and recovery simulation
-- **Location Data**: Geographic hierarchy (countries, states, cities) with coordinates and timezone support
-
-#### 🎨 Modern User Experience:
-- **WordPress Admin Color Integration**: Automatic adaptation to user's chosen admin color scheme
-- **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation and smart defaults
-- **Enhanced Form Controls**: Modern React interface with smart form fields and proper labeling
-- **Tabbed Navigation**: Organized 10-generator interface with progress tracking
-- **Real-time Feedback**: Live generation progress with detailed status updates and error handling
-- **Responsive Design**: Mobile-optimized interface with improved accessibility
-
-#### 🏗️ Enterprise Architecture:
-- **PSR-4 Architecture**: Modern PHP with namespacing, autoloading, and abstract base classes
-- **REST API Controllers**: 10 clean API controllers with comprehensive parameter schemas
-- **EasyCommerce Integration**: Native model usage with Order_Item_Meta and location system integration
-- **WordPress Standards**: Full WPCS compliance with security best practices and proper internationalization
-- **Extensible Design**: Hook system and abstract patterns for easy customization and extension
-
-#### 🔧 Technical Excellence:
-- **Modern Build System**: React 18, Tailwind CSS, Webpack 5 with CSS variable integration
-- **Advanced Validation**: Client-side and server-side parameter validation with proper error handling
-- **State Management**: Complex form handling with nested object parameter support
-- **Performance Optimization**: Efficient database operations and memory management
-- **Developer Experience**: Comprehensive documentation, modern tooling, and extensive customization hooks
+For detailed release information, see the [Changelog](docs/changelog.md).
