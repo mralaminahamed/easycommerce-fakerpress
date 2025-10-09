@@ -57,6 +57,11 @@ class Tax_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
+			// Check if EasyCommerce Tax class exists.
+			if ( ! class_exists( Tax::class ) ) {
+				return new \WP_Error( 'missing_model', 'EasyCommerce Tax model not found. Please ensure EasyCommerce plugin is active.' );
+			}
+
 			$tax_class_data = $this->generate_tax_class_data();
 			$tax_class      = $this->create_tax_class( $tax_class_data );
 

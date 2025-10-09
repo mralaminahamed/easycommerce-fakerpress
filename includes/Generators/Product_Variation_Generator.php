@@ -64,6 +64,11 @@ class Product_Variation_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
+			// Check if EasyCommerce Product_Variation class exists.
+			if ( ! class_exists( Product_Variation::class ) ) {
+				return new \WP_Error( 'missing_model', 'EasyCommerce Product_Variation model not found. Please ensure EasyCommerce plugin is active.' );
+			}
+
 			// Get product for variation generation.
 			$product = $this->get_product_for_variation();
 

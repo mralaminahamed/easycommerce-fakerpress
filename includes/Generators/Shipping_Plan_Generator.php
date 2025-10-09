@@ -37,6 +37,11 @@ class Shipping_Plan_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
+			// Check if EasyCommerce Shipping_Plan class exists.
+			if ( ! class_exists( Shipping_Plan::class ) ) {
+				return new \WP_Error( 'missing_model', 'EasyCommerce Shipping_Plan model not found. Please ensure EasyCommerce plugin is active.' );
+			}
+
 			$shipping_plan_data = $this->generate_shipping_plan_data();
 			$shipping_plan      = $this->create_shipping_plan( $shipping_plan_data );
 

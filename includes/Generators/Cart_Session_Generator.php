@@ -62,6 +62,11 @@ class Cart_Session_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
+			// Check if EasyCommerce Cart class exists.
+			if ( ! class_exists( Cart::class ) ) {
+				return new \WP_Error( 'missing_model', 'EasyCommerce Cart model not found. Please ensure EasyCommerce plugin is active.' );
+			}
+
 			// Get existing products.
 			$product_data = Product::list( array(), 50 );
 			$products     = $product_data['products'] ?? array();

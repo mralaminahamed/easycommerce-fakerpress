@@ -184,7 +184,7 @@ class EasyCommerce_FakerPress {
 		);
 		wp_add_inline_style( 'easycommerce-fakerpress-admin', $css_vars );
 
-		// Get locale information for frontend display
+		// Get locale information for frontend display.
 		$wp_locale     = get_locale();
 		$faker_locale  = $this->get_faker_locale_for_display( $wp_locale );
 		$locale_labels = $this->get_locale_labels();
@@ -193,15 +193,15 @@ class EasyCommerce_FakerPress {
 			'easycommerce-fakerpress-admin',
 			'easycommerceFakerpressApi',
 			array(
-				'restUrl'      => rest_url( 'easycommerce-fakerpress/v1/' ),
-				'restNonce'    => wp_create_nonce( 'wp_rest' ),
-				'adminColors'  => $admin_colors,
-				'colorScheme'  => $current_color,
-				'locale'       => array(
-					'wordpress'    => $wp_locale,
-					'faker'        => $faker_locale,
-					'label'        => isset( $locale_labels[ $faker_locale ] ) ? $locale_labels[ $faker_locale ] : 'English (United States)',
-					'allLocales'   => $locale_labels,
+				'restUrl'     => rest_url( 'easycommerce-fakerpress/v1/' ),
+				'restNonce'   => wp_create_nonce( 'wp_rest' ),
+				'adminColors' => $admin_colors,
+				'colorScheme' => $current_color,
+				'locale'      => array(
+					'wordpress'  => $wp_locale,
+					'faker'      => $faker_locale,
+					'label'      => isset( $locale_labels[ $faker_locale ] ) ? $locale_labels[ $faker_locale ] : 'English (United States)',
+					'allLocales' => $locale_labels,
 				),
 			)
 		);
@@ -360,18 +360,18 @@ class EasyCommerce_FakerPress {
 	 * @return string FakerPHP compatible locale code.
 	 */
 	private function get_faker_locale_for_display( string $wp_locale ): string {
-		// Allow developers to override the locale
+		// Allow developers to override the locale.
 		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $wp_locale );
 
-		// Get supported locales
+		// Get supported locales.
 		$supported_locales = array_keys( $this->get_locale_labels() );
 
-		// Direct match
+		// Direct match.
 		if ( in_array( $custom_locale, $supported_locales, true ) ) {
 			return $custom_locale;
 		}
 
-		// Try language fallback
+		// Try language fallback.
 		$language = substr( $custom_locale, 0, 2 );
 		foreach ( $supported_locales as $locale ) {
 			if ( strpos( $locale, $language . '_' ) === 0 ) {
@@ -379,7 +379,7 @@ class EasyCommerce_FakerPress {
 			}
 		}
 
-		// Default fallback
+		// Default fallback.
 		return 'en_US';
 	}
 
@@ -392,79 +392,79 @@ class EasyCommerce_FakerPress {
 	 */
 	private function get_locale_labels(): array {
 		return array(
-			'ar_SA'       => 'Arabic (Saudi Arabia)',
-			'at_AT'       => 'Austrian German',
-			'bg_BG'       => 'Bulgarian (Bulgaria)',
-			'bn_BD'       => 'Bangla (Bangladesh)',
-			'cs_CZ'       => 'Czech (Czech Republic)',
-			'da_DK'       => 'Danish (Denmark)',
-			'de_AT'       => 'German (Austria)',
-			'de_CH'       => 'German (Switzerland)',
-			'de_DE'       => 'German (Germany)',
-			'el_CY'       => 'Greek (Cyprus)',
-			'el_GR'       => 'Greek (Greece)',
-			'en_AU'       => 'English (Australia)',
-			'en_GB'       => 'English (Great Britain)',
-			'en_HK'       => 'English (Hong Kong)',
-			'en_IN'       => 'English (India)',
-			'en_NG'       => 'English (Nigeria)',
-			'en_NZ'       => 'English (New Zealand)',
-			'en_PH'       => 'English (Philippines)',
-			'en_SG'       => 'English (Singapore)',
-			'en_UG'       => 'English (Uganda)',
-			'en_US'       => 'English (United States)',
-			'en_ZA'       => 'English (South Africa)',
-			'es_AR'       => 'Spanish (Argentina)',
-			'es_ES'       => 'Spanish (Spain)',
-			'es_PE'       => 'Spanish (Peru)',
-			'es_VE'       => 'Spanish (Venezuela)',
-			'et_EE'       => 'Estonian (Estonia)',
-			'fa_IR'       => 'Persian (Iran)',
-			'fi_FI'       => 'Finnish (Finland)',
-			'fr_BE'       => 'French (Belgium)',
-			'fr_CA'       => 'French (Canada)',
-			'fr_CH'       => 'French (Switzerland)',
-			'fr_FR'       => 'French (France)',
-			'he_IL'       => 'Hebrew (Israel)',
-			'hr_HR'       => 'Croatian (Croatia)',
-			'hu_HU'       => 'Hungarian (Hungary)',
-			'hy_AM'       => 'Armenian (Armenia)',
-			'id_ID'       => 'Indonesian (Indonesia)',
-			'is_IS'       => 'Icelandic (Iceland)',
-			'it_CH'       => 'Italian (Switzerland)',
-			'it_IT'       => 'Italian (Italy)',
-			'ja_JP'       => 'Japanese (Japan)',
-			'ka_GE'       => 'Georgian (Georgia)',
-			'kk_KZ'       => 'Kazakh (Kazakhstan)',
-			'ko_KR'       => 'Korean (South Korea)',
-			'lt_LT'       => 'Lithuanian (Lithuania)',
-			'lv_LV'       => 'Latvian (Latvia)',
-			'me_ME'       => 'Montenegrin (Montenegro)',
-			'mn_MN'       => 'Mongolian (Mongolia)',
-			'ms_MY'       => 'Malay (Malaysia)',
-			'nb_NO'       => 'Norwegian Bokmål (Norway)',
-			'ne_NP'       => 'Nepali (Nepal)',
-			'nl_BE'       => 'Dutch (Belgium)',
-			'nl_NL'       => 'Dutch (Netherlands)',
-			'pl_PL'       => 'Polish (Poland)',
-			'pt_AO'       => 'Portuguese (Angola)',
-			'pt_BR'       => 'Portuguese (Brazil)',
-			'pt_PT'       => 'Portuguese (Portugal)',
-			'ro_MD'       => 'Romanian (Moldova)',
-			'ro_RO'       => 'Romanian (Romania)',
-			'ru_RU'       => 'Russian (Russia)',
-			'sk_SK'       => 'Slovak (Slovakia)',
-			'sl_SI'       => 'Slovenian (Slovenia)',
-			'sr_Cyrl_RS'  => 'Serbian Cyrillic (Serbia)',
-			'sr_Latn_RS'  => 'Serbian Latin (Serbia)',
-			'sr_RS'       => 'Serbian (Serbia)',
-			'sv_SE'       => 'Swedish (Sweden)',
-			'th_TH'       => 'Thai (Thailand)',
-			'tr_TR'       => 'Turkish (Turkey)',
-			'uk_UA'       => 'Ukrainian (Ukraine)',
-			'vi_VN'       => 'Vietnamese (Vietnam)',
-			'zh_CN'       => 'Chinese (China)',
-			'zh_TW'       => 'Chinese (Taiwan)',
+			'ar_SA'      => 'Arabic (Saudi Arabia)',
+			'at_AT'      => 'Austrian German',
+			'bg_BG'      => 'Bulgarian (Bulgaria)',
+			'bn_BD'      => 'Bangla (Bangladesh)',
+			'cs_CZ'      => 'Czech (Czech Republic)',
+			'da_DK'      => 'Danish (Denmark)',
+			'de_AT'      => 'German (Austria)',
+			'de_CH'      => 'German (Switzerland)',
+			'de_DE'      => 'German (Germany)',
+			'el_CY'      => 'Greek (Cyprus)',
+			'el_GR'      => 'Greek (Greece)',
+			'en_AU'      => 'English (Australia)',
+			'en_GB'      => 'English (Great Britain)',
+			'en_HK'      => 'English (Hong Kong)',
+			'en_IN'      => 'English (India)',
+			'en_NG'      => 'English (Nigeria)',
+			'en_NZ'      => 'English (New Zealand)',
+			'en_PH'      => 'English (Philippines)',
+			'en_SG'      => 'English (Singapore)',
+			'en_UG'      => 'English (Uganda)',
+			'en_US'      => 'English (United States)',
+			'en_ZA'      => 'English (South Africa)',
+			'es_AR'      => 'Spanish (Argentina)',
+			'es_ES'      => 'Spanish (Spain)',
+			'es_PE'      => 'Spanish (Peru)',
+			'es_VE'      => 'Spanish (Venezuela)',
+			'et_EE'      => 'Estonian (Estonia)',
+			'fa_IR'      => 'Persian (Iran)',
+			'fi_FI'      => 'Finnish (Finland)',
+			'fr_BE'      => 'French (Belgium)',
+			'fr_CA'      => 'French (Canada)',
+			'fr_CH'      => 'French (Switzerland)',
+			'fr_FR'      => 'French (France)',
+			'he_IL'      => 'Hebrew (Israel)',
+			'hr_HR'      => 'Croatian (Croatia)',
+			'hu_HU'      => 'Hungarian (Hungary)',
+			'hy_AM'      => 'Armenian (Armenia)',
+			'id_ID'      => 'Indonesian (Indonesia)',
+			'is_IS'      => 'Icelandic (Iceland)',
+			'it_CH'      => 'Italian (Switzerland)',
+			'it_IT'      => 'Italian (Italy)',
+			'ja_JP'      => 'Japanese (Japan)',
+			'ka_GE'      => 'Georgian (Georgia)',
+			'kk_KZ'      => 'Kazakh (Kazakhstan)',
+			'ko_KR'      => 'Korean (South Korea)',
+			'lt_LT'      => 'Lithuanian (Lithuania)',
+			'lv_LV'      => 'Latvian (Latvia)',
+			'me_ME'      => 'Montenegrin (Montenegro)',
+			'mn_MN'      => 'Mongolian (Mongolia)',
+			'ms_MY'      => 'Malay (Malaysia)',
+			'nb_NO'      => 'Norwegian Bokmål (Norway)',
+			'ne_NP'      => 'Nepali (Nepal)',
+			'nl_BE'      => 'Dutch (Belgium)',
+			'nl_NL'      => 'Dutch (Netherlands)',
+			'pl_PL'      => 'Polish (Poland)',
+			'pt_AO'      => 'Portuguese (Angola)',
+			'pt_BR'      => 'Portuguese (Brazil)',
+			'pt_PT'      => 'Portuguese (Portugal)',
+			'ro_MD'      => 'Romanian (Moldova)',
+			'ro_RO'      => 'Romanian (Romania)',
+			'ru_RU'      => 'Russian (Russia)',
+			'sk_SK'      => 'Slovak (Slovakia)',
+			'sl_SI'      => 'Slovenian (Slovenia)',
+			'sr_Cyrl_RS' => 'Serbian Cyrillic (Serbia)',
+			'sr_Latn_RS' => 'Serbian Latin (Serbia)',
+			'sr_RS'      => 'Serbian (Serbia)',
+			'sv_SE'      => 'Swedish (Sweden)',
+			'th_TH'      => 'Thai (Thailand)',
+			'tr_TR'      => 'Turkish (Turkey)',
+			'uk_UA'      => 'Ukrainian (Ukraine)',
+			'vi_VN'      => 'Vietnamese (Vietnam)',
+			'zh_CN'      => 'Chinese (China)',
+			'zh_TW'      => 'Chinese (Taiwan)',
 		);
 	}
 }

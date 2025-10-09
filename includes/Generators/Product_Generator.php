@@ -932,7 +932,7 @@ class Product_Generator extends Generator {
 
 			// Format attributes to match EasyCommerce model expectations.
 			foreach ( $variation['attributes'] as $attr_slug => $attr_value ) {
-				$attribute_model = new Attribute();
+				$attribute_model       = new Attribute();
 				$attribute_value_model = new Attribute_Value();
 
 				// Get or create attribute.
@@ -942,7 +942,7 @@ class Product_Generator extends Generator {
 				}
 
 				// Get or create attribute value.
-				$value_slug = sanitize_title( $attr_value );
+				$value_slug      = sanitize_title( $attr_value );
 				$attribute_value = $attribute_value_model->get_by_slug( $value_slug );
 				if ( ! $attribute_value ) {
 					continue; // Skip if value doesn't exist.

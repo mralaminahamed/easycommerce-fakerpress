@@ -240,7 +240,7 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array<string, mixed>|WP_Error|false Single item data, error, or false on failure.
+	 * @return array<string, mixed>|WP_Error Single item data or error.
 	 */
 	abstract protected function generate_single_item();
 
