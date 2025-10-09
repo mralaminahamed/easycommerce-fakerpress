@@ -14,6 +14,7 @@ use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Models\Location;
+use EasyCommerce\Models\Tax;
 use Exception;
 use WP_Error;
 use WP_User;

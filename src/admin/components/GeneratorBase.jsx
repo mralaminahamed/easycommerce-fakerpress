@@ -389,27 +389,33 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 								{ /* translators: %1$d: Number of items generated, %2$s: Resource type (e.g., products, customers, orders) */
 									sprintf( __( 'Generated %1$d %2$s.', 'easycommerce-fakerpress' ), result.generated, type ) }
 							</div>
-							{ result.data && result.data[ type ] && result.data[ type ].length > 0 && (
-								<div className="mt-4">
-									<h4 className="text-sm font-medium text-gray-900">{ __( 'Generated items:', 'easycommerce-fakerpress' ) }</h4>
-									<ul className="mt-2 text-sm text-gray-600 divide-y divide-gray-200">
-										{ result.data[ type ].slice( 0, 5 ).map( ( item, index ) => (
-											<li key={ index } className="flex justify-between py-2">
-												<span>{ item.name || item.title || item.code || item.id }</span>
-												<span className="text-gray-500">
-													{ item.email || item.price || item.total || item.amount || item.status }
-												</span>
-											</li>
-										) ) }
-										{ result.data[ type ].length > 5 && (
-											<li className="py-2 text-gray-500 italic">
-												{ /* translators: %d: Number of additional items not shown in the list */
-													sprintf( __( '… and %d more', 'easycommerce-fakerpress' ), result.data[ type ].length - 5 ) }
-											</li>
-										) }
-									</ul>
-								</div>
-							) }
+							{ ( () => {
+								// Get the plural form of the type to match backend response structure
+								const pluralType = type + 's';
+								const items = result[ pluralType ] || [];
+
+								return items.length > 0 && (
+									<div className="mt-4">
+										<h4 className="text-sm font-medium text-gray-900">{ __( 'Generated items:', 'easycommerce-fakerpress' ) }</h4>
+										<ul className="mt-2 text-sm text-gray-600 divide-y divide-gray-200">
+											{ items.slice( 0, 5 ).map( ( item, index ) => (
+												<li key={ index } className="flex justify-between py-2">
+													<span>{ item.name || item.title || item.code || item.id }</span>
+													<span className="text-gray-500">
+														{ item.email || item.price || item.total || item.amount || item.status }
+													</span>
+												</li>
+											) ) }
+											{ items.length > 5 && (
+												<li className="py-2 text-gray-500 italic">
+													{ /* translators: %d: Number of additional items not shown in the list */
+														sprintf( __( '… and %d more', 'easycommerce-fakerpress' ), items.length - 5 ) }
+												</li>
+											) }
+										</ul>
+									</div>
+								);
+							} )() }
 						</div>
 					</div>
 				</div>

@@ -62,6 +62,11 @@ class Transaction_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		try {
+			// Check if EasyCommerce Transaction class exists.
+			if ( ! class_exists( Transaction::class ) ) {
+				return new \WP_Error( 'missing_model', 'EasyCommerce Transaction model not found. Please ensure EasyCommerce plugin is active.' );
+			}
+
 			// Get orders based on customer parameters.
 			$orders = $this->get_orders_for_transactions();
 
