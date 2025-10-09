@@ -256,31 +256,28 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 						<Field className="space-y-1 relative">
 							<Label className="block text-sm font-medium text-gray-700">{ __( 'Locale', 'easycommerce-fakerpress' ) }</Label>
 							<Listbox
-								value={ parameters.locale || 'en_US' }
+								value={ parameters.locale || window.easycommerceFakerpressApi?.locale?.faker || 'en_US' }
 								onChange={ ( val ) => handleParameterChange( 'locale', val ) }
 								disabled={ isLoading }
 							>
 								<ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors">
 									<span className={ parameters.locale ? 'text-gray-900' : 'text-gray-500' }>
-										{ parameters.locale ? parameters.locale.replace( /_/g, ' ' ).replace( /\b\w/g, ( l ) => l.toUpperCase() ) : __( 'Select Locale', 'easycommerce-fakerpress' ) }
+										{ parameters.locale
+											? ( window.easycommerceFakerpressApi?.locale?.allLocales?.[ parameters.locale ] || parameters.locale )
+											: __( 'Select Locale', 'easycommerce-fakerpress' ) }
 									</span>
 									<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 										<ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 									</span>
 								</ListboxButton>
 								<ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-									{ [ 'en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT' ].map( ( locale ) => (
+									{ Object.entries( window.easycommerceFakerpressApi?.locale?.allLocales || {} ).map( ( [ localeCode, localeLabel ] ) => (
 										<ListboxOption
-											key={ locale }
-											value={ locale }
+											key={ localeCode }
+											value={ localeCode }
 											className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-wp-admin-highlight"
 										>
-											{ locale === 'en_US' && __( 'English (US)', 'easycommerce-fakerpress' ) }
-											{ locale === 'en_GB' && __( 'English (UK)', 'easycommerce-fakerpress' ) }
-											{ locale === 'fr_FR' && __( 'French', 'easycommerce-fakerpress' ) }
-											{ locale === 'de_DE' && __( 'German', 'easycommerce-fakerpress' ) }
-											{ locale === 'es_ES' && __( 'Spanish', 'easycommerce-fakerpress' ) }
-											{ locale === 'it_IT' && __( 'Italian', 'easycommerce-fakerpress' ) }
+											{ localeLabel }
 										</ListboxOption>
 									) ) }
 								</ListboxOptions>
