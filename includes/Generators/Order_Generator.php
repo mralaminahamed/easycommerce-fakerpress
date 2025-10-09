@@ -83,10 +83,14 @@ class Order_Generator extends Generator {
 				return new WP_Error( 'no_variations', 'No product variations found for order generation. Please create products with variations first.' );
 			}
 
+			// Get customer billing address early for tax calculation
+			$customer_model  = new Customer( $customer['id'] );
+			$billing_address = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
+
 			// Convert variations to order items format required by EasyCommerce.
-			$order_items = $this->convert_variations_to_items( $variations );
+			$order_items = $this->convert_variations_to_items( $variations, $billing_address );
 			$subtotal    = $this->calculate_subtotal( $order_items );
-			$order_meta  = $this->generate_order_meta( $customer, $subtotal );
+			$order_meta  = $this->generate_order_meta( $customer, $subtotal, $billing_address );
 			$total       = $this->calculate_total( $subtotal, $order_meta );
 
 			// Use EasyCommerce Order model with complete data structure.
@@ -294,10 +298,11 @@ class Order_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @param array $variations Array of Product_Variation objects.
+	 * @param array $billing_address Billing address for tax calculation.
 	 *
 	 * @return array Order items formatted for EasyCommerce Order model.
 	 */
-	private function convert_variations_to_items( array $variations ): array {
+	private function convert_variations_to_items( array $variations, array $billing_address ): array {
 		$order_items = array();
 
 		foreach ( $variations as $variation ) {
@@ -305,11 +310,12 @@ class Order_Generator extends Generator {
 				continue;
 			}
 
-			$product_id = $variation->get_product_id();
-			$price_id   = $variation->get_price_id();
-			$quantity   = $this->faker->numberBetween( 1, 3 );
-			$rate       = $variation->get_regular_price();
-			$subtotal   = $rate * $quantity;
+			$product_id   = $variation->get_product_id();
+			$price_id     = $variation->get_price_id();
+			$quantity     = $this->faker->numberBetween( 1, 3 );
+			$rate         = $variation->get_regular_price();
+			$subtotal     = $rate * $quantity;
+			$tax_class_id = $variation->get_tax_class();
 
 			if ( ! isset( $order_items[ $product_id ] ) ) {
 				$order_items[ $product_id ] = array();
@@ -322,8 +328,8 @@ class Order_Generator extends Generator {
 				'quantity'     => $quantity,
 				'rate'         => $rate,
 				'price'        => $subtotal,
-				'tax_class_id' => $variation->get_tax_class(),
-				'tax_rate'     => $this->generate_item_tax_rate(),
+				'tax_class_id' => $tax_class_id,
+				'tax_rate'     => $this->generate_item_tax_rate( $tax_class_id, $billing_address ),
 				'subtotal'     => $subtotal,
 				'meta'         => $item_meta,
 			);
@@ -360,12 +366,12 @@ class Order_Generator extends Generator {
 	 *
 	 * @param array $customer Customer user object.
 	 * @param float $subtotal Order subtotal.
+	 * @param array $billing_address Billing address (already retrieved).
 	 *
 	 * @return array Order metadata.
 	 */
-	private function generate_order_meta( array $customer, float $subtotal ): array {
+	private function generate_order_meta( array $customer, float $subtotal, array $billing_address ): array {
 		$customer_model   = new Customer( $customer['id'] );
-		$billing_address  = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
 		$shipping_address = $customer_model->get_shipping_address() ? $customer_model->get_shipping_address() : $billing_address;
 
 		return array(
@@ -965,31 +971,50 @@ class Order_Generator extends Generator {
 	}
 
 	/**
-	 * Generate item tax rate based on product type and location
+	 * Generate tax rate for order item using location-based tax lookup
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param int|null $tax_class_id Tax class ID from product variation.
+	 * @param array    $billing_address Billing address for location-based lookup.
+	 *
 	 * @return float Tax rate for the item.
 	 */
-	private function generate_item_tax_rate(): float {
-		$tax_rates = array(
-			'0.00'   => 10, // Tax-free (10%).
-			'0.05'   => 15, // 5% tax (15%).
-			'0.08'   => 35, // 8% tax (35%).
-			'0.0825' => 25, // 8.25% tax (25%).
-			'0.10'   => 10, // 10% tax (10%).
-			'0.125'  => 5,  // 12.5% tax (5%).
+	private function generate_item_tax_rate( $tax_class_id, array $billing_address ): float {
+		// If no tax class ID, return 0 (tax-free)
+		if ( ! $tax_class_id ) {
+			return 0.00;
+		}
+
+		// Try to get real tax rate based on location
+		$tax_model = new Tax();
+		$country   = $billing_address['country'] ?? '';
+		$state     = $billing_address['state'] ?? '';
+		$city      = $billing_address['city'] ?? '';
+
+		if ( $country ) {
+			$tax_rate = $tax_model->get_rate_by_location( $tax_class_id, $country, $state, $city );
+
+			// If we found a rate, use it
+			if ( $tax_rate > 0 ) {
+				return $tax_rate;
+			}
+		}
+
+		// Fallback to realistic random tax rates if no location-based rate found
+		$fallback_tax_rates = array(
+			0.00,  // Tax-free
+			5.00,  // Low tax
+			6.00,  // Average
+			7.00,  // Above average
+			7.25,  // CA base
+			8.00,  // Common
+			8.25,  // High
+			8.875, // NY
+			10.00, // Very high
 		);
 
-		return $this->faker->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $rate, $weight ) => array_fill( 0, $weight, $rate ),
-					array_keys( $tax_rates ),
-					$tax_rates
-				)
-			)
-		);
+		return $this->faker->randomElement( $fallback_tax_rates );
 	}
 
 	/**

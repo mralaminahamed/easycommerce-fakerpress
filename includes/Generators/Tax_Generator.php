@@ -107,6 +107,17 @@ class Tax_Generator extends Generator {
 	 * @return array Tax class data
 	 */
 	private function generate_tax_class_data(): array {
+		// Decide whether to use real CSV data or generated data (70% CSV, 30% generated)
+		$use_csv_data = $this->faker->boolean( 70 );
+
+		if ( $use_csv_data ) {
+			$csv_data = $this->generate_tax_class_from_csv();
+			if ( $csv_data ) {
+				return $csv_data;
+			}
+			// Fallback to generated data if CSV import fails
+		}
+
 		$tax_types = array(
 			'standard' => array(
 				'name'        => 'Standard Tax Rate',
@@ -321,6 +332,73 @@ class Tax_Generator extends Generator {
 		}
 
 		return $rates;
+	}
+
+	/**
+	 * Generate tax class from CSV data.
+	 *
+	 * Uses real tax rate data from CSV files in the EasyCommerce plugin.
+	 *
+	 * @return array|null Tax class data with real rates, or null if no CSV data available
+	 */
+	private function generate_tax_class_from_csv(): ?array {
+		$tax_model = new Tax();
+
+		// Countries with available CSV tax data
+		$available_countries = array( 'US', 'CA', 'GB', 'AU', 'IN', 'BD' );
+
+		// Get countries that have CSV files
+		$countries_with_files = $tax_model->get_tax_files_by_countries( $available_countries );
+
+		if ( empty( $countries_with_files ) ) {
+			return null;
+		}
+
+		// Select a random country with CSV data
+		$selected_country = $this->faker->randomElement( $countries_with_files );
+
+		// Get tax rates from CSV
+		$csv_rates = $tax_model->get_country_tax_rates_from_csv( strtolower( $selected_country ) );
+
+		if ( empty( $csv_rates ) ) {
+			return null;
+		}
+
+		// Select a subset of rates (3-10 states/regions)
+		$selected_count = min( count( $csv_rates ), $this->faker->numberBetween( 3, 10 ) );
+		$selected_rates = $this->faker->randomElements( $csv_rates, $selected_count );
+
+		// Format rates for tax class creation
+		$formatted_rates = array();
+		foreach ( $selected_rates as $csv_rate ) {
+			$formatted_rates[] = array(
+				'country'  => $csv_rate['country'],
+				'state'    => $csv_rate['state'] ?? '',
+				'city'     => $csv_rate['city'] ?? '',
+				'rate'     => (float) $csv_rate['combined_rate'],
+				'priority' => $this->faker->numberBetween( 1, 5 ),
+				'compound' => $this->faker->boolean( 15 ), // 15% chance of compound tax
+			);
+		}
+
+		$tax_class_types = array(
+			'standard' => 'Standard Tax Rate',
+			'sales'    => 'Sales Tax',
+			'vat'      => 'Value Added Tax (VAT)',
+			'gst'      => 'Goods and Services Tax (GST)',
+		);
+
+		$tax_type = $this->faker->randomElement( array_keys( $tax_class_types ) );
+
+		return array(
+			'name'        => $tax_class_types[ $tax_type ] . ' - ' . $selected_country,
+			'description' => sprintf(
+				'Real tax rates for %s imported from official tax data',
+				$selected_country
+			),
+			'status'      => $this->faker->boolean( 95 ), // 95% chance of being active for real data
+			'rates'       => $formatted_rates,
+		);
 	}
 
 	/**
