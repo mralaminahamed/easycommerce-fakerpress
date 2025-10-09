@@ -55,15 +55,137 @@ abstract class Generator {
 
 		$this->wpdb = $wpdb;
 
-		// Sanitize locale to prevent potential security issues.
-		$locale = get_locale();
-		$locale = preg_match( '/^[a-z]{2}_[A-Z]{2}$/', $locale ) ? $locale : 'en_US';
+		// Get locale with comprehensive FakerPHP support.
+		$locale = $this->get_faker_locale();
 
 		$this->faker = Factory::create( $locale );
 
 		// Add additional providers.
 		$this->faker->addProvider( new DateTime( $this->faker ) );
 		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
+	}
+
+	/**
+	 * Get FakerPHP locale with fallback support
+	 *
+	 * Maps WordPress locale to FakerPHP supported locale with intelligent fallback.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return string FakerPHP compatible locale code.
+	 */
+	private function get_faker_locale(): string {
+		// Get WordPress locale.
+		$wp_locale = get_locale();
+
+		// Allow developers to override the locale.
+		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $wp_locale );
+
+		// All FakerPHP supported locales (as of 2025).
+		$supported_locales = $this->get_supported_faker_locales();
+
+		// Direct match.
+		if ( in_array( $custom_locale, $supported_locales, true ) ) {
+			return $custom_locale;
+		}
+
+		// Try language fallback (e.g., en_GB -> en_US).
+		$language = substr( $custom_locale, 0, 2 );
+		foreach ( $supported_locales as $locale ) {
+			if ( strpos( $locale, $language . '_' ) === 0 ) {
+				return $locale;
+			}
+		}
+
+		// Default fallback.
+		return 'en_US';
+	}
+
+	/**
+	 * Get all FakerPHP supported locales
+	 *
+	 * Complete list of locales supported by FakerPHP library.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array Array of supported locale codes.
+	 */
+	private function get_supported_faker_locales(): array {
+		return array(
+			'ar_SA', // Arabic (Saudi Arabia)
+			'at_AT', // Austrian German
+			'bg_BG', // Bulgarian (Bulgaria)
+			'bn_BD', // Bangla (Bangladesh)
+			'cs_CZ', // Czech (Czech Republic)
+			'da_DK', // Danish (Denmark)
+			'de_AT', // German (Austria)
+			'de_CH', // German (Switzerland)
+			'de_DE', // German (Germany)
+			'el_CY', // Greek (Cyprus)
+			'el_GR', // Greek (Greece)
+			'en_AU', // English (Australia)
+			'en_GB', // English (Great Britain)
+			'en_HK', // English (Hong Kong)
+			'en_IN', // English (India)
+			'en_NG', // English (Nigeria)
+			'en_NZ', // English (New Zealand)
+			'en_PH', // English (Philippines)
+			'en_SG', // English (Singapore)
+			'en_UG', // English (Uganda)
+			'en_US', // English (United States)
+			'en_ZA', // English (South Africa)
+			'es_AR', // Spanish (Argentina)
+			'es_ES', // Spanish (Spain)
+			'es_PE', // Spanish (Peru)
+			'es_VE', // Spanish (Venezuela)
+			'et_EE', // Estonian (Estonia)
+			'fa_IR', // Persian (Iran)
+			'fi_FI', // Finnish (Finland)
+			'fr_BE', // French (Belgium)
+			'fr_CA', // French (Canada)
+			'fr_CH', // French (Switzerland)
+			'fr_FR', // French (France)
+			'he_IL', // Hebrew (Israel)
+			'hr_HR', // Croatian (Croatia)
+			'hu_HU', // Hungarian (Hungary)
+			'hy_AM', // Armenian (Armenia)
+			'id_ID', // Indonesian (Indonesia)
+			'is_IS', // Icelandic (Iceland)
+			'it_CH', // Italian (Switzerland)
+			'it_IT', // Italian (Italy)
+			'ja_JP', // Japanese (Japan)
+			'ka_GE', // Georgian (Georgia)
+			'kk_KZ', // Kazakh (Kazakhstan)
+			'ko_KR', // Korean (South Korea)
+			'lt_LT', // Lithuanian (Lithuania)
+			'lv_LV', // Latvian (Latvia)
+			'me_ME', // Montenegrin (Montenegro)
+			'mn_MN', // Mongolian (Mongolia)
+			'ms_MY', // Malay (Malaysia)
+			'nb_NO', // Norwegian Bokmål (Norway)
+			'ne_NP', // Nepali (Nepal)
+			'nl_BE', // Dutch (Belgium)
+			'nl_NL', // Dutch (Netherlands)
+			'pl_PL', // Polish (Poland)
+			'pt_AO', // Portuguese (Angola)
+			'pt_BR', // Portuguese (Brazil)
+			'pt_PT', // Portuguese (Portugal)
+			'ro_MD', // Romanian (Moldova)
+			'ro_RO', // Romanian (Romania)
+			'ru_RU', // Russian (Russia)
+			'sk_SK', // Slovak (Slovakia)
+			'sl_SI', // Slovenian (Slovenia)
+			'sr_Cyrl_RS', // Serbian Cyrillic (Serbia)
+			'sr_Latn_RS', // Serbian Latin (Serbia)
+			'sr_RS', // Serbian (Serbia)
+			'sv_SE', // Swedish (Sweden)
+			'th_TH', // Thai (Thailand)
+			'tr_TR', // Turkish (Turkey)
+			'uk_UA', // Ukrainian (Ukraine)
+			'vi_VN', // Vietnamese (Vietnam)
+			'zh_CN', // Chinese (China)
+			'zh_TW', // Chinese (Taiwan)
+		);
 	}
 
 	/**
