@@ -353,8 +353,11 @@ class Transaction_Generator extends Generator {
 	private function create_transaction( array $data ): ?int {
 		$transaction = new Transaction();
 
-		// Don't update order status automatically for fake data.
-		$transaction_id = $transaction->add( $data['order_id'], $data, false );
+		// Enable order status updates for completed payment transactions
+		// This creates realistic order status progression based on transactions
+		$should_update_status = ( 'payment' === $data['type'] && 'completed' === $data['status'] );
+
+		$transaction_id = $transaction->add( $data['order_id'], $data, $should_update_status );
 
 		return $transaction_id ?? null;
 	}

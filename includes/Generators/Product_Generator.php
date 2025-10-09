@@ -124,6 +124,10 @@ class Product_Generator extends Generator {
 			// Assign product tags after creation.
 			$this->assign_product_tags( $product_id );
 
+			// Get aggregated stock using Product model
+			$product_instance = new Product( $product_id );
+			$total_stock      = $product_instance->get_stock();
+
 			return array(
 				'id'           => $product_id,
 				'title'        => $product_title,
@@ -133,7 +137,8 @@ class Product_Generator extends Generator {
 				'brands'       => count( $brands ),
 				'attributes'   => count( $attributes ),
 				'price_range'  => $this->get_price_range( $variations ),
-				'stock_status' => $variations ? $this->determine_stock_status( $variations[0]['stock_quantity'] ) : 'in_stock',
+				'total_stock'  => $total_stock,
+				'stock_status' => $this->determine_stock_status( $total_stock ),
 			);
 		} catch ( Exception $e ) {
 			$this->log( 'Product creation failed: ' . $e->getMessage(), 'error' );
@@ -679,7 +684,8 @@ class Product_Generator extends Generator {
 		);
 
 		if ( 'physical' === $product_type ) {
-			$meta = array_merge(
+			$dimension_unit = $this->faker->randomElement( array( 'cm', 'in' ) );
+			$meta           = array_merge(
 				$meta,
 				array(
 					'weight'            => array(
@@ -687,10 +693,18 @@ class Product_Generator extends Generator {
 						'unit'  => $this->faker->randomElement( array( 'kg', 'g', 'lb' ) ),
 					),
 					'dimensions'        => array(
-						'height' => $this->faker->randomFloat( 2, 1, 50 ),
-						'width'  => $this->faker->randomFloat( 2, 5, 100 ),
-						'length' => $this->faker->randomFloat( 2, 5, 100 ),
-						'unit'   => $this->faker->randomElement( array( 'cm', 'in' ) ),
+						'height' => array(
+							'value' => $this->faker->randomFloat( 2, 1, 50 ),
+							'unit'  => $dimension_unit,
+						),
+						'width'  => array(
+							'value' => $this->faker->randomFloat( 2, 5, 100 ),
+							'unit'  => $dimension_unit,
+						),
+						'length' => array(
+							'value' => $this->faker->randomFloat( 2, 5, 100 ),
+							'unit'  => $dimension_unit,
+						),
 					),
 					'requires_shipping' => true,
 					'packaging'         => $this->faker->randomElement( array( 'standard', 'gift', 'eco-friendly' ) ),

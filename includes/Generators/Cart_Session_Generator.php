@@ -348,26 +348,83 @@ class Cart_Session_Generator extends Generator {
 	}
 
 	/**
-	 * Calculate cart total amount.
+	 * Calculate cart total amount with realistic shipping and tax.
 	 *
 	 * @param array $items Cart items.
 	 *
 	 * @return float Total amount
 	 */
 	private function calculate_cart_total( array $items ): float {
-		$total = 0;
+		$subtotal = 0;
 
+		// Calculate subtotal from items
 		foreach ( $items as $product_id => $variations ) {
 			foreach ( $variations as $price_id => $config ) {
-				$total += $config['price'];
+				$subtotal += $config['price'];
 			}
 		}
 
-		// Add shipping and tax estimate.
-		$shipping = $this->faker->randomFloat( 2, 0, 25 );
-		$tax      = $total * $this->faker->randomFloat( 2, 0.05, 0.15 ); // 5-15% tax
+		// Calculate realistic shipping based on subtotal
+		$shipping = $this->calculate_realistic_shipping( $subtotal );
 
-		return $total + $shipping + $tax;
+		// Calculate realistic tax based on subtotal (using typical tax rates)
+		$tax = $this->calculate_realistic_tax( $subtotal );
+
+		return $subtotal + $shipping + $tax;
+	}
+
+	/**
+	 * Calculate realistic shipping cost based on cart subtotal.
+	 *
+	 * @param float $subtotal Cart subtotal.
+	 *
+	 * @return float Shipping cost
+	 */
+	private function calculate_realistic_shipping( float $subtotal ): float {
+		// Free shipping for orders over $100 (common threshold)
+		if ( $subtotal >= 100 ) {
+			return $this->faker->boolean( 80 ) ? 0 : $this->faker->randomFloat( 2, 5, 10 );
+		}
+
+		// Tiered shipping based on subtotal
+		if ( $subtotal >= 50 ) {
+			return $this->faker->randomFloat( 2, 5, 12 );
+		}
+
+		if ( $subtotal >= 25 ) {
+			return $this->faker->randomFloat( 2, 8, 15 );
+		}
+
+		// Small orders have higher shipping
+		return $this->faker->randomFloat( 2, 10, 20 );
+	}
+
+	/**
+	 * Calculate realistic tax based on cart subtotal.
+	 *
+	 * Uses common tax rates from major jurisdictions.
+	 *
+	 * @param float $subtotal Cart subtotal.
+	 *
+	 * @return float Tax amount
+	 */
+	private function calculate_realistic_tax( float $subtotal ): float {
+		// Common tax rates by jurisdiction
+		$common_tax_rates = array(
+			0.00,  // Tax-free states (DE, MT, NH, OR)
+			5.00,  // Low tax states
+			6.00,  // Average tax states
+			7.00,  // Above average
+			7.25,  // CA base rate
+			8.25,  // High tax states
+			8.875, // NY rate
+			9.50,  // Combined state + local
+			10.00, // High combined rates
+		);
+
+		$tax_rate = $this->faker->randomElement( $common_tax_rates );
+
+		return $subtotal * ( $tax_rate / 100 );
 	}
 
 	/**

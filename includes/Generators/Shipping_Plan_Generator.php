@@ -41,6 +41,9 @@ class Shipping_Plan_Generator extends Generator {
 			$shipping_plan      = $this->create_shipping_plan( $shipping_plan_data );
 
 			if ( $shipping_plan ) {
+				// Test location lookup to verify plan can be found by its regions
+				$location_test = $this->test_location_lookup( $shipping_plan, $shipping_plan_data['regions'] );
+
 				return array(
 					'id'               => $shipping_plan->get_id(),
 					'name'             => $shipping_plan->get_name(),
@@ -50,6 +53,7 @@ class Shipping_Plan_Generator extends Generator {
 					'calculation_base' => $shipping_plan->get_calculation_base(),
 					'methods'          => $shipping_plan->get_methods(),
 					'regions'          => $shipping_plan->get_regions(),
+					'location_test'    => $location_test,
 				);
 			}
 
@@ -293,77 +297,377 @@ class Shipping_Plan_Generator extends Generator {
 	/**
 	 * Generate regional coverage.
 	 *
-	 * @return array Region codes
+	 * @return array Region data with structured location arrays
 	 */
 	private function generate_regional_coverage(): array {
 		$regions = array(
 			// North America.
-			'US-CA',
-			'US-NY',
-			'US-TX',
-			'US-FL',
-			'US-IL',
-			'CA-ON',
-			'CA-BC',
-			'CA-AB',
-			'CA-QC',
-			'MX-DF',
-			'MX-NL',
-			'MX-JA',
+			array(
+				'country'  => 'US',
+				'state'    => 'CA',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'US',
+				'state'    => 'NY',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'US',
+				'state'    => 'TX',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'US',
+				'state'    => 'FL',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'US',
+				'state'    => 'IL',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CA',
+				'state'    => 'ON',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CA',
+				'state'    => 'BC',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CA',
+				'state'    => 'AB',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CA',
+				'state'    => 'QC',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'MX',
+				'state'    => 'DF',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'MX',
+				'state'    => 'NL',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'MX',
+				'state'    => 'JA',
+				'city'     => '',
+				'zip_code' => '',
+			),
 
 			// Europe.
-			'GB-EN',
-			'GB-SC',
-			'GB-WA',
-			'GB-NI',
-			'DE-BY',
-			'DE-NW',
-			'DE-BW',
-			'DE-HE',
-			'FR-11',
-			'FR-84',
-			'FR-93',
-			'FR-75',
-			'IT-LZ',
-			'IT-LM',
-			'IT-PM',
-			'IT-VE',
-			'ES-MD',
-			'ES-CT',
-			'ES-AN',
-			'ES-VC',
+			array(
+				'country'  => 'GB',
+				'state'    => 'EN',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'GB',
+				'state'    => 'SC',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'GB',
+				'state'    => 'WA',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'GB',
+				'state'    => 'NI',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'DE',
+				'state'    => 'BY',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'DE',
+				'state'    => 'NW',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'DE',
+				'state'    => 'BW',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'DE',
+				'state'    => 'HE',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'FR',
+				'state'    => '11',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'FR',
+				'state'    => '84',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'FR',
+				'state'    => '93',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'FR',
+				'state'    => '75',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IT',
+				'state'    => 'LZ',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IT',
+				'state'    => 'LM',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IT',
+				'state'    => 'PM',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IT',
+				'state'    => 'VE',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ES',
+				'state'    => 'MD',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ES',
+				'state'    => 'CT',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ES',
+				'state'    => 'AN',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ES',
+				'state'    => 'VC',
+				'city'     => '',
+				'zip_code' => '',
+			),
 
 			// Asia Pacific.
-			'AU-NSW',
-			'AU-VIC',
-			'AU-QLD',
-			'AU-WA',
-			'JP-13',
-			'JP-27',
-			'JP-23',
-			'JP-14',
-			'CN-11',
-			'CN-31',
-			'CN-44',
-			'CN-32',
-			'IN-DL',
-			'IN-MH',
-			'IN-KA',
-			'IN-TN',
+			array(
+				'country'  => 'AU',
+				'state'    => 'NSW',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'AU',
+				'state'    => 'VIC',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'AU',
+				'state'    => 'QLD',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'AU',
+				'state'    => 'WA',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'JP',
+				'state'    => '13',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'JP',
+				'state'    => '27',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'JP',
+				'state'    => '23',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'JP',
+				'state'    => '14',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CN',
+				'state'    => '11',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CN',
+				'state'    => '31',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CN',
+				'state'    => '44',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'CN',
+				'state'    => '32',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IN',
+				'state'    => 'DL',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IN',
+				'state'    => 'MH',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IN',
+				'state'    => 'KA',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'IN',
+				'state'    => 'TN',
+				'city'     => '',
+				'zip_code' => '',
+			),
 
 			// Others.
-			'BR-SP',
-			'BR-RJ',
-			'BR-MG',
-			'BR-RS',
-			'ZA-WC',
-			'ZA-GT',
-			'ZA-KZ',
-			'ZA-EC',
-			'NG-LA',
-			'NG-AB',
-			'NG-KA',
-			'NG-RI',
+			array(
+				'country'  => 'BR',
+				'state'    => 'SP',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'BR',
+				'state'    => 'RJ',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'BR',
+				'state'    => 'MG',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'BR',
+				'state'    => 'RS',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ZA',
+				'state'    => 'WC',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ZA',
+				'state'    => 'GT',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ZA',
+				'state'    => 'KZ',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'ZA',
+				'state'    => 'EC',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'NG',
+				'state'    => 'LA',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'NG',
+				'state'    => 'AB',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'NG',
+				'state'    => 'KA',
+				'city'     => '',
+				'zip_code' => '',
+			),
+			array(
+				'country'  => 'NG',
+				'state'    => 'RI',
+				'city'     => '',
+				'zip_code' => '',
+			),
 		);
 
 		// Select random regions (2-8 regions per shipping plan).
@@ -410,5 +714,68 @@ class Shipping_Plan_Generator extends Generator {
 	 */
 	public function get_description(): string {
 		return 'Generates comprehensive shipping plans with multiple calculation methods (price, weight, quantity), regional coverage, and realistic pricing tiers for testing ecommerce shipping functionality.';
+	}
+
+	/**
+	 * Test location lookup for shipping plan
+	 *
+	 * Verifies that the shipping plan can be found using get_by_location()
+	 *
+	 * @param Shipping_Plan $shipping_plan Created shipping plan instance.
+	 * @param array         $regions Array of region data.
+	 *
+	 * @return array Test result with lookup status.
+	 */
+	private function test_location_lookup( Shipping_Plan $shipping_plan, array $regions ): array {
+		try {
+			if ( empty( $regions ) ) {
+				return array(
+					'tested'  => false,
+					'message' => 'No regions to test',
+				);
+			}
+
+			// Pick a random region to test
+			$test_region = $this->faker->randomElement( $regions );
+
+			// Build region code in format: COUNTRY-STATE or COUNTRY-STATE-CITY
+			$region_code_parts = array( $test_region['country'] );
+
+			if ( ! empty( $test_region['state'] ) ) {
+				$region_code_parts[] = $test_region['state'];
+			}
+
+			if ( ! empty( $test_region['city'] ) ) {
+				$region_code_parts[] = $test_region['city'];
+			}
+
+			$region_code = implode( '-', $region_code_parts );
+
+			// Use Shipping_Plan::get_by_location() to find plans for this region
+			$found_plans = Shipping_Plan::get_by_location( $region_code, 10 );
+
+			// Check if our plan is in the results
+			$plan_found = false;
+			foreach ( $found_plans as $plan ) {
+				if ( $plan['id'] === $shipping_plan->get_id() ) {
+					$plan_found = true;
+					break;
+				}
+			}
+
+			return array(
+				'tested'      => true,
+				'plan_found'  => $plan_found,
+				'region_code' => $region_code,
+				'total_plans' => count( $found_plans ),
+				'message'     => $plan_found ? 'Plan successfully found by location' : 'Plan not found in location lookup',
+			);
+		} catch ( Exception $e ) {
+			return array(
+				'tested'  => false,
+				'error'   => $e->getMessage(),
+				'message' => 'Location lookup test failed',
+			);
+		}
 	}
 }
