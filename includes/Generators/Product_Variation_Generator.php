@@ -187,11 +187,12 @@ class Product_Variation_Generator extends Generator {
 	 * @return bool True if product can have variations.
 	 */
 	private function can_product_have_variations( Product $product ): bool {
-		// Check if product has attributes or is already a variable product type.
-		$product_type   = $product->get_type();
+		// Check if product has attributes or is already a variable product.
+		$is_variable    = $product->is_variable();
 		$has_attributes = ! empty( $product->get_attributes() );
 
-		return $product_type === 'variable' || $has_attributes || $product_type === 'simple';
+		// Products with attributes can have variations, or products that are already variable
+		return $is_variable || $has_attributes;
 	}
 
 	/**
