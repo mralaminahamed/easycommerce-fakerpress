@@ -29,7 +29,7 @@ use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
  * color integration, and advanced parameter configuration.
  *
  * @since 1.0.0
- * @version 2.1.0
+ * @version 1.0.0
  */
 class EasyCommerce_FakerPress {
 
@@ -47,7 +47,7 @@ class EasyCommerce_FakerPress {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	public string $version = '2.1.0';
+	public string $version = '1.0.0';
 
 	/**
 	 * Get single instance of the class
