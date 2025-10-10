@@ -70,7 +70,7 @@ class Order_Generator extends Generator {
 		try {
 			// Check if EasyCommerce Order class exists.
 			if ( ! class_exists( Order::class ) ) {
-				return new WP_Error( 'missing_model', 'EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.' );
+				return new WP_Error( 'missing_model', __('EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.') );
 			}
 
 			$customer   = $this->get_customer_for_order();
@@ -84,7 +84,7 @@ class Order_Generator extends Generator {
 				return new WP_Error( 'no_variations', 'No product variations found for order generation. Please create products with variations first.' );
 			}
 
-			// Get customer billing address early for tax calculation
+			// Get customer billing address early for tax calculation.
 			$customer_model  = new Customer( $customer['id'] );
 			$billing_address = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
 

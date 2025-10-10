@@ -46,14 +46,14 @@ class Coupon_Generator extends Generator {
 		try {
 			// Check if EasyCommerce Coupon class exists.
 			if ( ! class_exists( Coupon::class ) ) {
-				return new WP_Error( 'missing_model', 'EasyCommerce Coupon model not found. Please ensure EasyCommerce plugin is active.' );
+				return new WP_Error( 'missing_model', __( 'EasyCommerce Coupon model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 			}
 
 			$coupon_data = $this->generate_coupon_data();
 
 			// Check if coupon code already exists.
 			if ( $this->coupon_code_exists( $coupon_data['code'] ) ) {
-				return new WP_Error( 'code_exists', 'A coupon with this code already exists.' );
+				return new WP_Error( 'code_exists', __( 'A coupon with this code already exists.', 'easycommerce-fakerpress' ) );
 			}
 
 			// Use EasyCommerce Coupon model with complete data structure.
@@ -77,7 +77,7 @@ class Coupon_Generator extends Generator {
 			);
 
 			if ( ! $created ) {
-				return new WP_Error( 'coupon_creation_failed', 'Failed to create coupon using EasyCommerce model.' );
+				return new WP_Error( 'coupon_creation_failed', __( 'Failed to create coupon using EasyCommerce model.', 'easycommerce-fakerpress' ) );
 			}
 
 			// Reload coupon to get the complete object with rules.
@@ -312,7 +312,7 @@ class Coupon_Generator extends Generator {
 		} while ( $existing && $attempts < 10 );
 
 		if ( $existing ) {
-			throw new RuntimeException( 'Unable to generate unique coupon code after 10 attempts.' );
+			throw new RuntimeException( esc_html__( 'Unable to generate unique coupon code after 10 attempts.', 'easycommerce-fakerpress' ) );
 		}
 
 		return $code;
@@ -374,7 +374,7 @@ class Coupon_Generator extends Generator {
 			return $this->faker->randomElement(
 				array_merge(
 					...array_map(
-						fn( $pct, $weight ) => array_fill( 0, $weight, $pct ),
+						static fn( $pct, $weight ) => array_fill( 0, $weight, $pct ),
 						$percentages,
 						$weights
 					)
@@ -389,7 +389,7 @@ class Coupon_Generator extends Generator {
 			return $this->faker->randomElement(
 				array_merge(
 					...array_map(
-						fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
+						static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
 						$amounts,
 						$weights
 					)
@@ -404,7 +404,7 @@ class Coupon_Generator extends Generator {
 			return $this->faker->randomElement(
 				array_merge(
 					...array_map(
-						fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
+						static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
 						$amounts,
 						$weights
 					)
@@ -419,7 +419,7 @@ class Coupon_Generator extends Generator {
 		return $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
+					static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
 					$amounts,
 					$weights
 				)
@@ -448,7 +448,7 @@ class Coupon_Generator extends Generator {
 				'value' => $this->faker->randomElement(
 					array_merge(
 						...array_map(
-							fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
+							static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
 							$min_amounts,
 							$weights
 						)
@@ -491,7 +491,7 @@ class Coupon_Generator extends Generator {
 				'value' => $this->faker->randomElement(
 					array_merge(
 						...array_map(
-							fn( $limit, $weight ) => array_fill( 0, $weight, $limit ),
+							static fn( $limit, $weight ) => array_fill( 0, $weight, $limit ),
 							$usage_limits,
 							$weights
 						)
@@ -509,7 +509,7 @@ class Coupon_Generator extends Generator {
 				'value' => $this->faker->randomElement(
 					array_merge(
 						...array_map(
-							fn( $limit, $weight ) => array_fill( 0, $weight, $limit ),
+							static fn( $limit, $weight ) => array_fill( 0, $weight, $limit ),
 							$per_customer_limits,
 							$weights
 						)
@@ -525,7 +525,7 @@ class Coupon_Generator extends Generator {
 				$restriction_type = $this->faker->randomElement( array( 'include_products', 'exclude_products' ) );
 				$rules[]          = array(
 					'type'  => $restriction_type,
-					'value' => array_map( fn( $id ) => array( 'id' => $id ), $product_ids ),
+					'value' => array_map( static fn( $id ) => array( 'id' => $id ), $product_ids ),
 				);
 			}
 		}
@@ -537,7 +537,7 @@ class Coupon_Generator extends Generator {
 				$restriction_type = $this->faker->randomElement( array( 'include_categories', 'exclude_categories' ) );
 				$rules[]          = array(
 					'type'  => $restriction_type,
-					'value' => array_map( fn( $id ) => array( 'id' => $id ), $category_ids ),
+					'value' => array_map( static fn( $id ) => array( 'id' => $id ), $category_ids ),
 				);
 			}
 		}
@@ -583,7 +583,7 @@ class Coupon_Generator extends Generator {
 				'value' => $this->faker->randomElement(
 					array_merge(
 						...array_map(
-							fn( $qty, $weight ) => array_fill( 0, $weight, $qty ),
+							static fn( $qty, $weight ) => array_fill( 0, $weight, $qty ),
 							$min_quantities,
 							$weights
 						)
@@ -750,7 +750,7 @@ class Coupon_Generator extends Generator {
 				'min_spend'   => $min_spend,
 				'max_spend'   => $max_spend,
 				'rules_count' => count( $coupon_data['rules'] ),
-				'message'     => $is_valid ? 'Coupon is active and configured' : 'Coupon is inactive',
+				'message'     => $is_valid ? __( 'Coupon is active and configured', 'easycommerce-fakerpress' ) : __( 'Coupon is inactive', 'easycommerce-fakerpress' ),
 			);
 		} catch ( Exception $e ) {
 			return array(
