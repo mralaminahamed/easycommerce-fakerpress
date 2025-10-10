@@ -16,7 +16,7 @@ use EasyCommerceFakerPress\Controllers\Order_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Coupon_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Product_Variation_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Shipping_Plan_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Tax_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Tax_Classes_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Transaction_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Cart_Session_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
@@ -230,7 +230,7 @@ class EasyCommerce_FakerPress {
 			// Enhanced generators (Version 2.0).
 			new Product_Variation_REST_Controller(),
 			new Shipping_Plan_REST_Controller(),
-			new Tax_REST_Controller(),
+			new Tax_Classes_REST_Controller(),
 			new Transaction_REST_Controller(),
 			new Cart_Session_REST_Controller(),
 			new Location_REST_Controller(),
