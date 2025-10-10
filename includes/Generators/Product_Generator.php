@@ -43,108 +43,102 @@ class Product_Generator extends Generator {
 	 * @return array|WP_Error Single product data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Product class exists.
-			if ( ! class_exists( Product::class ) ) {
-				return new WP_Error( 'missing_model', 'EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active.' );
-			}
-
-			$product_type  = $this->faker->randomElement( array( 'physical', 'digital' ) );
-			$product_title = $this->generate_product_title( $product_type );
-			$categories    = $this->get_or_create_product_categories();
-			$brands        = $this->get_or_create_product_brands();
-			$attributes    = $this->get_or_create_product_attributes( $product_type );
-			$variations    = $this->generate_product_variations( $attributes, $product_type );
-
-			// Use EasyCommerce Product model with compatible data structure.
-			$product = new Product();
-
-			// Prepare variations with proper structure for EasyCommerce model.
-			$formatted_variations = $this->format_variations_for_model( $variations, $attributes );
-
-			$product_id = $product->create(
-				array(
-					// Required fields.
-					'title'       => $product_title,
-
-					// Optional core fields.
-					'slug'        => sanitize_title( $product_title . '-' . uniqid( '', true ) ),
-					'content'     => $this->generate_product_description( $product_type ),
-					'status'      => $this->faker->randomElement( array( 'publish', 'draft', 'pending' ) ),
-					'description' => $this->generate_short_description( $product_type ),
-					'summary'     => $this->faker->sentence( 20, true ),
-					'thumbnail'   => $this->generate_thumbnail(),
-
-					// Taxonomy relationships.
-					'categories'  => array_slice( $categories, 0, $this->faker->numberBetween( 1, 4 ) ),
-					'brands'      => array_slice( $brands, 0, $this->faker->numberBetween( 1, 2 ) ),
-
-					// Product attributes and variations.
-					'attributes'  => $attributes,
-					'variations'  => $formatted_variations,
-
-					// Additional meta data.
-					'meta'        => array(
-						'gallery'         => $this->generate_gallery_images(),
-						'template'        => $this->faker->randomElement(
-							array(
-								'template-standard',
-								'template-premium',
-								'template-minimal',
-							)
-						),
-						'featured'        => $this->faker->boolean( 25 ),
-						'seo_title'       => $product_title . ' | ' . $this->faker->company,
-						'seo_description' => $this->faker->sentence( 15, true ),
-						'seo_keywords'    => implode( ', ', (array) $this->faker->words( 5 ) ),
-						'sku_prefix'      => strtoupper( $this->faker->lexify( '???' ) ),
-						'release_date'    => $this->faker->dateTimeThisYear()->format( 'Y-m-d' ),
-						'warranty'        => 'physical' === $product_type ? $this->faker->randomElement(
-							array(
-								'1 year',
-								'2 years',
-								'Limited Lifetime',
-							)
-						) : null,
-						'shipping_class'  => 'physical' === $product_type ? $this->faker->randomElement(
-							array(
-								'standard',
-								'expedited',
-								'fragile',
-							)
-						) : null,
-					),
-				)
-			);
-
-			if ( ! $product_id ) {
-				return new WP_Error( 'product_creation_failed', 'Failed to create product using EasyCommerce model.' );
-			}
-
-			// Assign product tags after creation.
-			$this->assign_product_tags( $product_id );
-
-			// Get aggregated stock using Product model
-			$product_instance = new Product( $product_id );
-			$total_stock      = $product_instance->get_stock();
-
-			return array(
-				'id'           => $product_id,
-				'title'        => $product_title,
-				'type'         => $product_type,
-				'variations'   => count( $variations ),
-				'categories'   => count( $categories ),
-				'brands'       => count( $brands ),
-				'attributes'   => count( $attributes ),
-				'price_range'  => $this->get_price_range( $variations ),
-				'total_stock'  => $total_stock,
-				'stock_status' => $this->determine_stock_status( $total_stock ),
-			);
-		} catch ( Exception $e ) {
-			$this->log( 'Product creation failed: ' . $e->getMessage(), 'error' );
-
-			return new WP_Error( 'product_creation_failed', $e->getMessage() );
+		// Check if EasyCommerce Product class exists.
+		if ( ! class_exists( Product::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		$product_type  = $this->faker->randomElement( array( 'physical', 'digital' ) );
+		$product_title = $this->generate_product_title( $product_type );
+		$categories    = $this->get_or_create_product_categories();
+		$brands        = $this->get_or_create_product_brands();
+		$attributes    = $this->get_or_create_product_attributes( $product_type );
+		$variations    = $this->generate_product_variations( $attributes, $product_type );
+
+		// Use EasyCommerce Product model with compatible data structure.
+		$product = new Product();
+
+		// Prepare variations with proper structure for EasyCommerce model.
+		$formatted_variations = $this->format_variations_for_model( $variations, $attributes );
+
+		$product_id = $product->create(
+			array(
+				// Required fields.
+				'title'       => $product_title,
+
+				// Optional core fields.
+				'slug'        => sanitize_title( $product_title . '-' . uniqid( '', true ) ),
+				'content'     => $this->generate_product_description( $product_type ),
+				'status'      => $this->faker->randomElement( array( 'publish', 'draft', 'pending' ) ),
+				'description' => $this->generate_short_description( $product_type ),
+				'summary'     => $this->faker->sentence( 20, true ),
+				'thumbnail'   => $this->generate_thumbnail(),
+
+				// Taxonomy relationships.
+				'categories'  => array_slice( $categories, 0, $this->faker->numberBetween( 1, 4 ) ),
+				'brands'      => array_slice( $brands, 0, $this->faker->numberBetween( 1, 2 ) ),
+
+				// Product attributes and variations.
+				'attributes'  => $attributes,
+				'variations'  => $formatted_variations,
+
+				// Additional meta data.
+				'meta'        => array(
+					'gallery'         => $this->generate_gallery_images(),
+					'template'        => $this->faker->randomElement(
+						array(
+							'template-standard',
+							'template-premium',
+							'template-minimal',
+						)
+					),
+					'featured'        => $this->faker->boolean( 25 ),
+					'seo_title'       => $product_title . ' | ' . $this->faker->company,
+					'seo_description' => $this->faker->sentence( 15, true ),
+					'seo_keywords'    => implode( ', ', (array) $this->faker->words( 5 ) ),
+					'sku_prefix'      => strtoupper( $this->faker->lexify( '???' ) ),
+					'release_date'    => $this->faker->dateTimeThisYear()->format( 'Y-m-d' ),
+					'warranty'        => 'physical' === $product_type ? $this->faker->randomElement(
+						array(
+							'1 year',
+							'2 years',
+							'Limited Lifetime',
+						)
+					) : null,
+					'shipping_class'  => 'physical' === $product_type ? $this->faker->randomElement(
+						array(
+							'standard',
+							'expedited',
+							'fragile',
+						)
+					) : null,
+				),
+			)
+		);
+
+		if ( ! $product_id ) {
+			return new WP_Error( 'product_creation_failed', __( 'Failed to create product using EasyCommerce model.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Assign product tags after creation.
+		$this->assign_product_tags( $product_id );
+
+		// Get aggregated stock using Product model.
+		$product_instance = new Product( $product_id );
+		$total_stock      = $product_instance->get_stock();
+
+		return array(
+			'id'           => $product_id,
+			'title'        => $product_title,
+			'type'         => $product_type,
+			'variations'   => count( $variations ),
+			'categories'   => count( $categories ),
+			'brands'       => count( $brands ),
+			'attributes'   => count( $attributes ),
+			'price_range'  => $this->get_price_range( $variations ),
+			'total_stock'  => $total_stock,
+			'stock_status' => $this->determine_stock_status( $total_stock ),
+		);
 	}
 
 	/**
@@ -520,25 +514,19 @@ class Product_Generator extends Generator {
 	 * @param string $type Attribute type.
 	 * @param string $slug Attribute slug.
 	 *
-	 * @return int|false Attribute ID or false on failure.
+	 * @return int Attribute ID or false on failure.
 	 */
-	private function get_or_create_attribute( string $name, string $type, string $slug ) {
-		try {
-			$attribute_model = new Attribute();
+	private function get_or_create_attribute( string $name, string $type, string $slug ): int {
+		$attribute_model = new Attribute();
 
-			// Check if attribute already exists.
-			$existing_attribute = $attribute_model->get_by_slug( $slug );
-			if ( $existing_attribute ) {
-				return $existing_attribute->id;
-			}
-
-			// Create new attribute.
-			return $attribute_model->add( $name, $type, $slug );
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to create attribute: ' . $e->getMessage(), 'error' );
-
-			return false;
+		// Check if attribute already exists.
+		$existing_attribute = $attribute_model->get_by_slug( $slug );
+		if ( $existing_attribute ) {
+			return $existing_attribute->id;
 		}
+
+		// Create new attribute.
+		return $attribute_model->add( $name, $type, $slug );
 	}
 
 	/**
@@ -550,26 +538,20 @@ class Product_Generator extends Generator {
 	 * @param string $name Value name.
 	 * @param string $value Value slug/value.
 	 *
-	 * @return int|false Attribute value ID or false on failure.
+	 * @return int Attribute value ID or false on failure.
 	 */
-	private function get_or_create_attribute_value( int $attribute_id, string $name, string $value ) {
-		try {
-			$value_model = new Attribute_Value();
-			$value_slug  = sanitize_title( $value );
+	private function get_or_create_attribute_value( int $attribute_id, string $name, string $value ): int {
+		$value_model = new Attribute_Value();
+		$value_slug  = sanitize_title( $value );
 
-			// Check if value already exists.
-			$existing_value = $value_model->get_by_slug( $value_slug );
-			if ( $existing_value && (int) $existing_value->attribute_id === $attribute_id ) {
-				return $existing_value->id;
-			}
-
-			// Create new attribute value.
-			return $value_model->add( $attribute_id, $name, $value, $value_slug );
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to create attribute value: ' . $e->getMessage(), 'error' );
-
-			return false;
+		// Check if value already exists.
+		$existing_value = $value_model->get_by_slug( $value_slug );
+		if ( $existing_value && (int) $existing_value->attribute_id === $attribute_id ) {
+			return $existing_value->id;
 		}
+
+		// Create new attribute value.
+		return $value_model->add( $attribute_id, $name, $value, $value_slug );
 	}
 
 	/**
@@ -1004,5 +986,25 @@ class Product_Generator extends Generator {
 
 		$selected_tags = $this->faker->randomElements( $tags, $this->faker->numberBetween( 2, 5 ) );
 		wp_set_post_terms( $product_id, $selected_tags, 'product_tag' );
+	}
+
+	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'products' => __( 'Products with Attributes, Variations, and Categories', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates realistic product data with attributes, variations, pricing, inventory management, categories, brands, tags, and comprehensive meta data for testing ecommerce functionality.', 'easycommerce-fakerpress' );
 	}
 }

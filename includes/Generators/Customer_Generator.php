@@ -13,6 +13,7 @@ use EasyCommerce\Models\Customer;
 use Exception;
 use RuntimeException;
 use WP_Error;
+use WP_User;
 
 /**
  * Customer Generator Class
@@ -42,95 +43,89 @@ class Customer_Generator extends Generator {
 	 * @return array|WP_Error Single customer data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Customer class exists.
-			if ( ! class_exists( Customer::class ) ) {
-				return new WP_Error( 'missing_model', __( 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
-			}
-
-			$first_name = $this->faker->firstName;
-			$last_name  = $this->faker->lastName;
-			$email      = $this->faker->unique()->safeEmail;
-			$full_name  = $first_name . ' ' . $last_name;
-
-			// Generate comprehensive customer data.
-			$billing_address  = $this->generate_billing_address( $first_name, $last_name, $email );
-			$shipping_address = $this->generate_shipping_address( $first_name, $last_name, $billing_address['country'] );
-			$customer_meta    = $this->generate_customer_meta();
-
-			// Check if user with this email already exists.
-			if ( email_exists( $email ) ) {
-				return new WP_Error( 'email_exists', __( 'A user with this email address already exists.', 'easycommerce-fakerpress' ) );
-			}
-
-			// Use EasyCommerce Customer model with proper data structure.
-			$customer = new Customer();
-			$username = $this->generate_unique_username( $first_name, $last_name );
-
-			// Prepare complete meta data for customer creation.
-			$complete_meta = array_merge(
-				array(
-					'phone'            => $billing_address['phone'],
-					'photo'            => $this->generate_customer_photo(),
-					'billing_address'  => $billing_address,
-					'shipping_address' => ! empty( $shipping_address ) ? $shipping_address : $billing_address,
-				),
-				$customer_meta
-			);
-
-			// Create customer using EasyCommerce Customer model.
-			$created = $customer->create(
-				array(
-					// Required fields.
-					'email'      => $email,
-					'name'       => $full_name,
-
-					// Optional core fields.
-					'first_name' => $first_name,
-					'last_name'  => $last_name,
-					'role'       => 'customer',
-					'username'   => $username,
-					'password'   => wp_generate_password( 16, true, true ),
-
-					// Customer meta data.
-					'meta'       => $complete_meta,
-				)
-			);
-
-			if ( ! $created ) {
-				return new WP_Error( 'customer_creation_failed', __( 'Failed to create customer using EasyCommerce model.', 'easycommerce-fakerpress' ) );
-			}
-
-			// Ensure the user has the proper EasyCommerce customer role.
-			$user = new \WP_User( $customer->get_id() );
-
-			// Remove default role and set EasyCommerce customer role.
-			$user->remove_role( 'subscriber' ); // Remove default role if assigned.
-			$user->set_role( 'customer' ); // Set EasyCommerce customer role with proper capabilities.
-
-			// Initialize customer statistics based on customer age.
-			$this->initialize_customer_history( $customer, $customer_meta );
-
-			return array(
-				'id'              => $customer->get_id(),
-				'name'            => $full_name,
-				'email'           => $email,
-				'username'        => $username,
-				'phone'           => $billing_address['phone'],
-				'billing_city'    => $billing_address['city'],
-				'billing_country' => $billing_address['country'],
-				'shipping_city'   => ! empty( $shipping_address ) ? $shipping_address['city'] : $billing_address['city'],
-				'customer_since'  => $customer_meta['customer_since'],
-				'loyalty_tier'    => $customer_meta['loyalty_tier'],
-				'total_orders'    => $customer_meta['total_orders'],
-				'total_spent'     => '$' . number_format( $customer_meta['total_spent'], 2 ),
-				'last_login'      => $customer_meta['last_login'],
-			);
-		} catch ( Exception $e ) {
-			$this->log( 'Customer creation failed: ' . $e->getMessage(), 'error' );
-
-			return new WP_Error( 'customer_creation_failed', $e->getMessage() );
+		// Check if EasyCommerce Customer class exists.
+		if ( ! class_exists( Customer::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		$first_name = $this->faker->firstName;
+		$last_name  = $this->faker->lastName;
+		$email      = $this->faker->unique()->safeEmail;
+		$full_name  = $first_name . ' ' . $last_name;
+
+		// Generate comprehensive customer data.
+		$billing_address  = $this->generate_billing_address( $first_name, $last_name, $email );
+		$shipping_address = $this->generate_shipping_address( $first_name, $last_name, $billing_address['country'] );
+		$customer_meta    = $this->generate_customer_meta();
+
+		// Check if user with this email already exists.
+		if ( email_exists( $email ) ) {
+			return new WP_Error( 'email_exists', __( 'A user with this email address already exists.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Use EasyCommerce Customer model with proper data structure.
+		$customer = new Customer();
+		$username = $this->generate_unique_username( $first_name, $last_name );
+
+		// Prepare complete meta data for customer creation.
+		$complete_meta = array_merge(
+			array(
+				'phone'            => $billing_address['phone'],
+				'photo'            => $this->generate_customer_photo(),
+				'billing_address'  => $billing_address,
+				'shipping_address' => ! empty( $shipping_address ) ? $shipping_address : $billing_address,
+			),
+			$customer_meta
+		);
+
+		// Create customer using EasyCommerce Customer model.
+		$created = $customer->create(
+			array(
+				// Required fields.
+				'email'      => $email,
+				'name'       => $full_name,
+
+				// Optional core fields.
+				'first_name' => $first_name,
+				'last_name'  => $last_name,
+				'role'       => 'customer',
+				'username'   => $username,
+				'password'   => wp_generate_password( 16, true, true ),
+
+				// Customer meta data.
+				'meta'       => $complete_meta,
+			)
+		);
+
+		if ( ! $created ) {
+			return new WP_Error( 'customer_creation_failed', __( 'Failed to create customer using EasyCommerce model.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Ensure the user has the proper EasyCommerce customer role.
+		$user = new WP_User( $customer->get_id() );
+
+		// Remove default role and set EasyCommerce customer role.
+		$user->remove_role( 'subscriber' ); // Remove default role if assigned.
+		$user->set_role( 'customer' ); // Set EasyCommerce customer role with proper capabilities.
+
+		// Initialize customer statistics based on customer age.
+		$this->initialize_customer_history( $customer, $customer_meta );
+
+		return array(
+			'id'              => $customer->get_id(),
+			'name'            => $full_name,
+			'email'           => $email,
+			'username'        => $username,
+			'phone'           => $billing_address['phone'],
+			'billing_city'    => $billing_address['city'],
+			'billing_country' => $billing_address['country'],
+			'shipping_city'   => ! empty( $shipping_address ) ? $shipping_address['city'] : $billing_address['city'],
+			'customer_since'  => $customer_meta['customer_since'],
+			'loyalty_tier'    => $customer_meta['loyalty_tier'],
+			'total_orders'    => $customer_meta['total_orders'],
+			'total_spent'     => '$' . number_format( $customer_meta['total_spent'], 2 ),
+			'last_login'      => $customer_meta['last_login'],
+		);
 	}
 
 	/**
@@ -141,10 +136,10 @@ class Customer_Generator extends Generator {
 	 * @param string $first_name First name.
 	 * @param string $last_name Last name.
 	 *
-	 * @return string Unique username.
+	 * @return WP_Error|string Unique username.
 	 * @throws RuntimeException If unable to generate a unique username after 10 attempts.
 	 */
-	private function generate_unique_username( string $first_name, string $last_name ): string {
+	private function generate_unique_username( string $first_name, string $last_name ) {
 		$base_username = strtolower( $first_name . '.' . $last_name );
 		$username      = sanitize_user( $base_username, true );
 		$attempts      = 0;
@@ -155,7 +150,7 @@ class Customer_Generator extends Generator {
 		}
 
 		if ( username_exists( $username ) ) {
-			throw new RuntimeException( esc_html__( 'Unable to generate unique username after 10 attempts.', 'easycommerce-fakerpress' ) );
+			return new WP_Error( 'username_generation_failed', esc_html__( 'Unable to generate unique username after 10 attempts.', 'easycommerce-fakerpress' ) );
 		}
 
 		return $username;
@@ -169,8 +164,22 @@ class Customer_Generator extends Generator {
 	 * @return string Photo URL or empty string.
 	 */
 	private function generate_customer_photo(): string {
-		// Placeholder for WordPress media library integration.
-		return (string) $this->faker->optional( 0.3 )->imageUrl( 200, 200, 'people' );
+		// Query for a random image from the media library.
+		$args = array(
+			'post_type'      => 'attachment',
+			'numberposts'    => 1,
+			'orderby'        => 'rand',
+			'post_status'    => 'inherit',
+			'post_mime_type' => 'image',
+		);
+
+		$random_images = get_posts( $args );
+
+		if ( ! $random_images || ! isset( $random_images[0] ) ) {
+			return (string) $this->faker->optional( 0.3 )->imageUrl( 200, 200, 'people' );
+		}
+
+		return wp_get_attachment_url( $random_images[0]->ID );
 	}
 
 	/**
@@ -185,8 +194,7 @@ class Customer_Generator extends Generator {
 	 * @return array Billing address data.
 	 */
 	private function generate_billing_address( string $first_name, string $last_name, string $email ): array {
-		$countries = array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' );
-		$country   = $this->faker->randomElement( $countries );
+		$country = $this->faker->randomElement( array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
 
 		return array(
 			'first_name' => $first_name,
@@ -618,5 +626,25 @@ class Customer_Generator extends Generator {
 		$customer->update_meta( 'loyalty_points', $customer_meta['loyalty_points'] );
 		$customer->update_meta( 'cart_abandonments', $customer_meta['cart_abandonments'] );
 		$customer->update_meta( 'coupon_usage', $customer_meta['coupon_usage'] );
+	}
+
+	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'customers' => __( 'Customer Profiles with Addresses and Metadata', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates realistic customer profiles with comprehensive personal information, billing/shipping addresses, preferences, purchase history, loyalty tiers, and engagement metrics for testing ecommerce customer management systems.', 'easycommerce-fakerpress' );
 	}
 }

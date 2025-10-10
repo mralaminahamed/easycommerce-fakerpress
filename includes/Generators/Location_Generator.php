@@ -71,7 +71,7 @@ class Location_Generator extends Generator {
 
 		// Save to EasyCommerce location system.
 		$result = $this->save_location_data( $location_data );
-		if ( ! $result ) {
+		if ( ! $result || is_wp_error( $result ) ) {
 			return new WP_Error( 'location_creation_failed', __( 'Failed to create location data using EasyCommerce model.', 'easycommerce-fakerpress' ) );
 		}
 
@@ -590,7 +590,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @param array $location_data Complete location data.
 	 *
-	 * @return bool True on success, false on failure.
+	 * @return WP_Error|bool True on success, false on failure.
 	 */
 	private function save_location_data( array $location_data ): bool {
 		try {
@@ -617,7 +617,7 @@ class Location_Generator extends Generator {
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to save location data: ' . $e->getMessage(), 'error' );
 
-			return false;
+			return new WP_Error( 'error', $e->getMessage() );
 		}
 	}
 
@@ -670,5 +670,25 @@ class Location_Generator extends Generator {
 		$upload_dir = wp_upload_dir();
 
 		return $upload_dir['basedir'] . '/easycommerce/locations.json';
+	}
+
+	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'locations' => __( 'Geographic Location Hierarchy with Countries, States, and Cities', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates comprehensive geographic location data with hierarchical structure (countries, states/provinces, cities) including coordinates, timezones, currencies, and administrative divisions for testing location-based ecommerce functionality.', 'easycommerce-fakerpress' );
 	}
 }

@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Tax;
 use Exception;
+use WP_Error;
 
 /**
  * Tax Generator Class
@@ -53,35 +54,29 @@ class Tax_Generator extends Generator {
 	/**
 	 * Generate a single tax class
 	 *
-	 * @return array|bool Single tax class data, error, or false on failure.
+	 * @return WP_Error|array|bool Single tax class data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Tax class exists.
-			if ( ! class_exists( Tax::class ) ) {
-				return new \WP_Error( 'missing_model', 'EasyCommerce Tax model not found. Please ensure EasyCommerce plugin is active.' );
-			}
-
-			$tax_class_data = $this->generate_tax_class_data();
-			$tax_class      = $this->create_tax_class( $tax_class_data );
-
-			if ( $tax_class ) {
-				return array(
-					'id'          => $tax_class['id'],
-					'name'        => $tax_class['name'],
-					'description' => $tax_class['description'],
-					'status'      => $tax_class['status'],
-					'rates'       => $tax_class['rates'],
-					'regions'     => $this->get_tax_class_regions( $tax_class['rates'] ),
-				);
-			}
-
-			return false;
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to generate tax class: ' . $e->getMessage(), 'error' );
-
-			return false;
+		// Check if EasyCommerce Tax class exists.
+		if ( ! class_exists( Tax::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Tax model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		$tax_class_data = $this->generate_tax_class_data();
+		$tax_class      = $this->create_tax_class( $tax_class_data );
+
+		if ( ! $tax_class ) {
+			return new WP_Error( 'tax-class-not-found', __( 'Tax class not found.', 'easycommerce-fakerpress' ) );
+		}
+
+		return array(
+			'id'          => $tax_class['id'],
+			'name'        => $tax_class['name'],
+			'description' => $tax_class['description'],
+			'status'      => $tax_class['status'],
+			'rates'       => $tax_class['rates'],
+			'regions'     => $this->get_tax_class_regions( $tax_class['rates'] ),
+		);
 	}
 
 	/**
@@ -112,7 +107,7 @@ class Tax_Generator extends Generator {
 	 * @return array Tax class data
 	 */
 	private function generate_tax_class_data(): array {
-		// Decide whether to use real CSV data or generated data (70% CSV, 30% generated)
+		// Decide whether to use real CSV data or generated data (70% CSV, 30% generated).
 		$use_csv_data = $this->faker->boolean( 70 );
 
 		if ( $use_csv_data ) {
@@ -120,7 +115,7 @@ class Tax_Generator extends Generator {
 			if ( $csv_data ) {
 				return $csv_data;
 			}
-			// Fallback to generated data if CSV import fails
+			// Fallback to generated data if CSV import fails.
 		}
 
 		$tax_types = array(
@@ -349,31 +344,31 @@ class Tax_Generator extends Generator {
 	private function generate_tax_class_from_csv(): ?array {
 		$tax_model = new Tax();
 
-		// Countries with available CSV tax data
+		// Countries with available CSV tax data.
 		$available_countries = array( 'US', 'CA', 'GB', 'AU', 'IN', 'BD' );
 
-		// Get countries that have CSV files
+		// Get countries that have CSV files.
 		$countries_with_files = $tax_model->get_tax_files_by_countries( $available_countries );
 
 		if ( empty( $countries_with_files ) ) {
 			return null;
 		}
 
-		// Select a random country with CSV data
+		// Select a random country with CSV data.
 		$selected_country = $this->faker->randomElement( $countries_with_files );
 
-		// Get tax rates from CSV
+		// Get tax rates from CSV.
 		$csv_rates = $tax_model->get_country_tax_rates_from_csv( strtolower( $selected_country ) );
 
 		if ( empty( $csv_rates ) ) {
 			return null;
 		}
 
-		// Select a subset of rates (3-10 states/regions)
+		// Select a subset of rates (3-10 states/regions).
 		$selected_count = min( count( $csv_rates ), $this->faker->numberBetween( 3, 10 ) );
 		$selected_rates = $this->faker->randomElements( $csv_rates, $selected_count );
 
-		// Format rates for tax class creation
+		// Format rates for tax class creation.
 		$formatted_rates = array();
 		foreach ( $selected_rates as $csv_rate ) {
 			$formatted_rates[] = array(

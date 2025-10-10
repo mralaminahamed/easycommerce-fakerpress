@@ -17,6 +17,7 @@ use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Transaction;
 use Exception;
 use RuntimeException;
+use WP_Error;
 
 /**
  * Transaction Generator Class
@@ -57,47 +58,41 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate a single transaction
 	 *
-	 * @return array|bool Single transaction data, error, or false on failure.
+	 * @return WP_Error|array|bool Single transaction data, error, or false on failure.
 	 * @throws RuntimeException When no orders are found.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Transaction class exists.
-			if ( ! class_exists( Transaction::class ) ) {
-				return new \WP_Error( 'missing_model', 'EasyCommerce Transaction model not found. Please ensure EasyCommerce plugin is active.' );
-			}
-
-			// Get orders based on customer parameters.
-			$orders = $this->get_orders_for_transactions();
-
-			if ( empty( $orders ) ) {
-				throw new RuntimeException( 'No orders found. Please generate orders first.' );
-			}
-
-			$order            = $this->faker->randomElement( $orders );
-			$transaction_data = $this->generate_transaction_data( $order );
-			$transaction_id   = $this->create_transaction( $transaction_data );
-
-			if ( $transaction_id ) {
-				return array(
-					'id'              => $transaction_id,
-					'order_id'        => $transaction_data['order_id'],
-					'customer_id'     => $transaction_data['customer_id'],
-					'transaction_id'  => $transaction_data['transaction_id'],
-					'payment_gateway' => $transaction_data['payment_gateway'],
-					'amount'          => $transaction_data['amount'],
-					'currency'        => $transaction_data['currency'],
-					'status'          => $transaction_data['status'],
-					'type'            => $transaction_data['type'],
-				);
-			}
-
-			return false;
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to generate transaction: ' . $e->getMessage(), 'error' );
-
-			return false;
+		// Check if EasyCommerce Transaction class exists.
+		if ( ! class_exists( Transaction::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Transaction model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		// Get orders based on customer parameters.
+		$orders = $this->get_orders_for_transactions();
+
+		if ( empty( $orders ) ) {
+			return new WP_Error( 'no_orders', __( 'No orders found. Please generate orders first.', 'easycommerce-fakerpress' ) );
+		}
+
+		$order            = $this->faker->randomElement( $orders );
+		$transaction_data = $this->generate_transaction_data( $order );
+		$transaction_id   = $this->create_transaction( $transaction_data );
+
+		if ( ! $transaction_id ) {
+			return new WP_Error( 'transaction_creation_failed', __( 'Failed to create transaction.', 'easycommerce-fakerpress' ) );
+		}
+
+		return array(
+			'id'              => $transaction_id,
+			'order_id'        => $transaction_data['order_id'],
+			'customer_id'     => $transaction_data['customer_id'],
+			'transaction_id'  => $transaction_data['transaction_id'],
+			'payment_gateway' => $transaction_data['payment_gateway'],
+			'amount'          => $transaction_data['amount'],
+			'currency'        => $transaction_data['currency'],
+			'status'          => $transaction_data['status'],
+			'type'            => $transaction_data['type'],
+		);
 	}
 
 	/**
@@ -206,17 +201,7 @@ class Transaction_Generator extends Generator {
 			'transaction_id'  => $this->generate_transaction_id( $gateway_key ),
 			'payment_gateway' => $payment_gateway,
 			'amount'          => $amount,
-			'currency'        => $this->faker->randomElement(
-				array(
-					'USD',
-					'EUR',
-					'GBP',
-					'CAD',
-					'AUD',
-					'JPY',
-					'INR',
-				)
-			),
+			'currency'        => $this->faker->randomElement( array( 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR' ) ),
 			'status'          => $this->generate_transaction_status( $transaction_type ),
 			'type'            => $transaction_type,
 		);
@@ -300,7 +285,7 @@ class Transaction_Generator extends Generator {
 		return $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
 					array_keys( $statuses ),
 					$statuses
 				)
@@ -358,8 +343,7 @@ class Transaction_Generator extends Generator {
 	private function create_transaction( array $data ): ?int {
 		$transaction = new Transaction();
 
-		// Enable order status updates for completed payment transactions
-		// This creates realistic order status progression based on transactions
+		// Enable order status updates for completed payment transactions.
 		$should_update_status = ( 'payment' === $data['type'] && 'completed' === $data['status'] );
 
 		$transaction_id = $transaction->add( $data['order_id'], $data, $should_update_status );
@@ -373,7 +357,7 @@ class Transaction_Generator extends Generator {
 	 * @param int $order_id Order ID.
 	 * @param int $transaction_count Number of transactions to generate.
 	 *
-	 * @return array Generated transactions.
+	 * @return WP_Error|array Generated transactions.
 	 * @throws RuntimeException When order is not found.
 	 */
 	public function generate_for_order( int $order_id, int $transaction_count = 3 ): array {
@@ -381,7 +365,7 @@ class Transaction_Generator extends Generator {
 		$order_data = $order_db->get_by_id( $order_id );
 
 		if ( ! $order_data ) {
-			throw new RuntimeException( 'Order not found.' );
+			return new WP_Error( 'order_not_found', __( 'Order not found.', 'easycommerce-fakerpress' ) );
 		}
 
 		$results          = array();
@@ -399,7 +383,7 @@ class Transaction_Generator extends Generator {
 					)
 				);
 
-				$transaction_data         = $this->generate_transaction_data( $order_data );
+				$transaction_data         = $this->generate_transaction_data( (array) $order_data );
 				$transaction_data['type'] = $transaction_type;
 
 				// Adjust amount for subsequent transactions.
