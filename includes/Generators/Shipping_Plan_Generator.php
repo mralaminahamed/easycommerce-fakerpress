@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Shipping_Plan;
 use Exception;
+use WP_Error;
 
 /**
  * Shipping Plan Generator Class
@@ -33,41 +34,35 @@ class Shipping_Plan_Generator extends Generator {
 	/**
 	 * Generate a single shipping plan
 	 *
-	 * @return array|bool Single shipping plan data, error, or false on failure.
+	 * @return WP_Error|array Single shipping plan data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Shipping_Plan class exists.
-			if ( ! class_exists( Shipping_Plan::class ) ) {
-				return new \WP_Error( 'missing_model', 'EasyCommerce Shipping_Plan model not found. Please ensure EasyCommerce plugin is active.' );
-			}
-
-			$shipping_plan_data = $this->generate_shipping_plan_data();
-			$shipping_plan      = $this->create_shipping_plan( $shipping_plan_data );
-
-			if ( $shipping_plan ) {
-				// Test location lookup to verify plan can be found by its regions
-				$location_test = $this->test_location_lookup( $shipping_plan, $shipping_plan_data['regions'] );
-
-				return array(
-					'id'               => $shipping_plan->get_id(),
-					'name'             => $shipping_plan->get_name(),
-					'description'      => $shipping_plan->get_description(),
-					'active'           => $shipping_plan->is_active(),
-					'taxable'          => $shipping_plan->is_taxable(),
-					'calculation_base' => $shipping_plan->get_calculation_base(),
-					'methods'          => $shipping_plan->get_methods(),
-					'regions'          => $shipping_plan->get_regions(),
-					'location_test'    => $location_test,
-				);
-			}
-
-			return false;
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to generate shipping plan: ' . $e->getMessage(), 'error' );
-
-			return false;
+		// Check if EasyCommerce Shipping_Plan class exists.
+		if ( ! class_exists( Shipping_Plan::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Shipping_Plan model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		$shipping_plan_data = $this->generate_shipping_plan_data();
+		$shipping_plan      = $this->create_shipping_plan( $shipping_plan_data );
+
+		if ( ! $shipping_plan ) {
+			return new WP_Error( 'shipping_plan_creation_failed', __( 'Failed to create shipping plan.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Test location lookup to verify plan can be found by its regions.
+		$location_test = $this->test_location_lookup( $shipping_plan, $shipping_plan_data['regions'] );
+
+		return array(
+			'id'               => $shipping_plan->get_id(),
+			'name'             => $shipping_plan->get_name(),
+			'description'      => $shipping_plan->get_description(),
+			'active'           => $shipping_plan->is_active(),
+			'taxable'          => $shipping_plan->is_taxable(),
+			'calculation_base' => $shipping_plan->get_calculation_base(),
+			'methods'          => $shipping_plan->get_methods(),
+			'regions'          => $shipping_plan->get_regions(),
+			'location_test'    => $location_test,
+		);
 	}
 
 	/**
@@ -729,58 +724,47 @@ class Shipping_Plan_Generator extends Generator {
 	 * @param Shipping_Plan $shipping_plan Created shipping plan instance.
 	 * @param array         $regions Array of region data.
 	 *
-	 * @return array Test result with lookup status.
+	 * @return WP_Error|array Test result with lookup status.
 	 */
 	private function test_location_lookup( Shipping_Plan $shipping_plan, array $regions ): array {
-		try {
-			if ( empty( $regions ) ) {
-				return array(
-					'tested'  => false,
-					'message' => 'No regions to test',
-				);
-			}
-
-			// Pick a random region to test
-			$test_region = $this->faker->randomElement( $regions );
-
-			// Build region code in format: COUNTRY-STATE or COUNTRY-STATE-CITY
-			$region_code_parts = array( $test_region['country'] );
-
-			if ( ! empty( $test_region['state'] ) ) {
-				$region_code_parts[] = $test_region['state'];
-			}
-
-			if ( ! empty( $test_region['city'] ) ) {
-				$region_code_parts[] = $test_region['city'];
-			}
-
-			$region_code = implode( '-', $region_code_parts );
-
-			// Use Shipping_Plan::get_by_location() to find plans for this region
-			$found_plans = Shipping_Plan::get_by_location( $region_code, 10 );
-
-			// Check if our plan is in the results
-			$plan_found = false;
-			foreach ( $found_plans as $plan ) {
-				if ( $plan['id'] === $shipping_plan->get_id() ) {
-					$plan_found = true;
-					break;
-				}
-			}
-
-			return array(
-				'tested'      => true,
-				'plan_found'  => $plan_found,
-				'region_code' => $region_code,
-				'total_plans' => count( $found_plans ),
-				'message'     => $plan_found ? 'Plan successfully found by location' : 'Plan not found in location lookup',
-			);
-		} catch ( Exception $e ) {
-			return array(
-				'tested'  => false,
-				'error'   => $e->getMessage(),
-				'message' => 'Location lookup test failed',
-			);
+		if ( empty( $regions ) ) {
+			return new WP_Error( 'missing_regions', __( 'No regions found.', 'easycommerce-fakerpress' ) );
 		}
+
+		// Pick a random region to test.
+		$test_region = $this->faker->randomElement( $regions );
+
+		// Build region code in format: COUNTRY-STATE or COUNTRY-STATE-CITY.
+		$region_code_parts = array( $test_region['country'] );
+
+		if ( ! empty( $test_region['state'] ) ) {
+			$region_code_parts[] = $test_region['state'];
+		}
+
+		if ( ! empty( $test_region['city'] ) ) {
+			$region_code_parts[] = $test_region['city'];
+		}
+
+		$region_code = implode( '-', $region_code_parts );
+
+		// Use Shipping_Plan::get_by_location() to find plans for this region.
+		$found_plans = Shipping_Plan::get_by_location( $region_code, 10 );
+
+		// Check if our plan is in the results.
+		$plan_found = false;
+		foreach ( $found_plans as $plan ) {
+			if ( $plan['id'] === $shipping_plan->get_id() ) {
+				$plan_found = true;
+				break;
+			}
+		}
+
+		return array(
+			'tested'      => true,
+			'plan_found'  => $plan_found,
+			'region_code' => $region_code,
+			'total_plans' => count( $found_plans ),
+			'message'     => $plan_found ? __( 'Plan successfully found by location', 'easycommerce-fakerpress' ) : __( 'Plan not found in location lookup', 'easycommerce-fakerpress' ),
+		);
 	}
 }

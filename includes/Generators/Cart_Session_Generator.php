@@ -82,24 +82,24 @@ class Cart_Session_Generator extends Generator {
 		$cart_data    = $this->generate_cart_session_data( $products, $customer );
 		$cart_session = $this->create_cart_session( $cart_data );
 
-		if ( $cart_session ) {
-			return array(
-				'hash'           => $cart_session['hash'],
-				'user_id'        => $cart_session['user_id'],
-				'status'         => $cart_session['status'],
-				'items_count'    => count( $cart_session['items'] ),
-				'total_amount'   => $cart_session['total_amount'],
-				'customer_email' => $cart_session['customer_email'],
-				'customer_name'  => $cart_session['customer_name'],
-				'reminders'      => $cart_session['reminders'],
-				'created_at'     => $cart_session['created_at'],
-				'updated_at'     => $cart_session['updated_at'],
-				'items'          => $cart_session['items'],
-				'addresses'      => $cart_session['addresses'],
-			);
+		if ( ! $cart_session ) {
+			return new WP_Error( 'cart_session_creation_failed', __( 'Failed to create cart session.', 'easycommerce-fakerpress' ) );
 		}
 
-		return array();
+		return array(
+			'hash'           => $cart_session['hash'],
+			'user_id'        => $cart_session['user_id'],
+			'status'         => $cart_session['status'],
+			'items_count'    => count( $cart_session['items'] ),
+			'total_amount'   => $cart_session['total_amount'],
+			'customer_email' => $cart_session['customer_email'],
+			'customer_name'  => $cart_session['customer_name'],
+			'reminders'      => $cart_session['reminders'],
+			'created_at'     => $cart_session['created_at'],
+			'updated_at'     => $cart_session['updated_at'],
+			'items'          => $cart_session['items'],
+			'addresses'      => $cart_session['addresses'],
+		);
 	}
 
 	/**
@@ -153,14 +153,14 @@ class Cart_Session_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Customer data or null if none found.
+	 * @return WP_Error|array Customer data or null if none found.
 	 */
-	private function get_random_existing_customer(): array {
+	private function get_random_existing_customer() {
 		$customer_data = Customer::list( null, 1, 30 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {
-			return array();
+			return new WP_Error( 'no-customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
 		}
 
 		$customer = $this->faker->randomElement( $customers );
@@ -181,9 +181,9 @@ class Cart_Session_Generator extends Generator {
 	 *
 	 * @param int $customer_id Customer ID.
 	 *
-	 * @return array Customer data or null if not found.
+	 * @return WP_Error|array Customer data or null if not found.
 	 */
-	private function get_specific_customer_for_cart( int $customer_id ): array {
+	private function get_specific_customer_for_cart( int $customer_id ) {
 		$customer = new Customer( $customer_id );
 		if ( $customer->get_id() && $customer->get_id() > 0 ) {
 			return array(
@@ -195,7 +195,7 @@ class Cart_Session_Generator extends Generator {
 			);
 		}
 
-		return array();
+		return new WP_Error( 'no-customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
 	}
 
 	/**
@@ -203,22 +203,22 @@ class Cart_Session_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|null New customer data or null on failure.
+	 * @return WP_Error|array New customer data or null on failure.
 	 */
 	private function create_new_customer_for_cart() {
 		$customer_generator = new Customer_Generator();
-		$result             = $customer_generator->generate_single_item();
+		$customer           = $customer_generator->generate_single_item();
 
-		if ( ! $result || is_wp_error( $result ) ) {
-			return array();
+		if ( is_wp_error( $customer ) ) {
+			return $customer;
 		}
 
 		return array(
-			'id'         => $result['id'],
-			'name'       => $result['name'],
-			'email'      => $result['email'],
-			'first_name' => $result['first_name'] ?? '',
-			'last_name'  => $result['last_name'] ?? '',
+			'id'         => $customer['id'],
+			'name'       => $customer['name'],
+			'email'      => $customer['email'],
+			'first_name' => $customer['first_name'] ?? '',
+			'last_name'  => $customer['last_name'] ?? '',
 		);
 	}
 
@@ -247,8 +247,8 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart session data.
 	 *
-	 * @param array      $products Available products.
-	 * @param array|null $customer Selected customer or null for guest.
+	 * @param array $products Available products.
+	 * @param array $customer Selected customer or null for guest.
 	 *
 	 * @return array Cart session data
 	 */
@@ -530,9 +530,9 @@ class Cart_Session_Generator extends Generator {
 	 *
 	 * @param array $data Cart session data.
 	 *
-	 * @return array|null Created cart session data
+	 * @return WP_Error|array Created cart session data
 	 */
-	private function create_cart_session( array $data ): ?array {
+	private function create_cart_session( array $data ): array {
 		$cart_db = new Database( 'cart_sessions' );
 
 		// Generate unique hash.
@@ -603,7 +603,7 @@ class Cart_Session_Generator extends Generator {
 			);
 		}
 
-		return null;
+		return new WP_Error( 'cart-creation-failed', __( 'There was an error creating the cart.', 'easycommerce-fakerpress' ) );
 	}
 
 	/**

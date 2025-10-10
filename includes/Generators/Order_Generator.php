@@ -67,76 +67,70 @@ class Order_Generator extends Generator {
 	 * @return array|WP_Error Single order data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Order class exists.
-			if ( ! class_exists( Order::class ) ) {
-				return new WP_Error( 'missing_model', __('EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.') );
-			}
-
-			$customer   = $this->get_customer_for_order();
-			$variations = $this->get_random_product_variations();
-
-			if ( ! $customer ) {
-				return new WP_Error( 'no_customers', 'No customers found for order generation. Please create customers first.' );
-			}
-
-			if ( empty( $variations ) ) {
-				return new WP_Error( 'no_variations', 'No product variations found for order generation. Please create products with variations first.' );
-			}
-
-			// Get customer billing address early for tax calculation.
-			$customer_model  = new Customer( $customer['id'] );
-			$billing_address = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
-
-			// Convert variations to order items format required by EasyCommerce.
-			$order_items = $this->convert_variations_to_items( $variations, $billing_address );
-			$subtotal    = $this->calculate_subtotal( $order_items );
-			$order_meta  = $this->generate_order_meta( $customer, $subtotal, $billing_address );
-			$total       = $this->calculate_total( $subtotal, $order_meta );
-
-			// Use EasyCommerce Order model with complete data structure.
-			$order   = new Order();
-			$created = $order->create(
-				array(
-					// Required fields.
-					'customer_id'    => $customer['id'],
-					'total'          => $total,
-
-					// Optional core fields.
-					'status'         => $this->generate_order_status(),
-					'fulfill_status' => $this->generate_fulfillment_status(),
-					'payment_method' => $this->generate_payment_method(),
-
-					// Order items (required).
-					'items'          => $order_items,
-
-					// Order metadata.
-					'meta'           => $order_meta,
-				)
-			);
-
-			if ( ! $created ) {
-				return new WP_Error( 'order_creation_failed', 'Failed to create order using EasyCommerce model.' );
-			}
-
-			// Update customer statistics.
-			$this->update_customer_stats( $customer['id'], $total );
-
-			return array(
-				'id'             => $order->get_id(),
-				'customer'       => $customer['name'],
-				'customer_email' => $customer['email'],
-				'total'          => '$' . number_format( $total, 2 ),
-				'status'         => $order->get_status(),
-				'payment_method' => $order_meta['payment_details']['method'],
-				'items_count'    => $this->count_order_items( $order_items ),
-				'created_date'   => current_time( 'Y-m-d H:i:s' ),
-			);
-		} catch ( Exception $e ) {
-			$this->log( 'Order creation failed: ' . $e->getMessage(), 'error' );
-
-			return new WP_Error( 'order_creation_failed', $e->getMessage() );
+		// Check if EasyCommerce Order class exists.
+		if ( ! class_exists( Order::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		$customer   = $this->get_customer_for_order();
+		$variations = $this->get_random_product_variations();
+
+		if ( is_wp_error( $customer ) ) {
+			return new WP_Error( 'no_customers', __( 'No customers found for order generation. Please create customers first.', 'easycommerce-fakerpress' ) );
+		}
+
+		if ( is_wp_error( $variations ) ) {
+			return new WP_Error( 'no_variations', __( 'No product variations found for order generation. Please create products with variations first.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Get customer billing address early for tax calculation.
+		$customer_model  = new Customer( $customer['id'] );
+		$billing_address = $customer_model->get_billing_address() ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
+
+		// Convert variations to order items format required by EasyCommerce.
+		$order_items = $this->convert_variations_to_items( $variations, $billing_address );
+		$subtotal    = $this->calculate_subtotal( $order_items );
+		$order_meta  = $this->generate_order_meta( $customer, $subtotal, $billing_address );
+		$total       = $this->calculate_total( $subtotal, $order_meta );
+
+		// Use EasyCommerce Order model with complete data structure.
+		$order   = new Order();
+		$created = $order->create(
+			array(
+				// Required fields.
+				'customer_id'    => $customer['id'],
+				'total'          => $total,
+
+				// Optional core fields.
+				'status'         => $this->generate_order_status(),
+				'fulfill_status' => $this->generate_fulfillment_status(),
+				'payment_method' => $this->generate_payment_method(),
+
+				// Order items (required).
+				'items'          => $order_items,
+
+				// Order metadata.
+				'meta'           => $order_meta,
+			)
+		);
+
+		if ( ! $created ) {
+			return new WP_Error( 'order_creation_failed', __( 'Failed to create order using EasyCommerce model.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Update customer statistics.
+		$this->update_customer_stats( $customer['id'], $total );
+
+		return array(
+			'id'             => $order->get_id(),
+			'customer'       => $customer['name'],
+			'customer_email' => $customer['email'],
+			'total'          => '$' . number_format( $total, 2 ),
+			'status'         => $order->get_status(),
+			'payment_method' => $order_meta['payment_details']['method'],
+			'items_count'    => $this->count_order_items( $order_items ),
+			'created_date'   => current_time( 'Y-m-d H:i:s' ),
+		);
 	}
 
 	/**
@@ -177,15 +171,15 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|false Random customer user object or false if none found.
+	 * @return WP_Error|array Random customer user object or false if none found.
 	 */
 	private function get_random_customer() {
 		// Use EasyCommerce Customer model's customer_list method to get customers with proper capabilities.
-		$customer_data = Customer::customer_list( null, 1, 50 );
+		$customer_data = Customer::list( null, 1, 50 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {
-			return false;
+			return new WP_Error( 'no_customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
 		}
 
 		// Use faker to randomly select from available customers.
@@ -199,26 +193,22 @@ class Order_Generator extends Generator {
 	 *
 	 * @param int $customer_id Customer ID.
 	 *
-	 * @return array|false Customer data or false if not found.
+	 * @return WP_Error|array Customer data or false if not found.
 	 */
 	private function get_specific_customer( int $customer_id ) {
-		try {
-			$customer = new Customer( $customer_id );
-			if ( $customer->get_id() && $customer->get_id() > 0 ) {
-				return array(
-					'id'         => $customer->get_id(),
-					'name'       => $customer->get_name(),
-					'email'      => $customer->get_email(),
-					'first_name' => $customer->get_first_name(),
-					'last_name'  => $customer->get_last_name(),
-					'role'       => $customer->get_role(),
-				);
-			}
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to get specific customer: ' . $e->getMessage(), 'warning' );
+		$customer = new Customer( $customer_id );
+		if ( $customer->get_id() && $customer->get_id() > 0 ) {
+			return array(
+				'id'         => $customer->get_id(),
+				'name'       => $customer->get_name(),
+				'email'      => $customer->get_email(),
+				'first_name' => $customer->get_first_name(),
+				'last_name'  => $customer->get_last_name(),
+				'role'       => $customer->get_role(),
+			);
 		}
 
-		return false;
+		return new WP_Error( 'no_customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
 	}
 
 	/**
@@ -229,29 +219,23 @@ class Order_Generator extends Generator {
 	 * @return array|false New customer data or false on failure.
 	 */
 	private function create_new_customer() {
-		try {
-			// Use Customer_Generator to create a new customer.
-			$customer_generator = new Customer_Generator();
-			$result             = $customer_generator->generate_single_item();
+		// Use Customer_Generator to create a new customer.
+		$customer_generator = new Customer_Generator();
+		$customer           = $customer_generator->generate_single_item();
 
-			if ( is_wp_error( $result ) || ! $result ) {
-				return false;
-			}
-
-			// Return customer in expected format.
-			return array(
-				'id'         => $result['id'],
-				'name'       => $result['name'],
-				'email'      => $result['email'],
-				'first_name' => $result['first_name'] ?? '',
-				'last_name'  => $result['last_name'] ?? '',
-				'role'       => 'customer',
-			);
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to create new customer: ' . $e->getMessage(), 'warning' );
-
-			return false;
+		if ( is_wp_error( $customer ) ) {
+			return $customer;
 		}
+
+		// Return customer in expected format.
+		return array(
+			'id'         => $customer['id'],
+			'name'       => $customer['name'],
+			'email'      => $customer['email'],
+			'first_name' => $customer['first_name'] ?? '',
+			'last_name'  => $customer['last_name'] ?? '',
+			'role'       => 'customer',
+		);
 	}
 
 	/**
@@ -259,7 +243,7 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Array of Product_Variation objects.
+	 * @return WP_Error|array Array of Product_Variation objects.
 	 */
 	private function get_random_product_variations(): array {
 		// Get a larger pool of available variations to choose from.
@@ -272,7 +256,7 @@ class Order_Generator extends Generator {
 		);
 
 		if ( empty( $variations_data ) ) {
-			return array();
+			return new WP_Error( 'no_variations', __( 'No variations found.', 'easycommerce-fakerpress' ) );
 		}
 
 		// Use faker to randomly select variations (1-5 items per order).
@@ -423,7 +407,7 @@ class Order_Generator extends Generator {
 		return $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
 					array_keys( $statuses ),
 					$statuses
 				)
@@ -542,7 +526,7 @@ class Order_Generator extends Generator {
 		$method = $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $method, $details ) => array_fill( 0, $details['weight'], $method ),
+					static fn( $method, $details ) => array_fill( 0, $details['weight'], $method ),
 					array_keys( $shipping_methods ),
 					$shipping_methods
 				)
@@ -665,7 +649,7 @@ class Order_Generator extends Generator {
 		return $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
 					array_keys( $statuses ),
 					$statuses
 				)
@@ -691,7 +675,7 @@ class Order_Generator extends Generator {
 		$source = $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $src, $weight ) => array_fill( 0, $weight, $src ),
+					static fn( $src, $weight ) => array_fill( 0, $weight, $src ),
 					array_keys( $sources ),
 					$sources
 				)
@@ -704,20 +688,10 @@ class Order_Generator extends Generator {
 			'ip_address'   => $this->faker->ipv4,
 			'referrer'     => $this->faker->optional( 0.4 )->url,
 			'utm_source'   => $this->faker->optional( 0.3 )->randomElement(
-				array(
-					'google',
-					'facebook',
-					'email',
-					'direct',
-				)
+				array( 'google', 'facebook', 'email', 'direct' )
 			),
 			'utm_medium'   => $this->faker->optional( 0.3 )->randomElement(
-				array(
-					'cpc',
-					'social',
-					'email',
-					'organic',
-				)
+				array( 'cpc', 'social', 'email', 'organic' )
 			),
 			'utm_campaign' => $this->faker->optional( 0.2 )->words( 2, true ),
 		);
@@ -752,8 +726,8 @@ class Order_Generator extends Generator {
 	 */
 	private function count_order_items( array $order_items ): int {
 		$count = 0;
-		foreach ( $order_items as $product_id => $variations ) {
-			foreach ( $variations as $price_id => $item ) {
+		foreach ( $order_items as $variations ) {
+			foreach ( $variations as $item ) {
 				$count += $item['quantity'];
 			}
 		}
@@ -792,7 +766,7 @@ class Order_Generator extends Generator {
 		$country_code = $this->faker->randomElement(
 			array_merge(
 				...array_map(
-					fn( $code, $weight ) => array_fill( 0, $weight, $code ),
+					static fn( $code, $weight ) => array_fill( 0, $weight, $code ),
 					array_keys( $weighted_countries ),
 					$weighted_countries
 				)
@@ -864,9 +838,7 @@ class Order_Generator extends Generator {
 		);
 
 		return array_map(
-			function ( $coupon ) {
-				return (array) $coupon;
-			},
+			static fn( $coupon ) => (array) $coupon,
 			$selected_coupons
 		);
 	}
@@ -982,12 +954,12 @@ class Order_Generator extends Generator {
 	 * @return float Tax rate for the item.
 	 */
 	private function generate_item_tax_rate( $tax_class_id, array $billing_address ): float {
-		// If no tax class ID, return 0 (tax-free)
+		// If no tax class ID, return 0 (tax-free).
 		if ( ! $tax_class_id ) {
 			return 0.00;
 		}
 
-		// Try to get real tax rate based on location
+		// Try to get real tax rate based on location.
 		$tax_model = new Tax();
 		$country   = $billing_address['country'] ?? '';
 		$state     = $billing_address['state'] ?? '';
@@ -996,23 +968,23 @@ class Order_Generator extends Generator {
 		if ( $country ) {
 			$tax_rate = $tax_model->get_rate_by_location( $tax_class_id, $country, $state, $city );
 
-			// If we found a rate, use it
+			// If we found a rate, use it.
 			if ( $tax_rate > 0 ) {
 				return $tax_rate;
 			}
 		}
 
-		// Fallback to realistic random tax rates if no location-based rate found
+		// Fallback to realistic random tax rates if no location-based rate found.
 		$fallback_tax_rates = array(
-			0.00,  // Tax-free
-			5.00,  // Low tax
-			6.00,  // Average
-			7.00,  // Above average
-			7.25,  // CA base
-			8.00,  // Common
-			8.25,  // High
-			8.875, // NY
-			10.00, // Very high
+			0.00,  // Tax-free.
+			5.00,  // Low tax.
+			6.00,  // Average.
+			7.00,  // Above average.
+			7.25,  // CA base.
+			8.00,  // Common.
+			8.25,  // High.
+			8.875, // NY.
+			10.00, // Very high.
 		);
 
 		return $this->faker->randomElement( $fallback_tax_rates );
@@ -1090,11 +1062,30 @@ class Order_Generator extends Generator {
 			case 'AU':
 				return $this->faker->regexify( '[0-9]{4}' );
 			case 'DE':
-				return $this->faker->regexify( '[0-9]{5}' );
 			case 'FR':
 				return $this->faker->regexify( '[0-9]{5}' );
 			default:
 				return $this->faker->postcode;
 		}
+	}
+
+	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'orders' => __( 'Customer Orders with Items, Shipping, and Payment Details', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates realistic customer orders with multiple items, comprehensive metadata (addresses, payment methods, shipping, taxes), status tracking, and relationship management for testing ecommerce order processing systems.', 'easycommerce-fakerpress' );
 	}
 }
