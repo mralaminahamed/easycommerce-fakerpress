@@ -45,7 +45,7 @@ class Customer_Generator extends Generator {
 		try {
 			// Check if EasyCommerce Customer class exists.
 			if ( ! class_exists( Customer::class ) ) {
-				return new WP_Error( 'missing_model', 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.' );
+				return new WP_Error( 'missing_model', __( 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 			}
 
 			$first_name = $this->faker->firstName;
@@ -60,7 +60,7 @@ class Customer_Generator extends Generator {
 
 			// Check if user with this email already exists.
 			if ( email_exists( $email ) ) {
-				return new WP_Error( 'email_exists', 'A user with this email address already exists.' );
+				return new WP_Error( 'email_exists', __( 'A user with this email address already exists.', 'easycommerce-fakerpress' ) );
 			}
 
 			// Use EasyCommerce Customer model with proper data structure.
@@ -98,7 +98,7 @@ class Customer_Generator extends Generator {
 			);
 
 			if ( ! $created ) {
-				return new WP_Error( 'customer_creation_failed', 'Failed to create customer using EasyCommerce model.' );
+				return new WP_Error( 'customer_creation_failed', __( 'Failed to create customer using EasyCommerce model.', 'easycommerce-fakerpress' ) );
 			}
 
 			// Ensure the user has the proper EasyCommerce customer role.
@@ -155,7 +155,7 @@ class Customer_Generator extends Generator {
 		}
 
 		if ( username_exists( $username ) ) {
-			throw new RuntimeException( 'Unable to generate unique username after 10 attempts.' );
+			throw new RuntimeException( esc_html__( 'Unable to generate unique username after 10 attempts.', 'easycommerce-fakerpress' ) );
 		}
 
 		return $username;
@@ -222,22 +222,7 @@ class Customer_Generator extends Generator {
 
 		// 80% chance shipping address is in the same country
 		$country = $this->faker->boolean( 80 ) ? $billing_country : $this->faker->randomElement(
-			array(
-				'US',
-				'CA',
-				'GB',
-				'AU',
-				'DE',
-				'FR',
-				'IT',
-				'ES',
-				'NL',
-				'BE',
-				'JP',
-				'IN',
-				'BR',
-				'MX',
-			)
+			array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
 		);
 
 		return array(
@@ -278,41 +263,15 @@ class Customer_Generator extends Generator {
 					'email_notifications'  => $this->faker->boolean( 85 ),
 					'marketing_opt_in'     => $this->faker->boolean( 60 ),
 					'preferred_language'   => $this->faker->randomElement(
-						array(
-							'en_US',
-							'es_ES',
-							'fr_FR',
-							'de_DE',
-							'it_IT',
-							'ja_JP',
-							'pt_BR',
-							'hi_IN',
-						)
+						array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' )
 					),
 					'currency'             => $this->faker->randomElement(
-						array(
-							'USD',
-							'CAD',
-							'GBP',
-							'AUD',
-							'EUR',
-							'JPY',
-							'INR',
-							'BRL',
-							'MXN',
-						)
+						array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
 					),
 					'timezone'             => $this->faker->timezone,
 					'communication_method' => $this->faker->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
 					'preferred_categories' => $this->faker->randomElements(
-						array(
-							'Electronics',
-							'Fashion',
-							'Books',
-							'Home',
-							'Sports',
-							'Beauty',
-						),
+						array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
 						$this->faker->numberBetween( 1, 3 )
 					),
 				),
@@ -329,54 +288,23 @@ class Customer_Generator extends Generator {
 				// Personal information.
 				'birth_date'           => $this->faker->optional( 0.65 )->date( 'Y-m-d', '-18 years' ),
 				'gender'               => $this->faker->optional( 0.55 )->randomElement(
-					array(
-						'male',
-						'female',
-						'non_binary',
-						'prefer_not_to_say',
-					)
+					array( 'male', 'female', 'non_binary', 'prefer_not_to_say' )
 				),
 				'occupation'           => $this->faker->optional( 0.45 )->jobTitle,
 				'marital_status'       => $this->faker->optional( 0.4 )->randomElement(
-					array(
-						'single',
-						'married',
-						'divorced',
-						'widowed',
-					)
+					array( 'single', 'married', 'divorced', 'widowed' )
 				),
 
 				// Marketing and engagement.
 				'source'               => $this->faker->randomElement(
-					array(
-						'organic',
-						'google_ads',
-						'facebook_ads',
-						'instagram',
-						'referral',
-						'email_campaign',
-						'direct',
-						'affiliate',
-					)
+					array( 'organic', 'google_ads', 'facebook_ads', 'instagram', 'referral', 'email_campaign', 'direct', 'affiliate' )
 				),
 				'utm_campaign'         => $this->faker->optional( 0.35 )->words( 3, true ),
 				'utm_source'           => $this->faker->optional( 0.35 )->randomElement(
-					array(
-						'google',
-						'facebook',
-						'twitter',
-						'linkedin',
-						'email',
-					)
+					array( 'google', 'facebook', 'twitter', 'linkedin', 'email' )
 				),
 				'utm_medium'           => $this->faker->optional( 0.35 )->randomElement(
-					array(
-						'cpc',
-						'social',
-						'email',
-						'referral',
-						'organic',
-					)
+					array( 'cpc', 'social', 'email', 'referral', 'organic' )
 				),
 				'tags'                 => $this->generate_customer_tags(),
 

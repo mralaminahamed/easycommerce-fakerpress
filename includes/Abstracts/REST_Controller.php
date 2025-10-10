@@ -229,7 +229,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return bool|WP_Error True if valid, WP_Error otherwise.
 	 */
-	public function validate_count( $value, WP_REST_Request $request, string $param ): bool|WP_Error {
+	public function validate_count( $value, WP_REST_Request $request, string $param ) {
 		if ( ! is_numeric( $value ) || $value <= 0 || $value > 100 ) {
 			return new WP_Error(
 				'invalid_count',

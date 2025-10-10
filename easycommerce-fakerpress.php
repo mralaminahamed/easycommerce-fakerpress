@@ -49,4 +49,5 @@ function easycommerce_fakerpress(): EasyCommerce_FakerPress {
 	return EasyCommerce_FakerPress::get_instance();
 }
 
+
 easycommerce_fakerpress()->init();

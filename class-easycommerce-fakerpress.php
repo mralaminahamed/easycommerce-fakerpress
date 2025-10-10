@@ -186,7 +186,7 @@ class EasyCommerce_FakerPress {
 
 		// Get locale information for frontend display.
 		$wp_locale     = get_locale();
-		$faker_locale  = $this->get_faker_locale_for_display( $wp_locale );
+		$faker_locale  = $this->get_faker_locale( $wp_locale );
 		$locale_labels = $this->get_locale_labels();
 
 		wp_localize_script(
@@ -338,7 +338,7 @@ class EasyCommerce_FakerPress {
 	 *
 	 * @return string FakerPHP compatible locale code.
 	 */
-	private function get_faker_locale_for_display( string $wp_locale ): string {
+	public function get_faker_locale( string $wp_locale ): string {
 		// Allow developers to override the locale.
 		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $wp_locale );
 
@@ -369,7 +369,7 @@ class EasyCommerce_FakerPress {
 	 *
 	 * @return array Associative array of locale codes and labels.
 	 */
-	private function get_locale_labels(): array {
+	public function get_locale_labels(): array {
 		return array(
 			'ar_SA'      => 'Arabic (Saudi Arabia)',
 			'at_AT'      => 'Austrian German',

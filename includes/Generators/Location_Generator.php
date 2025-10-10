@@ -61,34 +61,27 @@ class Location_Generator extends Generator {
 	 * @return array|WP_Error Single location data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Location class exists.
-			if ( ! class_exists( Location::class ) ) {
-				return new WP_Error( 'missing_model', 'EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active.' );
-			}
-
-			// Create comprehensive location data structure.
-			$location_data = $this->create_location_data_structure();
-
-			// Save to EasyCommerce location system.
-			$result = $this->save_location_data( $location_data );
-
-			if ( ! $result ) {
-				return new WP_Error( 'location_creation_failed', 'Failed to create location data using EasyCommerce model.' );
-			}
-
-			return array(
-				'countries_created' => count( $location_data ),
-				'total_states'      => $this->count_states( $location_data ),
-				'total_cities'      => $this->count_cities( $location_data ),
-				'data_file_path'    => $this->get_location_file_path(),
-				'created_date'      => current_time( 'Y-m-d H:i:s' ),
-			);
-		} catch ( Exception $e ) {
-			$this->log( 'Location creation failed: ' . $e->getMessage(), 'error' );
-
-			return new WP_Error( 'location_creation_failed', $e->getMessage() );
+		// Check if EasyCommerce Location class exists.
+		if ( ! class_exists( Location::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		// Create comprehensive location data structure.
+		$location_data = $this->create_location_data_structure();
+
+		// Save to EasyCommerce location system.
+		$result = $this->save_location_data( $location_data );
+		if ( ! $result ) {
+			return new WP_Error( 'location_creation_failed', __( 'Failed to create location data using EasyCommerce model.', 'easycommerce-fakerpress' ) );
+		}
+
+		return array(
+			'countries_created' => count( $location_data ),
+			'total_states'      => $this->count_states( $location_data ),
+			'total_cities'      => $this->count_cities( $location_data ),
+			'data_file_path'    => $this->get_location_file_path(),
+			'created_date'      => current_time( 'Y-m-d H:i:s' ),
+		);
 	}
 
 	/**
@@ -228,7 +221,7 @@ class Location_Generator extends Generator {
 		if ( ! empty( $regions ) ) {
 			$filtered_countries = array_filter(
 				$filtered_countries,
-				function ( $country ) use ( $regions ) {
+				static function ( $country ) use ( $regions ) {
 					return in_array( $country['region'], $regions, true ) ||
 							in_array( $country['subregion'], $regions, true );
 				}
@@ -239,7 +232,7 @@ class Location_Generator extends Generator {
 		if ( ! empty( $countries ) ) {
 			$filtered_countries = array_filter(
 				$filtered_countries,
-				function ( $country ) use ( $countries ) {
+				static function ( $country ) use ( $countries ) {
 					return in_array( $country['iso2'], $countries, true ) ||
 							in_array( $country['iso3'], $countries, true ) ||
 							in_array( $country['name'], $countries, true );
