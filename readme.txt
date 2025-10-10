@@ -4,7 +4,7 @@ Tags: ecommerce, easycommerce, faker, data-generation, testing, development, pro
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 1.0.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Generate realistic fake ecommerce data with 10 specialized generators, real-time
 
 == Description ==
 
-EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. Version 2.1.0 features 10 specialized generators, real-time data validation, advanced parameter systems, modern React Router v7 architecture, automatic WordPress admin color integration, and comprehensive business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
+EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. Version 1.0.0 features 10 specialized generators, real-time data validation, advanced parameter systems, modern React Router v7 architecture, automatic WordPress admin color integration, and comprehensive business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
 
 **🗂️ 10 Specialized Generators:**
 
@@ -118,7 +118,7 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 
 == Frequently Asked Questions ==
 
-= What's new in version 2.1.0? =
+= What's new in version 1.0.0? =
 
 This enhanced release includes major architectural improvements and new validation features:
 - Real-time data validation system with dependency checking
@@ -202,7 +202,7 @@ Options for data cleanup:
 
 == Changelog ==
 
-= 2.1.0 =
+= 1.0.0 =
 **Release Date: September 15, 2025**
 
 **🔧 Frontend Modernization:**
@@ -270,7 +270,7 @@ Options for data cleanup:
 
 == Upgrade Notice ==
 
-= 2.1.0 =
+= 1.0.0 =
 Major architectural improvements! Enhanced React Router v7 architecture, real-time data validation system, improved code quality with PHPStan level 8, and enhanced component organization. Recommended upgrade for better performance and user experience.
 
 = 1.0.0 =
@@ -285,7 +285,7 @@ Initial release of EasyCommerce FakerPress! Complete EasyCommerce data generatio
 
 **Generated Content:**
 * Uses Faker library to create fictional but realistic-looking data
-* All customer data includes fake names, addresses, and contact information  
+* All customer data includes fake names, addresses, and contact information
 * Generated content is clearly test data, not real customer information
 * Complies with privacy regulations as no actual personal data is involved
 
@@ -347,7 +347,7 @@ POST /wp-json/easycommerce-fakerpress/v1/coupons/generate
 ```
 easycommerce-fakerpress/
 ├── easycommerce-fakerpress.php           # Main plugin file
-├── class-easycommerce-fakerpress.php     # Main plugin class  
+├── class-easycommerce-fakerpress.php     # Main plugin class
 ├── includes/
 │   ├── Abstracts/                        # Abstract base classes
 │   ├── Generators/                       # Data generators with EasyCommerce integration
@@ -385,7 +385,7 @@ Developed by **Al Amin Ahamed** - Senior Full-Stack Developer specializing in Wo
 
 **Expertise:**
 * 🌐 **Website**: https://alaminahamed.com
-* 💼 **GitHub**: https://github.com/mralaminahamed  
+* 💼 **GitHub**: https://github.com/mralaminahamed
 * 📧 **Contact**: me@alaminahamed.com
 * 💼 **Services**: Enterprise WordPress development, EasyCommerce solutions, React applications, performance optimization
 

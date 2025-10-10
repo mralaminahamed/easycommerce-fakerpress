@@ -33,6 +33,39 @@ abstract class REST_Controller extends WP_REST_Controller {
 	protected $namespace = 'easycommerce-fakerpress/v1';
 
 	/**
+	 * Get REST base for the endpoint
+	 *
+	 * Must be implemented by child classes to define the endpoint base.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string REST base.
+	 */
+	abstract protected function get_rest_base(): string;
+
+	/**
+	 * Get generator instance
+	 *
+	 * Must be implemented by child classes to return the appropriate generator.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return Generator Generator instance.
+	 */
+	abstract protected function get_generator_instance(): Generator;
+
+	/**
+	 * Get resource type name
+	 *
+	 * Must be implemented by child classes to define the resource type.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	abstract protected function get_resource_type(): string;
+
+	/**
 	 * Register REST API routes
 	 *
 	 * Registers the generation endpoint for the specific resource type.
@@ -272,39 +305,6 @@ abstract class REST_Controller extends WP_REST_Controller {
 
 		return $schema;
 	}
-
-	/**
-	 * Get REST base for the endpoint
-	 *
-	 * Must be implemented by child classes to define the endpoint base.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string REST base.
-	 */
-	abstract protected function get_rest_base(): string;
-
-	/**
-	 * Get generator instance
-	 *
-	 * Must be implemented by child classes to return the appropriate generator.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return Generator Generator instance.
-	 */
-	abstract protected function get_generator_instance(): Generator;
-
-	/**
-	 * Get resource type name
-	 *
-	 * Must be implemented by child classes to define the resource type.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	abstract protected function get_resource_type(): string;
 
 	/**
 	 * Get resource-specific schema properties
