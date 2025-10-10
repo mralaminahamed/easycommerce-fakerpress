@@ -1,0 +1,9 @@
+{
+  "telemetry": {
+    "enabled": false,
+    "logPrompts": false
+  },
+  "usageStatisticsEnabled": false,
+  "hideTips": true,
+  "hideBanner": true
+}
