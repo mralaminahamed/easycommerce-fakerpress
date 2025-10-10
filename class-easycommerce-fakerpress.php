@@ -73,8 +73,8 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function init(): void {
-		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
+		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 
 		if ( ! $this->check_dependencies() ) {
 			add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
@@ -200,7 +200,7 @@ class EasyCommerce_FakerPress {
 				'locale'      => array(
 					'wordpress'  => $wp_locale,
 					'faker'      => $faker_locale,
-					'label'      => isset( $locale_labels[ $faker_locale ] ) ? $locale_labels[ $faker_locale ] : 'English (United States)',
+					'label'      => $locale_labels[ $faker_locale ] ?? 'English (United States)',
 					'allLocales' => $locale_labels,
 				),
 			)
@@ -242,37 +242,16 @@ class EasyCommerce_FakerPress {
 	}
 
 	/**
-	 * Plugin activation handler
+	 * Flush rewrite rules on activation and deactivation
 	 *
-	 * Checks dependencies and flushes rewrite rules on activation.
-	 * Terminates activation if dependencies are not met.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function activate(): void {
-		if ( ! $this->check_dependencies() ) {
-			wp_die(
-				esc_html__( 'EasyCommerce FakerPress requires EasyCommerce plugin.', 'easycommerce-fakerpress' ),
-				esc_html__( 'Plugin Activation Error', 'easycommerce-fakerpress' ),
-				array( 'back_link' => true )
-			);
-		}
-		flush_rewrite_rules();
-	}
-
-	/**
-	 * Plugin deactivation handler
-	 *
-	 * Flushes rewrite rules on deactivation to clean up any custom endpoints.
+	 * Flushes rewrite rules to clean up any custom endpoints.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function deactivate(): void {
-		flush_rewrite_rules();
+	public function flush_rewrite_rules(): void {
+		\flush_rewrite_rules();
 	}
 
 	/**
