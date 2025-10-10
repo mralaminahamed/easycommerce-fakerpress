@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Tax_Generator;
  *
  * @since 1.0.0
  */
-class Tax_REST_Controller extends REST_Controller {
+class Tax_Classes_REST_Controller extends REST_Controller {
 
 	/**
 	 * Get REST base for the endpoint
