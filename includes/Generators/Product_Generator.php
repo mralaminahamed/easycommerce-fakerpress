@@ -48,7 +48,7 @@ class Product_Generator extends Generator {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
-		$product_type  = $this->faker->randomElement( array( 'physical', 'digital' ) );
+		$product_type  = $this->get_faker()->randomElement( array( 'physical', 'digital' ) );
 		$product_title = $this->generate_product_title( $product_type );
 		$categories    = $this->get_or_create_product_categories();
 		$brands        = $this->get_or_create_product_brands();
@@ -69,14 +69,14 @@ class Product_Generator extends Generator {
 				// Optional core fields.
 				'slug'        => sanitize_title( $product_title . '-' . uniqid( '', true ) ),
 				'content'     => $this->generate_product_description( $product_type ),
-				'status'      => $this->faker->randomElement( array( 'publish', 'draft', 'pending' ) ),
+				'status'      => $this->get_faker()->randomElement( array( 'publish', 'draft', 'pending' ) ),
 				'description' => $this->generate_short_description( $product_type ),
-				'summary'     => $this->faker->sentence( 20, true ),
+				'summary'     => $this->get_faker()->sentence( 20, true ),
 				'thumbnail'   => $this->generate_thumbnail(),
 
 				// Taxonomy relationships.
-				'categories'  => array_slice( $categories, 0, $this->faker->numberBetween( 1, 4 ) ),
-				'brands'      => array_slice( $brands, 0, $this->faker->numberBetween( 1, 2 ) ),
+				'categories'  => array_slice( $categories, 0, $this->get_faker()->numberBetween( 1, 4 ) ),
+				'brands'      => array_slice( $brands, 0, $this->get_faker()->numberBetween( 1, 2 ) ),
 
 				// Product attributes and variations.
 				'attributes'  => $attributes,
@@ -85,16 +85,16 @@ class Product_Generator extends Generator {
 				// Additional meta data.
 				'meta'        => array(
 					'gallery'         => $this->generate_gallery_images(),
-					'template'        => $this->faker->randomElement(
+					'template'        => $this->get_faker()->randomElement(
 						array(
 							'template-standard',
 							'template-premium',
 							'template-minimal',
 						)
 					),
-					'featured'        => $this->faker->boolean( 25 ),
-					'seo_title'       => $product_title . ' | ' . $this->faker->company,
-					'seo_description' => $this->faker->sentence( 15, true ),
+					'featured'        => $this->get_faker()->boolean( 25 ),
+					'seo_title'       => $product_title . ' | ' . $this->get_faker()->company,
+					'seo_description' => $this->get_faker()->sentence( 15, true ),
 					'seo_keywords'    => implode( ', ', (array) $this->faker->words( 5 ) ),
 					'sku_prefix'      => strtoupper( $this->faker->lexify( '???' ) ),
 					'release_date'    => $this->faker->dateTimeThisYear()->format( 'Y-m-d' ),

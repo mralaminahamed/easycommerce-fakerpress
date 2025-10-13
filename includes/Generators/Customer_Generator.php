@@ -48,9 +48,9 @@ class Customer_Generator extends Generator {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
-		$first_name = $this->faker->firstName;
-		$last_name  = $this->faker->lastName;
-		$email      = $this->faker->unique()->safeEmail;
+		$first_name = $this->get_faker()->firstName;
+		$last_name  = $this->get_faker()->lastName;
+		$email      = $this->get_faker()->unique()->safeEmail;
 		$full_name  = $first_name . ' ' . $last_name;
 
 		// Generate comprehensive customer data.
@@ -145,7 +145,7 @@ class Customer_Generator extends Generator {
 		$attempts      = 0;
 
 		while ( username_exists( $username ) && $attempts < 10 ) {
-			$username = sanitize_user( $base_username . $this->faker->numberBetween( 1, 999 ), true );
+			$username = sanitize_user( $base_username . $this->get_faker()->numberBetween( 1, 999 ), true );
 			++$attempts;
 		}
 
@@ -176,7 +176,7 @@ class Customer_Generator extends Generator {
 		$random_images = get_posts( $args );
 
 		if ( ! $random_images || ! isset( $random_images[0] ) ) {
-			return (string) $this->faker->optional( 0.3 )->imageUrl( 200, 200, 'people' );
+			return (string) $this->get_faker()->optional( 0.3 )->imageUrl( 200, 200, 'people' );
 		}
 
 		return wp_get_attachment_url( $random_images[0]->ID );
@@ -194,17 +194,17 @@ class Customer_Generator extends Generator {
 	 * @return array Billing address data.
 	 */
 	private function generate_billing_address( string $first_name, string $last_name, string $email ): array {
-		$country = $this->faker->randomElement( array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
+		$country = $this->get_faker()->randomElement( array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
 
 		return array(
 			'first_name' => $first_name,
 			'last_name'  => $last_name,
 			'email'      => $email,
 			'phone'      => $this->generate_phone_number( $country ),
-			'company'    => $this->faker->optional( 0.25 )->company,
-			'address_1'  => $this->faker->streetAddress,
-			'address_2'  => $this->faker->optional( 0.35 )->secondaryAddress,
-			'city'       => $this->faker->city,
+			'company'    => $this->get_faker()->optional( 0.25 )->company,
+			'address_1'  => $this->get_faker()->streetAddress,
+			'address_2'  => $this->get_faker()->optional( 0.35 )->secondaryAddress,
+			'city'       => $this->get_faker()->city,
 			'state'      => $this->generate_state( $country ),
 			'country'    => $country,
 			'postcode'   => $this->generate_postcode( $country ),
@@ -224,12 +224,12 @@ class Customer_Generator extends Generator {
 	 */
 	private function generate_shipping_address( string $first_name, string $last_name, string $billing_country ): array {
 		// 70% chance same as billing address (return empty array)
-		if ( $this->faker->boolean( 70 ) ) {
+		if ( $this->get_faker()->boolean( 70 ) ) {
 			return array();
 		}
 
 		// 80% chance shipping address is in the same country
-		$country = $this->faker->boolean( 80 ) ? $billing_country : $this->faker->randomElement(
+		$country = $this->get_faker()->boolean( 80 ) ? $billing_country : $this->faker->randomElement(
 			array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
 		);
 

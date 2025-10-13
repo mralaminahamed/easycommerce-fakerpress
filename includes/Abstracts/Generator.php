@@ -46,6 +46,13 @@ abstract class Generator {
 	protected int $max_batch_size = 100;
 
 	/**
+	 * Locale for Faker
+	 *
+	 * @var string
+	 */
+	protected string $locale;
+
+	/**
 	 * Constructor
 	 *
 	 * @since 1.0.0
@@ -54,15 +61,46 @@ abstract class Generator {
 		global $wpdb;
 
 		$this->wpdb = $wpdb;
+	}
 
-		// Get locale with comprehensive FakerPHP support.
-		$locale = easycommerce_fakerpress()->get_faker_locale( get_locale() );
-
-		$this->faker = Factory::create( $locale );
+	/**
+	 * Set Faker instance
+	 *
+	 * @return void
+	 */
+	public function set_faker(): void {
+		$this->faker = Factory::create( $this->get_faker_locale() );
 
 		// Add additional providers.
-		$this->faker->addProvider( new DateTime( $this->faker ) );
-		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
+		$this->get_faker()->addProvider( new DateTime( $this->faker ) );
+		$this->get_faker()->addProvider( new PicsumPhotosProvider( $this->faker ) );
+	}
+
+	/**
+	 * Get Faker instance
+	 *
+	 * @return FakerGenerator Faker instance.
+	 */
+	public function get_faker(): FakerGenerator {
+		return $this->faker;
+	}
+
+	/**
+	 * Set locale for Faker
+	 *
+	 * @param string $locale Locale code.
+	 */
+	public function set_locale( string $locale = 'en_US' ): void {
+		$this->locale = $locale;
+	}
+
+	/**
+	 * Get locale for Faker
+	 *
+	 * @return string Locale code.
+	 */
+	public function get_faker_locale(): string {
+		return $this->locale;
 	}
 
 	/**
@@ -88,7 +126,6 @@ abstract class Generator {
 				$item_result = $this->generate_single_item();
 
 				if ( is_wp_error( $item_result ) ) {
-					// Continue with other items but log the error.
 					continue;
 				}
 

@@ -135,12 +135,12 @@ class Cart_Session_Generator extends Generator {
 			case 'mixed':
 			default:
 				// Use guest ratio parameter.
-				if ( $this->faker->boolean( $guest_ratio ) ) {
+				if ( $this->get_faker()->boolean( $guest_ratio ) ) {
 					return array(); // Guest cart.
 				}
 
 				// 50/50 between existing and new customers.
-				if ( $this->faker->boolean( 50 ) ) {
+				if ( $this->get_faker()->boolean( 50 ) ) {
 					return $this->get_random_existing_customer();
 				}
 
@@ -163,7 +163,7 @@ class Cart_Session_Generator extends Generator {
 			return new WP_Error( 'no-customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
 		}
 
-		$customer = $this->faker->randomElement( $customers );
+		$customer = $this->get_faker()->randomElement( $customers );
 
 		return array(
 			'id'         => $customer['id'],
@@ -267,7 +267,7 @@ class Cart_Session_Generator extends Generator {
 
 		$cart_statuses = ! empty( $status_distribution ) ? $status_distribution : $default_statuses;
 
-		$status = $this->faker->randomElement(
+		$status = $this->get_faker()->randomElement(
 			array_merge(
 				...array_map(
 					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
@@ -284,7 +284,7 @@ class Cart_Session_Generator extends Generator {
 		$total_amount = $this->calculate_cart_total( $items );
 
 		// Generate addresses if cart is advanced.
-		$addresses = $this->faker->boolean( 40 ) ? $this->generate_cart_addresses() : array();
+		$addresses = $this->get_faker()->boolean( 40 ) ? $this->generate_cart_addresses() : array();
 
 		// Generate timeline based on status.
 		$timeline = $this->generate_cart_timeline( $status );

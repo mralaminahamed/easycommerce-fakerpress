@@ -113,7 +113,7 @@ class Coupon_Generator extends Generator {
 	 * @throws Exception If unable to generate a unique coupon code after 10 attempts.
 	 */
 	private function generate_coupon_data(): array {
-		$discount_type = $this->faker->randomElement( array( 'percentage', 'fixed', 'fixed_product', 'buy_x_get_y' ) );
+		$discount_type = $this->get_faker()->randomElement( array( 'percentage', 'fixed', 'fixed_product', 'buy_x_get_y' ) );
 		$coupon_name   = $this->generate_coupon_name( $discount_type );
 		$coupon_code   = $this->generate_unique_code();
 
@@ -122,7 +122,7 @@ class Coupon_Generator extends Generator {
 			'code'          => $coupon_code,
 			'discount_type' => $discount_type,
 			'amount'        => $this->generate_discount_amount( $discount_type ),
-			'active'        => $this->faker->boolean( 90 ), // 90% active coupons
+			'active'        => $this->get_faker()->boolean( 90 ), // 90% active coupons
 			'description'   => $this->generate_coupon_description( $discount_type ),
 			'meta'          => $this->generate_coupon_meta(),
 			'rules'         => $this->generate_coupon_rules( $discount_type ),
@@ -232,9 +232,9 @@ class Coupon_Generator extends Generator {
 				'buy_x_get_y',
 			),
 			true
-		) ? $discount_type : $this->faker->randomElement( array( 'seasonal', 'event', 'product', 'customer' ) );
+		) ? $discount_type : $this->get_faker()->randomElement( array( 'seasonal', 'event', 'product', 'customer' ) );
 
-		return $this->faker->randomElement( $name_types[ $preferred_category ] );
+		return $this->get_faker()->randomElement( $name_types[ $preferred_category ] );
 	}
 
 	/**
@@ -262,7 +262,7 @@ class Coupon_Generator extends Generator {
 			'buy_x_get_y'   => 'Buy one item and get another at a discount or free! Great for building your collection.',
 		);
 
-		return $this->faker->randomElement( $prefixes ) . ( $details[ $discount_type ] ?? $this->faker->sentence( 10, true ) );
+		return $this->get_faker()->randomElement( $prefixes ) . ( $details[ $discount_type ] ?? $this->get_faker()->sentence( 10, true ) );
 	}
 
 	/**
@@ -274,8 +274,8 @@ class Coupon_Generator extends Generator {
 	 */
 	private function generate_coupon_meta(): array {
 		return array(
-			'created_by'    => $this->faker->userName(),
-			'campaign_name' => $this->faker->randomElement(
+			'created_by'    => $this->get_faker()->userName(),
+			'campaign_name' => $this->get_faker()->randomElement(
 				array(
 					'Summer Campaign',
 					'Holiday Promo',
@@ -284,8 +284,8 @@ class Coupon_Generator extends Generator {
 					'New User Acquisition',
 				)
 			),
-			'priority'      => $this->faker->randomElement( array( 'low', 'medium', 'high' ) ),
-			'last_updated'  => $this->faker->dateTimeThisYear()->format( 'Y-m-d H:i:s' ),
+			'priority'      => $this->get_faker()->randomElement( array( 'low', 'medium', 'high' ) ),
+			'last_updated'  => $this->get_faker()->dateTimeThisYear()->format( 'Y-m-d H:i:s' ),
 		);
 	}
 

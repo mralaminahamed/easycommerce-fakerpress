@@ -334,13 +334,13 @@ class EasyCommerce_FakerPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $wp_locale WordPress locale code.
+	 * @param string $locale_ WordPress locale code.
 	 *
 	 * @return string FakerPHP compatible locale code.
 	 */
-	public function get_faker_locale( string $wp_locale ): string {
+	public function get_faker_locale( string $locale_ ): string {
 		// Allow developers to override the locale.
-		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $wp_locale );
+		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $locale_ );
 
 		// Get supported locales.
 		$supported_locales = array_keys( $this->get_locale_labels() );

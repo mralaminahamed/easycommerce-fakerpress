@@ -270,8 +270,8 @@ class Location_Generator extends Generator {
 			'currency_symbol' => $config['currency_symbol'],
 			'region'          => $config['region'],
 			'subregion'       => $config['subregion'],
-			'latitude'        => $this->faker->latitude(),
-			'longitude'       => $this->faker->longitude(),
+			'latitude'        => $this->get_faker()->latitude(),
+			'longitude'       => $this->get_faker()->longitude(),
 			'timezones'       => $this->generate_timezones_for_country( $config['iso2'] ),
 		);
 	}
@@ -297,8 +297,8 @@ class Location_Generator extends Generator {
 				'id'         => $i,
 				'name'       => $state_name,
 				'state_code' => $this->generate_state_code( $state_name, $config['iso2'] ),
-				'latitude'   => $this->faker->latitude(),
-				'longitude'  => $this->faker->longitude(),
+				'latitude'   => $this->get_faker()->latitude(),
+				'longitude'  => $this->get_faker()->longitude(),
 				'cities'     => $this->generate_cities_for_state( $i, $config['cities_per_state'] ),
 			);
 
@@ -325,9 +325,9 @@ class Location_Generator extends Generator {
 			$city_id  = ( $state_id * 1000 ) + $i;
 			$cities[] = array(
 				'id'        => $city_id,
-				'name'      => $this->faker->city,
-				'latitude'  => $this->faker->latitude(),
-				'longitude' => $this->faker->longitude(),
+				'name'      => $this->get_faker()->city,
+				'latitude'  => $this->get_faker()->latitude(),
+				'longitude' => $this->get_faker()->longitude(),
 			);
 		}
 

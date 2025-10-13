@@ -74,7 +74,7 @@ class Transaction_Generator extends Generator {
 			return new WP_Error( 'no_orders', __( 'No orders found. Please generate orders first.', 'easycommerce-fakerpress' ) );
 		}
 
-		$order            = $this->faker->randomElement( $orders );
+		$order            = $this->get_faker()->randomElement( $orders );
 		$transaction_data = $this->generate_transaction_data( $order );
 		$transaction_id   = $this->create_transaction( $transaction_data );
 
@@ -174,7 +174,7 @@ class Transaction_Generator extends Generator {
 	 */
 	private function generate_transaction_data( $order ): array {
 		$transaction_types = array( 'payment', 'refund', 'adjustment', 'fee', 'commission' );
-		$transaction_type  = $this->faker->randomElement( $transaction_types );
+		$transaction_type  = $this->get_faker()->randomElement( $transaction_types );
 
 		$payment_gateways = array(
 			'stripe'        => 'Stripe',
@@ -189,7 +189,7 @@ class Transaction_Generator extends Generator {
 			'payu'          => 'PayU',
 		);
 
-		$gateway_key     = $this->faker->randomElement( array_keys( $payment_gateways ) );
+		$gateway_key     = $this->get_faker()->randomElement( array_keys( $payment_gateways ) );
 		$payment_gateway = $payment_gateways[ $gateway_key ];
 
 		// Generate transaction amount based on type.
@@ -201,7 +201,7 @@ class Transaction_Generator extends Generator {
 			'transaction_id'  => $this->generate_transaction_id( $gateway_key ),
 			'payment_gateway' => $payment_gateway,
 			'amount'          => $amount,
-			'currency'        => $this->faker->randomElement( array( 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR' ) ),
+			'currency'        => $this->get_faker()->randomElement( array( 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR' ) ),
 			'status'          => $this->generate_transaction_status( $transaction_type ),
 			'type'            => $transaction_type,
 		);
@@ -219,27 +219,27 @@ class Transaction_Generator extends Generator {
 		switch ( $type ) {
 			case 'payment':
 				// Full payment or partial payment.
-				return $this->faker->boolean( 80 )
+				return $this->get_faker()->boolean( 80 )
 					? $order_total
-					: $this->faker->randomFloat( 2, $order_total * 0.1, $order_total * 0.9 );
+					: $this->get_faker()->randomFloat( 2, $order_total * 0.1, $order_total * 0.9 );
 
 			case 'refund':
 				// Partial or full refund.
-				return $this->faker->boolean( 60 )
-					? $order_total * $this->faker->randomFloat( 2, 0.1, 0.5 )
+				return $this->get_faker()->boolean( 60 )
+					? $order_total * $this->get_faker()->randomFloat( 2, 0.1, 0.5 )
 					: $order_total;
 
 			case 'adjustment':
 				// Small positive or negative adjustment.
-				return $this->faker->randomFloat( 2, - 50, 50 );
+				return $this->get_faker()->randomFloat( 2, - 50, 50 );
 
 			case 'fee':
 				// Processing or transaction fees.
-				return $this->faker->randomFloat( 2, 0.99, $order_total * 0.05 );
+				return $this->get_faker()->randomFloat( 2, 0.99, $order_total * 0.05 );
 
 			case 'commission':
 				// Commission amounts.
-				return $this->faker->randomFloat( 2, $order_total * 0.02, $order_total * 0.15 );
+				return $this->get_faker()->randomFloat( 2, $order_total * 0.02, $order_total * 0.15 );
 
 			default:
 				return $order_total;
@@ -282,7 +282,7 @@ class Transaction_Generator extends Generator {
 
 		$statuses = $status_weights[ $type ] ?? array( 'completed' => 100 );
 
-		return $this->faker->randomElement(
+		return $this->get_faker()->randomElement(
 			array_merge(
 				...array_map(
 					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
@@ -303,7 +303,7 @@ class Transaction_Generator extends Generator {
 	private function generate_transaction_id( string $gateway ): string {
 		switch ( $gateway ) {
 			case 'stripe':
-				return 'ch_' . $this->faker->regexify( '[a-zA-Z0-9]{24}' );
+				return 'ch_' . $this->get_faker()->regexify( '[a-zA-Z0-9]{24}' );
 
 			case 'paypal':
 				return $this->faker->regexify( '[A-Z0-9]{17}' );
