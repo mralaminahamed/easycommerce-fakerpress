@@ -126,14 +126,14 @@ class Shipping_Plan_Generator extends Generator {
 			),
 		);
 
-		$plan_type   = $this->faker->randomElement( array_keys( $plan_types ) );
+		$plan_type   = $this->get_faker()->randomElement( array_keys( $plan_types ) );
 		$plan_config = $plan_types[ $plan_type ];
 
 		return array(
-			'name'             => $plan_config['name'] . ' - ' . $this->faker->city,
+			'name'             => $plan_config['name'] . ' - ' . $this->get_faker()->city,
 			'description'      => $plan_config['description'],
-			'active'           => $this->faker->boolean( 85 ), // 85% chance of being active
-			'taxable'          => $this->faker->boolean( 60 ), // 60% chance of being taxable
+			'active'           => $this->get_faker()->boolean( 85 ), // 85% chance of being active
+			'taxable'          => $this->get_faker()->boolean( 60 ), // 60% chance of being taxable
 			'calculation_base' => $plan_config['calculation_base'],
 			'methods'          => $plan_config['methods'],
 			'regions'          => $this->generate_regional_coverage(),
@@ -151,19 +151,19 @@ class Shipping_Plan_Generator extends Generator {
 				'name' => 'Under $50',
 				'min'  => 0.00,
 				'max'  => 49.99,
-				'cost' => $this->faker->randomFloat( 2, 5.99, 12.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 5.99, 12.99 ),
 			),
 			array(
 				'name' => '$50 to $100',
 				'min'  => 50.00,
 				'max'  => 99.99,
-				'cost' => $this->faker->randomFloat( 2, 3.99, 8.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 3.99, 8.99 ),
 			),
 			array(
 				'name' => '$100 to $200',
 				'min'  => 100.00,
 				'max'  => 199.99,
-				'cost' => $this->faker->randomFloat( 2, 1.99, 5.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 1.99, 5.99 ),
 			),
 			array(
 				'name' => 'Over $200',
@@ -185,25 +185,25 @@ class Shipping_Plan_Generator extends Generator {
 				'name' => 'Express Under $25',
 				'min'  => 0.00,
 				'max'  => 24.99,
-				'cost' => $this->faker->randomFloat( 2, 15.99, 25.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 15.99, 25.99 ),
 			),
 			array(
 				'name' => 'Express $25 to $75',
 				'min'  => 25.00,
 				'max'  => 74.99,
-				'cost' => $this->faker->randomFloat( 2, 12.99, 19.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 12.99, 19.99 ),
 			),
 			array(
 				'name' => 'Express $75 to $150',
 				'min'  => 75.00,
 				'max'  => 149.99,
-				'cost' => $this->faker->randomFloat( 2, 8.99, 14.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 8.99, 14.99 ),
 			),
 			array(
 				'name' => 'Express Over $150',
 				'min'  => 150.00,
 				'max'  => 999999.99,
-				'cost' => $this->faker->randomFloat( 2, 4.99, 9.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 4.99, 9.99 ),
 			),
 		);
 	}
@@ -219,7 +219,7 @@ class Shipping_Plan_Generator extends Generator {
 				'name' => 'Up to 1 kg',
 				'min'  => 0.0,
 				'max'  => 1.0,
-				'cost' => $this->faker->randomFloat( 2, 3.99, 7.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 3.99, 7.99 ),
 			),
 			array(
 				'name' => '1 kg to 5 kg',

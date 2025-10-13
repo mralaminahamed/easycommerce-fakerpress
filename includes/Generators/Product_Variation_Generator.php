@@ -171,10 +171,10 @@ class Product_Variation_Generator extends Generator {
 
 		if ( empty( $variable_products ) ) {
 			// If no variable products, use any available product.
-			return ! empty( $products ) ? $this->faker->randomElement( $products ) : null;
+			return ! empty( $products ) ? $this->get_faker()->randomElement( $products ) : null;
 		}
 
-		return $this->faker->randomElement( $variable_products );
+		return $this->get_faker()->randomElement( $variable_products );
 	}
 
 	/**
@@ -227,14 +227,14 @@ class Product_Variation_Generator extends Generator {
 	private function generate_variation_data( Product $product ): array {
 		$prices = $product->get_prices( false );
 
-		$base_price      = (float) ( $prices[0]['regular_price'] ?? $this->faker->randomFloat( 2, 10, 500 ) );
-		$price_variation = $this->faker->randomFloat( 2, - 0.2 * $base_price, 0.3 * $base_price );
+		$base_price      = (float) ( $prices[0]['regular_price'] ?? $this->get_faker()->randomFloat( 2, 10, 500 ) );
+		$price_variation = $this->get_faker()->randomFloat( 2, - 0.2 * $base_price, 0.3 * $base_price );
 		$regular_price   = max( 1, $base_price + $price_variation );
 
 		// Generate sale price with 30% probability.
 		$sale_price = null;
-		if ( $this->faker->boolean( 30 ) ) {
-			$sale_price = $this->faker->randomFloat( 2, $regular_price * 0.1, $regular_price * 0.9 );
+		if ( $this->get_faker()->boolean( 30 ) ) {
+			$sale_price = $this->get_faker()->randomFloat( 2, $regular_price * 0.1, $regular_price * 0.9 );
 		}
 
 		$variation_attributes = $this->get_variation_attributes();
@@ -243,13 +243,13 @@ class Product_Variation_Generator extends Generator {
 		return array(
 			'product_id'     => $product->get_id(),
 			'name'           => $variation_name,
-			'type'           => $this->faker->randomElement( array( 'physical', 'digital' ) ),
+			'type'           => $this->get_faker()->randomElement( array( 'physical', 'digital' ) ),
 			'price'          => $regular_price,
 			'sale_price'     => $sale_price,
 			'sku'            => $this->generate_variation_sku( $product->get_slug(), $variation_attributes ),
-			'stock_quantity' => $this->faker->numberBetween( 0, 100 ),
-			'stock_limit'    => $this->faker->numberBetween( 5, 20 ),
-			'status'         => $this->faker->randomElement( array( 'active', 'inactive', 'draft' ) ),
+			'stock_quantity' => $this->get_faker()->numberBetween( 0, 100 ),
+			'stock_limit'    => $this->get_faker()->numberBetween( 5, 20 ),
+			'status'         => $this->get_faker()->randomElement( array( 'active', 'inactive', 'draft' ) ),
 			'attributes'     => $variation_attributes,
 		);
 	}
@@ -290,7 +290,7 @@ class Product_Variation_Generator extends Generator {
 		$attribute_sets = array(
 			// Clothing variations.
 			array(
-				'size'  => $this->faker->randomElement( array( 'XS', 'S', 'M', 'L', 'XL', 'XXL' ) ),
+				'size'  => $this->get_faker()->randomElement( array( 'XS', 'S', 'M', 'L', 'XL', 'XXL' ) ),
 				'color' => $this->faker->randomElement(
 					array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Navy', 'Beige' )
 				),

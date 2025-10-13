@@ -108,7 +108,7 @@ class Tax_Generator extends Generator {
 	 */
 	private function generate_tax_class_data(): array {
 		// Decide whether to use real CSV data or generated data (70% CSV, 30% generated).
-		$use_csv_data = $this->faker->boolean( 70 );
+		$use_csv_data = $this->get_faker()->boolean( 70 );
 
 		if ( $use_csv_data ) {
 			$csv_data = $this->generate_tax_class_from_csv();
@@ -146,13 +146,13 @@ class Tax_Generator extends Generator {
 			),
 		);
 
-		$tax_type   = $this->faker->randomElement( array_keys( $tax_types ) );
+		$tax_type   = $this->get_faker()->randomElement( array_keys( $tax_types ) );
 		$tax_config = $tax_types[ $tax_type ];
 
 		return array(
-			'name'        => $tax_config['name'] . ' - ' . $this->faker->city,
+			'name'        => $tax_config['name'] . ' - ' . $this->get_faker()->city,
 			'description' => $tax_config['description'],
-			'status'      => $this->faker->boolean( 90 ), // 90% chance of being active
+			'status'      => $this->get_faker()->boolean( 90 ), // 90% chance of being active
 			'rates'       => $tax_config['rates'],
 		);
 	}
@@ -163,21 +163,21 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_standard_tax_rates(): array {
-		$selected_locations = $this->faker->randomElements(
+		$selected_locations = $this->get_faker()->randomElements(
 			$this->get_global_tax_locations(),
-			$this->faker->numberBetween( 3, 8 )
+			$this->get_faker()->numberBetween( 3, 8 )
 		);
 
 		$rates = array();
 		foreach ( $selected_locations as $location ) {
-			$base_rate = $this->faker->randomFloat( 2, 5.0, 15.0 );
+			$base_rate = $this->get_faker()->randomFloat( 2, 5.0, 15.0 );
 			$rates[]   = array(
 				'country'  => $location['country'],
 				'state'    => $location['state'],
 				'city'     => $location['city'],
 				'rate'     => $base_rate,
-				'priority' => $this->faker->numberBetween( 1, 10 ),
-				'compound' => $this->faker->boolean( 20 ), // 20% chance of compound tax
+				'priority' => $this->get_faker()->numberBetween( 1, 10 ),
+				'compound' => $this->get_faker()->boolean( 20 ), // 20% chance of compound tax
 			);
 		}
 
@@ -190,20 +190,20 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_reduced_tax_rates(): array {
-		$selected_locations = $this->faker->randomElements(
+		$selected_locations = $this->get_faker()->randomElements(
 			$this->get_global_tax_locations(),
-			$this->faker->numberBetween( 2, 6 )
+			$this->get_faker()->numberBetween( 2, 6 )
 		);
 
 		$rates = array();
 		foreach ( $selected_locations as $location ) {
-			$base_rate = $this->faker->randomFloat( 2, 0.0, 8.0 );
+			$base_rate = $this->get_faker()->randomFloat( 2, 0.0, 8.0 );
 			$rates[]   = array(
 				'country'  => $location['country'],
 				'state'    => $location['state'],
 				'city'     => $location['city'],
 				'rate'     => $base_rate,
-				'priority' => $this->faker->numberBetween( 1, 5 ),
+				'priority' => $this->get_faker()->numberBetween( 1, 5 ),
 				'compound' => false, // Reduced rates typically aren't compound.
 			);
 		}
@@ -217,7 +217,7 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_zero_tax_rates(): array {
-		$selected_locations = $this->faker->randomElements(
+		$selected_locations = $this->get_faker()->randomElements(
 			$this->get_global_tax_locations(),
 			$this->faker->numberBetween( 1, 4 )
 		);

@@ -162,7 +162,7 @@ class Order_Generator extends Generator {
 			case 'mixed':
 			default:
 				// 70% existing customers, 30% new customers for realistic distribution.
-				return $this->faker->boolean( 70 ) ? $this->get_random_customer() : $this->create_new_customer();
+				return $this->get_faker()->boolean( 70 ) ? $this->get_random_customer() : $this->create_new_customer();
 		}
 	}
 
@@ -183,7 +183,7 @@ class Order_Generator extends Generator {
 		}
 
 		// Use faker to randomly select from available customers.
-		return $this->faker->randomElement( $customers );
+		return $this->get_faker()->randomElement( $customers );
 	}
 
 	/**
@@ -260,8 +260,8 @@ class Order_Generator extends Generator {
 		}
 
 		// Use faker to randomly select variations (1-5 items per order).
-		$selected_count           = $this->faker->numberBetween( 1, 5 );
-		$selected_variations_data = $this->faker->randomElements(
+		$selected_count           = $this->get_faker()->numberBetween( 1, 5 );
+		$selected_variations_data = $this->get_faker()->randomElements(
 			$variations_data,
 			min( $selected_count, count( $variations_data ) )
 		);
@@ -297,7 +297,7 @@ class Order_Generator extends Generator {
 
 			$product_id   = $variation->get_product_id();
 			$price_id     = $variation->get_price_id();
-			$quantity     = $this->faker->numberBetween( 1, 3 );
+			$quantity     = $this->get_faker()->numberBetween( 1, 3 );
 			$rate         = $variation->get_regular_price();
 			$subtotal     = $rate * $quantity;
 			$tax_class_id = $variation->get_tax_class();
@@ -368,11 +368,11 @@ class Order_Generator extends Generator {
 			'shipping_details' => $this->generate_shipping_details( $subtotal ),
 			'tax_details'      => $this->generate_tax_details( $subtotal ),
 			'coupon_details'   => $this->generate_coupon_details( $subtotal ),
-			'order_notes'      => $this->faker->optional( 0.3 )->paragraph( 2 ),
+			'order_notes'      => $this->get_faker()->optional( 0.3 )->paragraph( 2 ),
 			'source_info'      => $this->generate_source_info(),
 			'fulfillment'      => array(
 				'status'             => $this->generate_fulfillment_status(),
-				'tracking_number'    => $this->faker->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
+				'tracking_number'    => $this->get_faker()->optional( 0.6 )->regexify( '[A-Z]{2}[0-9]{10}' ),
 				'estimated_delivery' => $this->faker->dateTimeBetween( 'now', '+2 weeks' )->format( 'Y-m-d' ),
 				'carrier'            => $this->faker->randomElement(
 					array(
