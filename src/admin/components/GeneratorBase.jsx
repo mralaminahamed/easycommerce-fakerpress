@@ -4,7 +4,6 @@ import { Button, Disclosure, DisclosureButton, DisclosurePanel, Field, Input, La
 import { RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
-
 export default function GeneratorBase( { title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children } ) {
 	const [ count, setCount ] = useState( 10 );
 	const [ showAdvanced, setShowAdvanced ] = useState( false );
