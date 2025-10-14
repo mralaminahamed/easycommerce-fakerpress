@@ -113,18 +113,13 @@ abstract class REST_Controller extends WP_REST_Controller {
 		}
 
 		// Pass all request parameters to the generator.
-		$params = $request->get_params();
-
-		$generator = $this->get_generator_instance( easycommerce_fakerpress()->get_faker_locale( $params['locale'] ) );
-
-		// Set generator parameters if the generator supports it.
-		if ( method_exists( $generator, 'set_generation_params' ) ) {
-			$generator->set_generation_params( $params );
-		}
+		$params    = $request->get_params();
+		$generator = $this->get_generator_instance();
 
 		// Set faker and locale.
 		$generator->set_locale( $params['locale'] );
 		$generator->set_faker();
+		$generator->set_generation_params( $params );
 
 		$result = $generator->generate( (int) $count );
 

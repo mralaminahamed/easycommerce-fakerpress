@@ -12,7 +12,6 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Shipping_Plan;
-use Exception;
 use WP_Error;
 
 /**

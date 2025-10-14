@@ -17,7 +17,6 @@ use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Helpers\Utility;
 use Exception;
-use RuntimeException;
 use WP_Error;
 
 /**
@@ -26,26 +25,6 @@ use WP_Error;
  * Generates realistic cart sessions for abandoned cart analysis and marketing.
  */
 class Cart_Session_Generator extends Generator {
-
-	/**
-	 * Generation parameters from REST API
-	 *
-	 * @var array
-	 */
-	private array $generation_params = array();
-
-	/**
-	 * Set generation parameters
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $params Generation parameters.
-	 *
-	 * @return void
-	 */
-	public function set_generation_params( array $params ): void {
-		$this->generation_params = $params;
-	}
 
 	/**
 	 * Get the resource type name
@@ -60,7 +39,6 @@ class Cart_Session_Generator extends Generator {
 	 * Generate a single cart session
 	 *
 	 * @return WP_Error|array Single cart session data, error, or false on failure.
-	 * @throws RuntimeException If no products or customers are found.
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Cart class exists.

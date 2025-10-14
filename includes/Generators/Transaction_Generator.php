@@ -15,8 +15,6 @@ use EasyCommerce\Models\Database;
 use EasyCommerce\Models\Order;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Transaction;
-use Exception;
-use RuntimeException;
 use WP_Error;
 
 /**
@@ -25,26 +23,6 @@ use WP_Error;
  * Generates realistic payment transaction history with various transaction types and statuses.
  */
 class Transaction_Generator extends Generator {
-
-	/**
-	 * Generation parameters from REST API
-	 *
-	 * @var array
-	 */
-	private array $generation_params = array();
-
-	/**
-	 * Set generation parameters
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $params Generation parameters.
-	 *
-	 * @return void
-	 */
-	public function set_generation_params( array $params ): void {
-		$this->generation_params = $params;
-	}
 
 	/**
 	 * Get the resource type name
@@ -58,8 +36,7 @@ class Transaction_Generator extends Generator {
 	/**
 	 * Generate a single transaction
 	 *
-	 * @return WP_Error|array|bool Single transaction data, error, or false on failure.
-	 * @throws RuntimeException When no orders are found.
+	 * @return WP_Error|array Single transaction data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Transaction class exists.
@@ -358,9 +335,8 @@ class Transaction_Generator extends Generator {
 	 * @param int $transaction_count Number of transactions to generate.
 	 *
 	 * @return WP_Error|array Generated transactions.
-	 * @throws RuntimeException When order is not found.
 	 */
-	public function generate_for_order( int $order_id, int $transaction_count = 3 ): array {
+	public function generate_for_order( int $order_id, int $transaction_count = 3 ) {
 		$order_db   = new Database( 'orders' );
 		$order_data = $order_db->get_by_id( $order_id );
 
@@ -372,43 +348,38 @@ class Transaction_Generator extends Generator {
 		$remaining_amount = $order_data->total;
 
 		for ( $i = 0; $i < $transaction_count; $i++ ) {
-			try {
-				// First transaction is usually a payment.
-				$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement(
-					array(
-						'payment',
-						'refund',
-						'adjustment',
-						'fee',
-					)
+			// First transaction is usually a payment.
+			$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement(
+				array(
+					'payment',
+					'refund',
+					'adjustment',
+					'fee',
+				)
+			);
+
+			$transaction_data         = $this->generate_transaction_data( (array) $order_data );
+			$transaction_data['type'] = $transaction_type;
+
+			// Adjust amount for subsequent transactions.
+			if ( $i > 0 && 'payment' === $transaction_type ) {
+				$transaction_data['amount'] = min( $remaining_amount, $transaction_data['amount'] );
+			}
+
+			$transaction_id = $this->create_transaction( $transaction_data );
+
+			if ( $transaction_id ) {
+				$results[] = array(
+					'id'              => $transaction_id,
+					'order_id'        => $transaction_data['order_id'],
+					'transaction_id'  => $transaction_data['transaction_id'],
+					'amount'          => $transaction_data['amount'],
+					'type'            => $transaction_data['type'],
+					'status'          => $transaction_data['status'],
+					'payment_gateway' => $transaction_data['payment_gateway'],
 				);
 
-				$transaction_data         = $this->generate_transaction_data( (array) $order_data );
-				$transaction_data['type'] = $transaction_type;
-
-				// Adjust amount for subsequent transactions.
-				if ( $i > 0 && 'payment' === $transaction_type ) {
-					$transaction_data['amount'] = min( $remaining_amount, $transaction_data['amount'] );
-				}
-
-				$transaction_id = $this->create_transaction( $transaction_data );
-
-				if ( $transaction_id ) {
-					$results[] = array(
-						'id'              => $transaction_id,
-						'order_id'        => $transaction_data['order_id'],
-						'transaction_id'  => $transaction_data['transaction_id'],
-						'amount'          => $transaction_data['amount'],
-						'type'            => $transaction_data['type'],
-						'status'          => $transaction_data['status'],
-						'payment_gateway' => $transaction_data['payment_gateway'],
-					);
-
-					$remaining_amount -= $transaction_data['amount'];
-				}
-			} catch ( Exception $e ) {
-				$this->log( "Failed to generate transaction {$i} for order {$order_id}: " . $e->getMessage(), 'error' );
-				continue;
+				$remaining_amount -= $transaction_data['amount'];
 			}
 		}
 
