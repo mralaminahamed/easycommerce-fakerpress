@@ -12,7 +12,6 @@ use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Coupon;
 use EasyCommerce\Models\Database;
 use Exception;
-use RuntimeException;
 use WP_Error;
 
 /**
@@ -295,7 +294,6 @@ class Coupon_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @return WP_Error|string Unique coupon code.
-	 * @throws RuntimeException If unable to generate a unique coupon code after 10 attempts.
 	 */
 	private function generate_unique_code(): string {
 		$attempts = 0;

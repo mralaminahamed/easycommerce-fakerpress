@@ -10,8 +10,6 @@ namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Customer;
-use Exception;
-use RuntimeException;
 use WP_Error;
 use WP_User;
 
@@ -137,7 +135,6 @@ class Customer_Generator extends Generator {
 	 * @param string $last_name Last name.
 	 *
 	 * @return WP_Error|string Unique username.
-	 * @throws RuntimeException If unable to generate a unique username after 10 attempts.
 	 */
 	private function generate_unique_username( string $first_name, string $last_name ) {
 		$base_username = strtolower( $first_name . '.' . $last_name );

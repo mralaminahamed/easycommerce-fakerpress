@@ -12,7 +12,6 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Tax;
-use Exception;
 use WP_Error;
 
 /**
@@ -21,26 +20,6 @@ use WP_Error;
  * Generates realistic tax classes and location-based tax rates.
  */
 class Tax_Generator extends Generator {
-
-	/**
-	 * Generation parameters from REST API
-	 *
-	 * @var array
-	 */
-	private array $generation_params = array();
-
-	/**
-	 * Set generation parameters
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $params Generation parameters.
-	 *
-	 * @return void
-	 */
-	public function set_generation_params( array $params ): void {
-		$this->generation_params = $params;
-	}
 
 	/**
 	 * Get the resource type name

@@ -15,9 +15,7 @@ use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Models\Location;
 use EasyCommerce\Models\Tax;
-use Exception;
 use WP_Error;
-use WP_User;
 
 /**
  * Order Generator Class
@@ -27,26 +25,6 @@ use WP_User;
  * @since 1.0.0
  */
 class Order_Generator extends Generator {
-
-	/**
-	 * Generation parameters from REST API
-	 *
-	 * @var array
-	 */
-	private array $generation_params = array();
-
-	/**
-	 * Set generation parameters
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $params Generation parameters.
-	 *
-	 * @return void
-	 */
-	public function set_generation_params( array $params ): void {
-		$this->generation_params = $params;
-	}
 
 	/**
 	 * Get the resource type name
@@ -138,7 +116,7 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|false Customer data or false if none found.
+	 * @return WP_Error|array Customer data or false if none found.
 	 */
 	private function get_customer_for_order() {
 		$customer_type        = $this->generation_params['customer_type'] ?? 'mixed';
@@ -216,12 +194,16 @@ class Order_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|false New customer data or false on failure.
+	 * @return WP_Error|array New customer data or false on failure.
 	 */
 	private function create_new_customer() {
 		// Use Customer_Generator to create a new customer.
 		$customer_generator = new Customer_Generator();
-		$customer           = $customer_generator->generate_single_item();
+
+		$customer_generator->set_locale( $this->get_faker_locale() );
+		$customer_generator->set_faker();
+
+		$customer = $customer_generator->generate_single_item();
 
 		if ( is_wp_error( $customer ) ) {
 			return $customer;
@@ -245,7 +227,7 @@ class Order_Generator extends Generator {
 	 *
 	 * @return WP_Error|array Array of Product_Variation objects.
 	 */
-	private function get_random_product_variations(): array {
+	private function get_random_product_variations() {
 		// Get a larger pool of available variations to choose from.
 		$db              = new Database( 'product_variations' );
 		$variations_data = $db->get_rows(

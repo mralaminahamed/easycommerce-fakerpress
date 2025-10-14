@@ -17,8 +17,6 @@ use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Attribute;
 use EasyCommerce\Models\Attribute_Value;
-use Exception;
-use RuntimeException;
 use WP_Error;
 
 /**
@@ -27,26 +25,6 @@ use WP_Error;
  * Generates realistic product variations with attributes, pricing, and inventory data.
  */
 class Product_Variation_Generator extends Generator {
-
-	/**
-	 * Generation parameters from REST API
-	 *
-	 * @var array
-	 */
-	private array $generation_params = array();
-
-	/**
-	 * Set generation parameters
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $params Generation parameters.
-	 *
-	 * @return void
-	 */
-	public function set_generation_params( array $params ): void {
-		$this->generation_params = $params;
-	}
 
 	/**
 	 * Get the resource type name
@@ -61,7 +39,6 @@ class Product_Variation_Generator extends Generator {
 	 * Generate a single product variation
 	 *
 	 * @return WP_Error|array Single variation data, error, or false on failure.
-	 * @throws RuntimeException When no products are found or on other errors.
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Product_Variation class exists.

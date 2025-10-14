@@ -53,6 +53,13 @@ abstract class Generator {
 	protected string $locale;
 
 	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected array $generation_params = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @since 1.0.0
@@ -178,6 +185,19 @@ abstract class Generator {
 	 */
 	protected function get_resource_type_plural(): string {
 		return $this->get_resource_type() . 's';
+	}
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
 	}
 
 	/**

@@ -20,7 +20,7 @@ class Generator_Relationships {
 	/**
 	 * Generator dependency map
 	 *
-	 * @var array
+	 * @var array<string, array<string>>
 	 */
 	private static array $dependencies = array(
 		'customer'          => array(),

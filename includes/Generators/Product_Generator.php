@@ -12,7 +12,6 @@ use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Attribute;
 use EasyCommerce\Models\Attribute_Value;
 use EasyCommerceFakerPress\Abstracts\Generator;
-use Exception;
 use WP_Error;
 
 /**
