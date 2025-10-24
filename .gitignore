@@ -6,6 +6,7 @@ vendor/
 build/
 dist/
 release/
+*.map
 
 # Logs
 *.log
