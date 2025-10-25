@@ -43,10 +43,10 @@ require_once __DIR__ . '/vendor/autoload.php';
  * Get main plugin instance
  *
  * @since 1.0.0
- * @return EasyCommerceFakerPress Plugin instance.
+ * @return EasyCommerce_FakerPress Plugin instance.
  */
-function easycommerce_fakerpress(): EasyCommerceFakerPress {
-	return EasyCommerceFakerPress::get_instance();
+function easycommerce_fakerpress(): EasyCommerce_FakerPress {
+	return EasyCommerce_FakerPress::get_instance();
 }
 
 
