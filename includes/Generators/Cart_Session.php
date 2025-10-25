@@ -154,7 +154,7 @@ class Cart_Session extends Generator {
 	 * @return WP_Error|array Customer data or null if none found.
 	 */
 	private function get_random_existing_customer() {
-		$customer_data = CustomerModel::list( null, 1, 30 );
+		$customer_data = CustomerModel::list( 'customer', null, 1, 30 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {
@@ -616,7 +616,7 @@ class Cart_Session extends Generator {
 
 		// Get existing products and customers.
 		$product_data  = ProductModel::list( array(), 30 );
-		$customer_data = CustomerModel::list( null, 1, 20 );
+		$customer_data = CustomerModel::list( 'customer', null, 1, 20 );
 
 		$products  = $product_data['products'] ?? array();
 		$customers = $customer_data['users'] ?? array();
