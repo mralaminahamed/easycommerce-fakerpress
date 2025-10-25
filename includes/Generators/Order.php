@@ -173,7 +173,7 @@ class Order extends Generator {
 	 */
 	private function get_random_customer() {
 		// Use EasyCommerce Customer model's customer_list method to get customers with proper capabilities.
-		$customer_data = CustomerModel::list( null, 1, 50 );
+		$customer_data = CustomerModel::list( 'customer', null, 1, 50 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {
@@ -736,7 +736,6 @@ class Order extends Generator {
 
 		return $count;
 	}
-
 
 	/**
 	 * Generate fallback address if customer doesn't have one
