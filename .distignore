@@ -104,6 +104,3 @@ wp-config-local.php
 # Cache directories
 /.cache/
 /tmp/
-
-# Plugin review and submission files
-plugin-submission-review.md
