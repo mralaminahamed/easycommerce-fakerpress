@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Transaction_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Transaction;
 
 /**
  * Transaction REST Controller Class
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Transaction_Generator;
  *
  * @since 1.0.0
  */
-class Transaction_REST_Controller extends REST_Controller {
+class Transactions extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'transaction';
+	}
+
+	/**
+	 * Get resource type label for transactions
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for transaction resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Transaction', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Transaction_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Transaction_Generator Generator instance.
+	 * @return Transaction Generator instance.
 	 */
-	protected function get_generator_instance(): Transaction_Generator {
-		return new Transaction_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'transaction';
+	protected function get_generator_instance(): Transaction {
+		return new Transaction();
 	}
 
 	/**

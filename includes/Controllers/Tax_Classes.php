@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Tax_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Tax_Class;
 
 /**
  * Tax REST Controller Class
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Tax_Generator;
  *
  * @since 1.0.0
  */
-class Tax_Classes_REST_Controller extends REST_Controller {
+class Tax_Classes extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'tax_class';
+	}
+
+	/**
+	 * Get resource type label for tax classes
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for tax class resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Tax Class', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Tax_Classes_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Tax_Generator Generator instance.
+	 * @return Tax_Class Generator instance.
 	 */
-	protected function get_generator_instance(): Tax_Generator {
-		return new Tax_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'tax_class';
+	protected function get_generator_instance(): Tax_Class {
+		return new Tax_Class();
 	}
 
 	/**

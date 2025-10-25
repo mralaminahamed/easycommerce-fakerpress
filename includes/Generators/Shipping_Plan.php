@@ -11,7 +11,7 @@ namespace EasyCommerceFakerPress\Generators;
 defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Shipping_Plan;
+use EasyCommerce\Models\Shipping_Plan as ShippingPlanModel;
 use WP_Error;
 
 /**
@@ -19,7 +19,7 @@ use WP_Error;
  *
  * Generates realistic shipping plans with methods and regional coverage.
  */
-class Shipping_Plan_Generator extends Generator {
+class Shipping_Plan extends Generator {
 
 	/**
 	 * Get the resource type name
@@ -31,13 +31,34 @@ class Shipping_Plan_Generator extends Generator {
 	}
 
 	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'shipping_plans' => 'Shipping Plans with Methods and Regions',
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return 'Generates comprehensive shipping plans with multiple calculation methods (price, weight, quantity), regional coverage, and realistic pricing tiers for testing ecommerce shipping functionality.';
+	}
+
+
+	/**
 	 * Generate a single shipping plan
 	 *
 	 * @return WP_Error|array Single shipping plan data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Shipping_Plan class exists.
-		if ( ! class_exists( Shipping_Plan::class ) ) {
+		if ( ! class_exists( ShippingPlanModel::class ) ) {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Shipping_Plan model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
@@ -224,19 +245,19 @@ class Shipping_Plan_Generator extends Generator {
 				'name' => '1 kg to 5 kg',
 				'min'  => 1.01,
 				'max'  => 5.0,
-				'cost' => $this->faker->randomFloat( 2, 7.99, 15.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 7.99, 15.99 ),
 			),
 			array(
 				'name' => '5 kg to 10 kg',
 				'min'  => 5.01,
 				'max'  => 10.0,
-				'cost' => $this->faker->randomFloat( 2, 15.99, 25.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 15.99, 25.99 ),
 			),
 			array(
 				'name' => 'Over 10 kg',
 				'min'  => 10.01,
 				'max'  => 999.99,
-				'cost' => $this->faker->randomFloat( 2, 25.99, 49.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 25.99, 49.99 ),
 			),
 		);
 	}
@@ -247,14 +268,14 @@ class Shipping_Plan_Generator extends Generator {
 	 * @return array Free shipping methods
 	 */
 	private function generate_free_shipping_methods(): array {
-		$minimum_order = $this->faker->randomElement( array( 50, 75, 100, 150, 200 ) );
+		$minimum_order = $this->get_faker()->randomElement( array( 50, 75, 100, 150, 200 ) );
 
 		return array(
 			array(
 				'name' => 'Standard Shipping',
 				'min'  => 0.00,
 				'max'  => $minimum_order - 0.01,
-				'cost' => $this->faker->randomFloat( 2, 4.99, 9.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 4.99, 9.99 ),
 			),
 			array(
 				'name' => "Free Shipping (Orders over {$minimum_order})",
@@ -276,19 +297,19 @@ class Shipping_Plan_Generator extends Generator {
 				'name' => 'Overnight Under $50',
 				'min'  => 0.00,
 				'max'  => 49.99,
-				'cost' => $this->faker->randomFloat( 2, 25.99, 39.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 25.99, 39.99 ),
 			),
 			array(
 				'name' => 'Overnight $50 to $100',
 				'min'  => 50.00,
 				'max'  => 99.99,
-				'cost' => $this->faker->randomFloat( 2, 19.99, 29.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 19.99, 29.99 ),
 			),
 			array(
 				'name' => 'Overnight Over $100',
 				'min'  => 100.00,
 				'max'  => 999999.99,
-				'cost' => $this->faker->randomFloat( 2, 12.99, 19.99 ),
+				'cost' => $this->get_faker()->randomFloat( 2, 12.99, 19.99 ),
 			),
 		);
 	}
@@ -670,9 +691,9 @@ class Shipping_Plan_Generator extends Generator {
 		);
 
 		// Select random regions (2-8 regions per shipping plan).
-		return $this->faker->randomElements(
+		return $this->get_faker()->randomElements(
 			$regions,
-			$this->faker->numberBetween( 2, 8 )
+			$this->get_faker()->numberBetween( 2, 8 )
 		);
 	}
 
@@ -681,57 +702,36 @@ class Shipping_Plan_Generator extends Generator {
 	 *
 	 * @param array $data Shipping plan data.
 	 *
-	 * @return Shipping_Plan|null Created shipping plan instance
+	 * @return ShippingPlanModel|null Created shipping plan instance
 	 */
-	private function create_shipping_plan( array $data ): ?Shipping_Plan {
-		$shipping_plan = new Shipping_Plan();
+	private function create_shipping_plan( array $data ): ?ShippingPlanModel {
+		$shipping_plan = new ShippingPlanModel();
 
 		$plan_id = $shipping_plan->create( $data );
 
 		if ( $plan_id ) {
-			return new Shipping_Plan( $plan_id );
+			return new ShippingPlanModel( $plan_id );
 		}
 
 		return null;
 	}
-
-	/**
-	 * Get supported data types for this generator.
-	 *
-	 * @return array Supported types
-	 */
-	public function get_supported_types(): array {
-		return array(
-			'shipping_plans' => 'Shipping Plans with Methods and Regions',
-		);
-	}
-
-	/**
-	 * Get generator description.
-	 *
-	 * @return string Description
-	 */
-	public function get_description(): string {
-		return 'Generates comprehensive shipping plans with multiple calculation methods (price, weight, quantity), regional coverage, and realistic pricing tiers for testing ecommerce shipping functionality.';
-	}
-
 	/**
 	 * Test location lookup for shipping plan
 	 *
 	 * Verifies that the shipping plan can be found using get_by_location()
 	 *
-	 * @param Shipping_Plan $shipping_plan Created shipping plan instance.
-	 * @param array         $regions Array of region data.
+	 * @param ShippingPlanModel $shipping_plan Created shipping plan instance.
+	 * @param array             $regions Array of region data.
 	 *
 	 * @return WP_Error|array Test result with lookup status.
 	 */
-	private function test_location_lookup( Shipping_Plan $shipping_plan, array $regions ): array {
+	private function test_location_lookup( ShippingPlanModel $shipping_plan, array $regions ): array {
 		if ( empty( $regions ) ) {
 			return new WP_Error( 'missing_regions', __( 'No regions found.', 'easycommerce-fakerpress' ) );
 		}
 
 		// Pick a random region to test.
-		$test_region = $this->faker->randomElement( $regions );
+		$test_region = $this->get_faker()->randomElement( $regions );
 
 		// Build region code in format: COUNTRY-STATE or COUNTRY-STATE-CITY.
 		$region_code_parts = array( $test_region['country'] );
@@ -746,8 +746,8 @@ class Shipping_Plan_Generator extends Generator {
 
 		$region_code = implode( '-', $region_code_parts );
 
-		// Use Shipping_Plan::get_by_location() to find plans for this region.
-		$found_plans = Shipping_Plan::get_by_location( $region_code, 10 );
+		// Use ShippingPlanModel::get_by_location() to find plans for this region.
+		$found_plans = ShippingPlanModel::get_by_location( $region_code, 10 );
 
 		// Check if our plan is in the results.
 		$plan_found = false;

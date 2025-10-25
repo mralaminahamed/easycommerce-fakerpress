@@ -3,18 +3,18 @@
 namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Cart_Session_Generator;
+use EasyCommerceFakerPress\Generators\Cart_Session;
 use EasyCommerce\Models\Cart;
 
 /**
  * Test class for Cart Session Generator
  *
- * @covers \EasyCommerceFakerPress\Generators\Cart_Session_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Cart_Session
  */
 class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Cart_Session_Generator
+	 * @var Cart_Session
 	 */
 	private $generator;
 
@@ -23,13 +23,13 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
+
 		// Skip if EasyCommerce plugin is not active
 		if ( ! class_exists( 'EasyCommerce\Models\Cart' ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
-		
-		$this->generator = new Cart_Session_Generator();
+
+		$this->generator = new Cart_Session();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Cart_Session_Generator::class, $this->generator );
+		$this->assertInstanceOf( Cart_Session::class, $this->generator );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
-		
+
 		$this->assertEquals( 'cart_session', $method->invoke( $this->generator ) );
 	}
 
@@ -190,11 +190,11 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 				$this->assertGreaterThan( 0, $config['total'] );
 
 				// Total should equal quantity * price
-				$this->assertEqualsWithDelta( 
-					$config['quantity'] * $config['price'], 
-					$config['total'], 
-					0.01, 
-					'Item total should equal quantity * price' 
+				$this->assertEqualsWithDelta(
+					$config['quantity'] * $config['price'],
+					$config['total'],
+					0.01,
+					'Item total should equal quantity * price'
 				);
 			}
 		}
@@ -265,7 +265,7 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 50 );
 
 		$this->assertIsArray( $result );
-		
+
 		$status_counts = array();
 		foreach ( $result['cart_sessions'] as $cart_session ) {
 			$status = $cart_session['status'];
@@ -362,17 +362,17 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			}
 
 			// Allow for small floating point differences
-			$this->assertEqualsWithDelta( 
-				$calculated_total, 
-				$cart_session['total_amount'], 
-				0.01, 
-				'Cart total should match sum of item totals' 
+			$this->assertEqualsWithDelta(
+				$calculated_total,
+				$cart_session['total_amount'],
+				0.01,
+				'Cart total should match sum of item totals'
 			);
 
-			$this->assertEquals( 
-				$calculated_item_count, 
-				$cart_session['item_count'], 
-				'Cart item count should match sum of item quantities' 
+			$this->assertEquals(
+				$calculated_item_count,
+				$cart_session['item_count'],
+				'Cart item count should match sum of item quantities'
 			);
 		}
 	}
@@ -389,7 +389,7 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (5 seconds)
 		$this->assertLessThan( 5, $execution_time, 'Cart session generation took too long' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 10, $result['generated'] );
 	}
@@ -406,7 +406,7 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 8MB for 15 cart sessions)
 		$this->assertLessThan( 8 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 15, $result['generated'] );
 	}
@@ -475,13 +475,13 @@ class CartSessionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_handles_missing_products_gracefully(): void {
 		// This test verifies that the generator handles the case where no products exist
-		
+
 		$result = $this->generator->generate( 1 );
-		
+
 		// Result should either be a valid array or a WP_Error, but not cause a fatal error
-		$this->assertTrue( 
-			is_array( $result ) || is_wp_error( $result ), 
-			'Generator should handle missing products gracefully' 
+		$this->assertTrue(
+			is_array( $result ) || is_wp_error( $result ),
+			'Generator should handle missing products gracefully'
 		);
 	}
 

@@ -11,7 +11,7 @@ namespace EasyCommerceFakerPress\Abstracts;
 use Bluemmb\Faker\PicsumPhotosProvider;
 use Exception;
 use Faker\Factory;
-use Faker\Generator as FakerGenerator;
+use Faker\Generator as Faker_Generator;
 use Faker\Provider\DateTime;
 use WP_Error;
 use wpdb;
@@ -27,13 +27,15 @@ abstract class Generator {
 	/**
 	 * Faker instance
 	 *
-	 * @var FakerGenerator
+	 * @since 1.0.0
+	 * @var Faker_Generator
 	 */
-	protected FakerGenerator $faker;
+	protected Faker_Generator $faker;
 
 	/**
 	 * WordPress database instance
 	 *
+	 * @since 1.0.0
 	 * @var \wpdb
 	 */
 	protected wpdb $wpdb;
@@ -41,6 +43,7 @@ abstract class Generator {
 	/**
 	 * Maximum items to generate per batch
 	 *
+	 * @since 1.0.0
 	 * @var int
 	 */
 	protected int $max_batch_size = 100;
@@ -48,6 +51,7 @@ abstract class Generator {
 	/**
 	 * Locale for Faker
 	 *
+	 * @since 1.0.0
 	 * @var string
 	 */
 	protected string $locale;
@@ -55,6 +59,7 @@ abstract class Generator {
 	/**
 	 * Generation parameters from REST API
 	 *
+	 * @since 1.0.0
 	 * @var array<string, mixed>
 	 */
 	protected array $generation_params = array();
@@ -62,7 +67,11 @@ abstract class Generator {
 	/**
 	 * Constructor
 	 *
+	 * Initializes the database reference.
+	 *
 	 * @since 1.0.0
+	 *
+	 * @return void
 	 */
 	public function __construct() {
 		global $wpdb;
@@ -73,29 +82,39 @@ abstract class Generator {
 	/**
 	 * Set Faker instance
 	 *
+	 * Configures the Faker generator with providers.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @return void
 	 */
 	public function set_faker(): void {
 		$this->faker = Factory::create( $this->get_faker_locale() );
 
-		// Add additional providers.
-		$this->get_faker()->addProvider( new DateTime( $this->faker ) );
-		$this->get_faker()->addProvider( new PicsumPhotosProvider( $this->faker ) );
+		// Add additional providers directly to avoid recursive calls.
+		$this->faker->addProvider( new DateTime( $this->faker ) );
+		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
 	}
 
 	/**
 	 * Get Faker instance
 	 *
-	 * @return FakerGenerator Faker instance.
+	 * @since 1.0.0
+	 *
+	 * @return Faker_Generator Faker instance.
 	 */
-	public function get_faker(): FakerGenerator {
+	public function get_faker(): Faker_Generator {
 		return $this->faker;
 	}
 
 	/**
 	 * Set locale for Faker
 	 *
-	 * @param string $locale Locale code.
+	 * @since 1.0.0
+	 *
+	 * @param string $locale Locale code (e.g., 'en_US').
+	 *
+	 * @return void
 	 */
 	public function set_locale( string $locale = 'en_US' ): void {
 		$this->locale = $locale;
@@ -103,6 +122,8 @@ abstract class Generator {
 
 	/**
 	 * Get locale for Faker
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return string Locale code.
 	 */
@@ -113,6 +134,8 @@ abstract class Generator {
 	/**
 	 * Generate fake data
 	 *
+	 * Orchestrates batch generation of items.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param int $count Number of items to generate.
@@ -120,29 +143,97 @@ abstract class Generator {
 	 * @return array<string, mixed>|WP_Error Generation results or error.
 	 */
 	public function generate( int $count ) {
+		$resource_type = $this->get_resource_type();
+
 		// Validate count.
 		$validation_result = $this->validate_count( $count );
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
+		/**
+		 * Apply filtered generation params for the current resource type.
+		 * Allows modification of generation parameters through WordPress filters.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array<string, mixed> $generation_params Generation parameters to be filtered
+		 */
+		$this->generation_params = apply_filters( "easycommerce_fakerpress_generation_params_{$resource_type}", $this->generation_params );
+
+		// Apply seed for reproducibility if provided.
+		$seed = $this->generation_params['seed'] ?? null;
+		if ( $seed ) {
+			$this->faker->seed( (int) $seed );
+			$this->log( "Seeded Faker with value: {$seed}", 'info' );
+		}
+
 		$results = array();
 
 		try {
 			for ( $i = 0; $i < $count; $i++ ) {
-				$item_result = $this->generate_single_item();
+				/**
+				 * Fires before generating a single item of the specified resource type.
+				 *
+				 * @since 1.0.0
+				 * @see   Generator::generate()
+				 *
+				 * @param string $resource_type The type of resource being generated (e.g. 'product', 'customer')
+				 */
+				do_action( "easycommerce_fakerpress_before_generate_single_item_{$resource_type}" );
 
-				if ( is_wp_error( $item_result ) ) {
+				try {
+					$item_result = $this->generate_single_item();
+
+					if ( is_wp_error( $item_result ) ) {
+						$this->log( 'Single item generation failed: ' . $item_result->get_error_message(), 'warning' );
+						continue;
+					}
+
+					/**
+					 * Filters the generated item of the specified resource type.
+					 *
+					 * @since 1.0.0
+					 *
+					 * @param array<string,mixed>|WP_Error $item_result The generated item result
+					 * @param int                          $i           The current item index in the generation loop
+					 */
+					$item_result = apply_filters( "easycommerce_fakerpress_generated_item_{$resource_type}", $item_result, $i );
+
+					if ( $item_result ) {
+						$results[] = $item_result;
+					}
+
+					/**
+					 * Fires after generating a single item of the specified resource type.
+					 *
+					 * @since 1.0.0
+					 * @see   Generator::generate()
+					 *
+					 * @param array<string,mixed>|WP_Error $item_result The generated item result
+					 * @param int                          $i           The current item index in the generation loop
+					 */
+					do_action( "easycommerce_fakerpress_after_generate_single_item_{$resource_type}", $item_result, $i );
+				} catch ( Exception $e ) {
+					$this->log( "Per-item exception: {$e->getMessage()}", 'error' );
 					continue;
-				}
-
-				if ( $item_result ) {
-					$results[] = $item_result;
 				}
 			}
 
+			/**
+			 * Fires after completing a batch generation of the specified resource type.
+			 *
+			 * @since 1.0.0
+			 * @see   Generator::generate()
+			 *
+			 * @param array<int,mixed> $results All generated items in the batch
+			 * @param int              $count   Total number of items attempted to generate
+			 */
+			do_action( "easycommerce_fakerpress_after_batch_generate_{$resource_type}", $results, $count );
+
 			return $this->format_results( $results );
 		} catch ( Exception $e ) {
+			$this->log( 'Batch generation exception: ' . $e->getMessage(), 'error' );
 			return new WP_Error(
 				'generation_failed',
 				sprintf(
@@ -157,7 +248,7 @@ abstract class Generator {
 	/**
 	 * Generate a single item
 	 *
-	 * Must be implemented by child classes
+	 * Must be implemented by child classes to define item-specific generation logic.
 	 *
 	 * @since 1.0.0
 	 *
@@ -168,7 +259,7 @@ abstract class Generator {
 	/**
 	 * Get the resource type name (e.g., 'product', 'customer')
 	 *
-	 * Must be implemented by child classes
+	 * Must be implemented by child classes.
 	 *
 	 * @since 1.0.0
 	 *
@@ -190,9 +281,11 @@ abstract class Generator {
 	/**
 	 * Set generation parameters
 	 *
+	 * Stores parameters for use during generation.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $params Generation parameters.
+	 * @param array<string, mixed> $params Generation parameters from request.
 	 *
 	 * @return void
 	 */
@@ -202,6 +295,8 @@ abstract class Generator {
 
 	/**
 	 * Validate generation count
+	 *
+	 * Ensures the count adheres to batch limits.
 	 *
 	 * @since 1.0.0
 	 *
@@ -234,11 +329,13 @@ abstract class Generator {
 	/**
 	 * Format generation results
 	 *
+	 * Structures the output for API responses.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param array<int, mixed> $results Generated items data.
 	 *
-	 * @return array<string, mixed> Formatted results.
+	 * @return array<string, mixed> Formatted results array.
 	 */
 	protected function format_results( array $results ): array {
 		return array(
@@ -250,15 +347,17 @@ abstract class Generator {
 	/**
 	 * Log generation activity
 	 *
+	 * Records activity for debugging, conditional on WP_DEBUG_LOG.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param string               $message Log message.
-	 * @param string               $level Log level (info, warning, error).
+	 * @param string               $level   Log level (e.g., 'info', 'warning', 'error').
 	 * @param array<string, mixed> $context Additional context data.
 	 *
 	 * @return void
 	 */
-	protected function log( string $message, string $level = 'info', array $context = array() ): void {
+	public function log( string $message, string $level = 'info', array $context = array() ): void {
 		if ( function_exists( 'error_log' ) && WP_DEBUG_LOG ) {
 			$context['resource_type'] = $this->get_resource_type();
 			$log_message              = sprintf(

@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Order_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Order;
 
 /**
  * Order Generator REST Controller
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Order_Generator;
  *
  * @since 1.0.0
  */
-class Order_REST_Controller extends REST_Controller {
+class Orders extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'order';
+	}
+
+	/**
+	 * Get resource type label for orders
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for order resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Order', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Order_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Order_Generator Generator instance.
+	 * @return Order Generator instance.
 	 */
-	protected function get_generator_instance(): Order_Generator {
-		return new Order_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'order';
+	protected function get_generator_instance(): Order {
+		return new Order();
 	}
 
 	/**

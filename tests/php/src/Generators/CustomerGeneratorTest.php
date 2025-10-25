@@ -3,18 +3,18 @@
 namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Customer_Generator;
+use EasyCommerceFakerPress\Generators\Customer;
 use EasyCommerce\Models\Customer;
 
 /**
  * Test class for Customer Generator
  *
- * @covers \EasyCommerceFakerPress\Generators\Customer_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Customer
  */
 class CustomerGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Customer_Generator
+	 * @var Customer
 	 */
 	private $generator;
 
@@ -23,13 +23,13 @@ class CustomerGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
+
 		// Skip if EasyCommerce plugin is not active
 		if ( ! class_exists( 'EasyCommerce\Models\Customer' ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
-		
-		$this->generator = new Customer_Generator();
+
+		$this->generator = new Customer();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class CustomerGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Customer_Generator::class, $this->generator );
+		$this->assertInstanceOf( Customer::class, $this->generator );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class CustomerGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
-		
+
 		$this->assertEquals( 'customer', $method->invoke( $this->generator ) );
 	}
 
@@ -254,7 +254,7 @@ class CustomerGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (3 seconds)
 		$this->assertLessThan( 3, $execution_time, 'Customer generation took too long' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 10, $result['generated'] );
 	}
@@ -271,7 +271,7 @@ class CustomerGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 5MB for 20 customers)
 		$this->assertLessThan( 5 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 20, $result['generated'] );
 	}

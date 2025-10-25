@@ -9,9 +9,8 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Coupon;
+use EasyCommerce\Models\Coupon as CouponModel;
 use EasyCommerce\Models\Database;
-use Exception;
 use WP_Error;
 
 /**
@@ -21,7 +20,7 @@ use WP_Error;
  *
  * @since 1.0.0
  */
-class Coupon_Generator extends Generator {
+class Coupon extends Generator {
 
 	/**
 	 * Get the resource type name
@@ -35,6 +34,26 @@ class Coupon_Generator extends Generator {
 	}
 
 	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'coupons' => __( 'Discount Coupons with Rules and Restrictions', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates realistic discount coupons with various discount types (percentage, fixed, buy-x-get-y), comprehensive rules, usage restrictions, validity periods, and relationship management for testing ecommerce promotional functionality.', 'easycommerce-fakerpress' );
+	}
+
+	/**
 	 * Generate a single coupon
 	 *
 	 * @since 1.0.0
@@ -43,7 +62,7 @@ class Coupon_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Coupon class exists.
-		if ( ! class_exists( Coupon::class ) ) {
+		if ( ! class_exists( CouponModel::class ) ) {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Coupon model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
@@ -55,7 +74,7 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Use EasyCommerce Coupon model with complete data structure.
-		$coupon  = new Coupon();
+		$coupon  = new CouponModel();
 		$created = $coupon->create(
 			array(
 				// Required fields.
@@ -79,7 +98,7 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Reload coupon to get the complete object with rules.
-		$coupon = new Coupon( $created );
+		$coupon = new CouponModel( $created );
 
 		// Validate coupon with sample cart to ensure rules are correctly configured.
 		$validation_result = $this->validate_coupon_with_sample_cart( $coupon, $coupon_data );
@@ -109,7 +128,6 @@ class Coupon_Generator extends Generator {
 	 * @since 1.0.0
 	 *
 	 * @return array Coupon data with all fields and rules.
-	 * @throws Exception If unable to generate a unique coupon code after 10 attempts.
 	 */
 	private function generate_coupon_data(): array {
 		$discount_type = $this->get_faker()->randomElement( array( 'percentage', 'fixed', 'fixed_product', 'buy_x_get_y' ) );
@@ -344,9 +362,9 @@ class Coupon_Generator extends Generator {
 			'??##??',
 		);
 
-		$pattern = $this->faker->randomElement( $code_patterns );
+		$pattern = $this->get_faker()->randomElement( $code_patterns );
 
-		return strtoupper( $this->faker->bothify( $pattern ) );
+		return strtoupper( $this->get_faker()->bothify( $pattern ) );
 	}
 
 	/**
@@ -363,7 +381,7 @@ class Coupon_Generator extends Generator {
 			$percentages = array( 5, 10, 15, 20, 25, 30, 40, 50, 60, 70 );
 			$weights     = array( 10, 20, 15, 15, 10, 10, 8, 5, 3, 2 );
 
-			return $this->faker->randomElement(
+			return $this->get_faker()->randomElement(
 				array_merge(
 					...array_map(
 						static fn( $pct, $weight ) => array_fill( 0, $weight, $pct ),
@@ -378,7 +396,7 @@ class Coupon_Generator extends Generator {
 			$amounts = array( 5, 10, 15, 20, 25, 30, 50, 75, 100, 200 );
 			$weights = array( 15, 20, 15, 15, 10, 10, 8, 5, 3, 2 );
 
-			return $this->faker->randomElement(
+			return $this->get_faker()->randomElement(
 				array_merge(
 					...array_map(
 						static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
@@ -393,7 +411,7 @@ class Coupon_Generator extends Generator {
 			$amounts = array( 2, 5, 10, 15, 20, 25 );
 			$weights = array( 20, 20, 15, 10, 10, 5 );
 
-			return $this->faker->randomElement(
+			return $this->get_faker()->randomElement(
 				array_merge(
 					...array_map(
 						static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
@@ -408,7 +426,7 @@ class Coupon_Generator extends Generator {
 		$amounts = array( 25, 50, 100 ); // Percentage off for the "get y" item.
 		$weights = array( 20, 15, 5 );
 
-		return $this->faker->randomElement(
+		return $this->get_faker()->randomElement(
 			array_merge(
 				...array_map(
 					static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
@@ -432,12 +450,12 @@ class Coupon_Generator extends Generator {
 		$rules = array();
 
 		// Minimum spend requirement (75% chance).
-		if ( $this->faker->boolean( 75 ) ) {
+		if ( $this->get_faker()->boolean( 75 ) ) {
 			$min_amounts = array( 20, 50, 75, 100, 150, 200, 250, 300, 500 );
 			$weights     = array( 10, 20, 15, 15, 10, 10, 8, 5, 2 );
 			$rules[]     = array(
 				'type'  => 'min_spend',
-				'value' => $this->faker->randomElement(
+				'value' => $this->get_faker()->randomElement(
 					array_merge(
 						...array_map(
 							static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
@@ -450,18 +468,18 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Maximum spend limit (25% chance).
-		if ( $this->faker->boolean( 25 ) ) {
+		if ( $this->get_faker()->boolean( 25 ) ) {
 			$max_amounts = array( 500, 1000, 1500, 2000, 3000, 5000 );
 			$rules[]     = array(
 				'type'  => 'max_spend',
-				'value' => $this->faker->randomElement( $max_amounts ),
+				'value' => $this->get_faker()->randomElement( $max_amounts ),
 			);
 		}
 
 		// Date range (95% chance).
-		if ( $this->faker->boolean( 95 ) ) {
-			$start_date = $this->faker->dateTimeBetween( '-2 months', '+2 weeks' );
-			$end_date   = $this->faker->dateTimeBetween( $start_date, '+6 months' );
+		if ( $this->get_faker()->boolean( 95 ) ) {
+			$start_date = $this->get_faker()->dateTimeBetween( '-2 months', '+2 weeks' );
+			$end_date   = $this->get_faker()->dateTimeBetween( $start_date, '+6 months' );
 
 			$rules[] = array(
 				'type'  => 'start_date',
@@ -475,12 +493,12 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Usage limit (80% chance).
-		if ( $this->faker->boolean( 80 ) ) {
+		if ( $this->get_faker()->boolean( 80 ) ) {
 			$usage_limits = array( 1, 5, 10, 20, 50, 100, 200, 500 );
 			$weights      = array( 10, 15, 20, 15, 15, 10, 8, 2 );
 			$rules[]      = array(
 				'type'  => 'usage_limit',
-				'value' => $this->faker->randomElement(
+				'value' => $this->get_faker()->randomElement(
 					array_merge(
 						...array_map(
 							static fn( $limit, $weight ) => array_fill( 0, $weight, $limit ),
@@ -493,12 +511,12 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Usage limit per customer (50% chance).
-		if ( $this->faker->boolean( 50 ) ) {
+		if ( $this->get_faker()->boolean( 50 ) ) {
 			$per_customer_limits = array( 1, 2, 3, 5, 10 );
 			$weights             = array( 20, 15, 10, 5, 2 );
 			$rules[]             = array(
 				'type'  => 'usage_limit_per_customer',
-				'value' => $this->faker->randomElement(
+				'value' => $this->get_faker()->randomElement(
 					array_merge(
 						...array_map(
 							static fn( $limit, $weight ) => array_fill( 0, $weight, $limit ),
@@ -511,10 +529,10 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Product restrictions (40% chance).
-		if ( $this->faker->boolean( 40 ) ) {
+		if ( $this->get_faker()->boolean( 40 ) ) {
 			$product_ids = $this->get_random_product_ids();
 			if ( ! empty( $product_ids ) ) {
-				$restriction_type = $this->faker->randomElement( array( 'include_products', 'exclude_products' ) );
+				$restriction_type = $this->get_faker()->randomElement( array( 'include_products', 'exclude_products' ) );
 				$rules[]          = array(
 					'type'  => $restriction_type,
 					'value' => array_map( static fn( $id ) => array( 'id' => $id ), $product_ids ),
@@ -523,10 +541,10 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Category restrictions (35% chance).
-		if ( $this->faker->boolean( 35 ) ) {
+		if ( $this->get_faker()->boolean( 35 ) ) {
 			$category_ids = $this->get_random_category_ids();
 			if ( ! empty( $category_ids ) ) {
-				$restriction_type = $this->faker->randomElement( array( 'include_categories', 'exclude_categories' ) );
+				$restriction_type = $this->get_faker()->randomElement( array( 'include_categories', 'exclude_categories' ) );
 				$rules[]          = array(
 					'type'  => $restriction_type,
 					'value' => array_map( static fn( $id ) => array( 'id' => $id ), $category_ids ),
@@ -535,16 +553,16 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Customer restrictions (20% chance).
-		if ( $this->faker->boolean( 20 ) ) {
+		if ( $this->get_faker()->boolean( 20 ) ) {
 			$customer_types = array( 'new_customers', 'existing_customers', 'vip_customers', 'registered_users' );
 			$rules[]        = array(
 				'type'  => 'customer_restriction',
-				'value' => $this->faker->randomElement( $customer_types ),
+				'value' => $this->get_faker()->randomElement( $customer_types ),
 			);
 		}
 
 		// Free shipping (15% chance for fixed/percentage, 0% for others).
-		if ( in_array( $discount_type, array( 'fixed', 'percentage' ), true ) && $this->faker->boolean( 15 ) ) {
+		if ( in_array( $discount_type, array( 'fixed', 'percentage' ), true ) && $this->get_faker()->boolean( 15 ) ) {
 			$rules[] = array(
 				'type'  => 'free_shipping',
 				'value' => true,
@@ -552,7 +570,7 @@ class Coupon_Generator extends Generator {
 		}
 
 		// First time customer only (10% chance).
-		if ( $this->faker->boolean( 10 ) ) {
+		if ( $this->get_faker()->boolean( 10 ) ) {
 			$rules[] = array(
 				'type'  => 'first_time_customer',
 				'value' => true,
@@ -567,12 +585,12 @@ class Coupon_Generator extends Generator {
 				'buy_x_get_y',
 			),
 			true
-		) && $this->faker->boolean( 20 ) ) {
+		) && $this->get_faker()->boolean( 20 ) ) {
 			$min_quantities = array( 2, 3, 4, 5, 10 );
 			$weights        = array( 20, 15, 10, 5, 2 );
 			$rules[]        = array(
 				'type'  => 'min_quantity',
-				'value' => $this->faker->randomElement(
+				'value' => $this->get_faker()->randomElement(
 					array_merge(
 						...array_map(
 							static fn( $qty, $weight ) => array_fill( 0, $weight, $qty ),
@@ -588,16 +606,16 @@ class Coupon_Generator extends Generator {
 		if ( 'buy_x_get_y' === $discount_type ) {
 			$rules[] = array(
 				'type'  => 'buy_quantity',
-				'value' => $this->faker->randomElement( array( 1, 2, 3 ) ),
+				'value' => $this->get_faker()->randomElement( array( 1, 2, 3 ) ),
 			);
 			$rules[] = array(
 				'type'  => 'get_quantity',
-				'value' => $this->faker->randomElement( array( 1, 2 ) ),
+				'value' => $this->get_faker()->randomElement( array( 1, 2 ) ),
 			);
 		}
 
 		// Stackable with other coupons (10% chance).
-		if ( $this->faker->boolean( 10 ) ) {
+		if ( $this->get_faker()->boolean( 10 ) ) {
 			$rules[] = array(
 				'type'  => 'stackable',
 				'value' => true,
@@ -605,15 +623,15 @@ class Coupon_Generator extends Generator {
 		}
 
 		// Apply to sale items (35% chance).
-		if ( $this->faker->boolean( 35 ) ) {
+		if ( $this->get_faker()->boolean( 35 ) ) {
 			$rules[] = array(
 				'type'  => 'apply_to_sale_items',
-				'value' => $this->faker->boolean( 75 ), // 75% allow, 25% exclude sale items
+				'value' => $this->get_faker()->boolean( 75 ), // 75% allow, 25% exclude sale items
 			);
 		}
 
 		// Auto-apply coupon (10% chance).
-		if ( $this->faker->boolean( 10 ) ) {
+		if ( $this->get_faker()->boolean( 10 ) ) {
 			$rules[] = array(
 				'type'  => 'auto_apply',
 				'value' => true,
@@ -640,7 +658,7 @@ class Coupon_Generator extends Generator {
 			)
 		);
 
-		return array_slice( $products, 0, $this->faker->numberBetween( 1, 6 ) );
+		return array_slice( $products, 0, $this->get_faker()->numberBetween( 1, 6 ) );
 	}
 
 	/**
@@ -665,7 +683,7 @@ class Coupon_Generator extends Generator {
 			return $categories;
 		}
 
-		return array_slice( $categories, 0, $this->faker->numberBetween( 1, 4 ) );
+		return array_slice( $categories, 0, $this->get_faker()->numberBetween( 1, 4 ) );
 	}
 
 	/**
@@ -709,12 +727,12 @@ class Coupon_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param Coupon $coupon Coupon instance to validate.
-	 * @param array  $coupon_data Coupon data used for validation.
+	 * @param CouponModel $coupon Coupon instance to validate.
+	 * @param array       $coupon_data Coupon data used for validation.
 	 *
 	 * @return array Validation result with status and details.
 	 */
-	private function validate_coupon_with_sample_cart( Coupon $coupon, array $coupon_data ): array {
+	private function validate_coupon_with_sample_cart( CouponModel $coupon, array $coupon_data ): array {
 		// Create a mock cart with appropriate values based on coupon rules.
 		$min_spend = $this->get_rule_value( $coupon_data['rules'], 'min_spend' );
 		$max_spend = $this->get_rule_value( $coupon_data['rules'], 'max_spend' );
@@ -743,25 +761,5 @@ class Coupon_Generator extends Generator {
 			'rules_count' => count( $coupon_data['rules'] ),
 			'message'     => $is_valid ? __( 'Coupon is active and configured', 'easycommerce-fakerpress' ) : __( 'Coupon is inactive', 'easycommerce-fakerpress' ),
 		);
-	}
-
-	/**
-	 * Get supported data types for this generator.
-	 *
-	 * @return array Supported types
-	 */
-	public function get_supported_types(): array {
-		return array(
-			'coupons' => __( 'Discount Coupons with Rules and Restrictions', 'easycommerce-fakerpress' ),
-		);
-	}
-
-	/**
-	 * Get generator description.
-	 *
-	 * @return string Description
-	 */
-	public function get_description(): string {
-		return __( 'Generates realistic discount coupons with various discount types (percentage, fixed, buy-x-get-y), comprehensive rules, usage restrictions, validity periods, and relationship management for testing ecommerce promotional functionality.', 'easycommerce-fakerpress' );
 	}
 }

@@ -3,7 +3,7 @@
 namespace EasyCommerceFakerPress\Tests\Controllers;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Controllers\Order_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Orders;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -11,12 +11,12 @@ use WP_Error;
 /**
  * Test class for Order REST Controller
  *
- * @covers \EasyCommerceFakerPress\Controllers\Order_REST_Controller
+ * @covers \EasyCommerceFakerPress\Controllers\Orders
  */
 class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Order_REST_Controller
+	 * @var Orders
 	 */
 	private $controller;
 
@@ -41,7 +41,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
 
-		$this->controller = new Order_REST_Controller();
+		$this->controller = new Orders();
 		$this->controller->register_routes();
 
 		$this->admin_user_id = $this->create_admin_user();
@@ -60,7 +60,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test controller instantiation
 	 */
 	public function test_controller_instantiation(): void {
-		$this->assertInstanceOf( Order_REST_Controller::class, $this->controller );
+		$this->assertInstanceOf( Orders::class, $this->controller );
 	}
 
 	/**

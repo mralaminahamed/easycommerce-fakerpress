@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Customer_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Customer;
 
 /**
  * Customer Generator REST Controller
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Customer_Generator;
  *
  * @since 1.0.0
  */
-class Customer_REST_Controller extends REST_Controller {
+class Customers extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'customer';
+	}
+
+	/**
+	 * Get resource type label for customers
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for customer resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Customer', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Customer_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Customer_Generator Generator instance.
+	 * @return Customer Generator instance.
 	 */
-	protected function get_generator_instance(): Customer_Generator {
-		return new Customer_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'customer';
+	protected function get_generator_instance(): Customer {
+		return new Customer();
 	}
 
 	/**

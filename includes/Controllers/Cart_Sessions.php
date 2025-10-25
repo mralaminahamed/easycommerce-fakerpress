@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Cart_Session_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Cart_Session;
 
 /**
  * Cart Session REST Controller Class
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Cart_Session_Generator;
  *
  * @since 1.0.0
  */
-class Cart_Session_REST_Controller extends REST_Controller {
+class Cart_Sessions extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'cart_session';
+	}
+
+	/**
+	 * Get resource type label for cart sessions
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for cart session resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Cart Session', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Cart_Session_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Cart_Session_Generator Generator instance.
+	 * @return Cart_Session Generator instance.
 	 */
-	protected function get_generator_instance(): Cart_Session_Generator {
-		return new Cart_Session_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'cart_session';
+	protected function get_generator_instance(): Cart_Session {
+		return new Cart_Session();
 	}
 
 	/**

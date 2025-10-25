@@ -3,18 +3,18 @@
 namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Transaction_Generator;
+use EasyCommerceFakerPress\Generators\Transaction;
 use EasyCommerce\Models\Transaction;
 
 /**
  * Test class for Transaction Generator
  *
- * @covers \EasyCommerceFakerPress\Generators\Transaction_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Transaction
  */
 class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Transaction_Generator
+	 * @var Transaction
 	 */
 	private $generator;
 
@@ -23,13 +23,13 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
+
 		// Skip if EasyCommerce plugin is not active
 		if ( ! class_exists( 'EasyCommerce\Models\Transaction' ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
-		
-		$this->generator = new Transaction_Generator();
+
+		$this->generator = new Transaction();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Transaction_Generator::class, $this->generator );
+		$this->assertInstanceOf( Transaction::class, $this->generator );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
-		
+
 		$this->assertEquals( 'transaction', $method->invoke( $this->generator ) );
 	}
 
@@ -297,7 +297,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (3 seconds)
 		$this->assertLessThan( 3, $execution_time, 'Transaction generation took too long' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 10, $result['generated'] );
 	}
@@ -314,7 +314,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 3MB for 20 transactions)
 		$this->assertLessThan( 3 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 20, $result['generated'] );
 	}
@@ -326,11 +326,11 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		// Create a mock order ID for testing
 		$order_id = 123;
 		$transaction_count = 3;
-		
+
 		// This test checks that the method exists and handles parameters correctly
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'generate_for_order' );
-		
+
 		$this->assertTrue( $method->isPublic() );
 		$this->assertEquals( 2, $method->getNumberOfParameters() );
 	}
@@ -374,7 +374,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 50 );
 
 		$this->assertIsArray( $result );
-		
+
 		$status_counts = array();
 		foreach ( $result['transactions'] as $transaction ) {
 			$status = $transaction['status'];
@@ -392,13 +392,13 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_handles_missing_orders_gracefully(): void {
 		// This test verifies that the generator handles the case where no orders exist
 		// The actual behavior depends on the implementation
-		
+
 		$result = $this->generator->generate( 1 );
-		
+
 		// Result should either be a valid array or a WP_Error, but not cause a fatal error
-		$this->assertTrue( 
-			is_array( $result ) || is_wp_error( $result ), 
-			'Generator should handle missing orders gracefully' 
+		$this->assertTrue(
+			is_array( $result ) || is_wp_error( $result ),
+			'Generator should handle missing orders gracefully'
 		);
 	}
 
@@ -463,7 +463,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 30 );
 
 		$this->assertIsArray( $result );
-		
+
 		$refund_transactions = array_filter( $result['transactions'], function( $transaction ) {
 			return $transaction['type'] === 'refund';
 		});
@@ -472,7 +472,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			foreach ( $refund_transactions as $refund ) {
 				// Refunds should have positive amounts (money going back to customer)
 				$this->assertGreaterThan( 0, $refund['amount'] );
-				
+
 				// Refund status should be appropriate
 				$valid_refund_statuses = array( 'completed', 'pending', 'failed' );
 				$this->assertContains( $refund['status'], $valid_refund_statuses );

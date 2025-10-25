@@ -3,18 +3,18 @@
 namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Order_Generator;
+use EasyCommerceFakerPress\Generators\Order;
 use EasyCommerce\Models\Order;
 
 /**
  * Test class for Order Generator
  *
- * @covers \EasyCommerceFakerPress\Generators\Order_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Order
  */
 class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Order_Generator
+	 * @var Order
 	 */
 	private $generator;
 
@@ -23,13 +23,13 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
+
 		// Skip if EasyCommerce plugin is not active
 		if ( ! class_exists( 'EasyCommerce\Models\Order' ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
-		
-		$this->generator = new Order_Generator();
+
+		$this->generator = new Order();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Order_Generator::class, $this->generator );
+		$this->assertInstanceOf( Order::class, $this->generator );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
-		
+
 		$this->assertEquals( 'order', $method->invoke( $this->generator ) );
 	}
 
@@ -281,7 +281,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$order = $result['orders'][0];
 
 		$calculated_total = $order['subtotal'] + $order['tax_amount'] + $order['shipping_amount'] - $order['discount_amount'];
-		
+
 		// Allow for small floating point differences
 		$this->assertEqualsWithDelta( $calculated_total, $order['total'], 0.01, 'Order total should equal subtotal + tax + shipping - discount' );
 	}
@@ -298,7 +298,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (5 seconds)
 		$this->assertLessThan( 5, $execution_time, 'Order generation took too long' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 10, $result['generated'] );
 	}
@@ -315,7 +315,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 8MB for 15 orders)
 		$this->assertLessThan( 8 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 15, $result['generated'] );
 	}
@@ -340,7 +340,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 			$this->assertIsString( $note['note'] );
 			$this->assertIsString( $note['type'] );
-			
+
 			$valid_note_types = array( 'customer', 'private', 'system' );
 			$this->assertContains( $note['type'], $valid_note_types );
 		}
@@ -353,7 +353,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 5 );
 
 		$this->assertIsArray( $result );
-		
+
 		foreach ( $result['orders'] as $order ) {
 			$this->assertArrayHasKey( 'coupons', $order );
 			$this->assertIsArray( $order['coupons'] );

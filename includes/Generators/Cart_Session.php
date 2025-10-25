@@ -12,9 +12,9 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerce\Models\Cart;
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Product;
-use EasyCommerce\Models\Customer;
-use EasyCommerce\Models\Database;
+use EasyCommerce\Models\Product as ProductModel;
+use EasyCommerce\Models\Customer as CustomerModel;
+use EasyCommerce\Models\Database as DatabaseModel;
 use EasyCommerce\Helpers\Utility;
 use Exception;
 use WP_Error;
@@ -24,7 +24,7 @@ use WP_Error;
  *
  * Generates realistic cart sessions for abandoned cart analysis and marketing.
  */
-class Cart_Session_Generator extends Generator {
+class Cart_Session extends Generator {
 
 	/**
 	 * Get the resource type name
@@ -33,6 +33,26 @@ class Cart_Session_Generator extends Generator {
 	 */
 	protected function get_resource_type(): string {
 		return 'cart_session';
+	}
+
+	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'cart_sessions' => __( 'Shopping Cart Sessions and Abandoned Carts', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates realistic shopping cart sessions with various statuses (pending, abandoned, completed, cancelled), customer information, multiple items, billing/shipping addresses, and timeline data for testing abandoned cart recovery, analytics, and marketing automation systems.', 'easycommerce-fakerpress' );
 	}
 
 	/**
@@ -47,7 +67,7 @@ class Cart_Session_Generator extends Generator {
 		}
 
 		// Get existing products.
-		$product_data = Product::list( array(), 50 );
+		$product_data = ProductModel::list( array(), 50 );
 		$products     = $product_data['products'] ?? array();
 
 		if ( empty( $products ) ) {
@@ -134,7 +154,7 @@ class Cart_Session_Generator extends Generator {
 	 * @return WP_Error|array Customer data or null if none found.
 	 */
 	private function get_random_existing_customer() {
-		$customer_data = Customer::list( null, 1, 30 );
+		$customer_data = CustomerModel::list( null, 1, 30 );
 		$customers     = $customer_data['users'] ?? array();
 
 		if ( empty( $customers ) ) {
@@ -162,7 +182,7 @@ class Cart_Session_Generator extends Generator {
 	 * @return WP_Error|array Customer data or null if not found.
 	 */
 	private function get_specific_customer_for_cart( int $customer_id ) {
-		$customer = new Customer( $customer_id );
+		$customer = new CustomerModel( $customer_id );
 		if ( $customer->get_id() && $customer->get_id() > 0 ) {
 			return array(
 				'id'         => $customer->get_id(),
@@ -184,7 +204,7 @@ class Cart_Session_Generator extends Generator {
 	 * @return WP_Error|array New customer data or null on failure.
 	 */
 	private function create_new_customer_for_cart() {
-		$customer_generator = new Customer_Generator();
+		$customer_generator = new Customer();
 		$customer           = $customer_generator->generate_single_item();
 
 		if ( is_wp_error( $customer ) ) {
@@ -282,31 +302,31 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart items.
 	 *
-	 * @param Product[] $products Available products.
+	 * @param ProductModel[] $products Available products.
 	 *
 	 * @return array Cart items
 	 */
 	private function generate_cart_items( array $products ): array {
 		$items      = array();
-		$item_count = $this->faker->numberBetween( 1, 8 ); // 1-8 items per cart
+		$item_count = $this->get_faker()->numberBetween( 1, 8 ); // 1-8 items per cart
 
-		$selected_products = $this->faker->randomElements(
+		$selected_products = $this->get_faker()->randomElements(
 			$products,
 			min( $item_count, count( $products ) )
 		);
 
 		foreach ( $selected_products as $product ) {
 			// Get product variations.
-			$variation_db = new Database( 'product_variations' );
+			$variation_db = new DatabaseModel( 'product_variations' );
 			$variations   = $variation_db->get_rows( array( 'product_id' => $product->get_id() ) );
 
 			if ( empty( $variations ) ) {
 				continue;
 			}
 
-			$variation = $this->faker->randomElement( $variations );
-			$quantity  = $this->faker->numberBetween( 1, 5 );
-			$price     = $this->faker->randomFloat( 2, 5, 200 );
+			$variation = $this->get_faker()->randomElement( $variations );
+			$quantity  = $this->get_faker()->numberBetween( 1, 5 );
+			$price     = $this->get_faker()->randomFloat( 2, 5, 200 );
 
 			$items[ $product->get_id() ][ $variation->price_id ] = array(
 				'quantity' => $quantity,
@@ -354,20 +374,20 @@ class Cart_Session_Generator extends Generator {
 	private function calculate_realistic_shipping( float $subtotal ): float {
 		// Free shipping for orders over $100 (common threshold).
 		if ( $subtotal >= 100 ) {
-			return $this->faker->boolean( 80 ) ? 0 : $this->faker->randomFloat( 2, 5, 10 );
+			return $this->get_faker()->boolean( 80 ) ? 0 : $this->get_faker()->randomFloat( 2, 5, 10 );
 		}
 
 		// Tiered shipping based on subtotal.
 		if ( $subtotal >= 50 ) {
-			return $this->faker->randomFloat( 2, 5, 12 );
+			return $this->get_faker()->randomFloat( 2, 5, 12 );
 		}
 
 		if ( $subtotal >= 25 ) {
-			return $this->faker->randomFloat( 2, 8, 15 );
+			return $this->get_faker()->randomFloat( 2, 8, 15 );
 		}
 
 		// Small orders have higher shipping.
-		return $this->faker->randomFloat( 2, 10, 20 );
+		return $this->get_faker()->randomFloat( 2, 10, 20 );
 	}
 
 	/**
@@ -392,7 +412,7 @@ class Cart_Session_Generator extends Generator {
 			10.00, // High combined rates.
 		);
 
-		$tax_rate = $this->faker->randomElement( $common_tax_rates );
+		$tax_rate = $this->get_faker()->randomElement( $common_tax_rates );
 
 		return $subtotal * ( $tax_rate / 100 );
 	}
@@ -405,30 +425,30 @@ class Cart_Session_Generator extends Generator {
 	private function generate_cart_addresses(): array {
 		$addresses = array(
 			'billing' => array(
-				'first_name' => $this->faker->firstName,
-				'last_name'  => $this->faker->lastName,
-				'email'      => $this->faker->email,
-				'phone'      => $this->faker->phoneNumber,
-				'address_1'  => $this->faker->streetAddress,
-				'address_2'  => $this->faker->boolean( 30 ) ? $this->faker->secondaryAddress : '',
-				'city'       => $this->faker->city,
-				'state'      => $this->faker->stateAbbr,
-				'postcode'   => $this->faker->postcode,
-				'country'    => $this->faker->countryCode,
+				'first_name' => $this->get_faker()->firstName,
+				'last_name'  => $this->get_faker()->lastName,
+				'email'      => $this->get_faker()->email,
+				'phone'      => $this->get_faker()->phoneNumber,
+				'address_1'  => $this->get_faker()->streetAddress,
+				'address_2'  => $this->get_faker()->boolean( 30 ) ? $this->get_faker()->secondaryAddress : '',
+				'city'       => $this->get_faker()->city,
+				'state'      => $this->get_faker()->stateAbbr,
+				'postcode'   => $this->get_faker()->postcode,
+				'country'    => $this->get_faker()->countryCode,
 			),
 		);
 
 		// 60% chance of different shipping address
-		if ( $this->faker->boolean( 60 ) ) {
+		if ( $this->get_faker()->boolean( 60 ) ) {
 			$addresses['shipping'] = array(
-				'first_name' => $this->faker->firstName,
-				'last_name'  => $this->faker->lastName,
-				'address_1'  => $this->faker->streetAddress,
-				'address_2'  => $this->faker->boolean( 30 ) ? $this->faker->secondaryAddress : '',
-				'city'       => $this->faker->city,
-				'state'      => $this->faker->stateAbbr,
-				'postcode'   => $this->faker->postcode,
-				'country'    => $this->faker->countryCode,
+				'first_name' => $this->get_faker()->firstName,
+				'last_name'  => $this->get_faker()->lastName,
+				'address_1'  => $this->get_faker()->streetAddress,
+				'address_2'  => $this->get_faker()->boolean( 30 ) ? $this->get_faker()->secondaryAddress : '',
+				'city'       => $this->get_faker()->city,
+				'state'      => $this->get_faker()->stateAbbr,
+				'postcode'   => $this->get_faker()->postcode,
+				'country'    => $this->get_faker()->countryCode,
 			);
 		}
 
@@ -448,32 +468,32 @@ class Cart_Session_Generator extends Generator {
 		switch ( $status ) {
 			case 'pending':
 				// Active carts - recent activity.
-				$created_hours_ago   = $this->faker->numberBetween( 1, 24 );
-				$updated_minutes_ago = $this->faker->numberBetween( 1, 180 );
+				$created_hours_ago   = $this->get_faker()->numberBetween( 1, 24 );
+				$updated_minutes_ago = $this->get_faker()->numberBetween( 1, 180 );
 				break;
 
 			case 'abandoned':
 				// Abandoned carts - older with no recent activity.
-				$created_hours_ago   = $this->faker->numberBetween( 24, 168 ); // 1-7 days ago
-				$updated_hours_ago   = $this->faker->numberBetween( 2, 72 ); // 2-72 hours ago
+				$created_hours_ago   = $this->get_faker()->numberBetween( 24, 168 ); // 1-7 days ago
+				$updated_hours_ago   = $this->get_faker()->numberBetween( 2, 72 ); // 2-72 hours ago
 				$updated_minutes_ago = $updated_hours_ago * 60;
 				break;
 
 			case 'completed':
 				// Completed carts.
-				$created_hours_ago   = $this->faker->numberBetween( 1, 72 );
-				$updated_minutes_ago = $this->faker->numberBetween( 30, $created_hours_ago * 60 );
+				$created_hours_ago   = $this->get_faker()->numberBetween( 1, 72 );
+				$updated_minutes_ago = $this->get_faker()->numberBetween( 30, $created_hours_ago * 60 );
 				break;
 
 			case 'cancelled':
 				// Cancelled carts.
-				$created_hours_ago   = $this->faker->numberBetween( 1, 48 );
-				$updated_minutes_ago = $this->faker->numberBetween( 10, $created_hours_ago * 60 );
+				$created_hours_ago   = $this->get_faker()->numberBetween( 1, 48 );
+				$updated_minutes_ago = $this->get_faker()->numberBetween( 10, $created_hours_ago * 60 );
 				break;
 
 			default:
-				$created_hours_ago   = $this->faker->numberBetween( 1, 24 );
-				$updated_minutes_ago = $this->faker->numberBetween( 1, 180 );
+				$created_hours_ago   = $this->get_faker()->numberBetween( 1, 24 );
+				$updated_minutes_ago = $this->get_faker()->numberBetween( 1, 180 );
 		}
 
 		$created_at = wp_date( 'Y-m-d H:i:s', $now - ( $created_hours_ago * 3600 ) );
@@ -495,9 +515,9 @@ class Cart_Session_Generator extends Generator {
 	private function generate_reminder_count( string $status ): int {
 		switch ( $status ) {
 			case 'abandoned':
-				return $this->faker->numberBetween( 1, 5 ); // Abandoned carts get reminders.
+				return $this->get_faker()->numberBetween( 1, 5 ); // Abandoned carts get reminders.
 			case 'pending':
-				return $this->faker->boolean( 30 ) ? $this->faker->numberBetween( 0, 2 ) : 0;
+				return $this->get_faker()->boolean( 30 ) ? $this->get_faker()->numberBetween( 0, 2 ) : 0;
 			default:
 				return 0;
 		}
@@ -511,7 +531,7 @@ class Cart_Session_Generator extends Generator {
 	 * @return WP_Error|array Created cart session data
 	 */
 	private function create_cart_session( array $data ): array {
-		$cart_db = new Database( 'cart_sessions' );
+		$cart_db = new DatabaseModel( 'cart_sessions' );
 
 		// Generate unique hash.
 		$hash = Utility::generate_hash();
@@ -527,13 +547,13 @@ class Cart_Session_Generator extends Generator {
 		}
 
 		// Add coupons randomly (20% chance).
-		if ( $this->faker->boolean( 20 ) ) {
-			$cart_data['coupons'] = array( $this->faker->regexify( '[A-Z]{4}[0-9]{2}' ) );
+		if ( $this->get_faker()->boolean( 20 ) ) {
+			$cart_data['coupons'] = array( $this->get_faker()->regexify( '[A-Z]{4}[0-9]{2}' ) );
 		}
 
 		// Add shipping method randomly (30% chance).
-		if ( $this->faker->boolean( 30 ) ) {
-			$cart_data['shipping_method'] = $this->faker->numberBetween( 1, 5 );
+		if ( $this->get_faker()->boolean( 30 ) ) {
+			$cart_data['shipping_method'] = $this->get_faker()->numberBetween( 1, 5 );
 		}
 
 		$db_data = array(
@@ -554,7 +574,7 @@ class Cart_Session_Generator extends Generator {
 			$customer_name  = '';
 
 			if ( $data['user_id'] > 0 ) {
-				$customer = new Customer( $data['user_id'] );
+				$customer = new CustomerModel( $data['user_id'] );
 				if ( $customer->get_id() ) {
 					$customer_email = $customer->get_email();
 					$customer_name  = $customer->get_name();
@@ -595,8 +615,8 @@ class Cart_Session_Generator extends Generator {
 		$results = array();
 
 		// Get existing products and customers.
-		$product_data  = Product::list( array(), 30 );
-		$customer_data = Customer::list( null, 1, 20 );
+		$product_data  = ProductModel::list( array(), 30 );
+		$customer_data = CustomerModel::list( null, 1, 20 );
 
 		$products  = $product_data['products'] ?? array();
 		$customers = $customer_data['users'] ?? array();
@@ -607,13 +627,13 @@ class Cart_Session_Generator extends Generator {
 				$cart_data = $this->generate_cart_session_data( $products, $customers );
 
 				$cart_data['status']    = 'abandoned'; // Force abandoned status.
-				$cart_data['reminders'] = $this->faker->numberBetween( 0, 3 );
+				$cart_data['reminders'] = $this->get_faker()->numberBetween( 0, 3 );
 
 				// Ensure older timeline for abandoned carts.
-				$hours_ago = $this->faker->numberBetween( 48, 336 ); // 2-14 days ago
+				$hours_ago = $this->get_faker()->numberBetween( 48, 336 ); // 2-14 days ago
 
 				$cart_data['created_at'] = wp_date( 'Y-m-d H:i:s', $now - ( $hours_ago * 3600 ) );
-				$cart_data['updated_at'] = wp_date( 'Y-m-d H:i:s', $now - ( $this->faker->numberBetween( 24, $hours_ago ) * 3600 ) );
+				$cart_data['updated_at'] = wp_date( 'Y-m-d H:i:s', $now - ( $this->get_faker()->numberBetween( 24, $hours_ago ) * 3600 ) );
 
 				$cart_session = $this->create_cart_session( $cart_data );
 
@@ -627,25 +647,5 @@ class Cart_Session_Generator extends Generator {
 		}
 
 		return $results;
-	}
-
-	/**
-	 * Get supported data types for this generator.
-	 *
-	 * @return array Supported types
-	 */
-	public function get_supported_types(): array {
-		return array(
-			'cart_sessions' => __( 'Shopping Cart Sessions and Abandoned Carts', 'easycommerce-fakerpress' ),
-		);
-	}
-
-	/**
-	 * Get generator description.
-	 *
-	 * @return string Description
-	 */
-	public function get_description(): string {
-		return __( 'Generates realistic shopping cart sessions with various statuses (pending, abandoned, completed, cancelled), customer information, multiple items, billing/shipping addresses, and timeline data for testing abandoned cart recovery, analytics, and marketing automation systems.', 'easycommerce-fakerpress' );
 	}
 }

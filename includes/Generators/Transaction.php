@@ -11,10 +11,10 @@ namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
 
-use EasyCommerce\Models\Database;
-use EasyCommerce\Models\Order;
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Transaction;
+use EasyCommerce\Models\Database as DatabaseModel;
+use EasyCommerce\Models\Order as OrderModel;
+use EasyCommerce\Models\Transaction as TransactionModel;
 use WP_Error;
 
 /**
@@ -22,7 +22,7 @@ use WP_Error;
  *
  * Generates realistic payment transaction history with various transaction types and statuses.
  */
-class Transaction_Generator extends Generator {
+class Transaction extends Generator {
 
 	/**
 	 * Get the resource type name
@@ -34,13 +34,33 @@ class Transaction_Generator extends Generator {
 	}
 
 	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'transactions' => 'Payment Transaction History',
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return 'Generates comprehensive payment transaction history with realistic transaction IDs, multiple payment gateways, various transaction types (payment, refund, adjustment, fee, commission), and appropriate status distributions for testing ecommerce payment functionality.';
+	}
+
+	/**
 	 * Generate a single transaction
 	 *
 	 * @return WP_Error|array Single transaction data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Transaction class exists.
-		if ( ! class_exists( Transaction::class ) ) {
+		if ( ! class_exists( TransactionModel::class ) ) {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Transaction model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
@@ -51,7 +71,8 @@ class Transaction_Generator extends Generator {
 			return new WP_Error( 'no_orders', __( 'No orders found. Please generate orders first.', 'easycommerce-fakerpress' ) );
 		}
 
-		$order            = $this->get_faker()->randomElement( $orders );
+		$order = $this->get_faker()->randomElement( $orders );
+
 		$transaction_data = $this->generate_transaction_data( $order );
 		$transaction_id   = $this->create_transaction( $transaction_data );
 
@@ -115,7 +136,7 @@ class Transaction_Generator extends Generator {
 				break;
 		}
 
-		$orders_data = Order::list( $query_params );
+		$orders_data = OrderModel::list( $query_params );
 
 		return $orders_data['orders'] ?? array();
 	}
@@ -283,30 +304,30 @@ class Transaction_Generator extends Generator {
 				return 'ch_' . $this->get_faker()->regexify( '[a-zA-Z0-9]{24}' );
 
 			case 'paypal':
-				return $this->faker->regexify( '[A-Z0-9]{17}' );
+				return $this->get_faker()->regexify( '[A-Z0-9]{17}' );
 
 			case 'square':
-				return $this->faker->regexify( '[a-zA-Z0-9\-]{22}' );
+				return $this->get_faker()->regexify( '[a-zA-Z0-9\-]{22}' );
 
 			case 'wepay':
 			case '2checkout':
 			case 'authorize_net':
-				return $this->faker->numerify( '##########' );
+				return $this->get_faker()->numerify( '##########' );
 
 			case 'braintree':
-				return $this->faker->regexify( '[a-z0-9]{8}' );
+				return $this->get_faker()->regexify( '[a-z0-9]{8}' );
 
 			case 'razorpay':
-				return 'pay_' . $this->faker->regexify( '[a-zA-Z0-9]{14}' );
+				return 'pay_' . $this->get_faker()->regexify( '[a-zA-Z0-9]{14}' );
 
 			case 'mollie':
-				return 'tr_' . $this->faker->regexify( '[a-zA-Z0-9]{10}' );
+				return 'tr_' . $this->get_faker()->regexify( '[a-zA-Z0-9]{10}' );
 
 			case 'payu':
-				return $this->faker->regexify( '[A-Z0-9]{15}' );
+				return $this->get_faker()->regexify( '[A-Z0-9]{15}' );
 
 			default:
-				return $this->faker->regexify( '[A-Z0-9]{12}' );
+				return $this->get_faker()->regexify( '[A-Z0-9]{12}' );
 		}
 	}
 
@@ -318,7 +339,7 @@ class Transaction_Generator extends Generator {
 	 * @return int|null Created transaction ID
 	 */
 	private function create_transaction( array $data ): ?int {
-		$transaction = new Transaction();
+		$transaction = new TransactionModel();
 
 		// Enable order status updates for completed payment transactions.
 		$should_update_status = ( 'payment' === $data['type'] && 'completed' === $data['status'] );
@@ -337,7 +358,7 @@ class Transaction_Generator extends Generator {
 	 * @return WP_Error|array Generated transactions.
 	 */
 	public function generate_for_order( int $order_id, int $transaction_count = 3 ) {
-		$order_db   = new Database( 'orders' );
+		$order_db   = new DatabaseModel( 'orders' );
 		$order_data = $order_db->get_by_id( $order_id );
 
 		if ( ! $order_data ) {
@@ -349,7 +370,7 @@ class Transaction_Generator extends Generator {
 
 		for ( $i = 0; $i < $transaction_count; $i++ ) {
 			// First transaction is usually a payment.
-			$transaction_type = ( 0 === $i ) ? 'payment' : $this->faker->randomElement(
+			$transaction_type = ( 0 === $i ) ? 'payment' : $this->get_faker()->randomElement(
 				array(
 					'payment',
 					'refund',
@@ -384,25 +405,5 @@ class Transaction_Generator extends Generator {
 		}
 
 		return $results;
-	}
-
-	/**
-	 * Get supported data types for this generator.
-	 *
-	 * @return array Supported types
-	 */
-	public function get_supported_types(): array {
-		return array(
-			'transactions' => 'Payment Transaction History',
-		);
-	}
-
-	/**
-	 * Get generator description.
-	 *
-	 * @return string Description
-	 */
-	public function get_description(): string {
-		return 'Generates comprehensive payment transaction history with realistic transaction IDs, multiple payment gateways, various transaction types (payment, refund, adjustment, fee, commission), and appropriate status distributions for testing ecommerce payment functionality.';
 	}
 }

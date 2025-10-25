@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Coupon_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Coupon;
 
 /**
  * Coupon Generator REST Controller
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Coupon_Generator;
  *
  * @since 1.0.0
  */
-class Coupon_REST_Controller extends REST_Controller {
+class Coupons extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'coupon';
+	}
+
+	/**
+	 * Get resource type label for coupons
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for coupon resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Coupon', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Coupon_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Coupon_Generator Generator instance.
+	 * @return Coupon Generator instance.
 	 */
-	protected function get_generator_instance(): Coupon_Generator {
-		return new Coupon_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'coupon';
+	protected function get_generator_instance(): Coupon {
+		return new Coupon();
 	}
 
 	/**
