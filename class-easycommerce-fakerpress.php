@@ -76,11 +76,7 @@ class EasyCommerce_FakerPress {
 		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 
-		if ( ! $this->check_dependencies() ) {
-			add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
-			return;
-		}
-
+		add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
@@ -96,6 +92,11 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function add_admin_menu(): void {
+		// Skip to register the admin menu.
+		if ( ! $this->check_dependencies() ) {
+			return;
+		}
+
 		add_menu_page(
 			__( 'EasyCommerce FakerPress', 'easycommerce-fakerpress' ),
 			__( 'EC FakerPress', 'easycommerce-fakerpress' ),
@@ -220,6 +221,11 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function register_rest_routes(): void {
+		// Skip to register the admin menu.
+		if ( ! $this->check_dependencies() ) {
+			return;
+		}
+
 		$controllers = array(
 			// Core generators.
 			new Product_REST_Controller(),
