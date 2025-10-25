@@ -378,8 +378,9 @@ class Product_Variation extends Generator {
 			}
 
 			// Get or create attribute value.
+			$value_slug      = strtolower( str_replace( ' ', '_', $value_slug ) );
 			$attribute_value = $this->get_or_create_attribute_value( $attribute->id, $value_slug );
-			if ( ! $attribute_value ) {
+			if ( is_wp_error( $attribute_value ) ) {
 				continue;
 			}
 
@@ -402,8 +403,8 @@ class Product_Variation extends Generator {
 	 * @return WP_Error|object Attribute data object.
 	 */
 	private function get_or_create_attribute( string $slug ) {
-		$attribute_model = new AttributeModel();
-		$existing        = $attribute_model->get_by_slug( $slug );
+		$model    = new AttributeModel();
+		$existing = $model->get_by_slug( $slug );
 
 		if ( $existing ) {
 			return $existing;
@@ -411,10 +412,10 @@ class Product_Variation extends Generator {
 
 		// Create new attribute.
 		$name         = ucfirst( str_replace( '_', ' ', $slug ) );
-		$attribute_id = $attribute_model->add( $name, 'select', $slug );
+		$attribute_id = $model->add( $name, 'select', $slug );
 
 		if ( $attribute_id ) {
-			return $attribute_model->get( $attribute_id );
+			return $model->get( $attribute_id );
 		}
 
 		return new WP_Error( 'attribute_not_found', sprintf( 'Attribute %s not found.', $slug ) );
@@ -429,21 +430,21 @@ class Product_Variation extends Generator {
 	 * @return WP_Error|object Attribute value data object.
 	 */
 	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ) {
-		$attribute_value_model = new AttributeValueModel();
-		$existing              = $attribute_value_model->get_by_slug( $value_slug );
+		$model    = new AttributeValueModel();
+		$existing = $model->get_by_slug( $value_slug );
 
 		// Check if existing value belongs to the same attribute.
-		if ( $existing && (int) $existing->attribute_id === $attribute_id ) {
+		if ( $existing && $existing->attribute_id ) {
 			return $existing;
 		}
 
 		// Create new attribute value.
 		$name     = $value_slug;
 		$slug     = strtolower( str_replace( ' ', '_', $value_slug ) );
-		$value_id = $attribute_value_model->add( $attribute_id, $name, $value_slug, $slug );
+		$value_id = $model->add( $attribute_id, $name, $value_slug, $slug );
 
 		if ( $value_id ) {
-			return $attribute_value_model->get( $value_id );
+			return $model->get( $value_id );
 		}
 
 		return new WP_Error( 'attribute_not_found', sprintf( 'Attribute %s not found.', $slug ) );
