@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import GeneratorBase from '../GeneratorBase';
 
-export default function TaxGenerator() {
+export default function TaxClassGenerator() {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ result, setResult ] = useState( null );
 	const [ error, setError ] = useState( null );
@@ -16,7 +16,7 @@ export default function TaxGenerator() {
 
 		try {
 			const data = await apiFetch( {
-				path: '/easycommerce-fakerpress/v1/taxes/generate',
+				path: '/easycommerce-fakerpress/v1/tax_classes/generate',
 				method: 'POST',
 				data: params,
 			} );
@@ -115,7 +115,7 @@ export default function TaxGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Tax Classes', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create tax classes with location-based rates for different jurisdictions and product types.', 'easycommerce-fakerpress' ) }
-			type="taxes"
+			type="tax_class"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

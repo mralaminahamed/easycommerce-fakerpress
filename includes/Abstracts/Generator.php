@@ -231,7 +231,7 @@ abstract class Generator {
 			 */
 			do_action( "easycommerce_fakerpress_after_batch_generate_{$resource_type}", $results, $count );
 
-			return $this->format_results( $results );
+			return $results;
 		} catch ( Exception $e ) {
 			$this->log( 'Batch generation exception: ' . $e->getMessage(), 'error' );
 			return new WP_Error(
@@ -266,17 +266,6 @@ abstract class Generator {
 	 * @return string Resource type name.
 	 */
 	abstract protected function get_resource_type(): string;
-
-	/**
-	 * Get the plural resource type name (e.g., 'products', 'customers')
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Plural resource type name.
-	 */
-	protected function get_resource_type_plural(): string {
-		return $this->get_resource_type() . 's';
-	}
 
 	/**
 	 * Set generation parameters
@@ -324,24 +313,6 @@ abstract class Generator {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Format generation results
-	 *
-	 * Structures the output for API responses.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $results Generated items data.
-	 *
-	 * @return array<string, mixed> Formatted results array.
-	 */
-	protected function format_results( array $results ): array {
-		return array(
-			'generated'                       => count( $results ),
-			$this->get_resource_type_plural() => $results,
-		);
 	}
 
 	/**

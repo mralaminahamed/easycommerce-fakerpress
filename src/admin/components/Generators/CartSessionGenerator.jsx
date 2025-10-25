@@ -155,7 +155,7 @@ export default function CartSessionGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Cart Sessions', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create shopping cart sessions with abandonment scenarios for analyzing cart recovery and customer behavior.', 'easycommerce-fakerpress' ) }
-			type="cart-sessions"
+			type="cart_session"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

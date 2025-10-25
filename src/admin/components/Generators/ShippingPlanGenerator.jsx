@@ -94,7 +94,7 @@ export default function ShippingPlanGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Shipping Plans', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create comprehensive shipping plans with different methods, costs, coverage areas, and delivery timeframes.', 'easycommerce-fakerpress' ) }
-			type="shipping-plans"
+			type="shipping_plan"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

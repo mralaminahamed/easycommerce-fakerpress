@@ -114,7 +114,7 @@ export default function OrderGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Orders', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create realistic orders with comprehensive data including customers, products, payments, shipping, and taxes. Enhanced with Order_Item_Meta and location-based addresses.', 'easycommerce-fakerpress' ) }
-			type="orders"
+			type="order"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

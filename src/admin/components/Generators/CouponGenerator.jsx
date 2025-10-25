@@ -216,7 +216,7 @@ export default function CouponGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Coupons', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create discount coupons with configurable types, discount values, usage limits, validity periods, and usage restrictions.', 'easycommerce-fakerpress' ) }
-			type="coupons"
+			type="coupon"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

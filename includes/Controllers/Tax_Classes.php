@@ -50,7 +50,7 @@ class Tax_Classes extends Controller {
 	 * @return string REST base.
 	 */
 	protected function get_rest_base(): string {
-		return 'taxes';
+		return 'tax_classes';
 	}
 
 	/**

@@ -125,7 +125,7 @@ export default function CustomerGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Customers', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create realistic customer accounts with demographics, addresses, contact information, and purchase history simulation.', 'easycommerce-fakerpress' ) }
-			type="customers"
+			type="customer"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

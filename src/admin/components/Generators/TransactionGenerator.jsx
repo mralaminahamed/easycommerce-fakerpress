@@ -107,7 +107,7 @@ export default function TransactionGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Transactions', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create realistic payment transaction history with different gateways, amounts, and status distributions.', 'easycommerce-fakerpress' ) }
-			type="transactions"
+			type="transaction"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

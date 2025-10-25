@@ -158,7 +158,7 @@ export default function ProductGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Products', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create fake products with random names, descriptions, prices, and attributes. Configure product types, pricing, categories, and inventory settings.', 'easycommerce-fakerpress' ) }
-			type="products"
+			type="product"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

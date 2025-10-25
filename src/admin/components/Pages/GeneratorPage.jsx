@@ -1,6 +1,6 @@
-import React from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ChevronRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+
 import { __ } from '@wordpress/i18n';
 
 import { generators } from './HomePage';

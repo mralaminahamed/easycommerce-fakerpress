@@ -13,8 +13,7 @@ module.exports = {
 	},
 	globals: {
 		wp: 'readonly',
-		dokanGeoProducts: 'readonly',
-		dokanGeolocation: 'readonly',
+		easycommerceFakerpressApi: 'readonly',
 		ajaxurl: 'readonly',
 		console: 'readonly',
 	},

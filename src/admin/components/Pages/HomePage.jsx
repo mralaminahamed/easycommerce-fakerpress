@@ -8,7 +8,7 @@ import OrderGenerator from '../Generators/OrderGenerator';
 import CouponGenerator from '../Generators/CouponGenerator';
 import ProductVariationGenerator from '../Generators/ProductVariationGenerator';
 import ShippingPlanGenerator from '../Generators/ShippingPlanGenerator';
-import TaxGenerator from '../Generators/TaxGenerator';
+import TaxClassGenerator from '../Generators/TaxClassGenerator';
 import TransactionGenerator from '../Generators/TransactionGenerator';
 import CartSessionGenerator from '../Generators/CartSessionGenerator';
 import LocationGenerator from '../Generators/LocationGenerator';
@@ -82,7 +82,7 @@ const generators = [
 	},
 	{
 		name: __( 'Tax Classes', 'easycommerce-fakerpress' ),
-		component: TaxGenerator,
+		component: TaxClassGenerator,
 		category: __( 'Enhanced', 'easycommerce-fakerpress' ),
 		order: 3,
 		description: __(
