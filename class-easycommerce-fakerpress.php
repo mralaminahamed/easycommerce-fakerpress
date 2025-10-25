@@ -47,7 +47,7 @@ class EasyCommerce_FakerPress {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	public string $version = '1.0.0';
+	public string $version = EASYCOMMERCE_FAKERPRESS_VERSION;
 
 	/**
 	 * Get single instance of the class

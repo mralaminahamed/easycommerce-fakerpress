@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-25T03:47:03+00:00\n"
+"POT-Creation-Date: 2025-08-28T01:12:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: easycommerce-fakerpress\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: easycommerce-fakerpress.php
-msgid "https://alaminahamed.com/projects/easycommerce-fakerpress"
+msgid "https://github.com/mralaminahamed/easycommerce-fakerpress"
 msgstr ""
 
 #. Description of the plugin
@@ -38,7 +38,7 @@ msgstr ""
 
 #. Author URI of the plugin
 #: easycommerce-fakerpress.php
-msgid "https://alaminahamed.com"
+msgid "https://github.com/mralaminahamed/"
 msgstr ""
 
 #: class-easycommerce-fakerpress.php:98

@@ -7,10 +7,10 @@
         {
             "name": "Al Amin Ahamed",
             "email": "me@alaminahamed.com",
-            "homepage": "https://alaminahamed.com"
+            "homepage": "https://github.com/mralaminahamed/"
         }
     ],
-    "homepage": "https://alaminahamed.com/projects/easycommerce-fakerpress",
+    "homepage": "https://github.com/mralaminahamed/easycommerce-fakerpress",
     "support": {
         "issues": "https://github.com/mralaminahamed/easycommerce-fakerpress/issues",
         "source": "https://github.com/mralaminahamed/easycommerce-fakerpress"
@@ -82,7 +82,8 @@
         "release": [
             "@lint",
             "@analyse",
-            "npm run build",
+            "rm -rf release vendor build/*",
+            "yarn build",
             "@makepot",
             "mkdir -p release",
             "composer install --no-dev --optimize-autoloader",
