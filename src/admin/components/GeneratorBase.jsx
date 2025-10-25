@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, Field, Input, Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch } from '@headlessui/react';
-import { RawHTML } from '@wordpress/element';
+
+import { useState, RawHTML } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 export default function GeneratorBase( { title, description, type, onGenerate, isLoading, result, error, parameterConfig = {}, children } ) {
@@ -352,8 +352,7 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 							{ __( 'Generating…', 'easycommerce-fakerpress' ) }
 						</>
 					) : (
-						/* translators: %s: Resource type (e.g., products, customers, orders) */
-						sprintf( __( 'Generate %s', 'easycommerce-fakerpress' ), type )
+						__( 'Generate', 'easycommerce-fakerpress' )
 					) }
 				</Button>
 			</div>
@@ -383,14 +382,21 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 							</svg>
 						</div>
 						<div className="ml-3">
+							<h3 className="text-sm font-medium text-green-800">{ result.message }</h3>
+							{ /*
+
 							<h3 className="text-sm font-medium text-green-800">{ __( 'Success!', 'easycommerce-fakerpress' ) }</h3>
 							<div className="mt-2 text-sm text-green-700">
-								{ /* translators: %1$d: Number of items generated, %2$s: Resource type (e.g., products, customers, orders) */
-									sprintf( __( 'Generated %1$d %2$s.', 'easycommerce-fakerpress' ), result.generated, type ) }
+								{ /\* translators: %1$d: Number of items generated, %2$s: Resource type (e.g., products, customers, orders) *\/
+								sprintf( __( 'Generated %1$d %2$s.', 'easycommerce-fakerpress' ), result.generated, type ) }
 							</div>
+
+							*/ }
+
+							{ /*
 							{ ( () => {
 								// Get the plural form of the type to match backend response structure
-								const pluralType = type + 's';
+								const pluralType = `${ type }s`;
 								const items = result[ pluralType ] || [];
 
 								return items.length > 0 && (
@@ -407,7 +413,7 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 											) ) }
 											{ items.length > 5 && (
 												<li className="py-2 text-gray-500 italic">
-													{ /* translators: %d: Number of additional items not shown in the list */
+													{ //\* translators: %d: Number of additional items not shown in the list \*\/
 														sprintf( __( '… and %d more', 'easycommerce-fakerpress' ), items.length - 5 ) }
 												</li>
 											) }
@@ -415,6 +421,7 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 									</div>
 								);
 							} )() }
+								*/ }
 						</div>
 					</div>
 				</div>

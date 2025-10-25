@@ -103,7 +103,7 @@ export default function LocationGenerator() {
 			<GeneratorBase
 				title={ __( 'Generate Location Data', 'easycommerce-fakerpress' ) }
 				description={ __( 'Create comprehensive location hierarchy data (countries, states, cities) for the EasyCommerce system. This populates the locations.json file used throughout the system.', 'easycommerce-fakerpress' ) }
-				type="locations"
+				type="location"
 				onGenerate={ handleGenerate }
 				isLoading={ isLoading }
 				result={ result }

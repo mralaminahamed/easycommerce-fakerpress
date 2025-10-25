@@ -122,7 +122,7 @@ export default function ProductVariationGenerator() {
 		<GeneratorBase
 			title={ __( 'Generate Product Variations', 'easycommerce-fakerpress' ) }
 			description={ __( 'Create realistic product variations with different attributes, prices, and stock levels. Requires existing products to create variations for.', 'easycommerce-fakerpress' ) }
-			type="product-variations"
+			type="product_variation"
 			onGenerate={ handleGenerate }
 			isLoading={ isLoading }
 			result={ result }

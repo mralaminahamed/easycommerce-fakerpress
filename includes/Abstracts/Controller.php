@@ -180,6 +180,21 @@ abstract class Controller extends WP_REST_Controller {
 			return $result;
 		}
 
+		$total_output = count( $result );
+
+		$message = sprintf(
+			// translators: Total output.
+			_n( '%1$s item successfully created.', '%1$s items successfully created.', $total_output, 'easycommerce-fakerpress' ),
+			$total_output
+		);
+
+		$message = apply_filters( 'easycommerce_fakerpress_rest_message', $message, $result, $this->get_resource_type() );
+
+		$response = array(
+			'message'                  => $message,
+			$this->get_resource_type() => $result,
+		);
+
 		/**
 		 * Defines the base path for a REST API endpoint.
 		 *
@@ -192,12 +207,12 @@ abstract class Controller extends WP_REST_Controller {
 		 * methods to create full REST routes. Ensure it adheres to naming
 		 * conventions and does not conflict with existing endpoints.
 		 *
-		 * @var array           $result The result of the fake data
+		 * @var array           $response The result of the fake data
 		 * @var WP_REST_Request $request Full data about the request.
 		 */
-		do_action( "easycommerce_fakerpress_rest_generate_after_{$rest_base}", $result, $request );
+		do_action( "easycommerce_fakerpress_rest_generate_after_{$rest_base}", $response, $request );
 
-		return new WP_REST_Response( $result, 200 );
+		return new WP_REST_Response( $response, 200 );
 	}
 
 	/**

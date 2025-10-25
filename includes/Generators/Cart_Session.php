@@ -205,7 +205,11 @@ class Cart_Session extends Generator {
 	 */
 	private function create_new_customer_for_cart() {
 		$customer_generator = new Customer();
-		$customer           = $customer_generator->generate_single_item();
+
+		$customer_generator->set_locale( $this->get_faker_locale() );
+		$customer_generator->set_faker();
+
+		$customer = $customer_generator->generate_single_item();
 
 		if ( is_wp_error( $customer ) ) {
 			return $customer;
