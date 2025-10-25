@@ -45,7 +45,6 @@ parameters:
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_URL
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH
-
     # Ignore errors
     ignoreErrors:
         # WordPress functions that may not be defined during static analysis

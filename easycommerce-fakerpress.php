@@ -9,13 +9,13 @@
  *
  * @wordpress-plugin
  * Plugin Name:       EasyCommerce FakerPress
- * Plugin URI:        https://alaminahamed.com/projects/easycommerce-fakerpress
+ * Plugin URI:        https://github.com/mralaminahamed/easycommerce-fakerpress
  * Description:       Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.
  * Version:           1.0.0
  * Requires at least: 5.0
  * Requires PHP:      7.4
  * Author:            Al Amin Ahamed
- * Author URI:        https://alaminahamed.com
+ * Author URI:        https://github.com/mralaminahamed/
  * Text Domain:       easycommerce-fakerpress
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
