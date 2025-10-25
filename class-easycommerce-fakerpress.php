@@ -31,7 +31,7 @@ use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
  * @since 1.0.0
  * @version 1.0.0
  */
-class EasyCommerceFakerPress {
+class EasyCommerce_FakerPress {
 
 	/**
 	 * Single instance of the class
