@@ -275,7 +275,7 @@ Security researchers who responsibly disclose vulnerabilities will be:
 
 ### Security Team
 - **Primary Email**: security@alaminahamed.com
-- **Website**: https://github.com/mralaminahamed//security
+- **Website**: https://github.com/mralaminahamed/easycommerce-fakerpress/security
 - **Response Time**: Within 48 hours
 
 ### Encrypted Communication
