@@ -117,20 +117,8 @@ class Product extends Generator {
 					'seo_keywords'    => implode( ', ', (array) $this->get_faker()->words( 5 ) ),
 					'sku_prefix'      => strtoupper( $this->get_faker()->lexify( '???' ) ),
 					'release_date'    => $this->get_faker()->dateTimeThisYear()->format( 'Y-m-d' ),
-					'warranty'        => 'physical' === $product_type ? $this->get_faker()->randomElement(
-						array(
-							'1 year',
-							'2 years',
-							'Limited Lifetime',
-						)
-					) : null,
-					'shipping_class'  => 'physical' === $product_type ? $this->get_faker()->randomElement(
-						array(
-							'standard',
-							'expedited',
-							'fragile',
-						)
-					) : null,
+					'warranty'        => 'physical' === $product_type ? $this->get_faker()->randomElement( array( '1 year', '2 years', 'Limited Lifetime' ) ) : '',
+					'shipping_class'  => 'physical' === $product_type ? $this->get_faker()->randomElement( array( 'standard', 'expedited', 'fragile' ) ) : '',
 				),
 			)
 		);
@@ -565,7 +553,8 @@ class Product extends Generator {
 
 		// Check if value already exists.
 		$existing_value = $value_model->get_by_slug( $value_slug );
-		if ( $existing_value && (int) $existing_value->attribute_id === $attribute_id ) {
+
+		if ( $existing_value && $existing_value->attribute_id ) {
 			return $existing_value->id;
 		}
 
@@ -716,18 +705,9 @@ class Product extends Generator {
 				$meta,
 				array(
 					'requires_shipping' => false,
-					'download_limit'    => $this->get_faker()->optional( 0.8 )->numberBetween( 1, 20 ),
-					'download_expiry'   => $this->get_faker()->optional( 0.6 )->numberBetween( 7, 365 ),
-					'file_format'       => $this->get_faker()->randomElement(
-						array(
-							'PDF',
-							'MP4',
-							'MP3',
-							'ZIP',
-							'EXE',
-							'DMG',
-						)
-					),
+					'download_limit'    => (int) $this->get_faker()->optional( 0.8 )->numberBetween( 1, 20 ),
+					'download_expiry'   => (int) $this->get_faker()->optional( 0.6 )->numberBetween( 7, 365 ),
+					'file_format'       => $this->get_faker()->randomElement( array( 'PDF', 'MP4', 'MP3', 'ZIP', 'EXE', 'DMG' ) ),
 				)
 			);
 		}
