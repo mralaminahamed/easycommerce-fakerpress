@@ -24,7 +24,7 @@
 ### 🐛 Bug Fixes
 - **Model Integration**: Fixed Customer model exists() method usage across generators
 - **Method Calls**: Corrected Customer::list() to Customer::customer_list() usage
-- **Parameter Validation**: Fixed PHPDoc parameter order in Order_Generator
+- **Parameter Validation**: Fixed PHPDoc parameter order in Order
 - **Autoloading**: Updated composer autoload configuration
 
 ## v1.0.0 - Initial Release
