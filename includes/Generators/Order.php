@@ -613,10 +613,10 @@ class Order extends Generator {
 		$total_discount = 0;
 
 		foreach ( $coupons as $coupon ) {
-			if ( 'percentage' === $coupon['discount_type'] ) {
-				$discount = $subtotal * ( $coupon['amount'] / 100 );
+			if ( 'percentage' === $coupon['type'] ) {
+				$discount = $subtotal * ( $coupon['offer'] / 100 );
 			} else {
-				$discount = min( $coupon['amount'], $subtotal );
+				$discount = min( $coupon['offer'], $subtotal );
 			}
 
 			$coupon['discount_applied'] = $discount;
