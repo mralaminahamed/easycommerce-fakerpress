@@ -11,27 +11,27 @@ easycommerce-fakerpress/
 │   │   ├── Generator.php                 # Base generator with parameter handling
 │   │   └── REST_Controller.php           # Base REST controller with validation
 │   ├── Generators/                       # 10 Specialized generators
-│   │   ├── Product_Generator.php         # Products with attributes & variations
-│   │   ├── Customer_Generator.php        # Comprehensive customer profiles
-│   │   ├── Order_Generator.php           # Orders with item metadata & locations
-│   │   ├── Coupon_Generator.php          # Coupons with advanced rule systems
-│   │   ├── Product_Variation_Generator.php # Product variations & attributes
-│   │   ├── Shipping_Plan_Generator.php   # Shipping methods & regional coverage
-│   │   ├── Tax_Generator.php             # Tax classes & location-based rates
-│   │   ├── Transaction_Generator.php     # Payment transaction history
-│   │   ├── Cart_Session_Generator.php    # Cart sessions & abandonment
-│   │   └── Location_Generator.php        # Geographic location hierarchy
+│   │   ├── Product.php         # Products with attributes & variations
+│   │   ├── Customer.php        # Comprehensive customer profiles
+│   │   ├── Order.php           # Orders with item metadata & locations
+│   │   ├── Coupon.php          # Coupons with advanced rule systems
+│   │   ├── Product_Variation.php # Product variations & attributes
+│   │   ├── Shipping_Plan.php   # Shipping methods & regional coverage
+│   │   ├── Tax.php             # Tax classes & location-based rates
+│   │   ├── Transaction.php     # Payment transaction history
+│   │   ├── Cart_Session.php    # Cart sessions & abandonment
+│   │   └── Location.php        # Geographic location hierarchy
 │   └── Controllers/                      # REST API controllers with parameters
-│       ├── Product_REST_Controller.php
-│       ├── Customer_REST_Controller.php
-│       ├── Order_REST_Controller.php
-│       ├── Coupon_REST_Controller.php
-│       ├── Product_Variation_REST_Controller.php
-│       ├── Shipping_Plan_REST_Controller.php
-│       ├── Tax_REST_Controller.php
-│       ├── Transaction_REST_Controller.php
-│       ├── Cart_Session_REST_Controller.php
-│       └── Location_REST_Controller.php
+│       ├── Product.php
+│       ├── Customer.php
+│       ├── Order.php
+│       ├── Coupon.php
+│       ├── Product_Variation.php
+│       ├── Shipping_Plan.php
+│       ├── Tax.php
+│       ├── Transaction.php
+│       ├── Cart_Session.php
+│       └── Location.php
 ├── src/
 │   └── admin/
 │       ├── components/                   # React components with advanced UX
