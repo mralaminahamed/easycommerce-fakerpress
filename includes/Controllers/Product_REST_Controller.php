@@ -179,24 +179,22 @@ class Product_REST_Controller extends REST_Controller {
 	 */
 	protected function get_resource_specific_properties(): array {
 		return array(
-			'data' => array(
-				'properties' => array(
-					'products' => array(
-						'description' => __( 'Generated products data.', 'easycommerce-fakerpress' ),
-						'type'        => 'array',
-						'items'       => array(
-							'type'       => 'object',
-							'properties' => array(
-								'id'         => array(
-									'type' => 'integer',
-								),
-								'title'      => array(
-									'type' => 'string',
-								),
-								'variations' => array(
-									'type' => 'integer',
-								),
-							),
+			'products' => array(
+				'description' => __( 'Generated products data.', 'easycommerce-fakerpress' ),
+				'type'        => 'array',
+				'context'     => array( 'view' ),
+				'readonly'    => true,
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'         => array(
+							'type' => 'integer',
+						),
+						'title'      => array(
+							'type' => 'string',
+						),
+						'variations' => array(
+							'type' => 'integer',
 						),
 					),
 				),

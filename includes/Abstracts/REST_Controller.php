@@ -2,8 +2,8 @@
 /**
  * Abstract REST Controller Class.
  *
- * @package EasyCommerceFakerPress\Abstracts
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Abstracts
  */
 
 namespace EasyCommerceFakerPress\Abstracts;
@@ -31,6 +31,39 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 * @var string
 	 */
 	protected $namespace = 'easycommerce-fakerpress/v1';
+
+	/**
+	 * Get REST base for the endpoint
+	 *
+	 * Must be implemented by child classes to define the endpoint base.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string REST base.
+	 */
+	abstract protected function get_rest_base(): string;
+
+	/**
+	 * Get generator instance
+	 *
+	 * Must be implemented by child classes to return the appropriate generator.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return Generator Generator instance.
+	 */
+	abstract protected function get_generator_instance(): Generator;
+
+	/**
+	 * Get resource type name
+	 *
+	 * Must be implemented by child classes to define the resource type.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	abstract protected function get_resource_type(): string;
 
 	/**
 	 * Register REST API routes
@@ -80,14 +113,13 @@ abstract class REST_Controller extends WP_REST_Controller {
 		}
 
 		// Pass all request parameters to the generator.
-		$params = $request->get_params();
-
+		$params    = $request->get_params();
 		$generator = $this->get_generator_instance();
 
-		// Set generator parameters if the generator supports it.
-		if ( method_exists( $generator, 'set_generation_params' ) ) {
-			$generator->set_generation_params( $params );
-		}
+		// Set faker and locale.
+		$generator->set_locale( $params['locale'] );
+		$generator->set_faker();
+		$generator->set_generation_params( $params );
 
 		$result = $generator->generate( (int) $count );
 
@@ -223,9 +255,9 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed           $value   Parameter value.
-	 * @param WP_REST_Request $request Request object.
-	 * @param string          $param   Parameter name.
+	 * @param int|string|mixed $value Parameter value.
+	 * @param WP_REST_Request  $request Request object.
+	 * @param string           $param Parameter name.
 	 *
 	 * @return bool|WP_Error True if valid, WP_Error otherwise.
 	 */
@@ -272,39 +304,6 @@ abstract class REST_Controller extends WP_REST_Controller {
 
 		return $schema;
 	}
-
-	/**
-	 * Get REST base for the endpoint
-	 *
-	 * Must be implemented by child classes to define the endpoint base.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string REST base.
-	 */
-	abstract protected function get_rest_base(): string;
-
-	/**
-	 * Get generator instance
-	 *
-	 * Must be implemented by child classes to return the appropriate generator.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return Generator Generator instance.
-	 */
-	abstract protected function get_generator_instance(): Generator;
-
-	/**
-	 * Get resource type name
-	 *
-	 * Must be implemented by child classes to define the resource type.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	abstract protected function get_resource_type(): string;
 
 	/**
 	 * Get resource-specific schema properties

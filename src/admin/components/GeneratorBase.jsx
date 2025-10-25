@@ -227,6 +227,8 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 				<p className="mt-1 text-sm text-gray-500 leading-6">{ description }</p>
 			</div>
 
+			{ /* Data Validation Status */ }
+
 			<div className="space-y-6">
 				{ /* Basic Parameters */ }
 				<div className="rounded-lg bg-gray-50 p-6 shadow-sm">
@@ -253,31 +255,28 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 						<Field className="space-y-1 relative">
 							<Label className="block text-sm font-medium text-gray-700">{ __( 'Locale', 'easycommerce-fakerpress' ) }</Label>
 							<Listbox
-								value={ parameters.locale || 'en_US' }
+								value={ parameters.locale || window.easycommerceFakerpressApi?.locale?.faker || 'en_US' }
 								onChange={ ( val ) => handleParameterChange( 'locale', val ) }
 								disabled={ isLoading }
 							>
 								<ListboxButton className="relative w-full mt-1 cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-sm data-[focus]:ring-2 data-[focus]:ring-wp-admin-primary data-[disabled]:bg-gray-100 transition-colors">
 									<span className={ parameters.locale ? 'text-gray-900' : 'text-gray-500' }>
-										{ parameters.locale ? parameters.locale.replace( /_/g, ' ' ).replace( /\b\w/g, ( l ) => l.toUpperCase() ) : __( 'Select Locale', 'easycommerce-fakerpress' ) }
+										{ parameters.locale
+											? ( window.easycommerceFakerpressApi?.locale?.allLocales?.[ parameters.locale ] || parameters.locale )
+											: __( 'Select Locale', 'easycommerce-fakerpress' ) }
 									</span>
 									<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 										<ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 									</span>
 								</ListboxButton>
 								<ListboxOptions className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg max-h-60 overflow-auto ring-1 ring-black ring-opacity-5">
-									{ [ 'en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT' ].map( ( locale ) => (
+									{ Object.entries( window.easycommerceFakerpressApi?.locale?.allLocales || {} ).map( ( [ localeCode, localeLabel ] ) => (
 										<ListboxOption
-											key={ locale }
-											value={ locale }
+											key={ localeCode }
+											value={ localeCode }
 											className="cursor-pointer select-none px-4 py-2 text-sm data-[focus]:bg-blue-50 data-[focus]:text-wp-admin-highlight"
 										>
-											{ locale === 'en_US' && __( 'English (US)', 'easycommerce-fakerpress' ) }
-											{ locale === 'en_GB' && __( 'English (UK)', 'easycommerce-fakerpress' ) }
-											{ locale === 'fr_FR' && __( 'French', 'easycommerce-fakerpress' ) }
-											{ locale === 'de_DE' && __( 'German', 'easycommerce-fakerpress' ) }
-											{ locale === 'es_ES' && __( 'Spanish', 'easycommerce-fakerpress' ) }
-											{ locale === 'it_IT' && __( 'Italian', 'easycommerce-fakerpress' ) }
+											{ localeLabel }
 										</ListboxOption>
 									) ) }
 								</ListboxOptions>
@@ -389,27 +388,33 @@ export default function GeneratorBase( { title, description, type, onGenerate, i
 								{ /* translators: %1$d: Number of items generated, %2$s: Resource type (e.g., products, customers, orders) */
 									sprintf( __( 'Generated %1$d %2$s.', 'easycommerce-fakerpress' ), result.generated, type ) }
 							</div>
-							{ result.data && result.data[ type ] && result.data[ type ].length > 0 && (
-								<div className="mt-4">
-									<h4 className="text-sm font-medium text-gray-900">{ __( 'Generated items:', 'easycommerce-fakerpress' ) }</h4>
-									<ul className="mt-2 text-sm text-gray-600 divide-y divide-gray-200">
-										{ result.data[ type ].slice( 0, 5 ).map( ( item, index ) => (
-											<li key={ index } className="flex justify-between py-2">
-												<span>{ item.name || item.title || item.code || item.id }</span>
-												<span className="text-gray-500">
-													{ item.email || item.price || item.total || item.amount || item.status }
-												</span>
-											</li>
-										) ) }
-										{ result.data[ type ].length > 5 && (
-											<li className="py-2 text-gray-500 italic">
-												{ /* translators: %d: Number of additional items not shown in the list */
-													sprintf( __( '… and %d more', 'easycommerce-fakerpress' ), result.data[ type ].length - 5 ) }
-											</li>
-										) }
-									</ul>
-								</div>
-							) }
+							{ ( () => {
+								// Get the plural form of the type to match backend response structure
+								const pluralType = type + 's';
+								const items = result[ pluralType ] || [];
+
+								return items.length > 0 && (
+									<div className="mt-4">
+										<h4 className="text-sm font-medium text-gray-900">{ __( 'Generated items:', 'easycommerce-fakerpress' ) }</h4>
+										<ul className="mt-2 text-sm text-gray-600 divide-y divide-gray-200">
+											{ items.slice( 0, 5 ).map( ( item, index ) => (
+												<li key={ index } className="flex justify-between py-2">
+													<span>{ item.name || item.title || item.code || item.id }</span>
+													<span className="text-gray-500">
+														{ item.email || item.price || item.total || item.amount || item.status }
+													</span>
+												</li>
+											) ) }
+											{ items.length > 5 && (
+												<li className="py-2 text-gray-500 italic">
+													{ /* translators: %d: Number of additional items not shown in the list */
+														sprintf( __( '… and %d more', 'easycommerce-fakerpress' ), items.length - 5 ) }
+												</li>
+											) }
+										</ul>
+									</div>
+								);
+							} )() }
 						</div>
 					</div>
 				</div>

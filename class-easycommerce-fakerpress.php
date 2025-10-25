@@ -16,7 +16,7 @@ use EasyCommerceFakerPress\Controllers\Order_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Coupon_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Product_Variation_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Shipping_Plan_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Tax_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Tax_Classes_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Transaction_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Cart_Session_REST_Controller;
 use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
@@ -24,9 +24,12 @@ use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
 /**
  * Main Plugin Class
  *
- * Handles plugin initialization, dependencies, admin interface, and REST API registration.
+ * Comprehensive EasyCommerce test data generator featuring 10 specialized generators,
+ * real-time validation system, modern React Router v7 interface, WordPress admin
+ * color integration, and advanced parameter configuration.
  *
  * @since 1.0.0
+ * @version 1.0.0
  */
 class EasyCommerceFakerPress {
 
@@ -70,8 +73,8 @@ class EasyCommerceFakerPress {
 	 * @return void
 	 */
 	public function init(): void {
-		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
+		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 
 		if ( ! $this->check_dependencies() ) {
 			add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
@@ -181,14 +184,25 @@ class EasyCommerceFakerPress {
 		);
 		wp_add_inline_style( 'easycommerce-fakerpress-admin', $css_vars );
 
+		// Get locale information for frontend display.
+		$wp_locale     = get_locale();
+		$faker_locale  = $this->get_faker_locale( $wp_locale );
+		$locale_labels = $this->get_locale_labels();
+
 		wp_localize_script(
 			'easycommerce-fakerpress-admin',
-			'ecfpApi',
+			'easycommerceFakerpressApi',
 			array(
 				'restUrl'     => rest_url( 'easycommerce-fakerpress/v1/' ),
 				'restNonce'   => wp_create_nonce( 'wp_rest' ),
 				'adminColors' => $admin_colors,
 				'colorScheme' => $current_color,
+				'locale'      => array(
+					'wordpress'  => $wp_locale,
+					'faker'      => $faker_locale,
+					'label'      => $locale_labels[ $faker_locale ] ?? 'English (United States)',
+					'allLocales' => $locale_labels,
+				),
 			)
 		);
 
@@ -216,7 +230,7 @@ class EasyCommerceFakerPress {
 			// Enhanced generators (Version 2.0).
 			new Product_Variation_REST_Controller(),
 			new Shipping_Plan_REST_Controller(),
-			new Tax_REST_Controller(),
+			new Tax_Classes_REST_Controller(),
 			new Transaction_REST_Controller(),
 			new Cart_Session_REST_Controller(),
 			new Location_REST_Controller(),
@@ -228,37 +242,16 @@ class EasyCommerceFakerPress {
 	}
 
 	/**
-	 * Plugin activation handler
+	 * Flush rewrite rules on activation and deactivation
 	 *
-	 * Checks dependencies and flushes rewrite rules on activation.
-	 * Terminates activation if dependencies are not met.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function activate(): void {
-		if ( ! $this->check_dependencies() ) {
-			wp_die(
-				esc_html__( 'EasyCommerce FakerPress requires EasyCommerce plugin.', 'easycommerce-fakerpress' ),
-				esc_html__( 'Plugin Activation Error', 'easycommerce-fakerpress' ),
-				array( 'back_link' => true )
-			);
-		}
-		flush_rewrite_rules();
-	}
-
-	/**
-	 * Plugin deactivation handler
-	 *
-	 * Flushes rewrite rules on deactivation to clean up any custom endpoints.
+	 * Flushes rewrite rules to clean up any custom endpoints.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function deactivate(): void {
-		flush_rewrite_rules();
+	public function flush_rewrite_rules(): void {
+		\flush_rewrite_rules();
 	}
 
 	/**
@@ -332,5 +325,125 @@ class EasyCommerceFakerPress {
 	 */
 	public function __wakeup() {
 		throw new RuntimeException( 'Cannot unserialize singleton' );
+	}
+
+	/**
+	 * Get FakerPHP locale for display purposes
+	 *
+	 * Replicates Generator locale detection logic for frontend display
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $locale_ WordPress locale code.
+	 *
+	 * @return string FakerPHP compatible locale code.
+	 */
+	public function get_faker_locale( string $locale_ ): string {
+		// Allow developers to override the locale.
+		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $locale_ );
+
+		// Get supported locales.
+		$supported_locales = array_keys( $this->get_locale_labels() );
+
+		// Direct match.
+		if ( in_array( $custom_locale, $supported_locales, true ) ) {
+			return $custom_locale;
+		}
+
+		// Try language fallback.
+		$language = substr( $custom_locale, 0, 2 );
+		foreach ( $supported_locales as $locale ) {
+			if ( strpos( $locale, $language . '_' ) === 0 ) {
+				return $locale;
+			}
+		}
+
+		// Default fallback.
+		return 'en_US';
+	}
+
+	/**
+	 * Get human-readable labels for all supported FakerPHP locales
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array Associative array of locale codes and labels.
+	 */
+	public function get_locale_labels(): array {
+		return array(
+			'ar_SA'      => 'Arabic (Saudi Arabia)',
+			'at_AT'      => 'Austrian German',
+			'bg_BG'      => 'Bulgarian (Bulgaria)',
+			'bn_BD'      => 'Bangla (Bangladesh)',
+			'cs_CZ'      => 'Czech (Czech Republic)',
+			'da_DK'      => 'Danish (Denmark)',
+			'de_AT'      => 'German (Austria)',
+			'de_CH'      => 'German (Switzerland)',
+			'de_DE'      => 'German (Germany)',
+			'el_CY'      => 'Greek (Cyprus)',
+			'el_GR'      => 'Greek (Greece)',
+			'en_AU'      => 'English (Australia)',
+			'en_GB'      => 'English (Great Britain)',
+			'en_HK'      => 'English (Hong Kong)',
+			'en_IN'      => 'English (India)',
+			'en_NG'      => 'English (Nigeria)',
+			'en_NZ'      => 'English (New Zealand)',
+			'en_PH'      => 'English (Philippines)',
+			'en_SG'      => 'English (Singapore)',
+			'en_UG'      => 'English (Uganda)',
+			'en_US'      => 'English (United States)',
+			'en_ZA'      => 'English (South Africa)',
+			'es_AR'      => 'Spanish (Argentina)',
+			'es_ES'      => 'Spanish (Spain)',
+			'es_PE'      => 'Spanish (Peru)',
+			'es_VE'      => 'Spanish (Venezuela)',
+			'et_EE'      => 'Estonian (Estonia)',
+			'fa_IR'      => 'Persian (Iran)',
+			'fi_FI'      => 'Finnish (Finland)',
+			'fr_BE'      => 'French (Belgium)',
+			'fr_CA'      => 'French (Canada)',
+			'fr_CH'      => 'French (Switzerland)',
+			'fr_FR'      => 'French (France)',
+			'he_IL'      => 'Hebrew (Israel)',
+			'hr_HR'      => 'Croatian (Croatia)',
+			'hu_HU'      => 'Hungarian (Hungary)',
+			'hy_AM'      => 'Armenian (Armenia)',
+			'id_ID'      => 'Indonesian (Indonesia)',
+			'is_IS'      => 'Icelandic (Iceland)',
+			'it_CH'      => 'Italian (Switzerland)',
+			'it_IT'      => 'Italian (Italy)',
+			'ja_JP'      => 'Japanese (Japan)',
+			'ka_GE'      => 'Georgian (Georgia)',
+			'kk_KZ'      => 'Kazakh (Kazakhstan)',
+			'ko_KR'      => 'Korean (South Korea)',
+			'lt_LT'      => 'Lithuanian (Lithuania)',
+			'lv_LV'      => 'Latvian (Latvia)',
+			'me_ME'      => 'Montenegrin (Montenegro)',
+			'mn_MN'      => 'Mongolian (Mongolia)',
+			'ms_MY'      => 'Malay (Malaysia)',
+			'nb_NO'      => 'Norwegian Bokmål (Norway)',
+			'ne_NP'      => 'Nepali (Nepal)',
+			'nl_BE'      => 'Dutch (Belgium)',
+			'nl_NL'      => 'Dutch (Netherlands)',
+			'pl_PL'      => 'Polish (Poland)',
+			'pt_AO'      => 'Portuguese (Angola)',
+			'pt_BR'      => 'Portuguese (Brazil)',
+			'pt_PT'      => 'Portuguese (Portugal)',
+			'ro_MD'      => 'Romanian (Moldova)',
+			'ro_RO'      => 'Romanian (Romania)',
+			'ru_RU'      => 'Russian (Russia)',
+			'sk_SK'      => 'Slovak (Slovakia)',
+			'sl_SI'      => 'Slovenian (Slovenia)',
+			'sr_Cyrl_RS' => 'Serbian Cyrillic (Serbia)',
+			'sr_Latn_RS' => 'Serbian Latin (Serbia)',
+			'sr_RS'      => 'Serbian (Serbia)',
+			'sv_SE'      => 'Swedish (Sweden)',
+			'th_TH'      => 'Thai (Thailand)',
+			'tr_TR'      => 'Turkish (Turkey)',
+			'uk_UA'      => 'Ukrainian (Ukraine)',
+			'vi_VN'      => 'Vietnamese (Vietnam)',
+			'zh_CN'      => 'Chinese (China)',
+			'zh_TW'      => 'Chinese (Taiwan)',
+		);
 	}
 }

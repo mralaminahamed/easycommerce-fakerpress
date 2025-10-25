@@ -1,31 +1,36 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with the EasyCommerce FakerPress plugin.
+# EasyCommerce FakerPress - Development Context
 
 ## Project Overview
 
-EasyCommerce FakerPress is a modernized WordPress plugin that generates realistic fake ecommerce data for testing and development. It integrates deeply with the EasyCommerce plugin's data models and features a modern React-based admin interface with comprehensive REST API architecture.
+EasyCommerce FakerPress is a comprehensive WordPress plugin designed to generate realistic fake ecommerce data for EasyCommerce stores. It features 10 specialized generators (Products, Customers, Orders, Coupons, Product Variations, Shipping Plans, Tax Classes, Transactions, Cart Sessions, and Locations), advanced parameter configuration, WordPress admin color integration, and a modern React interface with comprehensive business logic modeling.
+
+**Key Details:**
+- **Current Version**: 2.1.0
+- **License**: GPL v2 or later
+- **PHP Requirement**: 7.4 or higher
+- **WordPress Requirement**: 5.0 or higher
+- **Required Plugin**: EasyCommerce (dependency check in place)
+- **Author**: Al Amin Ahamed
 
 ## Development Environment
 
-- WordPress installation path: `/Users/alamin/Sites/easy-commerce-development/wp-content/plugins/easycommerce-fakerpress/`
+- WordPress installation path: `/home/alamin/Local Sites/easy-commerce-development/app/public/`
 - Plugin path: `wp-content/plugins/easycommerce-fakerpress/`
 - Local by Flywheel development setup
-- PHP 7.4+ required (8.0+ recommended)
+- PHP 7.4+ required
 - Node.js 16+ for frontend development
 - **Package Manager Guidelines**:
-  - Always use yarn as package manager instead of npm (version 4.9.2 specified in packageManager field)
+  - Always use yarn as package manager instead of npm
 
 ## Architecture Overview
 
-### Version 1.0.0 Architecture (Current)
+### Version 2.0.0 Architecture
 The plugin has been completely modernized with:
 - **PSR-4 Namespace Structure**: All classes use `EasyCommerceFakerPress` namespace
 - **Composer Autoloading**: Automatic class loading via Composer PSR-4 autoloader
 - **REST API Controllers**: WordPress REST API endpoints replacing legacy AJAX
 - **Abstract Base Classes**: Uniform patterns reducing code duplication by ~70%
 - **EasyCommerce Model Integration**: Uses EasyCommerce plugin's data models instead of direct database queries
-- **WordPress Scripts Integration**: Uses @wordpress/scripts for modern build tooling
 
 ### Backend (PHP) - Current Structure
 ```
@@ -40,7 +45,7 @@ includes/
 │   ├── Coupon_REST_Controller.php            # REST endpoints for coupon generation
 │   ├── Product_Variation_REST_Controller.php # REST endpoints for product variations
 │   ├── Shipping_Plan_REST_Controller.php     # REST endpoints for shipping plans
-│   ├── Tax_REST_Controller.php               # REST endpoints for tax classes
+│   ├── Tax_Classes_REST_Controller.php       # REST endpoints for tax classes
 │   ├── Transaction_REST_Controller.php       # REST endpoints for transactions
 │   └── Cart_Session_REST_Controller.php      # REST endpoints for cart sessions
 └── Generators/
@@ -86,30 +91,106 @@ src/admin/components/
 - **Tailwind CSS** for utility-first styling with WordPress design system
 - **Webpack 5** build system with Babel for modern JavaScript features
 
-## Development Commands
+## Architecture & Technology Stack
 
+### Backend (PHP)
+- **Pattern**: Singleton architecture with main `EasyCommerce_FakerPress` class
+- **Structure**: PSR-4 autoloading with organized directories (Abstracts, Controllers, Generators, Helpers)
+- **REST API**: WordPress REST API integration with 10 specialized controllers
+- **Dependency Management**: Composer with FakerPHP and faker-picsum-photos-provider
+- **Code Quality**: PHPCS, PHPStan (level 8), WordPress coding standards
+
+### Frontend (JavaScript/React)
+- **Framework**: React 18 with React Router v7
+- **UI Library**: Tailwind CSS with Headless UI components
+- **Build Tools**: Webpack 5, Babel, PostCSS, Sass
+- **WordPress Integration**: WordPress Script packages for admin integration
+- **Admin Color Integration**: Dynamic CSS variables based on WordPress admin color schemes
+
+## Directory Structure
+
+```
+easycommerce-fakerpress/
+├── build/                    # Generated assets
+├── docs/                     # Documentation files
+├── includes/                 # PHP backend code
+│   ├── Abstracts/            # Base classes and abstract functionality
+│   ├── Controllers/          # REST API controllers (10 generators)
+│   ├── Generators/           # Data generation logic
+│   └── Helpers/              # Utility functions
+├── languages/                # Translation files
+├── node_modules/             # Node.js dependencies
+├── src/                      # Source files
+│   └── admin/                # React admin interface source
+├── tests/                    # Test files
+├── vendor/                   # PHP dependencies
+├── .wordpress-org/           # WordPress.org assets
+├── class-easycommerce-fakerpress.php  # Main plugin class
+├── easycommerce-fakerpress.php        # Plugin entry point
+├── package.json             # Node.js dependencies and scripts
+├── composer.json            # PHP dependencies and scripts
+├── README.md               # Project documentation
+└── phpcs.xml               # PHP coding standards configuration
+```
+
+## Building and Running
+
+### Initial Setup
 ```bash
 # Install dependencies
 composer install
 yarn install         # Always use yarn as package manager
 
 # Development
-yarn dev             # Watch mode for development (alias for yarn start)
-yarn start           # Start development server with hot reloading
+yarn dev             # Watch mode for development
 yarn build           # Production build
-yarn watch           # Alias for yarn start
 
 # Code quality
-yarn lint            # Lint JS, CSS, and PHP (runs all linters)
-yarn lint:js         # ESLint for JavaScript files
-yarn lint:css        # Stylelint for CSS/SCSS files  
-yarn lint:php        # PHPCS for PHP files
-yarn fix             # Auto-fix JS formatting and PHP code style
-yarn format          # Format JS files with wp-scripts
-yarn phpstan         # Run PHPStan static analysis
+yarn lint            # Lint JS and CSS with ESLint and Stylelint
+yarn fix             # Auto-fix linting issues
 composer run lint    # PHP CodeSniffer (WPCS) with PHPStan
 composer run fix     # PHP Code Beautifier
 ```
+
+### Development Scripts
+- `yarn dev` - Watch mode for development
+- `yarn build` - Production build
+- `yarn lint` - Lint JavaScript and CSS files
+- `yarn fix` - Auto-fix linting issues
+- `composer run lint` - Run PHP CodeSniffer (WordPress Coding Standards)
+- `composer run fix` - PHP Code Beautifier
+- `composer run phpstan` - Static analysis with PHPStan
+- `composer run test` - Run PHP unit tests
+
+### Plugin Activation
+- Requires EasyCommerce plugin to be installed and active
+- Adds admin menu under "EC FakerPress" 
+- React interface mounts to `#easycommerce-fakerpress-root` element
+
+## REST API Endpoints
+
+### Core Endpoints:
+- `POST /easycommerce-fakerpress/v1/products/generate` - Generate products with variations
+- `POST /easycommerce-fakerpress/v1/customers/generate` - Generate customer profiles
+- `POST /easycommerce-fakerpress/v1/orders/generate` - Generate orders with comprehensive data
+- `POST /easycommerce-fakerpress/v1/coupons/generate` - Generate discount coupons
+
+### Advanced Endpoints (New in v2.0.0):
+- `POST /easycommerce-fakerpress/v1/product-variations/generate` - Generate product variations
+- `POST /easycommerce-fakerpress/v1/shipping-plans/generate` - Generate shipping configurations
+- `POST /easycommerce-fakerpress/v1/taxes/generate` - Generate tax classes and rates
+- `POST /easycommerce-fakerpress/v1/transactions/generate` - Generate payment transactions
+- `POST /easycommerce-fakerpress/v1/cart-sessions/generate` - Generate cart sessions and abandoned carts
+
+## Key Features
+
+- **10 Specialized Generators**: Each with unique configuration parameters
+- **Real-time Validation**: Input validation for generation parameters
+- **Advanced Configuration**: Smart defaults with customizable parameters
+- **WordPress Admin Integration**: Color scheme integration with admin theme
+- **Multilingual Support**: 40+ FakerPHP locales with fallback logic
+- **Modern UI**: React-based interface with React Router v7
+- **Dependency Management**: Automatic checks for EasyCommerce requirement
 
 ## Coding Standards & Quality
 
@@ -143,7 +224,7 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 - **Order Model**: Orders with items, payment methods, shipping, and taxes
 - **Coupon Model**: Discount coupons with advanced rules and restrictions
 
-#### Advanced Models
+#### Advanced Models (New in v2.0.0)
 - **Product_Variation Model**: Product variations with attributes and pricing
 - **Attribute/Attribute_Value Models**: Product attribute system management
 - **Shipping_Plan Model**: Shipping methods with regional coverage and pricing tiers
@@ -155,25 +236,20 @@ The plugin integrates with EasyCommerce's comprehensive data model ecosystem:
 - **Location Model**: Geographic hierarchy (countries, states, cities) with currency data
 - **Database Model**: Enhanced database operations with query optimization
 
-### REST API Endpoints
-- **Base URL**: `/wp-json/easycommerce-fakerpress/v1/`
-- **Core Endpoints**:
-  - `POST /products/generate` - Generate products with variations
-  - `POST /customers/generate` - Generate customer profiles
-  - `POST /orders/generate` - Generate orders with comprehensive data
-  - `POST /coupons/generate` - Generate discount coupons
-- **Advanced Endpoints**:
-  - `POST /product-variations/generate` - Generate product variations
-  - `POST /shipping-plans/generate` - Generate shipping configurations
-  - `POST /taxes/generate` - Generate tax classes and rates
-  - `POST /transactions/generate` - Generate payment transactions
-  - `POST /cart-sessions/generate` - Generate cart sessions and abandoned carts
-
 ### Admin Interface
 - **Page**: `admin.php?page=easycommerce-fakerpress`
 - **React Mount Point**: `#easycommerce-fakerpress-root`
 - **Security**: `easycommerce_fakerpress_nonce` for REST API authentication
 - **Permissions**: `manage_options` capability required
+
+## Development Conventions
+
+- **PHP**: WordPress coding standards with PSR-4 autoloading
+- **JavaScript**: ESLint and Stylelint for code quality
+- **CSS**: Tailwind CSS with custom configuration
+- **Testing**: PHPUnit for backend, Playwright for frontend (if configured)
+- **Localization**: WordPress i18n functions with POT file generation
+- **Documentation**: Inline PHPDoc and external documentation in `/docs/`
 
 ## Code Patterns and Best Practices
 
@@ -216,7 +292,6 @@ const router = createHashRouter([
 - **Pages Components**: Import from `./Pages/` directory for route components
 - **Generator Components**: Import from `./Generators/` for data generation
 - **Shared Logic**: Export/import generators array between HomePage and GeneratorPage
-
 
 ## Data Generation Features
 
@@ -314,79 +389,67 @@ const router = createHashRouter([
 5. **Build**: Use `yarn build` for production deployment
 6. **Documentation**: Update PHPDoc and inline documentation
 
-## Current Architectural Features (v1.0.0)
+## Recent Architectural Improvements (v2.1.0)
 
-### Modern Frontend Architecture
-- **Component Separation**: Clean App.jsx with focused Page components (29 lines)
-- **React Router v7**: Uses createHashRouter with data router patterns for WordPress compatibility
-- **Pages Directory**: Organized route-based components (RootLayout, HomePage, GeneratorPage)
-- **Generators Directory**: Dedicated generator components with consistent naming
-- **WordPress Scripts**: Integrated @wordpress/scripts for optimal WordPress development
+### Frontend Modernization
+- **Component Extraction**: Separated App.jsx into focused Page components
+- **React Router v7**: Migrated from HashRouter to createHashRouter with data router patterns
+- **Pages Directory**: Organized route-based components into logical directory structure
+- **Improved Maintainability**: Reduced App.jsx from 310+ lines to 29 lines
+- **Better Code Organization**: Clear separation between Pages, Generators, and Base components
 
-### Performance Features
-- **WordPress Scripts Optimization**: Built-in code splitting and optimization
-- **Modern React 18**: Concurrent features and improved rendering
-- **Tailwind CSS**: Utility-first CSS framework with purging for smaller bundles
-- **Sass Support**: Advanced CSS preprocessing capabilities
-- **PostCSS**: Advanced CSS processing with Autoprefixer
+### Performance Enhancements
+- **Route-Based Code Splitting**: Components loaded on-demand for better performance
+- **Optimized Bundle Size**: Removed unused imports and dependencies
+- **Modern React Patterns**: Leveraged React 18 features and concurrent rendering
+- **Improved Tree Shaking**: Better elimination of unused code in production builds
 
 ### Developer Experience
-- **WordPress Standards**: Full compliance with WordPress coding standards
-- **TypeScript Support**: Optional static typing for enhanced development
-- **Playwright Testing**: Modern end-to-end testing capabilities
-- **Multiple Linting**: ESLint, Stylelint, and PHPCS integration
-- **PHPStan Analysis**: Advanced PHP static analysis with WordPress stubs
+- **Cleaner Architecture**: More predictable file organization and component structure
+- **Better IDE Support**: Improved IntelliSense and auto-completion
+- **Easier Debugging**: Smaller, focused components for easier troubleshooting
+- **Enhanced Testability**: Components can be tested in isolation
 
 ### Pre-Commit Checklist
 - [ ] Run `composer run lint` (PHPCS + PHPStan)
-- [ ] Run `yarn lint` (ESLint + Stylelint + PHPCS)
-- [ ] Run `yarn build` to ensure production build works
+- [ ] Run `yarn lint` (ESLint + Stylelint)
 - [ ] Test data generation functionality
 - [ ] Verify REST API endpoints
 - [ ] Check error handling and validation
 - [ ] Update documentation if needed
 
+## Main Files
+
+- `easycommerce-fakerpress.php` - Main plugin file with WordPress plugin header
+- `class-easycommerce-fakerpress.php` - Core plugin class with singleton pattern
+- `/includes/Controllers/*` - REST API controllers for each generator
+- `/src/admin/` - React source code for admin interface
+- `/includes/Generators/*` - Data generation logic
+
 ## Dependencies
 
-### PHP Dependencies (Production)
-- `fakerphp/faker`: 1.23+ - Realistic fake data generation with localization
-- `bluemmb/faker-picsum-photos-provider`: 2.0+ - Lorem Picsum image provider for Faker
+### PHP Dependencies (Composer)
+- `fakerphp/faker`: Realistic fake data generation with localization
 - `EasyCommerce Plugin`: Data models and business logic (required dependency)
 - `WordPress`: 5.0+ with proper database abstraction
-- `PHP`: 7.4+ (8.0+ recommended)
 
-### PHP Development Dependencies
-- `phpstan/phpstan`: 2.1+ - PHP static analysis tool
-- `squizlabs/php_codesniffer`: 3.7+ - PHP code style checking
-- `wp-coding-standards/wpcs`: 3.1+ - WordPress coding standards
-- `phpunit/phpunit`: 9.6+ - PHP unit testing framework
-- `wp-phpunit/wp-phpunit`: 6.8+ - WordPress-specific PHPUnit utilities
-- `php-stubs/wordpress-stubs`: 6.4+ - WordPress function stubs for static analysis
+### JavaScript Dependencies (Yarn)
+- `react`: UI component library with hooks and concurrent features
+- `react-router-dom`: Modern routing library with data router patterns
+- `@headlessui/react`: Accessible, unstyled UI components
+- `@heroicons/react`: Beautiful hand-crafted SVG icons
+- `@wordpress/i18n`: WordPress internationalization utilities
+- `@wordpress/api-fetch`: WordPress REST API fetch wrapper
+- `tailwindcss`: Utility-first CSS framework
+- `webpack`: Module bundler with optimization
+- `babel`: JavaScript compiler with modern syntax support
 
-### JavaScript Dependencies (Production)
-- `react`: 18.x - UI component library with hooks and concurrent features
-- `react-router-dom`: 7.7.1 - Modern routing library with data router patterns
-- `@headlessui/react`: 2.2.7 - Accessible, unstyled UI components
-- `@heroicons/react`: 2.2.0 - Beautiful hand-crafted SVG icons
-- `@wordpress/i18n`: 6.0.0 - WordPress internationalization utilities
-- `@wordpress/api-fetch`: 7.27.0 - WordPress REST API fetch wrapper
-- `@wordpress/element`: 6.27.0 - WordPress React element wrapper
-- `@wordpress/dom-ready`: 4.27.0 - WordPress DOM ready utility
-
-### JavaScript Development Dependencies
-- `@wordpress/scripts`: 30.20.0 - WordPress build tooling and configuration
-- `tailwindcss`: 3.3.5 - Utility-first CSS framework
-- `@playwright/test`: 1.54.2 - End-to-end testing framework
-- `sass`: 1.89.2 - CSS preprocessor
-- `typescript`: 5.9.2 - Static type checking
-
-### Integrated Development Tools
-- `@wordpress/scripts`: Complete WordPress development toolchain
-- `@wordpress/eslint-plugin`: WordPress-specific ESLint rules
-- `@wordpress/stylelint-config`: WordPress CSS standards
-- `phpstan/phpstan`: Advanced PHP static analysis
-- `wp-coding-standards/wpcs`: WordPress PHP coding standards
-- `@playwright/test`: Modern end-to-end testing
+### Development Dependencies
+- `phpstan/phpstan`: PHP static analysis
+- `squizlabs/php_codesniffer`: PHP code style checking
+- `wp-coding-standards/wpcs`: WordPress coding standards
+- `eslint`: JavaScript linting
+- `stylelint`: CSS/SCSS linting
 
 ## Plugin Requirements
 
@@ -403,7 +466,7 @@ const router = createHashRouter([
 - **Model Not Found**: Ensure EasyCommerce plugin is active and properly configured
 - **Permission Denied**: Verify user has `manage_options` capability
 - **Generation Fails**: Check database connectivity and plugin dependencies
-- **Frontend Not Loading**: Run `yarn build` and check browser console
+- **Frontend Not Loading**: Run `npm run build` and check browser console
 - **Memory Issues**: Increase PHP memory limit for large batch operations
 
 ### Debug Mode
@@ -507,6 +570,15 @@ import { generators } from './Pages/HomePage';
 - Implement proper caching strategies
 - Monitor memory usage during generation
 - Use WordPress object cache where appropriate
+
+## WordPress Integration Points
+
+- **Admin Menu**: Adds "EC FakerPress" menu item at position 30
+- **Assets**: Enqueues React build files only on plugin admin page
+- **REST API**: Custom endpoints under `easycommerce-fakerpress/v1/` namespace
+- **Admin Colors**: Dynamic CSS variables for theme integration
+- **i18n**: Full localization support with script translations
+- **Hooks**: Activation/deactivation with dependency checks
 
 ## EasyCommerce Integration Notes
 

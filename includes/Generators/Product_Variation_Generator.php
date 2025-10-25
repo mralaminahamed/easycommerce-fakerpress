@@ -4,8 +4,8 @@
  *
  * Generates fake product variation data for testing purposes.
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -17,8 +17,7 @@ use EasyCommerce\Models\Product_Variation;
 use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Attribute;
 use EasyCommerce\Models\Attribute_Value;
-use Exception;
-use RuntimeException;
+use WP_Error;
 
 /**
  * Product Variation Generator Class
@@ -39,61 +38,138 @@ class Product_Variation_Generator extends Generator {
 	/**
 	 * Generate a single product variation
 	 *
-	 * @return array|bool Single variation data, error, or false on failure.
-	 * @throws RuntimeException When no products are found or on other errors.
+	 * @return WP_Error|array Single variation data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			$data     = Product::list( array(), 20 );
-			$products = $data['products'] ?? array();
-
-			if ( empty( $products ) ) {
-				throw new RuntimeException( 'No products found. Please generate products first.' );
-			}
-
-			$product = $this->faker->randomElement( $products );
-			if ( ! $product->exists() ) {
-				return false;
-			}
-
-			$variation_data = $this->generate_variation_data( $product );
-			$variation      = $this->create_variation( $variation_data );
-
-			if ( $variation ) {
-				// Add attributes to the variation.
-				$this->add_variation_attributes( $variation );
-
-				// Add meta data (dimensions, weight, etc.).
-				$this->add_variation_meta( $variation );
-
-				return array(
-					'id'             => $variation->get_id(),
-					'product_id'     => $variation->get_product_id(),
-					'name'           => $variation->get_name(),
-					'sku'            => $variation->get_sku(),
-					'price'          => $variation->get_price(),
-					'sale_price'     => $variation->get_sale_price(),
-					'stock_quantity' => $variation->get_stock(),
-					'type'           => $variation->get_type(),
-					'status'         => $variation->get_status(),
-					'attributes'     => $variation->get_attributes(),
-					'meta'           => array(
-						'weight'     => $variation->get_weight(),
-						'dimensions' => array(
-							'length' => $variation->get_length(),
-							'width'  => $variation->get_width(),
-							'height' => $variation->get_height(),
-						),
-						'tax_class'  => $variation->get_tax_class(),
-					),
-				);
-			}
-
-			return false;
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to generate variation: ' . $e->getMessage(), 'error' );
-			return false;
+		// Check if EasyCommerce Product_Variation class exists.
+		if ( ! class_exists( Product_Variation::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Product_Variation model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		// Get product for variation generation.
+		$product = $this->get_product_for_variation();
+
+		if ( ! $product ) {
+			return new WP_Error( 'no_suitable_products', __( 'No suitable products found. Please generate products first.', 'easycommerce-fakerpress' ) );
+		}
+		if ( ! $product->exists() ) {
+			return new WP_Error( 'product_not_exists', __( 'Product does not exist.', 'easycommerce-fakerpress' ) );
+		}
+
+		$variation_data = $this->generate_variation_data( $product );
+		$variation      = $this->create_variation( $variation_data );
+
+		if ( ! $variation ) {
+			return new WP_Error( 'variation_creation_failed', __( 'Failed to create product variation.', 'easycommerce-fakerpress' ) );
+		}
+
+		// Add attributes to the variation.
+		$this->add_variation_attributes( $variation );
+
+		// Add meta data (dimensions, weight, etc.).
+		$this->add_variation_meta( $variation );
+
+		return array(
+			'id'             => $variation->get_id(),
+			'product_id'     => $variation->get_product_id(),
+			'name'           => $variation->get_name(),
+			'sku'            => $variation->get_sku(),
+			'price'          => $variation->get_price(),
+			'sale_price'     => $variation->get_sale_price(),
+			'stock_quantity' => $variation->get_stock(),
+			'type'           => $variation->get_type(),
+			'status'         => $variation->get_status(),
+			'attributes'     => $variation->get_attributes(),
+			'meta'           => array(
+				'weight'     => $variation->get_weight(),
+				'dimensions' => array(
+					'length' => $variation->get_length(),
+					'width'  => $variation->get_width(),
+					'height' => $variation->get_height(),
+				),
+				'tax_class'  => $variation->get_tax_class(),
+			),
+		);
+	}
+
+	/**
+	 * Get product for variation generation based on parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return Product|null Product instance or null if none found.
+	 */
+	private function get_product_for_variation() {
+		$specific_product_id = $this->generation_params['specific_product_id'] ?? null;
+		$product_types       = $this->generation_params['product_types'] ?? array();
+		$exclude_products    = $this->generation_params['exclude_products'] ?? array();
+
+		// If specific product is requested.
+		if ( $specific_product_id ) {
+			$product = new Product( $specific_product_id );
+
+			return $product->exists() ? $product : null;
+		}
+
+		// Get products with filters.
+		$query_params = array( 'per_page' => 50 );
+
+		// Add product type filter.
+		if ( ! empty( $product_types ) ) {
+			$query_params['type'] = $product_types;
+		}
+
+		// Get products.
+		$data     = Product::list( $query_params );
+		$products = $data['products'] ?? array();
+
+		if ( empty( $products ) ) {
+			return null;
+		}
+
+		// Filter out excluded products.
+		if ( ! empty( $exclude_products ) ) {
+			$products = array_filter(
+				$products,
+				static function ( $product ) use ( $exclude_products ) {
+					return ! in_array( $product->get_id(), $exclude_products, true );
+				}
+			);
+		}
+
+		// Filter to products that can have variations.
+		$variable_products = array_filter(
+			$products,
+			function ( $product ) {
+				// Check if product can have variations (has attributes or is variable type).
+				return $this->can_product_have_variations( $product );
+			}
+		);
+
+		if ( empty( $variable_products ) ) {
+			// If no variable products, use any available product.
+			return ! empty( $products ) ? $this->get_faker()->randomElement( $products ) : null;
+		}
+
+		return $this->get_faker()->randomElement( $variable_products );
+	}
+
+	/**
+	 * Check if product can have variations
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param Product $product Product to check.
+	 *
+	 * @return bool True if product can have variations.
+	 */
+	private function can_product_have_variations( Product $product ): bool {
+		// Check if product has attributes or is already a variable product.
+		$is_variable    = $product->is_variable();
+		$has_attributes = ! empty( $product->get_attributes() );
+
+		// Products with attributes can have variations, or products that are already variable.
+		return $is_variable || $has_attributes;
 	}
 
 	/**
@@ -101,6 +177,7 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int   $count Number of variations to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated variation data.
 	 */
 	public function generate_multiple( int $count = 10, array $args = array() ): array {
@@ -121,19 +198,20 @@ class Product_Variation_Generator extends Generator {
 	 * Generate variation data.
 	 *
 	 * @param Product $product Parent product.
+	 *
 	 * @return array Variation data.
 	 */
 	private function generate_variation_data( Product $product ): array {
 		$prices = $product->get_prices( false );
 
-		$base_price      = (float) ( $prices[0]['regular_price'] ?? $this->faker->randomFloat( 2, 10, 500 ) );
-		$price_variation = $this->faker->randomFloat( 2, -0.2 * $base_price, 0.3 * $base_price );
+		$base_price      = (float) ( $prices[0]['regular_price'] ?? $this->get_faker()->randomFloat( 2, 10, 500 ) );
+		$price_variation = $this->get_faker()->randomFloat( 2, - 0.2 * $base_price, 0.3 * $base_price );
 		$regular_price   = max( 1, $base_price + $price_variation );
 
 		// Generate sale price with 30% probability.
 		$sale_price = null;
-		if ( $this->faker->boolean( 30 ) ) {
-			$sale_price = $this->faker->randomFloat( 2, $regular_price * 0.1, $regular_price * 0.9 );
+		if ( $this->get_faker()->boolean( 30 ) ) {
+			$sale_price = $this->get_faker()->randomFloat( 2, $regular_price * 0.1, $regular_price * 0.9 );
 		}
 
 		$variation_attributes = $this->get_variation_attributes();
@@ -142,13 +220,13 @@ class Product_Variation_Generator extends Generator {
 		return array(
 			'product_id'     => $product->get_id(),
 			'name'           => $variation_name,
-			'type'           => $this->faker->randomElement( array( 'physical', 'digital' ) ),
+			'type'           => $this->get_faker()->randomElement( array( 'physical', 'digital' ) ),
 			'price'          => $regular_price,
 			'sale_price'     => $sale_price,
 			'sku'            => $this->generate_variation_sku( $product->get_slug(), $variation_attributes ),
-			'stock_quantity' => $this->faker->numberBetween( 0, 100 ),
-			'stock_limit'    => $this->faker->numberBetween( 5, 20 ),
-			'status'         => $this->faker->randomElement( array( 'active', 'inactive', 'draft' ) ),
+			'stock_quantity' => $this->get_faker()->numberBetween( 0, 100 ),
+			'stock_limit'    => $this->get_faker()->numberBetween( 5, 20 ),
+			'status'         => $this->get_faker()->randomElement( array( 'active', 'inactive', 'draft' ) ),
 			'attributes'     => $variation_attributes,
 		);
 	}
@@ -157,10 +235,12 @@ class Product_Variation_Generator extends Generator {
 	 * Create variation in database.
 	 *
 	 * @param array $data Variation data.
+	 *
 	 * @return Product_Variation|null Created variation instance.
 	 */
 	private function create_variation( array $data ): ?Product_Variation {
-		$variation             = new Product_Variation();
+		$variation = new Product_Variation();
+
 		$variation->product_id = $data['product_id'];
 		$variation->set_name( $data['name'] );
 		$variation->set_sku( $data['sku'] );
@@ -187,23 +267,31 @@ class Product_Variation_Generator extends Generator {
 		$attribute_sets = array(
 			// Clothing variations.
 			array(
-				'size'  => $this->faker->randomElement( array( 'XS', 'S', 'M', 'L', 'XL', 'XXL' ) ),
-				'color' => $this->faker->randomElement( array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Navy', 'Beige' ) ),
+				'size'  => $this->get_faker()->randomElement( array( 'XS', 'S', 'M', 'L', 'XL', 'XXL' ) ),
+				'color' => $this->faker->randomElement(
+					array( 'Red', 'Blue', 'Green', 'Black', 'White', 'Gray', 'Navy', 'Beige' )
+				),
 			),
 			// Electronics variations.
 			array(
 				'storage' => $this->faker->randomElement( array( '64GB', '128GB', '256GB', '512GB', '1TB' ) ),
-				'color'   => $this->faker->randomElement( array( 'Space Gray', 'Silver', 'Gold', 'Rose Gold', 'Midnight', 'Blue' ) ),
+				'color'   => $this->faker->randomElement(
+					array( 'Space Gray', 'Silver', 'Gold', 'Rose Gold', 'Midnight', 'Blue' )
+				),
 			),
 			// Shoe variations.
 			array(
-				'size'  => $this->faker->randomElement( array( '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '12' ) ),
+				'size'  => $this->faker->randomElement(
+					array( '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '12' )
+				),
 				'color' => $this->faker->randomElement( array( 'Black', 'White', 'Brown', 'Navy', 'Gray', 'Red' ) ),
 			),
 			// Book variations.
 			array(
 				'format'   => $this->faker->randomElement( array( 'Hardcover', 'Paperback', 'eBook', 'Audiobook' ) ),
-				'language' => $this->faker->randomElement( array( 'English', 'Spanish', 'French', 'German', 'Italian' ) ),
+				'language' => $this->faker->randomElement(
+					array( 'English', 'Spanish', 'French', 'German', 'Italian' )
+				),
 			),
 			// Watch variations.
 			array(
@@ -220,12 +308,13 @@ class Product_Variation_Generator extends Generator {
 	 * Generate variation name from attributes.
 	 *
 	 * @param array $attributes Variation attributes.
+	 *
 	 * @return string Generated name.
 	 */
 	private function generate_variation_name( array $attributes ): string {
 		$name_parts = array();
 
-		foreach ( $attributes as $key => $value ) {
+		foreach ( $attributes as $value ) {
 			$name_parts[] = $value;
 		}
 
@@ -237,12 +326,13 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param string $base_sku Parent product SKU.
 	 * @param array  $attributes Variation attributes.
+	 *
 	 * @return string Generated SKU.
 	 */
 	private function generate_variation_sku( string $base_sku, array $attributes ): string {
 		$sku_parts = array( $base_sku );
 
-		foreach ( $attributes as $key => $value ) {
+		foreach ( $attributes as $value ) {
 			// Create short codes from attribute values.
 			$short_code  = strtoupper( substr( preg_replace( '/[^A-Za-z0-9]/', '', $value ), 0, 3 ) );
 			$sku_parts[] = $short_code;
@@ -288,7 +378,8 @@ class Product_Variation_Generator extends Generator {
 	 * Get or create attribute.
 	 *
 	 * @param string $slug Attribute slug.
-	 * @return object|null Attribute data object.
+	 *
+	 * @return WP_Error|object Attribute data object.
 	 */
 	private function get_or_create_attribute( string $slug ) {
 		$attribute_model = new Attribute();
@@ -306,7 +397,7 @@ class Product_Variation_Generator extends Generator {
 			return $attribute_model->get( $attribute_id );
 		}
 
-		return null;
+		return new WP_Error( 'attribute_not_found', sprintf( 'Attribute %s not found.', $slug ) );
 	}
 
 	/**
@@ -314,7 +405,8 @@ class Product_Variation_Generator extends Generator {
 	 *
 	 * @param int    $attribute_id Attribute ID.
 	 * @param string $value_slug Value slug.
-	 * @return object|null Attribute value data object.
+	 *
+	 * @return WP_Error|object Attribute value data object.
 	 */
 	private function get_or_create_attribute_value( int $attribute_id, string $value_slug ) {
 		$attribute_value_model = new Attribute_Value();
@@ -334,7 +426,7 @@ class Product_Variation_Generator extends Generator {
 			return $attribute_value_model->get( $value_id );
 		}
 
-		return null;
+		return new WP_Error( 'attribute_not_found', sprintf( 'Attribute %s not found.', $slug ) );
 	}
 
 	/**
@@ -405,7 +497,7 @@ class Product_Variation_Generator extends Generator {
 	 */
 	public function get_supported_types(): array {
 		return array(
-			'product_variations' => 'Product Variations with Attributes',
+			'product_variations' => __( 'Product Variations with Attributes', 'easycommerce-fakerpress' ),
 		);
 	}
 
@@ -415,6 +507,6 @@ class Product_Variation_Generator extends Generator {
 	 * @return string Description
 	 */
 	public function get_description(): string {
-		return 'Generates realistic product variations with attributes, pricing variations, inventory management, and comprehensive meta data for testing ecommerce functionality.';
+		return __( 'Generates realistic product variations with attributes, pricing variations, inventory management, and comprehensive meta data for testing ecommerce functionality.', 'easycommerce-fakerpress' );
 	}
 }

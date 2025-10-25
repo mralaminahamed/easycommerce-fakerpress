@@ -2,21 +2,22 @@
 /**
  * Cart Session Generator Class
  *
- * @package EasyCommerceFakerPress\Generators
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
 
 defined( 'ABSPATH' ) || exit;
 
+use EasyCommerce\Models\Cart;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Product;
 use EasyCommerce\Models\Customer;
 use EasyCommerce\Models\Database;
 use EasyCommerce\Helpers\Utility;
 use Exception;
-use RuntimeException;
+use WP_Error;
 
 /**
  * Cart Session Generator Class
@@ -37,47 +38,166 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate a single cart session
 	 *
-	 * @return array|bool Single cart session data, error, or false on failure.
-	 * @throws RuntimeException If no products or customers are found.
+	 * @return WP_Error|array Single cart session data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Get existing products and customers.
-			$product_data  = Product::list( array(), 50 );
-			$customer_data = Customer::list( 'customer', null, 1, 30 );
-
-			$products  = $product_data['products'] ?? array();
-			$customers = $customer_data['users'] ?? array();
-
-			if ( empty( $products ) ) {
-				throw new RuntimeException( 'No products found. Please generate products first.' );
-			}
-
-			$cart_data    = $this->generate_cart_session_data( $products, $customers );
-			$cart_session = $this->create_cart_session( $cart_data );
-
-			if ( $cart_session ) {
-				return array(
-					'hash'           => $cart_session['hash'],
-					'user_id'        => $cart_session['user_id'],
-					'status'         => $cart_session['status'],
-					'items_count'    => count( $cart_session['items'] ),
-					'total_amount'   => $cart_session['total_amount'],
-					'customer_email' => $cart_session['customer_email'],
-					'customer_name'  => $cart_session['customer_name'],
-					'reminders'      => $cart_session['reminders'],
-					'created_at'     => $cart_session['created_at'],
-					'updated_at'     => $cart_session['updated_at'],
-					'items'          => $cart_session['items'],
-					'addresses'      => $cart_session['addresses'],
-				);
-			}
-
-			return false;
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to generate cart session: ' . $e->getMessage(), 'error' );
-			return false;
+		// Check if EasyCommerce Cart class exists.
+		if ( ! class_exists( Cart::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Cart model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		// Get existing products.
+		$product_data = Product::list( array(), 50 );
+		$products     = $product_data['products'] ?? array();
+
+		if ( empty( $products ) ) {
+			return new WP_Error( 'no-products', __( 'No products found', 'easycommerce-fakerpress' ) );
+		}
+
+		// Get customer for cart session.
+		$customer = $this->get_customer_for_cart();
+
+		$cart_data    = $this->generate_cart_session_data( $products, $customer );
+		$cart_session = $this->create_cart_session( $cart_data );
+
+		if ( ! $cart_session ) {
+			return new WP_Error( 'cart_session_creation_failed', __( 'Failed to create cart session.', 'easycommerce-fakerpress' ) );
+		}
+
+		return array(
+			'hash'           => $cart_session['hash'],
+			'user_id'        => $cart_session['user_id'],
+			'status'         => $cart_session['status'],
+			'items_count'    => count( $cart_session['items'] ),
+			'total_amount'   => $cart_session['total_amount'],
+			'customer_email' => $cart_session['customer_email'],
+			'customer_name'  => $cart_session['customer_name'],
+			'reminders'      => $cart_session['reminders'],
+			'created_at'     => $cart_session['created_at'],
+			'updated_at'     => $cart_session['updated_at'],
+			'items'          => $cart_session['items'],
+			'addresses'      => $cart_session['addresses'],
+		);
+	}
+
+	/**
+	 * Get customer for cart session based on parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Customer data or null for guest.
+	 */
+	private function get_customer_for_cart(): array {
+		$customer_type        = $this->generation_params['customer_type'] ?? 'mixed';
+		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
+		$guest_ratio          = $this->generation_params['guest_cart_ratio'] ?? 40;
+
+		switch ( $customer_type ) {
+			case 'existing':
+				return $this->get_random_existing_customer();
+
+			case 'new':
+				return $this->create_new_customer_for_cart();
+
+			case 'specific':
+				if ( $specific_customer_id ) {
+					return $this->get_specific_customer_for_cart( $specific_customer_id );
+				}
+
+				// Fallback to random.
+				return $this->get_random_existing_customer();
+
+			case 'guest_only':
+				return array(); // Guest cart.
+
+			case 'mixed':
+			default:
+				// Use guest ratio parameter.
+				if ( $this->get_faker()->boolean( $guest_ratio ) ) {
+					return array(); // Guest cart.
+				}
+
+				// 50/50 between existing and new customers.
+				if ( $this->get_faker()->boolean( 50 ) ) {
+					return $this->get_random_existing_customer();
+				}
+
+				return $this->create_new_customer_for_cart();
+		}
+	}
+
+	/**
+	 * Get random existing customer
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return WP_Error|array Customer data or null if none found.
+	 */
+	private function get_random_existing_customer() {
+		$customer_data = Customer::list( null, 1, 30 );
+		$customers     = $customer_data['users'] ?? array();
+
+		if ( empty( $customers ) ) {
+			return new WP_Error( 'no-customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
+		}
+
+		$customer = $this->get_faker()->randomElement( $customers );
+
+		return array(
+			'id'         => $customer['id'],
+			'name'       => $customer['name'],
+			'email'      => $customer['email'],
+			'first_name' => $customer['first_name'] ?? '',
+			'last_name'  => $customer['last_name'] ?? '',
+		);
+	}
+
+	/**
+	 * Get specific customer for cart
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $customer_id Customer ID.
+	 *
+	 * @return WP_Error|array Customer data or null if not found.
+	 */
+	private function get_specific_customer_for_cart( int $customer_id ) {
+		$customer = new Customer( $customer_id );
+		if ( $customer->get_id() && $customer->get_id() > 0 ) {
+			return array(
+				'id'         => $customer->get_id(),
+				'name'       => $customer->get_name(),
+				'email'      => $customer->get_email(),
+				'first_name' => $customer->get_first_name(),
+				'last_name'  => $customer->get_last_name(),
+			);
+		}
+
+		return new WP_Error( 'no-customers', __( 'No customers found.', 'easycommerce-fakerpress' ) );
+	}
+
+	/**
+	 * Create new customer for cart session
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return WP_Error|array New customer data or null on failure.
+	 */
+	private function create_new_customer_for_cart() {
+		$customer_generator = new Customer_Generator();
+		$customer           = $customer_generator->generate_single_item();
+
+		if ( is_wp_error( $customer ) ) {
+			return $customer;
+		}
+
+		return array(
+			'id'         => $customer['id'],
+			'name'       => $customer['name'],
+			'email'      => $customer['email'],
+			'first_name' => $customer['first_name'] ?? '',
+			'last_name'  => $customer['last_name'] ?? '',
+		);
 	}
 
 	/**
@@ -85,6 +205,7 @@ class Cart_Session_Generator extends Generator {
 	 *
 	 * @param int   $count Number of cart sessions to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated cart session data
 	 */
 	public function generate_multiple( int $count = 15, array $args = array() ): array {
@@ -104,19 +225,27 @@ class Cart_Session_Generator extends Generator {
 	/**
 	 * Generate cart session data.
 	 *
-	 * @param Product[] $products Available products.
-	 * @param array     $customers Available customers.
+	 * @param array $products Available products.
+	 * @param array $customer Selected customer or null for guest.
+	 *
 	 * @return array Cart session data
 	 */
-	private function generate_cart_session_data( array $products, array $customers ): array {
-		$cart_statuses = array(
-			'pending'   => 60,    // 60% pending (active carts)
-			'abandoned' => 30,  // 30% abandoned
-			'completed' => 8,   // 8% completed
-			'cancelled' => 2,   // 2% cancelled
+	private function generate_cart_session_data( array $products, $customer ): array {
+		// Get abandonment settings from parameters.
+		$abandonment_rate    = $this->generation_params['abandonment_rate'] ?? 30;
+		$status_distribution = $this->generation_params['status_distribution'] ?? array();
+
+		// Default status distribution.
+		$default_statuses = array(
+			'pending'   => 60 - $abandonment_rate,
+			'abandoned' => $abandonment_rate,
+			'completed' => 8,
+			'cancelled' => 2,
 		);
 
-		$status = $this->faker->randomElement(
+		$cart_statuses = ! empty( $status_distribution ) ? $status_distribution : $default_statuses;
+
+		$status = $this->get_faker()->randomElement(
 			array_merge(
 				...array_map(
 					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
@@ -126,17 +255,14 @@ class Cart_Session_Generator extends Generator {
 			)
 		);
 
-		// Select customer (70% have customer accounts).
-		$customer = $this->faker->boolean( 70 ) && ! empty( $customers )
-			? $this->faker->randomElement( $customers )
-			: null;
+		// Customer is already selected by get_customer_for_cart() method.
 
 		// Generate cart items.
 		$items        = $this->generate_cart_items( $products );
 		$total_amount = $this->calculate_cart_total( $items );
 
 		// Generate addresses if cart is advanced.
-		$addresses = $this->faker->boolean( 40 ) ? $this->generate_cart_addresses() : array();
+		$addresses = $this->get_faker()->boolean( 40 ) ? $this->generate_cart_addresses() : array();
 
 		// Generate timeline based on status.
 		$timeline = $this->generate_cart_timeline( $status );
@@ -157,6 +283,7 @@ class Cart_Session_Generator extends Generator {
 	 * Generate cart items.
 	 *
 	 * @param Product[] $products Available products.
+	 *
 	 * @return array Cart items
 	 */
 	private function generate_cart_items( array $products ): array {
@@ -192,25 +319,82 @@ class Cart_Session_Generator extends Generator {
 	}
 
 	/**
-	 * Calculate cart total amount.
+	 * Calculate cart total amount with realistic shipping and tax.
 	 *
 	 * @param array $items Cart items.
+	 *
 	 * @return float Total amount
 	 */
 	private function calculate_cart_total( array $items ): float {
-		$total = 0;
+		$subtotal = 0;
 
-		foreach ( $items as $product_id => $variations ) {
-			foreach ( $variations as $price_id => $config ) {
-				$total += $config['price'];
+		// Calculate subtotal from items.
+		foreach ( $items as $variations ) {
+			foreach ( $variations as $config ) {
+				$subtotal += $config['price'];
 			}
 		}
 
-		// Add shipping and tax estimate.
-		$shipping = $this->faker->randomFloat( 2, 0, 25 );
-		$tax      = $total * $this->faker->randomFloat( 2, 0.05, 0.15 ); // 5-15% tax
+		// Calculate realistic shipping based on subtotal.
+		$shipping = $this->calculate_realistic_shipping( $subtotal );
 
-		return $total + $shipping + $tax;
+		// Calculate realistic tax based on subtotal (using typical tax rates).
+		$tax = $this->calculate_realistic_tax( $subtotal );
+
+		return $subtotal + $shipping + $tax;
+	}
+
+	/**
+	 * Calculate realistic shipping cost based on cart subtotal.
+	 *
+	 * @param float $subtotal Cart subtotal.
+	 *
+	 * @return float Shipping cost
+	 */
+	private function calculate_realistic_shipping( float $subtotal ): float {
+		// Free shipping for orders over $100 (common threshold).
+		if ( $subtotal >= 100 ) {
+			return $this->faker->boolean( 80 ) ? 0 : $this->faker->randomFloat( 2, 5, 10 );
+		}
+
+		// Tiered shipping based on subtotal.
+		if ( $subtotal >= 50 ) {
+			return $this->faker->randomFloat( 2, 5, 12 );
+		}
+
+		if ( $subtotal >= 25 ) {
+			return $this->faker->randomFloat( 2, 8, 15 );
+		}
+
+		// Small orders have higher shipping.
+		return $this->faker->randomFloat( 2, 10, 20 );
+	}
+
+	/**
+	 * Calculate realistic tax based on cart subtotal.
+	 *
+	 * Uses common tax rates from major jurisdictions.
+	 *
+	 * @param float $subtotal Cart subtotal.
+	 *
+	 * @return float Tax amount
+	 */
+	private function calculate_realistic_tax( float $subtotal ): float {
+		$common_tax_rates = array(
+			0.00,  // Tax-free states (DE, MT, NH, OR).
+			5.00,  // Low tax states.
+			6.00,  // Average tax states.
+			7.00,  // Above average.
+			7.25,  // CA base rate.
+			8.25,  // High tax states.
+			8.875, // NY rate.
+			9.50,  // Combined state + local.
+			10.00, // High combined rates.
+		);
+
+		$tax_rate = $this->faker->randomElement( $common_tax_rates );
+
+		return $subtotal * ( $tax_rate / 100 );
 	}
 
 	/**
@@ -255,6 +439,7 @@ class Cart_Session_Generator extends Generator {
 	 * Generate cart timeline based on status.
 	 *
 	 * @param string $status Cart status.
+	 *
 	 * @return array Timeline data
 	 */
 	private function generate_cart_timeline( string $status ): array {
@@ -304,6 +489,7 @@ class Cart_Session_Generator extends Generator {
 	 * Generate reminder count based on status.
 	 *
 	 * @param string $status Cart status.
+	 *
 	 * @return int Reminder count
 	 */
 	private function generate_reminder_count( string $status ): int {
@@ -321,9 +507,10 @@ class Cart_Session_Generator extends Generator {
 	 * Create cart session in database.
 	 *
 	 * @param array $data Cart session data.
-	 * @return array|null Created cart session data
+	 *
+	 * @return WP_Error|array Created cart session data
 	 */
-	private function create_cart_session( array $data ): ?array {
+	private function create_cart_session( array $data ): array {
 		$cart_db = new Database( 'cart_sessions' );
 
 		// Generate unique hash.
@@ -394,13 +581,14 @@ class Cart_Session_Generator extends Generator {
 			);
 		}
 
-		return null;
+		return new WP_Error( 'cart-creation-failed', __( 'There was an error creating the cart.', 'easycommerce-fakerpress' ) );
 	}
 
 	/**
 	 * Generate abandoned cart scenarios specifically.
 	 *
 	 * @param int $count Number of abandoned carts to generate.
+	 *
 	 * @return array Generated abandoned cart data
 	 */
 	public function generate_abandoned_carts( int $count = 10 ): array {
@@ -408,7 +596,7 @@ class Cart_Session_Generator extends Generator {
 
 		// Get existing products and customers.
 		$product_data  = Product::list( array(), 30 );
-		$customer_data = Customer::list( 'customer', null, 1, 20 );
+		$customer_data = Customer::list( null, 1, 20 );
 
 		$products  = $product_data['products'] ?? array();
 		$customers = $customer_data['users'] ?? array();
@@ -448,7 +636,7 @@ class Cart_Session_Generator extends Generator {
 	 */
 	public function get_supported_types(): array {
 		return array(
-			'cart_sessions' => 'Shopping Cart Sessions and Abandoned Carts',
+			'cart_sessions' => __( 'Shopping Cart Sessions and Abandoned Carts', 'easycommerce-fakerpress' ),
 		);
 	}
 
@@ -458,6 +646,6 @@ class Cart_Session_Generator extends Generator {
 	 * @return string Description
 	 */
 	public function get_description(): string {
-		return 'Generates realistic shopping cart sessions with various statuses (pending, abandoned, completed, cancelled), customer information, multiple items, billing/shipping addresses, and timeline data for testing abandoned cart recovery, analytics, and marketing automation systems.';
+		return __( 'Generates realistic shopping cart sessions with various statuses (pending, abandoned, completed, cancelled), customer information, multiple items, billing/shipping addresses, and timeline data for testing abandoned cart recovery, analytics, and marketing automation systems.', 'easycommerce-fakerpress' );
 	}
 }

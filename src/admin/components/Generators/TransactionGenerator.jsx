@@ -30,6 +30,26 @@ export default function TransactionGenerator() {
 	};
 
 	const parameterConfig = {
+		customer_type: {
+			description: __( 'Type of customers for transactions', 'easycommerce-fakerpress' ),
+			type: 'string',
+			enum: [ 'all', 'specific', 'existing_customers_only', 'new_customers_only' ],
+			default: 'all',
+		},
+		specific_customer_id: {
+			description: __( 'Specific customer ID for transactions (when customer_type is "specific")', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 1,
+			dependsOn: { customer_type: 'specific' },
+		},
+		order_status_filter: {
+			description: __( 'Filter orders by status for transaction generation', 'easycommerce-fakerpress' ),
+			type: 'array',
+			items: {
+				type: 'string',
+				enum: [ 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' ],
+			},
+		},
 		transaction_types: {
 			description: __( 'Types of transactions to generate', 'easycommerce-fakerpress' ),
 			type: 'array',
@@ -37,16 +57,32 @@ export default function TransactionGenerator() {
 				type: 'string',
 				enum: [ 'payment', 'refund', 'adjustment', 'fee', 'commission' ],
 			},
-			default: [ 'payment', 'refund', 'adjustment' ],
+			default: [ 'payment', 'refund' ],
 		},
 		payment_gateways: {
-			description: __( 'Payment gateways to simulate', 'easycommerce-fakerpress' ),
+			description: __( 'Payment gateways to use for transactions', 'easycommerce-fakerpress' ),
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: [ 'stripe', 'paypal', 'square', 'authorize_net', 'braintree' ],
+				enum: [ 'stripe', 'paypal', 'square', 'authorize_net', 'braintree', 'razorpay', 'mollie' ],
 			},
 			default: [ 'stripe', 'paypal', 'square' ],
+		},
+		date_range: {
+			description: __( 'Date range for transaction generation', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				start: {
+					description: __( 'Start date (YYYY-MM-DD format)', 'easycommerce-fakerpress' ),
+					type: 'string',
+					format: 'date',
+				},
+				end: {
+					description: __( 'End date (YYYY-MM-DD format)', 'easycommerce-fakerpress' ),
+					type: 'string',
+					format: 'date',
+				},
+			},
 		},
 		amount_range: {
 			description: __( 'Transaction amount range', 'easycommerce-fakerpress' ),

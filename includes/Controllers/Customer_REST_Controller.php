@@ -184,6 +184,8 @@ class Customer_REST_Controller extends REST_Controller {
 			'customers' => array(
 				'description' => __( 'Generated customers data.', 'easycommerce-fakerpress' ),
 				'type'        => 'array',
+				'context'     => array( 'view' ),
+				'readonly'    => true,
 				'items'       => array(
 					'type'       => 'object',
 					'properties' => array(

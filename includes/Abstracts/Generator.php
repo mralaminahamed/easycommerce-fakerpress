@@ -2,8 +2,8 @@
 /**
  * Abstract Generator Class.
  *
- * @package EasyCommerceFakerPress\Abstracts
  * @since   1.0.0
+ * @package EasyCommerceFakerPress\Abstracts
  */
 
 namespace EasyCommerceFakerPress\Abstracts;
@@ -46,6 +46,20 @@ abstract class Generator {
 	protected int $max_batch_size = 100;
 
 	/**
+	 * Locale for Faker
+	 *
+	 * @var string
+	 */
+	protected string $locale;
+
+	/**
+	 * Generation parameters from REST API
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected array $generation_params = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @since 1.0.0
@@ -53,12 +67,47 @@ abstract class Generator {
 	public function __construct() {
 		global $wpdb;
 
-		$this->wpdb  = $wpdb;
-		$this->faker = Factory::create( get_locale() );
+		$this->wpdb = $wpdb;
+	}
 
-		// Add addtional providers.
-		$this->faker->addProvider( new DateTime( $this->faker ) );
-		$this->faker->addProvider( new PicsumPhotosProvider( $this->faker ) );
+	/**
+	 * Set Faker instance
+	 *
+	 * @return void
+	 */
+	public function set_faker(): void {
+		$this->faker = Factory::create( $this->get_faker_locale() );
+
+		// Add additional providers.
+		$this->get_faker()->addProvider( new DateTime( $this->faker ) );
+		$this->get_faker()->addProvider( new PicsumPhotosProvider( $this->faker ) );
+	}
+
+	/**
+	 * Get Faker instance
+	 *
+	 * @return FakerGenerator Faker instance.
+	 */
+	public function get_faker(): FakerGenerator {
+		return $this->faker;
+	}
+
+	/**
+	 * Set locale for Faker
+	 *
+	 * @param string $locale Locale code.
+	 */
+	public function set_locale( string $locale = 'en_US' ): void {
+		$this->locale = $locale;
+	}
+
+	/**
+	 * Get locale for Faker
+	 *
+	 * @return string Locale code.
+	 */
+	public function get_faker_locale(): string {
+		return $this->locale;
 	}
 
 	/**
@@ -84,7 +133,6 @@ abstract class Generator {
 				$item_result = $this->generate_single_item();
 
 				if ( is_wp_error( $item_result ) ) {
-					// Continue with other items but log the error.
 					continue;
 				}
 
@@ -113,7 +161,7 @@ abstract class Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array<string, mixed>|WP_Error|false Single item data, error, or false on failure.
+	 * @return array<string, mixed>|WP_Error Single item data or error.
 	 */
 	abstract protected function generate_single_item();
 
@@ -137,6 +185,19 @@ abstract class Generator {
 	 */
 	protected function get_resource_type_plural(): string {
 		return $this->get_resource_type() . 's';
+	}
+
+	/**
+	 * Set generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $params Generation parameters.
+	 *
+	 * @return void
+	 */
+	public function set_generation_params( array $params ): void {
+		$this->generation_params = $params;
 	}
 
 	/**
@@ -192,7 +253,7 @@ abstract class Generator {
 	 * @since 1.0.0
 	 *
 	 * @param string               $message Log message.
-	 * @param string               $level   Log level (info, warning, error).
+	 * @param string               $level Log level (info, warning, error).
 	 * @param array<string, mixed> $context Additional context data.
 	 *
 	 * @return void
