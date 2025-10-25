@@ -41,34 +41,27 @@ class Location_Generator extends Generator {
 	 * @return array|WP_Error Single location data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			// Check if EasyCommerce Location class exists.
-			if ( ! class_exists( Location::class ) ) {
-				return new WP_Error( 'missing_model', 'EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active.' );
-			}
-
-			// Create comprehensive location data structure.
-			$location_data = $this->create_location_data_structure();
-
-			// Save to EasyCommerce location system.
-			$result = $this->save_location_data( $location_data );
-
-			if ( ! $result ) {
-				return new WP_Error( 'location_creation_failed', 'Failed to create location data using EasyCommerce model.' );
-			}
-
-			return array(
-				'countries_created' => count( $location_data ),
-				'total_states'      => $this->count_states( $location_data ),
-				'total_cities'      => $this->count_cities( $location_data ),
-				'data_file_path'    => $this->get_location_file_path(),
-				'created_date'      => current_time( 'Y-m-d H:i:s' ),
-			);
-		} catch ( Exception $e ) {
-			$this->log( 'Location creation failed: ' . $e->getMessage(), 'error' );
-
-			return new WP_Error( 'location_creation_failed', $e->getMessage() );
+		// Check if EasyCommerce Location class exists.
+		if ( ! class_exists( Location::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		// Create comprehensive location data structure.
+		$location_data = $this->create_location_data_structure();
+
+		// Save to EasyCommerce location system.
+		$result = $this->save_location_data( $location_data );
+		if ( ! $result || is_wp_error( $result ) ) {
+			return new WP_Error( 'location_creation_failed', __( 'Failed to create location data using EasyCommerce model.', 'easycommerce-fakerpress' ) );
+		}
+
+		return array(
+			'countries_created' => count( $location_data ),
+			'total_states'      => $this->count_states( $location_data ),
+			'total_cities'      => $this->count_cities( $location_data ),
+			'data_file_path'    => $this->get_location_file_path(),
+			'created_date'      => current_time( 'Y-m-d H:i:s' ),
+		);
 	}
 
 	/**
@@ -81,7 +74,7 @@ class Location_Generator extends Generator {
 	private function create_location_data_structure(): array {
 		$countries = array();
 
-		// Generate major countries with realistic data.
+		// Generate countries based on parameters.
 		$country_configs = $this->get_country_configurations();
 
 		foreach ( $country_configs as $config ) {
@@ -95,14 +88,20 @@ class Location_Generator extends Generator {
 	}
 
 	/**
-	 * Get predefined country configurations
+	 * Get filtered country configurations based on parameters
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return array Country configuration data.
 	 */
 	private function get_country_configurations(): array {
-		return array(
+		// Get filtering parameters.
+		$regions       = $this->generation_params['regions'] ?? array();
+		$countries     = $this->generation_params['countries'] ?? array();
+		$max_countries = $this->generation_params['max_countries'] ?? 10;
+
+		// Full country configurations.
+		$all_countries = array(
 			array(
 				'id'               => 1,
 				'name'             => 'United States',
@@ -194,6 +193,39 @@ class Location_Generator extends Generator {
 				'cities_per_state' => 6,
 			),
 		);
+
+		// Apply filters based on parameters.
+		$filtered_countries = $all_countries;
+
+		// Filter by regions if specified.
+		if ( ! empty( $regions ) ) {
+			$filtered_countries = array_filter(
+				$filtered_countries,
+				static function ( $country ) use ( $regions ) {
+					return in_array( $country['region'], $regions, true ) ||
+							in_array( $country['subregion'], $regions, true );
+				}
+			);
+		}
+
+		// Filter by specific countries if specified.
+		if ( ! empty( $countries ) ) {
+			$filtered_countries = array_filter(
+				$filtered_countries,
+				static function ( $country ) use ( $countries ) {
+					return in_array( $country['iso2'], $countries, true ) ||
+							in_array( $country['iso3'], $countries, true ) ||
+							in_array( $country['name'], $countries, true );
+				}
+			);
+		}
+
+		// Limit number of countries.
+		if ( count( $filtered_countries ) > $max_countries ) {
+			$filtered_countries = array_slice( $filtered_countries, 0, $max_countries );
+		}
+
+		return $filtered_countries;
 	}
 
 	/**
@@ -218,8 +250,8 @@ class Location_Generator extends Generator {
 			'currency_symbol' => $config['currency_symbol'],
 			'region'          => $config['region'],
 			'subregion'       => $config['subregion'],
-			'latitude'        => $this->faker->latitude(),
-			'longitude'       => $this->faker->longitude(),
+			'latitude'        => $this->get_faker()->latitude(),
+			'longitude'       => $this->get_faker()->longitude(),
 			'timezones'       => $this->generate_timezones_for_country( $config['iso2'] ),
 		);
 	}
@@ -245,8 +277,8 @@ class Location_Generator extends Generator {
 				'id'         => $i,
 				'name'       => $state_name,
 				'state_code' => $this->generate_state_code( $state_name, $config['iso2'] ),
-				'latitude'   => $this->faker->latitude(),
-				'longitude'  => $this->faker->longitude(),
+				'latitude'   => $this->get_faker()->latitude(),
+				'longitude'  => $this->get_faker()->longitude(),
 				'cities'     => $this->generate_cities_for_state( $i, $config['cities_per_state'] ),
 			);
 
@@ -261,7 +293,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $state_id    State ID.
+	 * @param int $state_id State ID.
 	 * @param int $cities_count Number of cities to generate.
 	 *
 	 * @return array Cities data.
@@ -273,9 +305,9 @@ class Location_Generator extends Generator {
 			$city_id  = ( $state_id * 1000 ) + $i;
 			$cities[] = array(
 				'id'        => $city_id,
-				'name'      => $this->faker->city,
-				'latitude'  => $this->faker->latitude(),
-				'longitude' => $this->faker->longitude(),
+				'name'      => $this->get_faker()->city,
+				'latitude'  => $this->get_faker()->latitude(),
+				'longitude' => $this->get_faker()->longitude(),
 			);
 		}
 
@@ -419,7 +451,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $state_name   State name.
+	 * @param string $state_name State name.
 	 * @param string $country_code ISO2 country code.
 	 *
 	 * @return string State code.
@@ -438,6 +470,7 @@ class Location_Generator extends Generator {
 					'Ohio'         => 'OH',
 					'Georgia'      => 'GA',
 				);
+
 				return $state_codes[ $state_name ] ?? strtoupper( substr( $state_name, 0, 2 ) );
 			case 'CA':
 				$state_codes = array(
@@ -446,6 +479,7 @@ class Location_Generator extends Generator {
 					'British Columbia' => 'BC',
 					'Alberta'          => 'AB',
 				);
+
 				return $state_codes[ $state_name ] ?? strtoupper( substr( $state_name, 0, 2 ) );
 			default:
 				return strtoupper( substr( $state_name, 0, 2 ) );
@@ -536,7 +570,7 @@ class Location_Generator extends Generator {
 	 *
 	 * @param array $location_data Complete location data.
 	 *
-	 * @return bool True on success, false on failure.
+	 * @return WP_Error|bool True on success, false on failure.
 	 */
 	private function save_location_data( array $location_data ): bool {
 		try {
@@ -562,7 +596,8 @@ class Location_Generator extends Generator {
 			return $wp_filesystem->put_contents( $json_path, $json_data, FS_CHMOD_FILE );
 		} catch ( Exception $e ) {
 			$this->log( 'Failed to save location data: ' . $e->getMessage(), 'error' );
-			return false;
+
+			return new WP_Error( 'error', $e->getMessage() );
 		}
 	}
 
@@ -580,6 +615,7 @@ class Location_Generator extends Generator {
 		foreach ( $location_data as $country ) {
 			$count += count( $country['states'] );
 		}
+
 		return $count;
 	}
 
@@ -599,6 +635,7 @@ class Location_Generator extends Generator {
 				$count += count( $state['cities'] );
 			}
 		}
+
 		return $count;
 	}
 
@@ -611,6 +648,27 @@ class Location_Generator extends Generator {
 	 */
 	private function get_location_file_path(): string {
 		$upload_dir = wp_upload_dir();
+
 		return $upload_dir['basedir'] . '/easycommerce/locations.json';
+	}
+
+	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'locations' => __( 'Geographic Location Hierarchy with Countries, States, and Cities', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates comprehensive geographic location data with hierarchical structure (countries, states/provinces, cities) including coordinates, timezones, currencies, and administrative divisions for testing location-based ecommerce functionality.', 'easycommerce-fakerpress' );
 	}
 }

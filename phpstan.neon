@@ -3,18 +3,18 @@ includes:
 
 parameters:
     level: 7
-    
+
     paths:
         - class-easycommerce-fakerpress.php
         - includes/
-    
+
     excludePaths:
         - vendor/
         - node_modules/
         - build/
         - tests/
         - languages/
-    
+
     # WordPress specific configuration
     bootstrapFiles:
         - easycommerce-fakerpress.php
@@ -28,12 +28,11 @@ parameters:
         - WP_Query
         - WP_REST_Request
         - WP_REST_Response
-    
+
     # Stub files
     stubFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
-        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
-    
+
     # WordPress constants
     dynamicConstantNames:
         - ABSPATH
@@ -46,7 +45,6 @@ parameters:
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_URL
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH
-    
     # Ignore errors
     ignoreErrors:
         # WordPress functions that may not be defined during static analysis
@@ -70,28 +68,28 @@ parameters:
         - '#Function wp_send_json_success not found\.#'
         - '#Function wp_send_json_error not found\.#'
         - '#Function easycommerce_[a-zA-Z_]+ not found\.#'
-        
+
         # PHPUnit specific
         - '#Method [a-zA-Z0-9\\_]+Test::(setUp|tearDown)\(\) should return void but returns [a-zA-Z0-9\\_]+\.#'
         - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject::[a-zA-Z0-9_]+\(\)\.#'
-        
+
         # WordPress globals
         - '#Undefined variable: \$wpdb\.#'
         - '#Undefined variable: \$wp_version\.#'
         - '#Undefined variable: \$wp_rest_server\.#'
-        
+
         # Dynamic properties (WordPress objects often have dynamic properties)
         - '#Access to an undefined property WP_[a-zA-Z_]+::\$[a-zA-Z_]+\.#'
         - '#Property WP_[a-zA-Z_]+::\$[a-zA-Z_]+ \(mixed\) does not accept [a-zA-Z0-9\\_|]+\.#'
-        
+
         # WordPress hooks (actions and filters)
         - '#Parameter \#1 \$function_to_add of function add_action expects callable\(\): mixed, array given\.#'
         - '#Parameter \#1 \$function_to_add of function add_filter expects callable, array given\.#'
-        
+
         # EasyCommerce plugin dependencies (external plugin classes)
         - '#.*EasyCommerce\\Models\\.*#'
         - '#.*EasyCommerce\\Helpers\\.*#'
-        
+
         # Array type specifications (PHP 7.4 compatibility)
         - '#Method .* has no value type specified in iterable type array\.#'
         - '#Method .* return type has no value type specified in iterable type array\.#'
@@ -99,40 +97,40 @@ parameters:
         - '#has parameter .* with generic class .* but does not specify its types\.#'
         - '#Method .* has parameter .* with no value type specified in iterable type array\.#'
         - '#has parameter \$request with generic class WP_REST_Request but does not specify its types: T#'
-        
+
         # WordPress specific issues
         - '#Call to function is_numeric\(\) with int will always evaluate to true\.#'
         - '#Variable .* in empty\(\) always exists and is not falsy\.#'
         - '#Call to function is_wp_error\(\) .* will always evaluate to false\.#'
         - '#Strict comparison using .* will always evaluate to true\.#'
-        
+
         # Faker library dynamic properties
         - '#Access to an undefined property Faker\\Generator::\$[a-zA-Z_]+\.#'
-        
+
         # PHPDoc type issues (inheritance)
         - '#PHPDoc tag @return with type .* is not subtype of native type .*\.#'
-        
+
         # Return type mismatches
         - '#Method .* should return .* but returns false\.#'
         - '#Method .* has invalid return type .*WP_Error\.#'
-        
+
         # Test-specific ignores
-        - '#Instantiated class ECFP_[a-zA-Z_]+ not found\.#'
+        - '#Instantiated class EasyCommerceFakerPress\\\\[a-zA-Z_\\\\]+ not found\.#'
         - path: tests/
           message: '#Call to method [a-zA-Z_]+ on an unknown class [a-zA-Z0-9\\_]+\.#'
 
         - identifier: 'property.notFound'
-    
+
     # Report unused ignores
     reportUnmatchedIgnoredErrors: false
-    
+
     # Parallel processing
     parallel:
         jobSize: 20
         maximumNumberOfProcesses: 4
-    
+
     # Error format
     errorFormat: table
-    
+
     # Cache
     tmpDir: .phpstan-cache

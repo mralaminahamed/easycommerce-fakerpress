@@ -1,15 +1,68 @@
+# Dependencies
 node_modules/
-build/
 vendor/
+
+# Build outputs
+build/
+dist/
+release/
+
+# Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
 .DS_Store
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
+Thumbs.db
+
+# Archives
 *.zip
+*.tar.gz
+*.rar
+
+# WordPress specific
 wp-config.php
+wp-config-local.php
+
+# Development tools cache
 /.yarn/
 /.phpstan-cache/
-/release/
+/.cache/
+.eslintcache
+.stylelintcache
+
+# Testing
+/coverage/
+/test-results/
+/tmp/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Claude AI files
+/.claude/

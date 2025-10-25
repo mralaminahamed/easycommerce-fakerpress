@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Tax;
-use Exception;
+use WP_Error;
 
 /**
  * Tax Generator Class
@@ -33,29 +33,29 @@ class Tax_Generator extends Generator {
 	/**
 	 * Generate a single tax class
 	 *
-	 * @return array|bool Single tax class data, error, or false on failure.
+	 * @return WP_Error|array|bool Single tax class data, error, or false on failure.
 	 */
 	protected function generate_single_item() {
-		try {
-			$tax_class_data = $this->generate_tax_class_data();
-			$tax_class      = $this->create_tax_class( $tax_class_data );
-
-			if ( $tax_class ) {
-				return array(
-					'id'          => $tax_class['id'],
-					'name'        => $tax_class['name'],
-					'description' => $tax_class['description'],
-					'status'      => $tax_class['status'],
-					'rates'       => $tax_class['rates'],
-					'regions'     => $this->get_tax_class_regions( $tax_class['rates'] ),
-				);
-			}
-
-			return false;
-		} catch ( Exception $e ) {
-			$this->log( 'Failed to generate tax class: ' . $e->getMessage(), 'error' );
-			return false;
+		// Check if EasyCommerce Tax class exists.
+		if ( ! class_exists( Tax::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Tax model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
+
+		$tax_class_data = $this->generate_tax_class_data();
+		$tax_class      = $this->create_tax_class( $tax_class_data );
+
+		if ( ! $tax_class ) {
+			return new WP_Error( 'tax-class-not-found', __( 'Tax class not found.', 'easycommerce-fakerpress' ) );
+		}
+
+		return array(
+			'id'          => $tax_class['id'],
+			'name'        => $tax_class['name'],
+			'description' => $tax_class['description'],
+			'status'      => $tax_class['status'],
+			'rates'       => $tax_class['rates'],
+			'regions'     => $this->get_tax_class_regions( $tax_class['rates'] ),
+		);
 	}
 
 	/**
@@ -63,6 +63,7 @@ class Tax_Generator extends Generator {
 	 *
 	 * @param int   $count Number of tax classes to generate.
 	 * @param array $args Additional arguments.
+	 *
 	 * @return array Generated tax class data
 	 */
 	public function generate_multiple( int $count = 5, array $args = array() ): array {
@@ -85,6 +86,17 @@ class Tax_Generator extends Generator {
 	 * @return array Tax class data
 	 */
 	private function generate_tax_class_data(): array {
+		// Decide whether to use real CSV data or generated data (70% CSV, 30% generated).
+		$use_csv_data = $this->get_faker()->boolean( 70 );
+
+		if ( $use_csv_data ) {
+			$csv_data = $this->generate_tax_class_from_csv();
+			if ( $csv_data ) {
+				return $csv_data;
+			}
+			// Fallback to generated data if CSV import fails.
+		}
+
 		$tax_types = array(
 			'standard' => array(
 				'name'        => 'Standard Tax Rate',
@@ -113,13 +125,13 @@ class Tax_Generator extends Generator {
 			),
 		);
 
-		$tax_type   = $this->faker->randomElement( array_keys( $tax_types ) );
+		$tax_type   = $this->get_faker()->randomElement( array_keys( $tax_types ) );
 		$tax_config = $tax_types[ $tax_type ];
 
 		return array(
-			'name'        => $tax_config['name'] . ' - ' . $this->faker->city,
+			'name'        => $tax_config['name'] . ' - ' . $this->get_faker()->city,
 			'description' => $tax_config['description'],
-			'status'      => $this->faker->boolean( 90 ), // 90% chance of being active
+			'status'      => $this->get_faker()->boolean( 90 ), // 90% chance of being active
 			'rates'       => $tax_config['rates'],
 		);
 	}
@@ -130,21 +142,21 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_standard_tax_rates(): array {
-		$selected_locations = $this->faker->randomElements(
+		$selected_locations = $this->get_faker()->randomElements(
 			$this->get_global_tax_locations(),
-			$this->faker->numberBetween( 3, 8 )
+			$this->get_faker()->numberBetween( 3, 8 )
 		);
 
 		$rates = array();
 		foreach ( $selected_locations as $location ) {
-			$base_rate = $this->faker->randomFloat( 2, 5.0, 15.0 );
+			$base_rate = $this->get_faker()->randomFloat( 2, 5.0, 15.0 );
 			$rates[]   = array(
 				'country'  => $location['country'],
 				'state'    => $location['state'],
 				'city'     => $location['city'],
 				'rate'     => $base_rate,
-				'priority' => $this->faker->numberBetween( 1, 10 ),
-				'compound' => $this->faker->boolean( 20 ), // 20% chance of compound tax
+				'priority' => $this->get_faker()->numberBetween( 1, 10 ),
+				'compound' => $this->get_faker()->boolean( 20 ), // 20% chance of compound tax
 			);
 		}
 
@@ -157,20 +169,20 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_reduced_tax_rates(): array {
-		$selected_locations = $this->faker->randomElements(
+		$selected_locations = $this->get_faker()->randomElements(
 			$this->get_global_tax_locations(),
-			$this->faker->numberBetween( 2, 6 )
+			$this->get_faker()->numberBetween( 2, 6 )
 		);
 
 		$rates = array();
 		foreach ( $selected_locations as $location ) {
-			$base_rate = $this->faker->randomFloat( 2, 0.0, 8.0 );
+			$base_rate = $this->get_faker()->randomFloat( 2, 0.0, 8.0 );
 			$rates[]   = array(
 				'country'  => $location['country'],
 				'state'    => $location['state'],
 				'city'     => $location['city'],
 				'rate'     => $base_rate,
-				'priority' => $this->faker->numberBetween( 1, 5 ),
+				'priority' => $this->get_faker()->numberBetween( 1, 5 ),
 				'compound' => false, // Reduced rates typically aren't compound.
 			);
 		}
@@ -184,7 +196,7 @@ class Tax_Generator extends Generator {
 	 * @return array Tax rates
 	 */
 	private function generate_zero_tax_rates(): array {
-		$selected_locations = $this->faker->randomElements(
+		$selected_locations = $this->get_faker()->randomElements(
 			$this->get_global_tax_locations(),
 			$this->faker->numberBetween( 1, 4 )
 		);
@@ -299,6 +311,73 @@ class Tax_Generator extends Generator {
 		}
 
 		return $rates;
+	}
+
+	/**
+	 * Generate tax class from CSV data.
+	 *
+	 * Uses real tax rate data from CSV files in the EasyCommerce plugin.
+	 *
+	 * @return array|null Tax class data with real rates, or null if no CSV data available
+	 */
+	private function generate_tax_class_from_csv(): ?array {
+		$tax_model = new Tax();
+
+		// Countries with available CSV tax data.
+		$available_countries = array( 'US', 'CA', 'GB', 'AU', 'IN', 'BD' );
+
+		// Get countries that have CSV files.
+		$countries_with_files = $tax_model->get_tax_files_by_countries( $available_countries );
+
+		if ( empty( $countries_with_files ) ) {
+			return null;
+		}
+
+		// Select a random country with CSV data.
+		$selected_country = $this->faker->randomElement( $countries_with_files );
+
+		// Get tax rates from CSV.
+		$csv_rates = $tax_model->get_country_tax_rates_from_csv( strtolower( $selected_country ) );
+
+		if ( empty( $csv_rates ) ) {
+			return null;
+		}
+
+		// Select a subset of rates (3-10 states/regions).
+		$selected_count = min( count( $csv_rates ), $this->faker->numberBetween( 3, 10 ) );
+		$selected_rates = $this->faker->randomElements( $csv_rates, $selected_count );
+
+		// Format rates for tax class creation.
+		$formatted_rates = array();
+		foreach ( $selected_rates as $csv_rate ) {
+			$formatted_rates[] = array(
+				'country'  => $csv_rate['country'],
+				'state'    => $csv_rate['state'] ?? '',
+				'city'     => $csv_rate['city'] ?? '',
+				'rate'     => (float) $csv_rate['combined_rate'],
+				'priority' => $this->faker->numberBetween( 1, 5 ),
+				'compound' => $this->faker->boolean( 15 ), // 15% chance of compound tax
+			);
+		}
+
+		$tax_class_types = array(
+			'standard' => 'Standard Tax Rate',
+			'sales'    => 'Sales Tax',
+			'vat'      => 'Value Added Tax (VAT)',
+			'gst'      => 'Goods and Services Tax (GST)',
+		);
+
+		$tax_type = $this->faker->randomElement( array_keys( $tax_class_types ) );
+
+		return array(
+			'name'        => $tax_class_types[ $tax_type ] . ' - ' . $selected_country,
+			'description' => sprintf(
+				'Real tax rates for %s imported from official tax data',
+				$selected_country
+			),
+			'status'      => $this->faker->boolean( 95 ), // 95% chance of being active for real data
+			'rates'       => $formatted_rates,
+		);
 	}
 
 	/**
@@ -562,6 +641,7 @@ class Tax_Generator extends Generator {
 	 * Create tax class in database.
 	 *
 	 * @param array $data Tax class data.
+	 *
 	 * @return array|null Created tax class data
 	 */
 	private function create_tax_class( array $data ): ?array {
@@ -580,6 +660,7 @@ class Tax_Generator extends Generator {
 	 * Get tax class regions from rates.
 	 *
 	 * @param array $rates Tax rates.
+	 *
 	 * @return string Comma-separated regions
 	 */
 	private function get_tax_class_regions( array $rates ): string {

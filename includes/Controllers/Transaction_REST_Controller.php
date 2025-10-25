@@ -54,6 +54,76 @@ class Transaction_REST_Controller extends REST_Controller {
 	}
 
 	/**
+	 * Get resource-specific generation parameters
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Resource-specific parameters.
+	 */
+	protected function get_resource_specific_params(): array {
+		return array(
+			'customer_type'        => array(
+				'description'       => __( 'Type of customers for transactions.', 'easycommerce-fakerpress' ),
+				'type'              => 'string',
+				'enum'              => array( 'all', 'specific', 'existing_customers_only', 'new_customers_only' ),
+				'default'           => 'all',
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'specific_customer_id' => array(
+				'description'       => __( 'Specific customer ID for transactions (when customer_type is "specific").', 'easycommerce-fakerpress' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+			),
+			'order_status_filter'  => array(
+				'description'       => __( 'Filter orders by status for transaction generation.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
+					'type' => 'string',
+					'enum' => array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' ),
+				),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
+			),
+			'transaction_types'    => array(
+				'description'       => __( 'Types of transactions to generate.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
+					'type' => 'string',
+					'enum' => array( 'payment', 'refund', 'adjustment', 'fee', 'commission' ),
+				),
+				'default'           => array( 'payment', 'refund' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
+			),
+			'payment_gateways'     => array(
+				'description'       => __( 'Payment gateways to use for transactions.', 'easycommerce-fakerpress' ),
+				'type'              => 'array',
+				'items'             => array(
+					'type' => 'string',
+					'enum' => array( 'stripe', 'paypal', 'square', 'authorize_net', 'braintree', 'razorpay', 'mollie' ),
+				),
+				'default'           => array( 'stripe', 'paypal', 'square' ),
+				'sanitize_callback' => array( $this, 'sanitize_array' ),
+			),
+			'date_range'           => array(
+				'description' => __( 'Date range for transaction generation.', 'easycommerce-fakerpress' ),
+				'type'        => 'object',
+				'properties'  => array(
+					'start' => array(
+						'description' => __( 'Start date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
+						'type'        => 'string',
+						'format'      => 'date',
+					),
+					'end'   => array(
+						'description' => __( 'End date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
+						'type'        => 'string',
+						'format'      => 'date',
+					),
+				),
+			),
+		);
+	}
+
+	/**
 	 * Get resource-specific schema properties
 	 *
 	 * @since 1.0.0

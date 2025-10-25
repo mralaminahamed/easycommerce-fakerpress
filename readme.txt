@@ -8,11 +8,11 @@ Stable tag: 1.0.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic fake ecommerce data with 10 specialized generators, advanced parameter configuration, WordPress admin color integration, and modern React interface.
+Generate realistic fake ecommerce data with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React interface.
 
 == Description ==
 
-EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. This initial release features 10 specialized generators, advanced parameter systems, automatic WordPress admin color integration, and comprehensive business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
+EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. Version 1.0.0 features 10 specialized generators, real-time data validation, advanced parameter systems, modern React Router v7 architecture, automatic WordPress admin color integration, and comprehensive business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
 
 **🗂️ 10 Specialized Generators:**
 
@@ -26,13 +26,16 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 * **💳 Transactions**: Payment transaction history with multiple gateways and status distributions
 * **🛒 Cart Sessions**: Shopping cart sessions with abandonment scenarios and recovery simulation
 * **🌍 Location Data**: Comprehensive geographic hierarchy (countries, states, cities) with coordinates
+* **✅ Data Validation**: Real-time validation endpoints for data availability and dependency checks
 
 **🎨 Advanced User Experience:**
 
 * **WordPress Admin Color Integration**: Automatically adapts to user's chosen admin color scheme
+* **Modern React Architecture**: React 18 + React Router v7 with data router patterns and component-based design
 * **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation
 * **Enhanced Form Controls**: Modern React interface with smart form fields and proper labeling
 * **Real-time Feedback**: Live generation progress with detailed status updates and error handling
+* **Data Validation UI**: Real-time dependency checking and data availability indicators
 
 **🎯 Advanced Features:**
 
@@ -123,15 +126,16 @@ This plugin uses compiled JavaScript and CSS files. The source code for all comp
 
 == Frequently Asked Questions ==
 
-= What makes version 1.0.0 special? =
+= What's new in version 1.0.0? =
 
-This initial release is a comprehensive EasyCommerce data generation solution featuring:
-- 10 specialized generators covering all major ecommerce data types
-- Advanced parameter system with dynamic, nested configuration options
-- WordPress admin color integration for personalized user experience
-- Complete EasyCommerce model integration with proper business logic
+This enhanced release includes major architectural improvements and new validation features:
+- Real-time data validation system with dependency checking
+- React Router v7 migration with modern data router patterns
+- Enhanced component architecture with Pages, Generators, and Base components
+- Improved code quality with PHPStan level 8 compliance
+- Fixed controller schema structures and enhanced documentation
 - Modern React interface with enhanced form controls and validation
-- Enterprise-grade architecture with PSR-4 namespacing and REST API controllers
+- Enterprise-grade architecture with 11 REST API controllers including validation
 
 = How does EasyCommerce model integration work? =
 
@@ -207,6 +211,33 @@ Options for data cleanup:
 == Changelog ==
 
 = 1.0.0 =
+**Release Date: September 15, 2025**
+
+**🔧 Frontend Modernization:**
+* React Router v7 migration with createHashRouter and data router patterns
+* Component architecture improvements with focused Page components
+* Enhanced organization with clear separation between Pages, Generators, and Base components
+* Performance optimizations with route-based code splitting
+
+**✅ Data Validation System:**
+* New Validation REST Controller for real-time data availability checks
+* Smart dependency validation with user-friendly recommendations
+* UI integration with real-time validation indicators
+* Comprehensive error handling with graceful degradation
+
+**🏗️ Code Quality Improvements:**
+* Fixed controller schema property structures across all REST controllers
+* Enhanced PHPDoc compliance and parameter validation
+* Improved WordPress Standards compliance
+* Added missing abstract method implementations
+
+**🛠️ Development Experience:**
+* Enhanced build system with better asset optimization
+* PHPStan level 8 compliance implementation
+* Improved .gitignore and .distignore for cleaner builds
+* Updated comprehensive development documentation
+
+= 1.0.0 =
 **Release Date: August 5, 2025**
 
 **🎉 Initial Release - Complete EasyCommerce Data Generation Solution:**
@@ -246,6 +277,9 @@ Options for data cleanup:
 * 👨‍💻 **Developer Experience**: Comprehensive documentation, modern tooling, and extensive customization hooks
 
 == Upgrade Notice ==
+
+= 1.0.0 =
+Major architectural improvements! Enhanced React Router v7 architecture, real-time data validation system, improved code quality with PHPStan level 8, and enhanced component organization. Recommended upgrade for better performance and user experience.
 
 = 1.0.0 =
 Initial release of EasyCommerce FakerPress! Complete EasyCommerce data generation solution with 10 specialized generators, WordPress admin color integration, advanced parameter system, and modern React interface. Requires EasyCommerce plugin for full functionality.
@@ -296,25 +330,25 @@ class Product_Generator extends Generator {
 
 ```php
 // Modify product generation
-add_filter('ecfp_product_data', 'custom_product_data');
+add_filter('easycommerce_fakerpress_product_data', 'custom_product_data');
 
 // Customize customer creation
-add_action('ecfp_after_customer_created', 'custom_customer_setup');
+add_action('easycommerce_fakerpress_after_customer_created', 'custom_customer_setup');
 
 // Modify order generation
-add_filter('ecfp_order_meta', 'custom_order_meta');
+add_filter('easycommerce_fakerpress_order_meta', 'custom_order_meta');
 
 // Customize coupon rules
-add_filter('ecfp_coupon_rules', 'custom_coupon_rules');
+add_filter('easycommerce_fakerpress_coupon_rules', 'custom_coupon_rules');
 ```
 
 **REST API Endpoints:**
 
 ```
-POST /wp-json/ecfp/v1/products/generate
-POST /wp-json/ecfp/v1/customers/generate
-POST /wp-json/ecfp/v1/orders/generate
-POST /wp-json/ecfp/v1/coupons/generate
+POST /wp-json/easycommerce-fakerpress/v1/products/generate
+POST /wp-json/easycommerce-fakerpress/v1/customers/generate
+POST /wp-json/easycommerce-fakerpress/v1/orders/generate
+POST /wp-json/easycommerce-fakerpress/v1/coupons/generate
 ```
 
 **File Structure:**

@@ -30,45 +30,123 @@ export default function CartSessionGenerator() {
 	};
 
 	const parameterConfig = {
-		session_statuses: {
-			description: __( 'Cart session statuses to generate', 'easycommerce-fakerpress' ),
-			type: 'array',
-			items: {
-				type: 'string',
-				enum: [ 'pending', 'abandoned', 'completed', 'cancelled' ],
-			},
-			default: [ 'pending', 'abandoned', 'completed' ],
+		customer_type: {
+			description: __( 'Type of customers for cart sessions', 'easycommerce-fakerpress' ),
+			type: 'string',
+			enum: [ 'existing', 'new', 'mixed', 'specific', 'guest_only' ],
+			default: 'mixed',
 		},
-		abandonment_scenarios: {
-			description: __( 'Cart abandonment scenarios', 'easycommerce-fakerpress' ),
+		specific_customer_id: {
+			description: __( 'Specific customer ID for cart sessions (when customer_type is "specific")', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 1,
+			dependsOn: { customer_type: 'specific' },
+		},
+		guest_cart_ratio: {
+			description: __( 'Percentage of guest carts (0–100) when customer_type is "mixed"', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 0,
+			maximum: 100,
+			default: 40,
+			dependsOn: { customer_type: 'mixed' },
+		},
+		abandonment_rate: {
+			description: __( 'Cart abandonment rate percentage (0–100)', 'easycommerce-fakerpress' ),
+			type: 'integer',
+			minimum: 0,
+			maximum: 100,
+			default: 30,
+		},
+		status_distribution: {
+			description: __( 'Custom cart status distribution', 'easycommerce-fakerpress' ),
 			type: 'object',
 			properties: {
-				abandonment_rate: { type: 'integer', minimum: 0, maximum: 100, default: 70 },
-				average_abandon_time: { type: 'integer', minimum: 1, maximum: 1440, default: 30 },
+				pending: {
+					description: __( 'Percentage of pending carts', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+				},
+				abandoned: {
+					description: __( 'Percentage of abandoned carts', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+				},
+				completed: {
+					description: __( 'Percentage of completed carts', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+				},
+				cancelled: {
+					description: __( 'Percentage of cancelled carts', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+				},
+			},
+		},
+		cart_value_range: {
+			description: __( 'Cart value range for generated sessions', 'easycommerce-fakerpress' ),
+			type: 'object',
+			properties: {
+				min: {
+					description: __( 'Minimum cart value', 'easycommerce-fakerpress' ),
+					type: 'number',
+					minimum: 0,
+					default: 5,
+				},
+				max: {
+					description: __( 'Maximum cart value', 'easycommerce-fakerpress' ),
+					type: 'number',
+					minimum: 1,
+					default: 500,
+				},
 			},
 		},
 		items_per_cart: {
-			description: __( 'Items per cart session', 'easycommerce-fakerpress' ),
+			description: __( 'Number of items per cart session', 'easycommerce-fakerpress' ),
 			type: 'object',
 			properties: {
-				min: { type: 'integer', minimum: 1, default: 1 },
-				max: { type: 'integer', minimum: 1, default: 10 },
+				min: {
+					description: __( 'Minimum items per cart', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 1,
+					default: 1,
+				},
+				max: {
+					description: __( 'Maximum items per cart', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 1,
+					maximum: 15,
+					default: 5,
+				},
 			},
 		},
-		value_ranges: {
-			description: __( 'Cart value ranges', 'easycommerce-fakerpress' ),
+		abandonment_tracking: {
+			description: __( 'Abandonment tracking settings', 'easycommerce-fakerpress' ),
 			type: 'object',
 			properties: {
-				min_value: { type: 'number', minimum: 0, default: 10 },
-				max_value: { type: 'number', minimum: 1, default: 500 },
-			},
-		},
-		recovery_simulation: {
-			description: __( 'Cart recovery simulation', 'easycommerce-fakerpress' ),
-			type: 'object',
-			properties: {
-				enable_recovery: { type: 'boolean', default: true },
-				recovery_rate: { type: 'integer', minimum: 0, maximum: 100, default: 15 },
+				generate_reminders: {
+					description: __( 'Generate abandoned cart reminders', 'easycommerce-fakerpress' ),
+					type: 'boolean',
+					default: true,
+				},
+				reminder_count: {
+					description: __( 'Maximum number of reminders to generate', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 10,
+					default: 3,
+				},
+				recovery_rate: {
+					description: __( 'Cart recovery rate percentage (0–100)', 'easycommerce-fakerpress' ),
+					type: 'integer',
+					minimum: 0,
+					maximum: 100,
+					default: 15,
+				},
 			},
 		},
 	};
