@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Location;
+use EasyCommerce\Models\Location as LocationModel;
 use WP_Error;
 use Exception;
 
@@ -20,7 +20,7 @@ use Exception;
  *
  * @since 1.0.0
  */
-class Location_Generator extends Generator {
+class Location extends Generator {
 
 	/**
 	 * Get the resource type name
@@ -34,6 +34,26 @@ class Location_Generator extends Generator {
 	}
 
 	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'locations' => __( 'Geographic Location Hierarchy with Countries, States, and Cities', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates comprehensive geographic location data with hierarchical structure (countries, states/provinces, cities) including coordinates, timezones, currencies, and administrative divisions for testing location-based ecommerce functionality.', 'easycommerce-fakerpress' );
+	}
+
+	/**
 	 * Generate a single location data entry
 	 *
 	 * @since 1.0.0
@@ -42,7 +62,7 @@ class Location_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Location class exists.
-		if ( ! class_exists( Location::class ) ) {
+		if ( ! class_exists( LocationModel::class ) ) {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
@@ -650,25 +670,5 @@ class Location_Generator extends Generator {
 		$upload_dir = wp_upload_dir();
 
 		return $upload_dir['basedir'] . '/easycommerce/locations.json';
-	}
-
-	/**
-	 * Get supported data types for this generator.
-	 *
-	 * @return array Supported types
-	 */
-	public function get_supported_types(): array {
-		return array(
-			'locations' => __( 'Geographic Location Hierarchy with Countries, States, and Cities', 'easycommerce-fakerpress' ),
-		);
-	}
-
-	/**
-	 * Get generator description.
-	 *
-	 * @return string Description
-	 */
-	public function get_description(): string {
-		return __( 'Generates comprehensive geographic location data with hierarchical structure (countries, states/provinces, cities) including coordinates, timezones, currencies, and administrative divisions for testing location-based ecommerce functionality.', 'easycommerce-fakerpress' );
 	}
 }

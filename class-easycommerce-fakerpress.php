@@ -10,16 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use EasyCommerceFakerPress\Controllers\Product_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Customer_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Order_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Coupon_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Product_Variation_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Shipping_Plan_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Tax_Classes_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Transaction_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Cart_Session_REST_Controller;
-use EasyCommerceFakerPress\Controllers\Location_REST_Controller;
+use EasyCommerceFakerPress\Controllers\Products;
+use EasyCommerceFakerPress\Controllers\Customers;
+use EasyCommerceFakerPress\Controllers\Orders;
+use EasyCommerceFakerPress\Controllers\Coupons;
+use EasyCommerceFakerPress\Controllers\Product_Variations;
+use EasyCommerceFakerPress\Controllers\Shipping_Plans;
+use EasyCommerceFakerPress\Controllers\Tax_Classes;
+use EasyCommerceFakerPress\Controllers\Transactions;
+use EasyCommerceFakerPress\Controllers\Cart_Sessions;
+use EasyCommerceFakerPress\Controllers\Locations;
 
 /**
  * Main Plugin Class
@@ -67,6 +67,7 @@ class EasyCommerce_FakerPress {
 	 *
 	 * Sets up hooks for activation, deactivation, and core functionality.
 	 * Checks dependencies before proceeding with initialization.
+	 * Hooked to WordPress core via implicit instantiation; no explicit action needed.
 	 *
 	 * @since 1.0.0
 	 *
@@ -86,6 +87,7 @@ class EasyCommerce_FakerPress {
 	 * Add admin menu page
 	 *
 	 * Creates the main admin menu page for the plugin interface.
+	 * Hooked to 'admin_menu' action.
 	 *
 	 * @since 1.0.0
 	 *
@@ -112,6 +114,7 @@ class EasyCommerce_FakerPress {
 	 * Render the admin page
 	 *
 	 * Outputs the React root element where the admin interface will be mounted.
+	 * Called as callback from add_menu_page().
 	 *
 	 * @since 1.0.0
 	 *
@@ -126,6 +129,7 @@ class EasyCommerce_FakerPress {
 	 *
 	 * Loads JavaScript, CSS, and localization data for the admin interface.
 	 * Only loads on the plugin's admin page.
+	 * Hooked to 'admin_enqueue_scripts' action.
 	 *
 	 * @since 1.0.0
 	 *
@@ -215,6 +219,7 @@ class EasyCommerce_FakerPress {
 	 *
 	 * Initializes and registers all REST API controllers for the plugin.
 	 * Includes both core generators and enhanced Version 2.0 generators.
+	 * Hooked to 'rest_api_init' action.
 	 *
 	 * @since 1.0.0
 	 *
@@ -228,18 +233,18 @@ class EasyCommerce_FakerPress {
 
 		$controllers = array(
 			// Core generators.
-			new Product_REST_Controller(),
-			new Customer_REST_Controller(),
-			new Order_REST_Controller(),
-			new Coupon_REST_Controller(),
+			new Products(),
+			new Customers(),
+			new Orders(),
+			new Coupons(),
 
 			// Enhanced generators (Version 2.0).
-			new Product_Variation_REST_Controller(),
-			new Shipping_Plan_REST_Controller(),
-			new Tax_Classes_REST_Controller(),
-			new Transaction_REST_Controller(),
-			new Cart_Session_REST_Controller(),
-			new Location_REST_Controller(),
+			new Product_Variations(),
+			new Shipping_Plans(),
+			new Tax_Classes(),
+			new Transactions(),
+			new Cart_Sessions(),
+			new Locations(),
 		);
 
 		foreach ( $controllers as $controller ) {
@@ -251,6 +256,7 @@ class EasyCommerce_FakerPress {
 	 * Flush rewrite rules on activation and deactivation
 	 *
 	 * Flushes rewrite rules to clean up any custom endpoints.
+	 * Hooked to 'register_activation_hook' and 'register_deactivation_hook'.
 	 *
 	 * @since 1.0.0
 	 *
@@ -264,6 +270,7 @@ class EasyCommerce_FakerPress {
 	 * Display dependency notice
 	 *
 	 * Shows an admin notice when required dependencies are not met.
+	 * Hooked to 'admin_notices' action.
 	 *
 	 * @since 1.0.0
 	 *
@@ -325,9 +332,8 @@ class EasyCommerce_FakerPress {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @throws RuntimeException When attempting to unserialize.
-	 *
 	 * @return void
+	 * @throws RuntimeException When attempting to unserialize.
 	 */
 	public function __wakeup() {
 		throw new RuntimeException( 'Cannot unserialize singleton' );
@@ -336,17 +342,25 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Get FakerPHP locale for display purposes
 	 *
-	 * Replicates Generator locale detection logic for frontend display
+	 * Replicates Generator locale detection logic for frontend display.
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $locale_ WordPress locale code.
+	 * @param string $locale WordPress locale code.
 	 *
 	 * @return string FakerPHP compatible locale code.
 	 */
-	public function get_faker_locale( string $locale_ ): string {
-		// Allow developers to override the locale.
-		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $locale_ );
+	public function get_faker_locale( string $locale ): string {
+		/**
+		 * Filters the locale used for test data generation.
+		 *
+		 * Allows developers to override the default locale used by FakerPress for generating test data.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $locale The current WordPress locale code (e.g. 'en_US').
+		 */
+		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $locale );
 
 		// Get supported locales.
 		$supported_locales = array_keys( $this->get_locale_labels() );
@@ -358,9 +372,9 @@ class EasyCommerce_FakerPress {
 
 		// Try language fallback.
 		$language = substr( $custom_locale, 0, 2 );
-		foreach ( $supported_locales as $locale ) {
-			if ( strpos( $locale, $language . '_' ) === 0 ) {
-				return $locale;
+		foreach ( $supported_locales as $locale_code ) {
+			if ( strpos( $locale_code, $language . '_' ) === 0 ) {
+				return $locale_code;
 			}
 		}
 

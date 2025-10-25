@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Product_Variation_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Product_Variation;
 
 /**
  * Product Variation REST Controller Class
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Product_Variation_Generator;
  *
  * @since 1.0.0
  */
-class Product_Variation_REST_Controller extends REST_Controller {
+class Product_Variations extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'product_variation';
+	}
+
+	/**
+	 * Get resource type label for product variations
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for product variation resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Product Variation', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Product_Variation_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Product_Variation_Generator Generator instance.
+	 * @return Product_Variation Generator instance.
 	 */
-	protected function get_generator_instance(): Product_Variation_Generator {
-		return new Product_Variation_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'product_variation';
+	protected function get_generator_instance(): Product_Variation {
+		return new Product_Variation();
 	}
 
 	/**

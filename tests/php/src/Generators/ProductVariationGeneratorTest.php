@@ -3,18 +3,18 @@
 namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Product_Variation_Generator;
+use EasyCommerceFakerPress\Generators\Product_Variation;
 use EasyCommerce\Models\Product_Variation;
 
 /**
  * Test class for Product Variation Generator
  *
- * @covers \EasyCommerceFakerPress\Generators\Product_Variation_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Product_Variation
  */
 class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Product_Variation_Generator
+	 * @var Product_Variation
 	 */
 	private $generator;
 
@@ -23,13 +23,13 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
+
 		// Skip if EasyCommerce plugin is not active
 		if ( ! class_exists( 'EasyCommerce\Models\Product_Variation' ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
-		
-		$this->generator = new Product_Variation_Generator();
+
+		$this->generator = new Product_Variation();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Product_Variation_Generator::class, $this->generator );
+		$this->assertInstanceOf( Product_Variation::class, $this->generator );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
-		
+
 		$this->assertEquals( 'product_variation', $method->invoke( $this->generator ) );
 	}
 
@@ -185,7 +185,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			// Common attribute types that should be present
 			$possible_attributes = array( 'size', 'color', 'storage', 'band', 'format', 'language' );
 			$variation_keys = array_keys( $variation['attributes'] );
-			
+
 			// At least one common attribute should be present
 			$intersection = array_intersect( $possible_attributes, $variation_keys );
 			$this->assertGreaterThan( 0, count( $intersection ), 'Variation should have at least one recognizable attribute' );
@@ -207,7 +207,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		// Name should contain attribute values separated by ' - '
 		$attribute_values = array_values( $variation['attributes'] );
 		$expected_name = implode( ' - ', $attribute_values );
-		
+
 		$this->assertEquals( $expected_name, $variation['name'] );
 	}
 
@@ -341,7 +341,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (5 seconds)
 		$this->assertLessThan( 5, $execution_time, 'Variation generation took too long' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 10, $result['generated'] );
 	}
@@ -358,7 +358,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 5MB for 15 variations)
 		$this->assertLessThan( 5 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 15, $result['generated'] );
 	}
@@ -439,13 +439,13 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_handles_missing_products_gracefully(): void {
 		// This test verifies that the generator handles the case where no parent products exist
 		// The actual behavior depends on the implementation - it might return empty results or throw exceptions
-		
+
 		$result = $this->generator->generate( 1 );
-		
+
 		// Result should either be a valid array or a WP_Error, but not cause a fatal error
-		$this->assertTrue( 
-			is_array( $result ) || is_wp_error( $result ), 
-			'Generator should handle missing products gracefully' 
+		$this->assertTrue(
+			is_array( $result ) || is_wp_error( $result ),
+			'Generator should handle missing products gracefully'
 		);
 	}
 }

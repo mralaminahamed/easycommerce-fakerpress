@@ -181,7 +181,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 		$_POST['count'] = 5;
 
 		// Mock the generator
-		$mock_generator = $this->createMock( \EasyCommerceFakerPress\Generators\Product_Generator::class );
+		$mock_generator = $this->createMock( \EasyCommerceFakerPress\Generators\Product::class );
 		$mock_generator->method( 'generate' )->willReturn( array( 'success' => true, 'products_created' => 5 ) );
 
 		// We can't easily test the full method without actual generators, so we test parameter validation

@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Product_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Product;
 
 /**
  * Product Generator REST Controller
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Product_Generator;
  *
  * @since 1.0.0
  */
-class Product_REST_Controller extends REST_Controller {
+class Products extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'product';
+	}
+
+	/**
+	 * Get resource type label for products
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for product resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Product', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Product_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Product_Generator Generator instance.
+	 * @return Product Generator instance.
 	 */
-	protected function get_generator_instance(): Product_Generator {
-		return new Product_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'product';
+	protected function get_generator_instance(): Product {
+		return new Product();
 	}
 
 	/**

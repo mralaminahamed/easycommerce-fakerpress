@@ -344,7 +344,7 @@ We encourage adding tests for new functionality:
 // Example PHPUnit test
 class Test_Product_Generator extends WP_UnitTestCase {
     public function test_generate_products() {
-        $generator = new \EasyCommerceFakerPress\Generators\Product_Generator();
+        $generator = new \EasyCommerceFakerPress\Generators\Product();
         $result = $generator->generate(5);
         
         $this->assertCount(5, $result);

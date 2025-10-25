@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Shipping_Plan_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Shipping_Plan;
 
 /**
  * Shipping Plan REST Controller Class
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Shipping_Plan_Generator;
  *
  * @since 1.0.0
  */
-class Shipping_Plan_REST_Controller extends REST_Controller {
+class Shipping_Plans extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'shipping_plan';
+	}
+
+	/**
+	 * Get resource type label for shipping plans
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for shipping plan resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Shipping Plan', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Shipping_Plan_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Shipping_Plan_Generator Generator instance.
+	 * @return Shipping_Plan Generator instance.
 	 */
-	protected function get_generator_instance(): Shipping_Plan_Generator {
-		return new Shipping_Plan_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'shipping_plan';
+	protected function get_generator_instance(): Shipping_Plan {
+		return new Shipping_Plan();
 	}
 
 	/**

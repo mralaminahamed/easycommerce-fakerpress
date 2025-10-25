@@ -3,18 +3,18 @@
 namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Coupon_Generator;
+use EasyCommerceFakerPress\Generators\Coupon;
 use EasyCommerce\Models\Coupon;
 
 /**
  * Test class for Coupon Generator
  *
- * @covers \EasyCommerceFakerPress\Generators\Coupon_Generator
+ * @covers \EasyCommerceFakerPress\Generators\Coupon
  */
 class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Coupon_Generator
+	 * @var Coupon
 	 */
 	private $generator;
 
@@ -23,13 +23,13 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		
+
 		// Skip if EasyCommerce plugin is not active
 		if ( ! class_exists( 'EasyCommerce\Models\Coupon' ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
-		
-		$this->generator = new Coupon_Generator();
+
+		$this->generator = new Coupon();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Coupon_Generator::class, $this->generator );
+		$this->assertInstanceOf( Coupon::class, $this->generator );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$reflection = new \ReflectionClass( $this->generator );
 		$method = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
-		
+
 		$this->assertEquals( 'coupon', $method->invoke( $this->generator ) );
 	}
 
@@ -234,7 +234,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		if ( ! is_null( $coupon['start_date'] ) ) {
 			$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $coupon['start_date'] );
 		}
-		
+
 		if ( ! is_null( $coupon['end_date'] ) ) {
 			$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $coupon['end_date'] );
 		}
@@ -308,7 +308,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Generation should complete within reasonable time (3 seconds)
 		$this->assertLessThan( 3, $execution_time, 'Coupon generation took too long' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 10, $result['generated'] );
 	}
@@ -325,7 +325,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Memory usage should be reasonable (less than 3MB for 20 coupons)
 		$this->assertLessThan( 3 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
-		
+
 		$this->assertIsArray( $result );
 		$this->assertEquals( 20, $result['generated'] );
 	}

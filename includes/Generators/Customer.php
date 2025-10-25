@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
-use EasyCommerce\Models\Customer;
+use EasyCommerce\Models\Customer as CustomerModel;
 use WP_Error;
 use WP_User;
 
@@ -20,7 +20,7 @@ use WP_User;
  *
  * @since 1.0.0
  */
-class Customer_Generator extends Generator {
+class Customer extends Generator {
 
 	/**
 	 * Get the resource type name
@@ -34,6 +34,26 @@ class Customer_Generator extends Generator {
 	}
 
 	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'customers' => __( 'Customer Profiles with Addresses and Metadata', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return __( 'Generates realistic customer profiles with comprehensive personal information, billing/shipping addresses, preferences, purchase history, loyalty tiers, and engagement metrics for testing ecommerce customer management systems.', 'easycommerce-fakerpress' );
+	}
+
+	/**
 	 * Generate a single customer
 	 *
 	 * @since 1.0.0
@@ -42,7 +62,7 @@ class Customer_Generator extends Generator {
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Customer class exists.
-		if ( ! class_exists( Customer::class ) ) {
+		if ( ! class_exists( CustomerModel::class ) ) {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
@@ -62,7 +82,7 @@ class Customer_Generator extends Generator {
 		}
 
 		// Use EasyCommerce Customer model with proper data structure.
-		$customer = new Customer();
+		$customer = new CustomerModel();
 		$username = $this->generate_unique_username( $first_name, $last_name );
 
 		// Prepare complete meta data for customer creation.
@@ -226,21 +246,21 @@ class Customer_Generator extends Generator {
 		}
 
 		// 80% chance shipping address is in the same country
-		$country = $this->get_faker()->boolean( 80 ) ? $billing_country : $this->faker->randomElement(
+		$country = $this->get_faker()->boolean( 80 ) ? $billing_country : $this->get_faker()->randomElement(
 			array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
 		);
 
 		return array(
 			'first_name'   => $first_name,
 			'last_name'    => $last_name,
-			'company'      => $this->faker->optional( 0.2 )->company,
-			'address_1'    => $this->faker->streetAddress,
-			'address_2'    => $this->faker->optional( 0.3 )->secondaryAddress,
-			'city'         => $this->faker->city,
+			'company'      => $this->get_faker()->optional( 0.2 )->company,
+			'address_1'    => $this->get_faker()->streetAddress,
+			'address_2'    => $this->get_faker()->optional( 0.3 )->secondaryAddress,
+			'city'         => $this->get_faker()->city,
 			'state'        => $this->generate_state( $country ),
 			'country'      => $country,
 			'postcode'     => $this->generate_postcode( $country ),
-			'instructions' => $this->faker->optional( 0.4 )->sentence( 6, true ),
+			'instructions' => $this->get_faker()->optional( 0.4 )->sentence( 6, true ),
 		);
 	}
 
@@ -252,8 +272,8 @@ class Customer_Generator extends Generator {
 	 * @return array Customer metadata.
 	 */
 	private function generate_customer_meta(): array {
-		$join_date  = $this->faker->dateTimeBetween( '-5 years', '-1 week' );
-		$last_login = $this->faker->optional( 0.85 )->dateTimeBetween( $join_date, 'now' );
+		$join_date  = $this->get_faker()->dateTimeBetween( '-5 years', '-1 week' );
+		$last_login = $this->get_faker()->optional( 0.85 )->dateTimeBetween( $join_date, 'now' );
 
 		// Generate realistic customer history based on how long they've been a customer.
 		$customer_age_days = $join_date->diff( new \DateTime() )->days;
@@ -263,21 +283,21 @@ class Customer_Generator extends Generator {
 			array(
 				// Customer preferences.
 				'customer_preferences' => array(
-					'newsletter'           => $this->faker->boolean( 70 ),
-					'sms_notifications'    => $this->faker->boolean( 40 ),
-					'email_notifications'  => $this->faker->boolean( 85 ),
-					'marketing_opt_in'     => $this->faker->boolean( 60 ),
-					'preferred_language'   => $this->faker->randomElement(
+					'newsletter'           => $this->get_faker()->boolean( 70 ),
+					'sms_notifications'    => $this->get_faker()->boolean( 40 ),
+					'email_notifications'  => $this->get_faker()->boolean( 85 ),
+					'marketing_opt_in'     => $this->get_faker()->boolean( 60 ),
+					'preferred_language'   => $this->get_faker()->randomElement(
 						array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' )
 					),
-					'currency'             => $this->faker->randomElement(
+					'currency'             => $this->get_faker()->randomElement(
 						array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
 					),
-					'timezone'             => $this->faker->timezone,
-					'communication_method' => $this->faker->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
-					'preferred_categories' => $this->faker->randomElements(
+					'timezone'             => $this->get_faker()->timezone,
+					'communication_method' => $this->get_faker()->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
+					'preferred_categories' => $this->get_faker()->randomElements(
 						array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
-						$this->faker->numberBetween( 1, 3 )
+						$this->get_faker()->numberBetween( 1, 3 )
 					),
 				),
 
@@ -286,39 +306,39 @@ class Customer_Generator extends Generator {
 				'last_login'           => null !== $last_login ? $last_login->format( 'Y-m-d H:i:s' ) : null,
 
 				// Loyalty and engagement.
-				'referral_code'        => strtoupper( $this->faker->lexify( '????' ) . $this->faker->numerify( '###' ) ),
-				'referred_by'          => $this->faker->optional( 0.2 )->randomNumber( 5 ), // Customer ID who referred.
-				'referral_count'       => $this->faker->numberBetween( 0, 5 ),
+				'referral_code'        => strtoupper( $this->get_faker()->lexify( '????' ) . $this->get_faker()->numerify( '###' ) ),
+				'referred_by'          => $this->get_faker()->optional( 0.2 )->randomNumber( 5 ), // Customer ID who referred.
+				'referral_count'       => $this->get_faker()->numberBetween( 0, 5 ),
 
 				// Personal information.
-				'birth_date'           => $this->faker->optional( 0.65 )->date( 'Y-m-d', '-18 years' ),
-				'gender'               => $this->faker->optional( 0.55 )->randomElement(
+				'birth_date'           => $this->get_faker()->optional( 0.65 )->date( 'Y-m-d', '-18 years' ),
+				'gender'               => $this->get_faker()->optional( 0.55 )->randomElement(
 					array( 'male', 'female', 'non_binary', 'prefer_not_to_say' )
 				),
-				'occupation'           => $this->faker->optional( 0.45 )->jobTitle,
-				'marital_status'       => $this->faker->optional( 0.4 )->randomElement(
+				'occupation'           => $this->get_faker()->optional( 0.45 )->jobTitle,
+				'marital_status'       => $this->get_faker()->optional( 0.4 )->randomElement(
 					array( 'single', 'married', 'divorced', 'widowed' )
 				),
 
 				// Marketing and engagement.
-				'source'               => $this->faker->randomElement(
+				'source'               => $this->get_faker()->randomElement(
 					array( 'organic', 'google_ads', 'facebook_ads', 'instagram', 'referral', 'email_campaign', 'direct', 'affiliate' )
 				),
-				'utm_campaign'         => $this->faker->optional( 0.35 )->words( 3, true ),
-				'utm_source'           => $this->faker->optional( 0.35 )->randomElement(
+				'utm_campaign'         => $this->get_faker()->optional( 0.35 )->words( 3, true ),
+				'utm_source'           => $this->get_faker()->optional( 0.35 )->randomElement(
 					array( 'google', 'facebook', 'twitter', 'linkedin', 'email' )
 				),
-				'utm_medium'           => $this->faker->optional( 0.35 )->randomElement(
+				'utm_medium'           => $this->get_faker()->optional( 0.35 )->randomElement(
 					array( 'cpc', 'social', 'email', 'referral', 'organic' )
 				),
 				'tags'                 => $this->generate_customer_tags(),
 
 				// Customer service.
-				'notes'                => $this->faker->optional( 0.25 )->paragraph( 3, true ),
-				'vip_status'           => $this->faker->boolean( 8 ), // 8% VIP customers
-				'account_status'       => $this->faker->randomElement( array( 'active', 'inactive', 'pending' ) ),
-				'email_verified'       => $this->faker->boolean( 90 ),
-				'phone_verified'       => $this->faker->boolean( 65 ),
+				'notes'                => $this->get_faker()->optional( 0.25 )->paragraph( 3, true ),
+				'vip_status'           => $this->get_faker()->boolean( 8 ), // 8% VIP customers
+				'account_status'       => $this->get_faker()->randomElement( array( 'active', 'inactive', 'pending' ) ),
+				'email_verified'       => $this->get_faker()->boolean( 90 ),
+				'phone_verified'       => $this->get_faker()->boolean( 65 ),
 			),
 			$customer_history
 		);
@@ -352,7 +372,7 @@ class Customer_Generator extends Generator {
 			'returning_customer',
 		);
 
-		return $this->faker->randomElements( $available_tags, $this->faker->numberBetween( 1, 5 ) );
+		return $this->get_faker()->randomElements( $available_tags, $this->get_faker()->numberBetween( 1, 5 ) );
 	}
 
 	/**
@@ -384,7 +404,7 @@ class Customer_Generator extends Generator {
 
 		$pattern = $patterns[ $country ] ?? '+1-###-###-####';
 
-		return $this->faker->numerify( $pattern );
+		return $this->get_faker()->numerify( $pattern );
 	}
 
 	/**
@@ -399,15 +419,15 @@ class Customer_Generator extends Generator {
 	private function generate_state( string $country ): string {
 		switch ( $country ) {
 			case 'US':
-				return $this->faker->stateAbbr;
+				return $this->get_faker()->stateAbbr;
 			case 'CA':
 				$provinces = array( 'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT' );
 
-				return $this->faker->randomElement( $provinces );
+				return $this->get_faker()->randomElement( $provinces );
 			case 'AU':
 				$states = array( 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT' );
 
-				return $this->faker->randomElement( $states );
+				return $this->get_faker()->randomElement( $states );
 			case 'GB':
 				$counties = array(
 					'Greater London',
@@ -420,7 +440,7 @@ class Customer_Generator extends Generator {
 					'Hampshire',
 				);
 
-				return $this->faker->randomElement( $counties );
+				return $this->get_faker()->randomElement( $counties );
 			case 'JP':
 				$prefectures = array(
 					'Tokyo',
@@ -433,7 +453,7 @@ class Customer_Generator extends Generator {
 					'Saitama',
 				);
 
-				return $this->faker->randomElement( $prefectures );
+				return $this->get_faker()->randomElement( $prefectures );
 			case 'IN':
 				$states = array(
 					'Maharashtra',
@@ -446,11 +466,11 @@ class Customer_Generator extends Generator {
 					'Uttar Pradesh',
 				);
 
-				return $this->faker->randomElement( $states );
+				return $this->get_faker()->randomElement( $states );
 			case 'BR':
 				$states = array( 'SP', 'RJ', 'MG', 'RS', 'BA', 'PE', 'CE', 'PR' );
 
-				return $this->faker->randomElement( $states );
+				return $this->get_faker()->randomElement( $states );
 			case 'MX':
 				$states = array(
 					'CDMX',
@@ -463,9 +483,9 @@ class Customer_Generator extends Generator {
 					'Chihuahua',
 				);
 
-				return $this->faker->randomElement( $states );
+				return $this->get_faker()->randomElement( $states );
 			default:
-				return $this->faker->state;
+				return $this->get_faker()->state;
 		}
 	}
 
@@ -498,7 +518,7 @@ class Customer_Generator extends Generator {
 
 		$pattern = $patterns[ $country ] ?? '#####';
 
-		return $this->faker->bothify( $pattern );
+		return $this->get_faker()->bothify( $pattern );
 	}
 
 	/**
@@ -515,7 +535,7 @@ class Customer_Generator extends Generator {
 		$purchase_probability = min( 0.95, $customer_age_days / 365 * 0.4 + 0.1 );
 
 		// Determine if customer has made purchases.
-		$has_purchases = $this->faker->boolean( $purchase_probability * 100 );
+		$has_purchases = $this->get_faker()->boolean( $purchase_probability * 100 );
 
 		if ( ! $has_purchases ) {
 			return array(
@@ -525,22 +545,22 @@ class Customer_Generator extends Generator {
 				'last_order_date'     => null,
 				'loyalty_tier'        => 'bronze',
 				'loyalty_points'      => 0,
-				'cart_abandonments'   => $this->faker->numberBetween( 0, 3 ),
+				'cart_abandonments'   => $this->get_faker()->numberBetween( 0, 3 ),
 				'coupon_usage'        => 0,
 			);
 		}
 
 		// Generate realistic purchase history.
 		$months_active        = max( 1, $customer_age_days / 30 );
-		$avg_orders_per_month = $this->faker->randomFloat( 2, 0.05, 3.0 );
+		$avg_orders_per_month = $this->get_faker()->randomFloat( 2, 0.05, 3.0 );
 		$total_orders         = max( 1, round( $months_active * $avg_orders_per_month ) );
 
 		// Generate realistic spending patterns.
-		$avg_order_value = $this->faker->randomFloat( 2, 30, 500 );
+		$avg_order_value = $this->get_faker()->randomFloat( 2, 30, 500 );
 		$total_spent     = $total_orders * $avg_order_value;
 
 		// Add variance for realism.
-		$total_spent *= $this->faker->randomFloat( 2, 0.8, 1.5 );
+		$total_spent *= $this->get_faker()->randomFloat( 2, 0.8, 1.5 );
 
 		// Determine loyalty tier.
 		$loyalty_tier = $this->determine_loyalty_tier( $total_spent );
@@ -556,12 +576,12 @@ class Customer_Generator extends Generator {
 		$loyalty_points  = floor( $base_points * $tier_multiplier[ $loyalty_tier ] );
 
 		// Determine last order date.
-		$last_order_days_ago = $this->faker->numberBetween( 1, min( 365, $customer_age_days ) );
-		$last_order_date     = $this->faker->dateTimeBetween( "-{$last_order_days_ago} days", 'now' );
+		$last_order_days_ago = $this->get_faker()->numberBetween( 1, min( 365, $customer_age_days ) );
+		$last_order_date     = $this->get_faker()->dateTimeBetween( "-{$last_order_days_ago} days", 'now' );
 
 		// Generate additional engagement metrics.
-		$cart_abandonments = $this->faker->numberBetween( 0, ceil( $total_orders / 2 ) );
-		$coupon_usage      = $this->faker->numberBetween( 0, ceil( $total_orders / 3 ) );
+		$cart_abandonments = $this->get_faker()->numberBetween( 0, ceil( $total_orders / 2 ) );
+		$coupon_usage      = $this->get_faker()->numberBetween( 0, ceil( $total_orders / 3 ) );
 
 		return array(
 			'total_orders'        => $total_orders,
@@ -605,12 +625,12 @@ class Customer_Generator extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param Customer $customer Customer object.
-	 * @param array    $customer_meta Customer metadata.
+	 * @param CustomerModel $customer Customer object.
+	 * @param array         $customer_meta Customer metadata.
 	 *
 	 * @return void
 	 */
-	private function initialize_customer_history( Customer $customer, array $customer_meta ): void {
+	private function initialize_customer_history( CustomerModel $customer, array $customer_meta ): void {
 		if ( ! $customer->get_id() || $customer->get_id() <= 0 ) {
 			return;
 		}
@@ -623,25 +643,5 @@ class Customer_Generator extends Generator {
 		$customer->update_meta( 'loyalty_points', $customer_meta['loyalty_points'] );
 		$customer->update_meta( 'cart_abandonments', $customer_meta['cart_abandonments'] );
 		$customer->update_meta( 'coupon_usage', $customer_meta['coupon_usage'] );
-	}
-
-	/**
-	 * Get supported data types for this generator.
-	 *
-	 * @return array Supported types
-	 */
-	public function get_supported_types(): array {
-		return array(
-			'customers' => __( 'Customer Profiles with Addresses and Metadata', 'easycommerce-fakerpress' ),
-		);
-	}
-
-	/**
-	 * Get generator description.
-	 *
-	 * @return string Description
-	 */
-	public function get_description(): string {
-		return __( 'Generates realistic customer profiles with comprehensive personal information, billing/shipping addresses, preferences, purchase history, loyalty tiers, and engagement metrics for testing ecommerce customer management systems.', 'easycommerce-fakerpress' );
 	}
 }

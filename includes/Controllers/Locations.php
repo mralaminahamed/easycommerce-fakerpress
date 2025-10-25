@@ -8,8 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
-use EasyCommerceFakerPress\Abstracts\REST_Controller;
-use EasyCommerceFakerPress\Generators\Location_Generator;
+use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Location;
 
 /**
  * Location REST Controller Class
@@ -18,7 +18,29 @@ use EasyCommerceFakerPress\Generators\Location_Generator;
  *
  * @since 1.0.0
  */
-class Location_REST_Controller extends REST_Controller {
+class Locations extends Controller {
+
+	/**
+	 * Get resource type name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type.
+	 */
+	protected function get_resource_type(): string {
+		return 'location';
+	}
+
+	/**
+	 * Get resource type label for locations
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The translated label for location resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Location', 'easycommerce-fakerpress' );
+	}
 
 	/**
 	 * Get REST base for the endpoint
@@ -36,21 +58,10 @@ class Location_REST_Controller extends REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Location_Generator Generator instance.
+	 * @return Location Generator instance.
 	 */
-	protected function get_generator_instance(): Location_Generator {
-		return new Location_Generator();
-	}
-
-	/**
-	 * Get resource type name
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Resource type.
-	 */
-	protected function get_resource_type(): string {
-		return 'location';
+	protected function get_generator_instance(): Location {
+		return new Location();
 	}
 
 	/**

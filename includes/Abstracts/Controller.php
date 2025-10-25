@@ -22,7 +22,7 @@ use WP_Error;
  *
  * @since 1.0.0
  */
-abstract class REST_Controller extends WP_REST_Controller {
+abstract class Controller extends WP_REST_Controller {
 
 	/**
 	 * REST API namespace
@@ -39,7 +39,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string REST base.
+	 * @return string REST base path (e.g., 'products').
 	 */
 	abstract protected function get_rest_base(): string;
 
@@ -50,7 +50,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance.
+	 * @return Generator Generator instance for the resource.
 	 */
 	abstract protected function get_generator_instance(): Generator;
 
@@ -61,29 +61,59 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Resource type.
+	 * @return string Resource type (e.g., 'product').
 	 */
 	abstract protected function get_resource_type(): string;
+
+	/**
+	 * Get human-readable label for the resource type
+	 *
+	 * Must be implemented by child classes to provide a user-friendly
+	 * label for the resource type being handled.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Resource type label (e.g., 'Product', 'Order').
+	 */
+	abstract protected function get_resource_type_label(): string;
 
 	/**
 	 * Register REST API routes
 	 *
 	 * Registers the generation endpoint for the specific resource type.
+	 * Integrated via the parent plugin's 'rest_api_init' action.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function register_routes() {
+	public function register_routes(): void {
+		$rest_base = $this->get_rest_base();
+
+		/**
+		 * Filters the REST API parameters for a specific endpoint.
+		 *
+		 * Allows modifying the parameters used for data generation on a per-endpoint basis.
+		 * The dynamic portion of the filter name, `$rest_base`, refers to the endpoint's
+		 * REST base path (e.g., 'products', 'orders', etc.).
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $params The default generation parameters from get_generation_params().
+		 *
+		 * @return array Modified parameters array.
+		 */
+		$params = apply_filters( "easycommerce_fakerpress_rest_params_{$rest_base}", $this->get_generation_params() );
+
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->get_rest_base() . '/generate',
+			'/' . $rest_base . '/generate',
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'generate_items' ),
 					'permission_callback' => array( $this, 'generate_items_permissions_check' ),
-					'args'                => $this->get_generation_params(),
+					'args'                => $params,
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
@@ -97,11 +127,27 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return WP_REST_Response|WP_Error Response object or error.
+	 * @return WP_REST_Response|WP_Error Response object on success, WP_Error on failure.
 	 */
 	public function generate_items( WP_REST_Request $request ) {
+		$rest_base = $this->get_rest_base();
+
+		/**
+		 * The base path for the REST API routes.
+		 *
+		 * This variable defines the foundational path segment used in REST API endpoint URLs.
+		 * It acts as a prefix for all API requests within the defined namespace, providing
+		 * a consistent structure for API routing.
+		 *
+		 * Example: If the $rest_base is set to 'example', the resulting endpoint paths would
+		 * follow the format '/wp-json/{namespace}/example/...'.
+		 *
+		 * @var WP_REST_Request $requestFull data about the request.
+		 */
+		do_action( "easycommerce_fakerpress_rest_generate_before_{$rest_base}", $request );
+
 		$count = $request->get_param( 'count' );
 
 		if ( ! $count || $count <= 0 ) {
@@ -113,19 +159,43 @@ abstract class REST_Controller extends WP_REST_Controller {
 		}
 
 		// Pass all request parameters to the generator.
-		$params    = $request->get_params();
-		$generator = $this->get_generator_instance();
+		$params            = $request->get_params();
+		$generator         = $this->get_generator_instance();
+		$supported_locales = array_keys( easycommerce_fakerpress()->get_locale_labels() );
 
 		// Set faker and locale.
-		$generator->set_locale( $params['locale'] );
+		$locale = $params['locale'] ?? 'en_US';
+		if ( ! in_array( $locale, $supported_locales, true ) ) {
+			$generator->log( "Unsupported locale '{$locale}' used; falling back to 'en_US'.", 'warning' );
+			$locale = 'en_US';
+		}
+		$generator->set_locale( $locale );
 		$generator->set_faker();
 		$generator->set_generation_params( $params );
 
 		$result = $generator->generate( (int) $count );
 
 		if ( is_wp_error( $result ) ) {
+			$generator->log( 'Generation failed: ' . $result->get_error_message(), 'error', $params );
 			return $result;
 		}
+
+		/**
+		 * Defines the base path for a REST API endpoint.
+		 *
+		 * This variable is utilized in routing within the REST API to construct
+		 * the endpoint URL. It serves as a key component for specifying the
+		 * namespace or relative base for the API routes. Changes to this value
+		 * can affect endpoint accessibility and should be carefully managed.
+		 *
+		 * Typically, this value is used in conjunction with other parameters or
+		 * methods to create full REST routes. Ensure it adheres to naming
+		 * conventions and does not conflict with existing endpoints.
+		 *
+		 * @var array           $result The result of the fake data
+		 * @var WP_REST_Request $request Full data about the request.
+		 */
+		do_action( "easycommerce_fakerpress_rest_generate_after_{$rest_base}", $result, $request );
 
 		return new WP_REST_Response( $result, 200 );
 	}
@@ -137,9 +207,9 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_REST_Request $request Request object.
+	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return bool|WP_Error True if permission granted, error otherwise.
+	 * @return bool|WP_Error True if permission granted, WP_Error otherwise.
 	 */
 	public function generate_items_permissions_check( WP_REST_Request $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -160,7 +230,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Parameters schema.
+	 * @return array Associative array of parameter definitions.
 	 */
 	public function get_generation_params(): array {
 		$base_params = array(
@@ -177,7 +247,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 				'description'       => __( 'Locale for generated data (e.g., en_US, fr_FR, de_DE).', 'easycommerce-fakerpress' ),
 				'type'              => 'string',
 				'default'           => 'en_US',
-				'enum'              => array( 'en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT', 'ja_JP', 'zh_CN' ),
+				'enum'              => array_keys( easycommerce_fakerpress()->get_locale_labels() ),
 				'sanitize_callback' => 'sanitize_text_field',
 			),
 			'seed'          => array(
@@ -197,14 +267,18 @@ abstract class REST_Controller extends WP_REST_Controller {
 				'type'        => 'object',
 				'properties'  => array(
 					'start' => array(
-						'description' => __( 'Start date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
-						'type'        => 'string',
-						'format'      => 'date',
+						'description'       => __( 'Start date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
+						'type'              => 'string',
+						'format'            => 'date',
+						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => array( $this, 'validate_date' ),
 					),
 					'end'   => array(
-						'description' => __( 'End date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
-						'type'        => 'string',
-						'format'      => 'date',
+						'description'       => __( 'End date (YYYY-MM-DD format).', 'easycommerce-fakerpress' ),
+						'type'              => 'string',
+						'format'            => 'date',
+						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => array( $this, 'validate_date' ),
 					),
 				),
 			),
@@ -249,20 +323,44 @@ abstract class REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Validate date parameter
+	 *
+	 * Ensures date is in YYYY-MM-DD format.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string          $value   Date string.
+	 * @param WP_REST_Request $request Request object.
+	 * @param string          $param   Parameter name.
+	 *
+	 * @return bool|WP_Error True if valid, WP_Error otherwise.
+	 */
+	public function validate_date( string $value, WP_REST_Request $request, string $param ) {
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
+			return new WP_Error(
+				'invalid_date',
+				__( 'Date must be in YYYY-MM-DD format.', 'easycommerce-fakerpress' )
+			);
+		}
+		return true;
+	}
+
+	/**
 	 * Validate count parameter
 	 *
 	 * Validates the count parameter for generation requests.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|string|mixed $value Parameter value.
-	 * @param WP_REST_Request  $request Request object.
-	 * @param string           $param Parameter name.
+	 * @param int|string|mixed $value    Parameter value to validate.
+	 * @param WP_REST_Request  $request  Request object.
+	 * @param string           $param    Parameter name.
 	 *
 	 * @return bool|WP_Error True if valid, WP_Error otherwise.
 	 */
 	public function validate_count( $value, WP_REST_Request $request, string $param ) {
-		if ( ! is_numeric( $value ) || $value <= 0 || $value > 100 ) {
+		$int_value = (int) $value;
+		if ( ! is_numeric( $value ) || $int_value <= 0 || $int_value > 100 ) {
 			return new WP_Error(
 				'invalid_count',
 				__( 'Count must be a number between 1 and 100.', 'easycommerce-fakerpress' )
@@ -279,12 +377,13 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Schema definition.
+	 * @return array Schema definition for the response.
 	 */
 	public function get_public_item_schema(): array {
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => sprintf( '%s Generation Response', ucfirst( $this->get_resource_type() ) ),
+			// translators: Resource type.
+			'title'      => sprintf( __( '%s Generation Response', 'easycommerce-fakerpress' ), $this->get_resource_type_label() ),
 			'type'       => 'object',
 			'properties' => array(
 				'generated' => array(
@@ -312,7 +411,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Resource-specific properties.
+	 * @return array Resource-specific schema properties.
 	 */
 	protected function get_resource_specific_properties(): array {
 		return array();
@@ -325,7 +424,7 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Resource-specific parameters.
+	 * @return array Resource-specific parameter definitions.
 	 */
 	protected function get_resource_specific_params(): array {
 		return array();
@@ -338,9 +437,9 @@ abstract class REST_Controller extends WP_REST_Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $value Parameter value.
+	 * @param mixed $value Parameter value to sanitize.
 	 *
-	 * @return array Sanitized array.
+	 * @return array Sanitized array value.
 	 */
 	public function sanitize_array( $value ): array {
 		if ( ! is_array( $value ) ) {
