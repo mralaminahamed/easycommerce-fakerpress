@@ -1,6 +1,6 @@
 === EasyCommerce FakerPress ===
 Contributors: mralaminahamed
-Tags: ecommerce, easycommerce, faker, data-generation, testing, development, products, customers, orders, coupons
+Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -28,24 +28,6 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 * **🌍 Location Data**: Comprehensive geographic hierarchy (countries, states, cities) with coordinates
 * **✅ Data Validation**: Real-time validation endpoints for data availability and dependency checks
 
-**🎨 Advanced User Experience:**
-
-* **WordPress Admin Color Integration**: Automatically adapts to user's chosen admin color scheme
-* **Modern React Architecture**: React 18 + React Router v7 with data router patterns and component-based design
-* **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation
-* **Enhanced Form Controls**: Modern React interface with smart form fields and proper labeling
-* **Real-time Feedback**: Live generation progress with detailed status updates and error handling
-* **Data Validation UI**: Real-time dependency checking and data availability indicators
-
-**🎯 Advanced Features:**
-
-* **📊 Realistic Business Logic**: Customer journey modeling, purchase behavior analytics, and loyalty progression
-* **🔗 Smart Relationships**: Proper data relationships with referential integrity and business rule validation
-* **🌍 International Support**: Multi-country addresses, currencies, phone formats, and localization
-* **🎨 Modern Interface**: React 18 with Tailwind CSS, tabbed navigation, and responsive design
-* **🛡️ Enterprise Security**: Comprehensive validation, sanitization, capability checks, and nonce verification
-* **🔧 Developer Experience**: Abstract patterns, autoloading, extensive hooks, and comprehensive documentation
-
 **💼 Perfect For:**
 
 * **Enterprise Development**: Large-scale ecommerce applications requiring realistic test datasets
@@ -57,32 +39,32 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 **📈 Data Generation Quality:**
 
 **Products:**
-* Product variations with size, color, material attributes and proper inventory tracking
-* Categories and brands with WordPress taxonomy integration
-* Gallery images with metadata and alt text descriptions
-* Stock management with quantities, limits, and status tracking
-* Pricing strategies with regular prices, sale prices, and bulk discounts
+- Product variations with size, color, material attributes and proper inventory tracking
+- Categories and brands with WordPress taxonomy integration
+- Gallery images with metadata and alt text descriptions
+- Stock management with quantities, limits, and status tracking
+- Pricing strategies with regular prices, sale prices, and bulk discounts
 
 **Customers:**
-* International address support with country-specific formatting
-* Purchase history modeling based on customer lifecycle and behavior
-* Loyalty tier progression (Bronze/Silver/Gold/Platinum) with points systems
-* Marketing preferences, communication settings, and behavioral segmentation
-* Realistic customer journey patterns from new to loyal customers
+- International address support with country-specific formatting
+- Purchase history modeling based on customer lifecycle and behavior
+- Loyalty tier progression (Bronze/Silver/Gold/Platinum) with points systems
+- Marketing preferences, communication settings, and behavioral segmentation
+- Realistic customer journey patterns from new to loyal customers
 
 **Orders:**
-* Complete transaction workflows with payment method variety
-* Shipping calculations with carrier selection and delivery estimates
-* Multi-rate tax calculations with proper geographic breakdowns
-* Order fulfillment tracking with status progression and logistics
-* Coupon applications with validation and discount calculations
+- Complete transaction workflows with payment method variety
+- Shipping calculations with carrier selection and delivery estimates
+- Multi-rate tax calculations with proper geographic breakdowns
+- Order fulfillment tracking with status progression and logistics
+- Coupon applications with validation and discount calculations
 
 **Coupons:**
-* Percentage and fixed amount discounts with realistic value distributions
-* Comprehensive rule systems (spending limits, date ranges, usage restrictions)
-* Product and category restrictions with include/exclude logic
-* Customer targeting (new customers, VIP members, loyalty tiers)
-* Advanced features (free shipping, stackable coupons, quantity requirements)
+- Percentage and fixed amount discounts with realistic value distributions
+- Comprehensive rule systems (spending limits, date ranges, usage restrictions)
+- Product and category restrictions with include/exclude logic
+- Customer targeting (new customers, VIP members, loyalty tiers)
+- Advanced features (free shipping, stackable coupons, quantity requirements)
 
 == Installation ==
 
@@ -108,21 +90,13 @@ EasyCommerce FakerPress is a comprehensive WordPress plugin for generating reali
 3. Build: `yarn build`
 4. Activate the plugin
 
-**Source Code:**
+** Requirements **
 
-This plugin uses compiled JavaScript and CSS files. The source code for all compiled assets is available at:
-* **GitHub Repository**: https://github.com/mralaminahamed/easycommerce-fakerpress
-* **Source Files Location**: All JavaScript source files are in `/src/admin/` directory
-* **Build Process**: Uses @wordpress/scripts for compilation - run `yarn build` to rebuild assets
-* **Development**: Use `yarn start` for development mode with hot reloading
-
-== Requirements ==
-
-* **WordPress**: 5.0 or higher
-* **PHP**: 7.4 or higher (8.0+ recommended)
-* **EasyCommerce Plugin**: Latest version (required for ecommerce functionality)
-* **Memory**: 256MB minimum (512MB recommended for large datasets)
-* **Disk Space**: 100MB for plugin files, dependencies, and generated data
+- **WordPress**: 5.0 or higher
+- **PHP**: 7.4 or higher (8.0+ recommended)
+- **EasyCommerce Plugin**: Latest version (required for ecommerce functionality)
+- **Memory**: 256MB minimum (512MB recommended for large datasets)
+- **Disk Space**: 100MB for plugin files, dependencies, and generated data
 
 == Frequently Asked Questions ==
 
@@ -287,119 +261,39 @@ Initial release of EasyCommerce FakerPress! Complete EasyCommerce data generatio
 == Privacy & Data Handling ==
 
 **Data Storage:**
-* All generated data is stored locally in your WordPress database using EasyCommerce tables
-* No external services are contacted during data generation
-* No personal data is transmitted outside your server environment
+- All generated data is stored locally in your WordPress database using EasyCommerce tables
+- No external services are contacted during data generation
+- No personal data is transmitted outside your server environment
 
 **Generated Content:**
-* Uses Faker library to create fictional but realistic-looking data
-* All customer data includes fake names, addresses, and contact information
-* Generated content is clearly test data, not real customer information
-* Complies with privacy regulations as no actual personal data is involved
+- Uses Faker library to create fictional but realistic-looking data
+- All customer data includes fake names, addresses, and contact information
+- Generated content is clearly test data, not real customer information
+- Complies with privacy regulations as no actual personal data is involved
 
 **Security Recommendations:**
-* Use only on development/staging environments for safety
-* Always backup your database before generating large datasets
-* Understand data generation implications before use on any live site
-* Regular cleanup of test data to maintain database performance
-
-== Developer Information ==
-
-**Modern Architecture:**
-
-```php
-namespace EasyCommerceFakerPress\Generators;
-
-use EasyCommerce\Models\Product;
-use EasyCommerceFakerPress\Abstracts\Generator;
-
-class Product_Generator extends Generator {
-    protected function generate_single_item() {
-        $product = new Product();
-        return $product->create([
-            'title' => $this->faker->words(3, true),
-            'attributes' => $this->get_or_create_product_attributes(),
-            'variations' => $this->generate_product_variations(),
-            'meta' => $this->generate_product_meta(),
-        ]);
-    }
-}
-```
-
-**Available Hooks:**
-
-```php
-// Modify product generation
-add_filter('easycommerce_fakerpress_product_data', 'custom_product_data');
-
-// Customize customer creation
-add_action('easycommerce_fakerpress_after_customer_created', 'custom_customer_setup');
-
-// Modify order generation
-add_filter('easycommerce_fakerpress_order_meta', 'custom_order_meta');
-
-// Customize coupon rules
-add_filter('easycommerce_fakerpress_coupon_rules', 'custom_coupon_rules');
-```
-
-**REST API Endpoints:**
-
-```
-POST /wp-json/easycommerce-fakerpress/v1/products/generate
-POST /wp-json/easycommerce-fakerpress/v1/customers/generate
-POST /wp-json/easycommerce-fakerpress/v1/orders/generate
-POST /wp-json/easycommerce-fakerpress/v1/coupons/generate
-```
-
-**File Structure:**
-```
-easycommerce-fakerpress/
-├── easycommerce-fakerpress.php           # Main plugin file
-├── class-easycommerce-fakerpress.php     # Main plugin class
-├── includes/
-│   ├── Abstracts/                        # Abstract base classes
-│   ├── Generators/                       # Data generators with EasyCommerce integration
-│   └── Controllers/                      # REST API controllers
-├── src/admin/                            # React components and modern UI
-├── build/                                # Compiled assets
-├── vendor/                               # Composer dependencies
-└── composer.json                         # PSR-4 autoloading configuration
-```
+- Use only on development/staging environments for safety
+- Always backup your database before generating large datasets
+- Understand data generation implications before use on any live site
+- Regular cleanup of test data to maintain database performance
 
 **Contributing:**
-* GitHub: https://github.com/mralaminahamed/easycommerce-fakerpress
-* Issues: Report bugs and request features via GitHub Issues
-* Pull Requests: Code contributions welcome with proper testing
-* Standards: WordPress Coding Standards + PSR-4 + EasyCommerce best practices
+- GitHub: [Checkout the Repository](https://github.com/mralaminahamed/easycommerce-fakerpress)
+- Issues: Report bugs and request features via GitHub Issues
+- Pull Requests: Code contributions welcome with proper testing
+- Standards: WordPress Coding Standards + PSR-4 + EasyCommerce best practices
 
 == Support ==
 
 **Resources:**
-* 📚 **Documentation**: Comprehensive developer and user guides
-* 🐛 **Bug Reports**: GitHub Issues or WordPress.org support forum
-* 💡 **Feature Requests**: Submit via GitHub Issues with detailed requirements
-* 👨‍💻 **Development**: Extensive hooks, filters, and developer documentation
-* 📧 **Professional Support**: Available for custom development and integration projects
+- 📚 **Documentation**: Comprehensive developer and user guides
+- 🐛 **Bug Reports**: GitHub Issues or WordPress.org support forum
+- 💡 **Feature Requests**: Submit via GitHub Issues with detailed requirements
+- 👨‍💻 **Development**: Extensive hooks, filters, and developer documentation
+- 📧 **Professional Support**: Available for custom development and integration projects
 
 **Community:**
-* WordPress.org support forum for general questions
-* GitHub Discussions for technical conversations
-* Code contributions via Pull Requests
-* Documentation improvements and translations welcome
-
-== About the Author ==
-
-Developed by **Al Amin Ahamed** - Senior Full-Stack Developer specializing in WordPress, EasyCommerce, React, and modern web technologies with 10+ years of experience in ecommerce solutions.
-
-**Expertise:**
-* 🌐 **Website**: https://github.com/mralaminahamed/
-* 💼 **GitHub**: https://github.com/mralaminahamed
-* 📧 **Contact**: me@alaminahamed.com
-* 💼 **Services**: Enterprise WordPress development, EasyCommerce solutions, React applications, performance optimization
-
-**Professional Focus:**
-* EasyCommerce plugin development and customization
-* Modern WordPress architecture and best practices
-* React-based admin interfaces and SPAs
-* Performance optimization and scalability solutions
-* Enterprise ecommerce platform development
+- WordPress.org support forum for general questions
+- GitHub Discussions for technical conversations
+- Code contributions via Pull Requests
+- Documentation improvements and translations welcome
