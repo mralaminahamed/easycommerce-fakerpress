@@ -8,292 +8,139 @@ Stable tag: 1.0.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic fake ecommerce data with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React interface.
+Generate realistic fake e-commerce data for EasyCommerce: 10 specialized generators, real-time validation, advanced config, admin color integration, and React UI.
 
 == Description ==
 
-EasyCommerce FakerPress is a comprehensive WordPress plugin for generating realistic EasyCommerce test data. Version 1.0.0 features 10 specialized generators, real-time data validation, advanced parameter systems, modern React Router v7 architecture, automatic WordPress admin color integration, and comprehensive business logic modeling. Perfect for developers, agencies, and store owners who need sophisticated test datasets.
+EasyCommerce FakerPress is a robust WordPress plugin designed to generate realistic test data for the EasyCommerce e-commerce platform. It supports developers, agencies, and store owners in creating sophisticated datasets for testing, demonstrations, and performance evaluation. Key features include:
 
-**🗂️ 10 Specialized Generators:**
+* **10 Specialized Generators**: For products, customers, orders, coupons, variations, shipping, taxes, transactions, cart sessions, and locations.
+* **Real-Time Validation**: Ensures data integrity with dependency checks and user-friendly feedback.
+* **Advanced Configuration**: Nested parameters, intelligent defaults, and extensible hooks.
+* **Modern Interface**: Built with React Router v7, Tailwind CSS, and automatic WordPress admin color scheme adaptation.
+* **Enterprise-Grade Architecture**: PSR-4 compliant, with native EasyCommerce model integration and 11 REST API controllers.
 
-* **🛍️ Products**: Advanced products with attributes, variations, categories, pricing, and inventory management
-* **👥 Customers**: Comprehensive profiles with demographics, purchase history, and loyalty tier progression
-* **📦 Orders**: Complete orders with payment processing, shipping, tax calculations, and item metadata
-* **🎫 Coupons**: Sophisticated discount coupons with usage limits, restrictions, and validity periods
-* **🔄 Product Variations**: Detailed variations with attribute systems and inventory tracking
-* **🚚 Shipping Plans**: Shipping methods with regional coverage, carrier selection, and cost calculations
-* **💰 Tax Management**: Multi-jurisdiction tax classes with location-based rates and rule systems
-* **💳 Transactions**: Payment transaction history with multiple gateways and status distributions
-* **🛒 Cart Sessions**: Shopping cart sessions with abandonment scenarios and recovery simulation
-* **🌍 Location Data**: Comprehensive geographic hierarchy (countries, states, cities) with coordinates
-* **✅ Data Validation**: Real-time validation endpoints for data availability and dependency checks
+This plugin is ideal for enterprise development, QA testing, integration validation, and scalable performance assessments in non-production environments.
 
-**💼 Perfect For:**
+**Data Generation Highlights**:
+- **Products**: Includes attributes, variations, categories, pricing strategies, and inventory tracking.
+- **Customers**: Features demographics, purchase history, loyalty tiers, and behavioral segmentation.
+- **Orders**: Covers payment processing, shipping calculations, tax breakdowns, and fulfillment workflows.
+- **Coupons**: Supports discount rules, usage limits, restrictions, and targeting logic.
 
-* **Enterprise Development**: Large-scale ecommerce applications requiring realistic test datasets
-* **Agency Projects**: Quick setup of comprehensive demo stores with full business logic
-* **QA & Testing**: Consistent, reproducible test scenarios with complex data relationships
-* **Performance Testing**: Generate large datasets to test application performance and scalability
-* **Integration Testing**: Validate third-party integrations with realistic ecommerce data
-
-**📈 Data Generation Quality:**
-
-**Products:**
-- Product variations with size, color, material attributes and proper inventory tracking
-- Categories and brands with WordPress taxonomy integration
-- Gallery images with metadata and alt text descriptions
-- Stock management with quantities, limits, and status tracking
-- Pricing strategies with regular prices, sale prices, and bulk discounts
-
-**Customers:**
-- International address support with country-specific formatting
-- Purchase history modeling based on customer lifecycle and behavior
-- Loyalty tier progression (Bronze/Silver/Gold/Platinum) with points systems
-- Marketing preferences, communication settings, and behavioral segmentation
-- Realistic customer journey patterns from new to loyal customers
-
-**Orders:**
-- Complete transaction workflows with payment method variety
-- Shipping calculations with carrier selection and delivery estimates
-- Multi-rate tax calculations with proper geographic breakdowns
-- Order fulfillment tracking with status progression and logistics
-- Coupon applications with validation and discount calculations
-
-**Coupons:**
-- Percentage and fixed amount discounts with realistic value distributions
-- Comprehensive rule systems (spending limits, date ranges, usage restrictions)
-- Product and category restrictions with include/exclude logic
-- Customer targeting (new customers, VIP members, loyalty tiers)
-- Advanced features (free shipping, stackable coupons, quantity requirements)
+Generated data leverages the Faker library for authenticity while adhering to real-world e-commerce patterns, ensuring compatibility with EasyCommerce updates and extensions.
 
 == Installation ==
 
-**Automatic Installation:**
+### Automatic Installation
+1. Navigate to **Plugins → Add New** in your WordPress admin dashboard.
+2. Search for "EasyCommerce FakerPress".
+3. Click **Install Now**, then **Activate**.
+4. Access the plugin via the new **EC FakerPress** menu item.
 
-1. Go to Plugins → Add New in your WordPress admin
-2. Search for "EasyCommerce FakerPress"
-3. Click Install Now and then Activate
-4. Navigate to EC FakerPress in your admin menu
+### Manual Installation
+1. Download the plugin ZIP file.
+2. Upload it to `/wp-content/plugins/easycommerce-fakerpress/`.
+3. Run `composer install` in the plugin directory.
+4. Activate via the **Plugins** screen.
+5. Access via the **EC FakerPress** menu.
 
-**Manual Installation:**
+### Development Setup
+1. Clone the repository: `git clone https://github.com/mralaminahamed/easycommerce-fakerpress.git`.
+2. Install dependencies: `composer install && yarn install`.
+3. Build assets: `yarn build`.
+4. Activate the plugin.
 
-1. Download the plugin zip file
-2. Upload to `/wp-content/plugins/easycommerce-fakerpress/`
-3. Run `composer install` in the plugin directory
-4. Activate through the 'Plugins' screen in WordPress
-5. Access via the new "EC FakerPress" menu item
-
-**Development Setup:**
-
-1. Clone: `git clone https://github.com/mralaminahamed/easycommerce-fakerpress.git`
-2. Install: `composer install && yarn install`
-3. Build: `yarn build`
-4. Activate the plugin
-
-** Requirements **
-
-- **WordPress**: 5.0 or higher
-- **PHP**: 7.4 or higher (8.0+ recommended)
-- **EasyCommerce Plugin**: Latest version (required for ecommerce functionality)
-- **Memory**: 256MB minimum (512MB recommended for large datasets)
-- **Disk Space**: 100MB for plugin files, dependencies, and generated data
+**Requirements**:
+- WordPress 5.0+
+- PHP 7.4+ (8.0+ recommended)
+- EasyCommerce plugin (latest version required)
+- Minimum 256MB memory (512MB for large datasets)
+- 100MB disk space for files and data
 
 == Frequently Asked Questions ==
 
 = What's new in version 1.0.0? =
+This release introduces architectural enhancements, including React Router v7 migration, real-time validation via a dedicated REST controller, PHPStan level 8 compliance, and improved component organization for better performance and developer experience.
 
-This enhanced release includes major architectural improvements and new validation features:
-- Real-time data validation system with dependency checking
-- React Router v7 migration with modern data router patterns
-- Enhanced component architecture with Pages, Generators, and Base components
-- Improved code quality with PHPStan level 8 compliance
-- Fixed controller schema structures and enhanced documentation
-- Modern React interface with enhanced form controls and validation
-- Enterprise-grade architecture with 11 REST API controllers including validation
-
-= How does EasyCommerce model integration work? =
-
-The plugin uses native EasyCommerce models (Product, Customer, Order, Coupon) instead of direct database queries. This ensures:
-- Proper data validation and business rule enforcement
-- Compatibility with EasyCommerce updates and extensions
-- Consistent data relationships and integrity
-- Full feature support including attributes, variations, and meta data
+= How does EasyCommerce integration work? =
+The plugin utilizes native EasyCommerce models (e.g., Product, Customer, Order) for generation, ensuring data validation, relationship integrity, and compatibility with future updates. Direct database queries are avoided to maintain business logic enforcement.
 
 = Can I generate data with complex relationships? =
-
-Yes! The plugin creates realistic data relationships:
-- Orders link existing customers and products with proper inventory management
-- Customer purchase history affects loyalty tiers and behavior patterns
-- Product variations have proper attribute relationships and stock tracking
-- Coupon rules validate against actual products, categories, and customer data
+Yes. Examples include linking orders to existing customers/products with inventory adjustments, modeling purchase history for loyalty progression, and validating coupon rules against categories and user data.
 
 = How realistic is the generated data? =
-
-The data is highly realistic thanks to:
-- Faker library integration for authentic names, addresses, and content
-- Business logic modeling based on real ecommerce patterns
-- Customer lifecycle progression from new to loyal customers
-- Realistic pricing strategies, inventory levels, and seasonal patterns
-- Geographic accuracy with proper country-specific address formats
+Data is crafted using Faker for authentic details (e.g., addresses, names) combined with e-commerce-specific logic, such as seasonal pricing, geographic accuracy, and customer lifecycle patterns.
 
 = Is it safe for production use? =
+**Caution**: Use exclusively in development or staging environments. Always back up your database prior to generation, start with small datasets, and avoid live sites without thorough testing.
 
-**Warning**: This plugin generates real data in your database. Recommended usage:
-- Development and staging environments only
-- Always backup your database before generating large datasets
-- Test with small datasets first to understand the impact
-- Never use on live production stores without comprehensive backups
+= Can I customize generation? =
+Customization is supported via hooks for logic modifications, configuration panels for quantities/patterns, and abstract classes for extending generators.
 
-= Can I customize the data generation? =
+= What about performance for large datasets? =
+Optimizations include batch processing, memory-efficient algorithms, and resumable progress tracking to handle extensive datasets without timeouts.
 
-Yes, through multiple methods:
-- Extensive hook system for developers to modify generation logic
-- Configuration options for data patterns and quantities
-- Template system for customizing data structures
-- Abstract base classes allow easy extension of generation patterns
-
-= What about performance with large datasets? =
-
-The plugin is optimized for performance:
-- Efficient database operations using EasyCommerce abstractions
-- Memory-conscious algorithms for large dataset generation
-- Batch processing to prevent timeouts and memory exhaustion
-- Progress tracking and resumable generation for very large datasets
-
-= How do I remove generated test data? =
-
-Options for data cleanup:
-- Use WordPress standard deletion methods for individual items
-- Employ specialized cleanup plugins for bulk deletion
-- Database queries to remove test data (advanced users only)
-- Always backup before both generation and cleanup operations
+= How do I remove generated data? =
+Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted database queries (for advanced users). Back up data before any removal.
 
 == Screenshots ==
 
-1. **Modern Admin Interface** - React-based interface with tabbed navigation and WordPress admin color integration
-2. **Product Generator** - Advanced product creation with attributes, variations, categories, and inventory management
-3. **Customer Generator** - Comprehensive customer profiles with demographics, purchase history, and loyalty tracking
-4. **Order Generator** - Complete order generation with payment processing, shipping, and tax calculations
-5. **Coupon Generator** - Sophisticated coupon creation with usage limits, restrictions, and validity periods
-6. **Product Variation Generator** - Detailed product variations with attribute systems and stock tracking
-7. **Shipping Plan Generator** - Shipping methods with regional coverage, carrier selection, and cost calculations
-8. **Tax Generator** - Multi-jurisdiction tax classes with location-based rates and rule systems
-9. **Transaction Generator** - Payment transaction history with multiple gateways and status distributions
-10. **Cart Session Generator** - Shopping cart sessions with abandonment scenarios and recovery simulation
-11. **Location Generator** - Geographic hierarchy (countries, states, cities) with coordinates and timezone support
+1. Modern Admin Interface: React-based tabbed navigation with WordPress admin color integration.
+   *(Screenshot: Admin dashboard overview)*
+2. Product Generator: Controls for attributes, variations, categories, and inventory.
+   *(Screenshot: Product generation form)*
+3. Customer Generator: Profile creation with demographics and loyalty tracking.
+   *(Screenshot: Customer profile form)*
+4. Order Generator: Workflow simulation including payments and shipping.
+   *(Screenshot: Order creation interface)*
+5. Coupon Generator: Rule configuration for discounts and restrictions.
+   *(Screenshot: Coupon setup panel)*
+6. Product Variation Generator: Attribute-based variation and stock management.
+   *(Screenshot: Variations editor)*
+7. Shipping Plan Generator: Regional methods and cost calculations.
+   *(Screenshot: Shipping configuration)*
+8. Tax Generator: Jurisdiction-based rates and rules.
+   *(Screenshot: Tax management form)*
+9. Transaction Generator: Gateway history and status distributions.
+   *(Screenshot: Transactions overview)*
+10. Cart Session Generator: Abandonment and recovery simulations.
+    *(Screenshot: Cart session tools)*
+11. Location Generator: Geographic hierarchy with coordinates.
+    *(Screenshot: Location data form)*
 
 == Changelog ==
 
-= 1.0.0 =
-**Release Date: September 15, 2025**
+= 1.0.0 - September 15, 2025 =
+* **Frontend Modernization**: Migrated to React Router v7 with data router patterns; improved component architecture and route-based code splitting.
+* **Validation Enhancements**: Added real-time dependency checks via new REST controller; integrated UI indicators and error handling.
+* **Code Quality**: Achieved PHPStan level 8 compliance; fixed controller schemas and enhanced PHPDoc.
+* **Development Tools**: Optimized build system, updated documentation, and refined .gitignore.
 
-**🔧 Frontend Modernization:**
-* React Router v7 migration with createHashRouter and data router patterns
-* Component architecture improvements with focused Page components
-* Enhanced organization with clear separation between Pages, Generators, and Base components
-* Performance optimizations with route-based code splitting
-
-**✅ Data Validation System:**
-* New Validation REST Controller for real-time data availability checks
-* Smart dependency validation with user-friendly recommendations
-* UI integration with real-time validation indicators
-* Comprehensive error handling with graceful degradation
-
-**🏗️ Code Quality Improvements:**
-* Fixed controller schema property structures across all REST controllers
-* Enhanced PHPDoc compliance and parameter validation
-* Improved WordPress Standards compliance
-* Added missing abstract method implementations
-
-**🛠️ Development Experience:**
-* Enhanced build system with better asset optimization
-* PHPStan level 8 compliance implementation
-* Improved .gitignore and .distignore for cleaner builds
-* Updated comprehensive development documentation
-
-= 1.0.0 =
-**Release Date: August 5, 2025**
-
-**🎉 Initial Release - Complete EasyCommerce Data Generation Solution:**
-
-**🗂️ 10 Specialized Generators:**
-* ✨ **Products**: Advanced generation with attributes, variations, categories, pricing, and inventory management
-* 👥 **Customers**: Comprehensive profiles with demographics, purchase history, and loyalty tier progression
-* 📦 **Orders**: Complete orders with payment processing, shipping, tax calculations, and item metadata
-* 🎫 **Coupons**: Sophisticated discount system with usage limits, restrictions, and validity periods
-* 🔄 **Product Variations**: Detailed variations with attribute systems and inventory tracking
-* 🚚 **Shipping Plans**: Methods with regional coverage, carrier selection, and cost calculations
-* 💰 **Tax Management**: Multi-jurisdiction tax classes with location-based rates and rule systems
-* 💳 **Transactions**: Payment transaction history with multiple gateways and status distributions
-* 🛒 **Cart Sessions**: Shopping cart abandonment scenarios and recovery simulation
-* 🌍 **Location Data**: Geographic hierarchy (countries, states, cities) with coordinates and timezone support
-
-**🎨 Modern User Experience:**
-* 🌈 **WordPress Admin Color Integration**: Automatic adaptation to user's chosen admin color scheme
-* 🎛️ **Advanced Parameter System**: Dynamic, nested parameters with intelligent validation and smart defaults
-* 📝 **Enhanced Form Controls**: Modern React interface with smart form fields and proper labeling
-* 📋 **Tabbed Navigation**: Organized 10-generator interface with progress tracking
-* ⚡ **Real-time Feedback**: Live generation progress with detailed status updates and error handling
-* 📱 **Responsive Design**: Mobile-optimized interface with improved accessibility
-
-**🏗️ Enterprise Architecture:**
-* 🔧 **PSR-4 Architecture**: Modern PHP with namespacing, autoloading, and abstract base classes
-* 🌐 **REST API Controllers**: 10 clean API controllers with comprehensive parameter schemas
-* 🔗 **EasyCommerce Integration**: Native model usage with Order_Item_Meta and location system integration
-* 📚 **WordPress Standards**: Full WPCS compliance with security best practices and proper internationalization
-* 🛠️ **Extensible Design**: Hook system and abstract patterns for easy customization and extension
-
-**🔧 Technical Excellence:**
-* ⚡ **Modern Build System**: React 18, Tailwind CSS, Webpack 5 with CSS variable integration
-* ✅ **Advanced Validation**: Client-side and server-side parameter validation with proper error handling
-* 🔄 **State Management**: Complex form handling with nested object parameter support
-* 🚀 **Performance Optimization**: Efficient database operations and memory management
-* 👨‍💻 **Developer Experience**: Comprehensive documentation, modern tooling, and extensive customization hooks
+= 1.0.0 - August 5, 2025 (Initial Release) =
+* **Core Generators**: Introduced 10 specialized tools for products, customers, orders, coupons, variations, shipping, taxes, transactions, carts, and locations.
+* **User Experience**: Implemented WordPress admin color integration, advanced parameter system, responsive React interface, and real-time feedback.
+* **Architecture**: Adopted PSR-4 structure, 10+ REST controllers, and native EasyCommerce model integration.
+* **Technical Foundations**: Built with React 18, Tailwind CSS, Webpack 5; includes validation, state management, and extensibility hooks.
 
 == Upgrade Notice ==
 
 = 1.0.0 =
-Major architectural improvements! Enhanced React Router v7 architecture, real-time data validation system, improved code quality with PHPStan level 8, and enhanced component organization. Recommended upgrade for better performance and user experience.
+This version includes significant architectural updates for improved stability and validation. Upgrade recommended for all users; test in staging first, especially if using custom hooks. No data migration required.
 
-= 1.0.0 =
-Initial release of EasyCommerce FakerPress! Complete EasyCommerce data generation solution with 10 specialized generators, WordPress admin color integration, advanced parameter system, and modern React interface. Requires EasyCommerce plugin for full functionality.
+== Other Notes ==
 
-== Privacy & Data Handling ==
+**Privacy & Data Handling**:
+- Data is stored solely in your WordPress database; no external transmissions occur.
+- Generated content is fictional and compliant with privacy standards.
+- **Security Tip**: Restrict to non-production use and maintain regular backups.
 
-**Data Storage:**
-- All generated data is stored locally in your WordPress database using EasyCommerce tables
-- No external services are contacted during data generation
-- No personal data is transmitted outside your server environment
+**Contributing**:
+- Repository: [GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress)
+- Report issues or request features via GitHub Issues.
+- Submit pull requests with tests, adhering to WordPress Coding Standards and PSR-4.
 
-**Generated Content:**
-- Uses Faker library to create fictional but realistic-looking data
-- All customer data includes fake names, addresses, and contact information
-- Generated content is clearly test data, not real customer information
-- Complies with privacy regulations as no actual personal data is involved
-
-**Security Recommendations:**
-- Use only on development/staging environments for safety
-- Always backup your database before generating large datasets
-- Understand data generation implications before use on any live site
-- Regular cleanup of test data to maintain database performance
-
-**Contributing:**
-- GitHub: [Checkout the Repository](https://github.com/mralaminahamed/easycommerce-fakerpress)
-- Issues: Report bugs and request features via GitHub Issues
-- Pull Requests: Code contributions welcome with proper testing
-- Standards: WordPress Coding Standards + PSR-4 + EasyCommerce best practices
-
-== Support ==
-
-**Resources:**
-- 📚 **Documentation**: Comprehensive developer and user guides
-- 🐛 **Bug Reports**: GitHub Issues or WordPress.org support forum
-- 💡 **Feature Requests**: Submit via GitHub Issues with detailed requirements
-- 👨‍💻 **Development**: Extensive hooks, filters, and developer documentation
-- 📧 **Professional Support**: Available for custom development and integration projects
-
-**Community:**
-- WordPress.org support forum for general questions
-- GitHub Discussions for technical conversations
-- Code contributions via Pull Requests
-- Documentation improvements and translations welcome
+**Support**:
+- Documentation: Included in the plugin and GitHub wiki.
+- Forums: WordPress.org support threads.
+- Professional assistance: Available for custom integrations.
