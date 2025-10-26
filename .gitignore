@@ -33,10 +33,6 @@ Thumbs.db
 *.tar.gz
 *.rar
 
-# WordPress specific
-wp-config.php
-wp-config-local.php
-
 # Development tools cache
 /.yarn/
 /.phpstan-cache/
