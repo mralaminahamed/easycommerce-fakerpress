@@ -1,0 +1,131 @@
+name: Deploy and Release Plugin to WP.org
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write  # needed to create GitHub release
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  releaseToWPOrg:
+    name: Release to WordPress.org
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag and plugin version alignment
+        id: version_check
+        run: |
+          TAG_REF="${GITHUB_REF#refs/tags/}"
+          # Strip leading v if present
+          if [[ "$TAG_REF" =~ ^v ]]; then TAG_STRIPPED=${TAG_REF#v}; else TAG_STRIPPED=$TAG_REF; fi
+          # Extract Version from plugin header (first match)
+          PLUGIN_VERSION=$(grep -E "^[[:space:]]*\*[[:space:]]*Version:" easycommerce-fakerpress.php | head -n1 | sed -E 's/.*Version:[[:space:]]*([^ ]+).*/\1/')
+          echo "Tag: $TAG_REF";
+          echo "Stripped Tag: $TAG_STRIPPED";
+          echo "Plugin Version: $PLUGIN_VERSION";
+          if [ -z "$PLUGIN_VERSION" ]; then echo "Could not determine plugin version from easycommerce-fakerpress.php"; exit 1; fi
+          if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then echo "Version mismatch: tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)"; exit 1; fi
+          echo "version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Ensure composer.lock is present
+        run: |
+          if [ ! -f composer.lock ]; then
+            echo "composer.lock is missing. Please commit it before tagging a release." >&2
+            exit 1
+          fi
+
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+            vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Cache Node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+          key: node-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}
+          restore-keys: |
+            node-${{ runner.os }}-
+
+      - name: Install PHP dependencies (with dev for build tooling)
+        run: |
+          composer install --no-interaction --prefer-dist
+
+      - name: Build assets (npm)
+        run: |
+          if [ -f yarn.lock ]; then
+            corepack enable || true
+            yarn install --frozen-lockfile
+            yarn build
+          else
+            npm ci || npm install
+            npm run build
+          fi
+
+      - name: Optimize production autoloader (remove dev deps)
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist -o
+
+      - name: "Guard: composer.lock unchanged after build"
+        run: |
+          if ! git diff --quiet --exit-code composer.lock; then
+            echo "composer.lock changed during build. Commit updated lock file before release." >&2
+            git --no-pager diff composer.lock | head -n 100
+            exit 1
+          fi
+
+      - name: Install SVN (Subversion)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y subversion
+
+      - name: WordPress Plugin Deploy
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: easycommerce-fakerpress
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Dokan Kits ${{ steps.version_check.outputs.version }}
+          body: |
+            Release ${{ steps.version_check.outputs.version }} of Dokan Kits.
+            Refer to CHANGELOG.md for full details.
+          files: ${{ steps.deploy.outputs.zip-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
