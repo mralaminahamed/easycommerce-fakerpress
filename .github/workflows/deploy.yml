@@ -122,9 +122,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Dokan Kits ${{ steps.version_check.outputs.version }}
+          name: Easycommerce Fakerpress ${{ steps.version_check.outputs.version }}
           body: |
-            Release ${{ steps.version_check.outputs.version }} of Dokan Kits.
+            Release ${{ steps.version_check.outputs.version }} of Easycommerce Fakerpress.
             Refer to CHANGELOG.md for full details.
           files: ${{ steps.deploy.outputs.zip-path }}
         env:
