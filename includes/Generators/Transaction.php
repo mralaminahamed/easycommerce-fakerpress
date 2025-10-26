@@ -2,7 +2,7 @@
 /**
  * Transaction Generator Class for EasyCommerce FakerPress Plugin
  *
- * @since 2.0.0
+ * @since 1.0.0
  * @subpackage Generators
  * @package EasyCommerceFakerPress
  */
@@ -96,7 +96,7 @@ class Transaction extends Generator {
 	/**
 	 * Get orders for transaction generation based on customer parameters
 	 *
-	 * @since 2.0.0
+	 * @since 1.0.0
 	 *
 	 * @return array Array of orders.
 	 */

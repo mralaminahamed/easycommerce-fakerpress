@@ -344,7 +344,7 @@ class EasyCommerce_FakerPress {
 	 *
 	 * Replicates Generator locale detection logic for frontend display.
 	 *
-	 * @since 2.0.0
+	 * @since 1.0.0
 	 *
 	 * @param string $locale WordPress locale code.
 	 *
@@ -385,7 +385,7 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Get human-readable labels for all supported FakerPHP locales
 	 *
-	 * @since 2.0.0
+	 * @since 1.0.0
 	 *
 	 * @return array Associative array of locale codes and labels.
 	 */
