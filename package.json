@@ -39,7 +39,7 @@
     "@wordpress/scripts": "^30.26.0",
     "@wordpress/stylelint-config": "^23.25.0",
     "autoprefixer": "^10.4.21",
-    "eslint": "8",
+    "eslint": "^8.57.1",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "react": "18",
