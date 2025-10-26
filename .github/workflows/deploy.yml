@@ -83,7 +83,7 @@ jobs:
       - name: Build assets (npm)
         run: |
           if [ -f yarn.lock ]; then
-            corepack enable || true
+            corepack enable yarn || true
             yarn install --frozen-lockfile
             yarn build
           else
