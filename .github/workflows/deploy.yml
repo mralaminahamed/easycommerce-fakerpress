@@ -122,7 +122,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Easycommerce Fakerpress ${{ steps.version_check.outputs.version }}
+          name: Release ${{ steps.version_check.outputs.version }}
           body: |
             Release ${{ steps.version_check.outputs.version }} of Easycommerce Fakerpress.
             Refer to CHANGELOG.md for full details.
