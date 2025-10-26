@@ -111,13 +111,13 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
-= 1.0.0 - September 15, 2025 =
+= 1.0.0 - October 26, 2025 =
 * **Frontend Modernization**: Migrated to React Router v7 with data router patterns; improved component architecture and route-based code splitting.
 * **Validation Enhancements**: Added real-time dependency checks via new REST controller; integrated UI indicators and error handling.
 * **Code Quality**: Achieved PHPStan level 8 compliance; fixed controller schemas and enhanced PHPDoc.
 * **Development Tools**: Optimized build system, updated documentation, and refined .gitignore.
 
-= 1.0.0 - August 5, 2025 (Initial Release) =
+= 0.9.0 - August 5, 2025 (Initial Release) =
 * **Core Generators**: Introduced 10 specialized tools for products, customers, orders, coupons, variations, shipping, taxes, transactions, carts, and locations.
 * **User Experience**: Implemented WordPress admin color integration, advanced parameter system, responsive React interface, and real-time feedback.
 * **Architecture**: Adopted PSR-4 structure, 10+ REST controllers, and native EasyCommerce model integration.
