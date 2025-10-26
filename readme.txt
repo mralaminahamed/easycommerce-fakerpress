@@ -4,11 +4,11 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic fake e-commerce data for EasyCommerce: 10 specialized generators, real-time validation, advanced config, admin color integration, and React UI.
+Generate realistic EasyCommerce test data: 10 specialized generators, real-time validation, advanced config, and seamless admin integration.
 
 == Description ==
 
