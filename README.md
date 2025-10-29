@@ -3,7 +3,7 @@
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-8892BF.svg)](https://php.net/)
-[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-1.0.2-green.svg)]()
 
 A comprehensive WordPress plugin that generates realistic fake ecommerce data for EasyCommerce stores. Features 10 specialized generators, advanced parameter configuration, WordPress admin color integration, and modern React interface with comprehensive business logic modeling.
 
