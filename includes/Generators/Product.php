@@ -1,6 +1,10 @@
 <?php
 /**
- * Product Generator.
+ * Product Generator for EasyCommerce FakerPress
+ *
+ * Generates comprehensive product data for EasyCommerce stores including
+ * attributes, variations, categories, pricing, inventory, and metadata.
+ * Supports both physical and digital products with realistic e-commerce data.
  *
  * @since   1.0.0
  * @package EasyCommerceFakerPress\Generators
@@ -17,7 +21,20 @@ use WP_Error;
 /**
  * Product Generator Class
  *
- * Generates realistic fake product data for EasyCommerce
+ * Generates comprehensive and realistic product data for EasyCommerce stores.
+ * Creates products with attributes, variations, categories, pricing strategies,
+ * inventory management, and all necessary metadata for full e-commerce functionality.
+ * Supports both physical and digital products with appropriate characteristics.
+ *
+ * Generated Data Includes:
+ * - Product titles, descriptions, and specifications
+ * - Attribute systems (size, color, material)
+ * - Product variations with individual pricing
+ * - Category and brand assignments
+ * - Inventory levels and stock management
+ * - Pricing with regular/sale prices and margins
+ * - SEO metadata and gallery images
+ * - Product tags and taxonomy relationships
  *
  * @since 1.0.0
  */
@@ -35,9 +52,14 @@ class Product extends Generator {
 	}
 
 	/**
-	 * Get supported data types for this generator.
+	 * Get supported data types for this generator
 	 *
-	 * @return array Supported types
+	 * Returns an array of supported product generation types with descriptions.
+	 * Used by the admin interface to display available generation options.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, string> Array mapping type keys to human-readable descriptions.
 	 */
 	public function get_supported_types(): array {
 		return array(
@@ -46,9 +68,14 @@ class Product extends Generator {
 	}
 
 	/**
-	 * Get generator description.
+	 * Get generator description
 	 *
-	 * @return string Description
+	 * Returns a detailed description of what this generator creates,
+	 * used in admin interface tooltips and documentation.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Detailed description of the generator's capabilities.
 	 */
 	public function get_description(): string {
 		return __( 'Generates realistic product data with attributes, variations, pricing, inventory management, categories, brands, tags, and comprehensive meta data for testing ecommerce functionality.', 'easycommerce-fakerpress' );
@@ -57,9 +84,14 @@ class Product extends Generator {
 	/**
 	 * Generate a single product
 	 *
+	 * Creates a complete product with all associated data using the EasyCommerce
+	 * Product model. Handles product creation, attribute assignment, variation
+	 * generation, category assignment, and metadata population. Includes error
+	 * handling for missing dependencies and model failures.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|WP_Error Single product data, error, or false on failure.
+	 * @return array<string, mixed>|WP_Error Product data array with creation details or error object.
 	 */
 	protected function generate_single_item() {
 		// Check if EasyCommerce Product class exists.
@@ -73,6 +105,46 @@ class Product extends Generator {
 		$brands        = $this->get_or_create_product_brands();
 		$attributes    = $this->get_or_create_product_attributes( $product_type );
 		$variations    = $this->generate_product_variations( $attributes, $product_type );
+
+		/**
+		 * Filters the product data before creating the product.
+		 *
+		 * Allows developers to modify product data, categories, brands, attributes, and variations
+		 * before the product is created in the database.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_product_data_before_create
+		 *
+		 * @param array $product_data {
+		 *     Product data array.
+		 *
+		 *     @type string $product_type  Product type (physical/digital).
+		 *     @type string $product_title Product title.
+		 *     @type array  $categories    Product categories.
+		 *     @type array  $brands        Product brands.
+		 *     @type array  $attributes    Product attributes.
+		 *     @type array  $variations    Product variations.
+		 * }
+		 */
+		$product_data = apply_filters(
+			'easycommerce_fakerpress_product_data_before_create',
+			array(
+				'product_type'  => $product_type,
+				'product_title' => $product_title,
+				'categories'    => $categories,
+				'brands'        => $brands,
+				'attributes'    => $attributes,
+				'variations'    => $variations,
+			)
+		);
+
+		// Extract filtered data.
+		$product_type  = $product_data['product_type'];
+		$product_title = $product_data['product_title'];
+		$categories    = $product_data['categories'];
+		$brands        = $product_data['brands'];
+		$attributes    = $product_data['attributes'];
+		$variations    = $product_data['variations'];
 
 		// Use EasyCommerce Product model with compatible data structure.
 		$product = new ProductModel();
@@ -134,7 +206,7 @@ class Product extends Generator {
 		$product_instance = new ProductModel( $product_id );
 		$total_stock      = $product_instance->get_stock();
 
-		return array(
+		$result = array(
 			'id'           => $product_id,
 			'title'        => $product_title,
 			'type'         => $product_type,
@@ -146,6 +218,37 @@ class Product extends Generator {
 			'total_stock'  => $total_stock,
 			'stock_status' => $this->determine_stock_status( $total_stock ),
 		);
+
+		/**
+		 * Filters the product generation result data.
+		 *
+		 * Allows developers to modify the returned product data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_product_generation_result
+		 *
+		 * @param array $result       The product generation result data.
+		 * @param int   $product_id   The created product ID.
+		 * @param array $product_data The original product data used for creation.
+		 */
+		$result = apply_filters( 'easycommerce_fakerpress_product_generation_result', $result, $product_id, $product_data );
+
+		/**
+		 * Fires after a product has been successfully created.
+		 *
+		 * Allows developers to perform additional operations after product creation,
+		 * such as adding custom metadata, triggering related processes, or logging.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_after_product_created
+		 *
+		 * @param int   $product_id   The created product ID.
+		 * @param array $result       The product generation result data.
+		 * @param array $product_data The original product data used for creation.
+		 */
+		do_action( 'easycommerce_fakerpress_after_product_created', $product_id, $result, $product_data );
+
+		return $result;
 	}
 
 	/**

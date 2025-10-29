@@ -2,6 +2,9 @@
 /**
  * Product Generator REST Controller
  *
+ * Handles REST API endpoints for product data generation in EasyCommerce FakerPress.
+ * Provides endpoints for generating products with attributes, variations, and metadata.
+ *
  * @since   1.0.0
  * @package EasyCommerceFakerPress\Controllers
  */
@@ -14,7 +17,19 @@ use EasyCommerceFakerPress\Generators\Product;
 /**
  * Product Generator REST Controller
  *
- * Handles REST API endpoints for product generation
+ * Handles REST API endpoints for generating product data in EasyCommerce stores.
+ * Provides comprehensive product generation with support for attributes, variations,
+ * categories, pricing, and inventory management through the REST API.
+ *
+ * Endpoints:
+ * - POST /wp-json/easycommerce-fakerpress/v1/products/generate
+ *
+ * Features:
+ * - Full product creation with EasyCommerce model integration
+ * - Attribute and variation support
+ * - Category and taxonomy assignment
+ * - Pricing and inventory management
+ * - Metadata and SEO optimization
  *
  * @since 1.0.0
  */
@@ -45,9 +60,12 @@ class Products extends Controller {
 	/**
 	 * Get REST base for the endpoint
 	 *
+	 * Returns the REST API base path for product generation endpoints.
+	 * Forms the endpoint URL: /wp-json/easycommerce-fakerpress/v1/products/generate
+	 *
 	 * @since 1.0.0
 	 *
-	 * @return string REST base.
+	 * @return string REST base path segment ('products').
 	 */
 	protected function get_rest_base(): string {
 		return 'products';

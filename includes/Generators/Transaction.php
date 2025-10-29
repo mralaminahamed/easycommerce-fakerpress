@@ -80,7 +80,7 @@ class Transaction extends Generator {
 			return new WP_Error( 'transaction_creation_failed', __( 'Failed to create transaction.', 'easycommerce-fakerpress' ) );
 		}
 
-		return array(
+		$result = array(
 			'id'              => $transaction_id,
 			'order_id'        => $transaction_data['order_id'],
 			'customer_id'     => $transaction_data['customer_id'],
@@ -91,6 +91,20 @@ class Transaction extends Generator {
 			'status'          => $transaction_data['status'],
 			'type'            => $transaction_data['type'],
 		);
+
+		/**
+		 * Filters the transaction generation result data.
+		 *
+		 * Allows developers to modify the returned transaction data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_transaction_generation_result
+		 *
+		 * @param array $result           The transaction generation result data.
+		 * @param int   $transaction_id   The created transaction ID.
+		 * @param array $transaction_data The original transaction data used for creation.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_transaction_generation_result', $result, $transaction_id, $transaction_data );
 	}
 
 	/**

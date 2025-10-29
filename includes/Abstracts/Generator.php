@@ -1,6 +1,11 @@
 <?php
 /**
- * Abstract Generator Class.
+ * Abstract Generator Class for EasyCommerce FakerPress
+ *
+ * Base class providing common functionality for all data generators in the plugin.
+ * Implements the Template Method pattern for consistent generation workflows across
+ * all generator types. Handles FakerPHP integration, logging, validation, and
+ * WordPress hooks for extensibility.
  *
  * @since   1.0.0
  * @package EasyCommerceFakerPress\Abstracts
@@ -19,13 +24,27 @@ use wpdb;
 /**
  * Abstract Generator Class
  *
- * Base class for all data generators with common functionality
+ * Provides the foundation for all data generators in EasyCommerce FakerPress.
+ * Implements common functionality including FakerPHP integration, WordPress
+ * database access, logging, validation, and the core generation workflow.
+ * Uses the Template Method pattern to ensure consistent behavior across all generators.
+ *
+ * Key Features:
+ * - FakerPHP integration with locale support
+ * - WordPress database abstraction
+ * - Comprehensive logging system
+ * - Parameter validation and sanitization
+ * - WordPress action/filter hooks for extensibility
+ * - Batch processing with memory management
  *
  * @since 1.0.0
  */
 abstract class Generator {
 	/**
-	 * Faker instance
+	 * FakerPHP generator instance
+	 *
+	 * Holds the FakerPHP generator instance configured with the appropriate locale
+	 * and providers for generating realistic fake data. Initialized in set_faker().
 	 *
 	 * @since 1.0.0
 	 * @var Faker_Generator
@@ -35,6 +54,9 @@ abstract class Generator {
 	/**
 	 * WordPress database instance
 	 *
+	 * Reference to the global WordPress database object for performing
+	 * secure database operations using wpdb methods and prepared statements.
+	 *
 	 * @since 1.0.0
 	 * @var \wpdb
 	 */
@@ -43,13 +65,20 @@ abstract class Generator {
 	/**
 	 * Maximum items to generate per batch
 	 *
+	 * Limits the number of items that can be generated in a single batch
+	 * to prevent memory exhaustion and timeout issues. Can be overridden
+	 * by child classes for specific requirements.
+	 *
 	 * @since 1.0.0
 	 * @var int
 	 */
 	protected int $max_batch_size = 100;
 
 	/**
-	 * Locale for Faker
+	 * Locale for FakerPHP generator
+	 *
+	 * Stores the locale code (e.g., 'en_US', 'fr_FR') used to configure
+	 * the FakerPHP generator for locale-specific data generation.
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -59,6 +88,10 @@ abstract class Generator {
 	/**
 	 * Generation parameters from REST API
 	 *
+	 * Stores the parameters passed from the REST API request for customizing
+	 * the data generation process. Includes options like count, locale, seed,
+	 * and generator-specific parameters.
+	 *
 	 * @since 1.0.0
 	 * @var array<string, mixed>
 	 */
@@ -67,7 +100,9 @@ abstract class Generator {
 	/**
 	 * Constructor
 	 *
-	 * Initializes the database reference.
+	 * Initializes the generator with a reference to the WordPress database object.
+	 * Sets up the foundation for database operations and ensures proper integration
+	 * with WordPress database abstraction layer.
 	 *
 	 * @since 1.0.0
 	 *
@@ -80,9 +115,11 @@ abstract class Generator {
 	}
 
 	/**
-	 * Set Faker instance
+	 * Set FakerPHP instance
 	 *
-	 * Configures the Faker generator with providers.
+	 * Configures and initializes the FakerPHP generator with the specified locale
+	 * and additional providers. Adds DateTime and PicsumPhotos providers for
+	 * enhanced data generation capabilities including timestamps and placeholder images.
 	 *
 	 * @since 1.0.0
 	 *
@@ -97,22 +134,30 @@ abstract class Generator {
 	}
 
 	/**
-	 * Get Faker instance
+	 * Get FakerPHP instance
+	 *
+	 * Returns the configured FakerPHP generator instance for generating
+	 * realistic fake data. Ensures the generator is properly initialized
+	 * with locale and providers before use.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Faker_Generator Faker instance.
+	 * @return Faker_Generator The configured FakerPHP generator instance.
 	 */
 	public function get_faker(): Faker_Generator {
 		return $this->faker;
 	}
 
 	/**
-	 * Set locale for Faker
+	 * Set locale for FakerPHP generator
+	 *
+	 * Configures the locale for the FakerPHP generator to produce locale-specific
+	 * fake data. The locale affects names, addresses, phone numbers, and other
+	 * culturally-specific data patterns.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $locale Locale code (e.g., 'en_US').
+	 * @param string $locale Locale code (e.g., 'en_US', 'fr_FR', 'de_DE').
 	 *
 	 * @return void
 	 */
@@ -121,11 +166,15 @@ abstract class Generator {
 	}
 
 	/**
-	 * Get locale for Faker
+	 * Get locale for FakerPHP generator
+	 *
+	 * Returns the currently configured locale code for the FakerPHP generator.
+	 * Used internally for generator configuration and can be overridden by
+	 * child classes for specific locale handling requirements.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Locale code.
+	 * @return string The configured locale code (e.g., 'en_US').
 	 */
 	public function get_faker_locale(): string {
 		return $this->locale;
@@ -134,13 +183,23 @@ abstract class Generator {
 	/**
 	 * Generate fake data
 	 *
-	 * Orchestrates batch generation of items.
+	 * Orchestrates the complete data generation process using the Template Method pattern.
+	 * Handles parameter validation, dependency checking, batch processing, and error handling.
+	 * Fires WordPress actions at key points to allow for extensibility and monitoring.
+	 *
+	 * Process Flow:
+	 * 1. Validate generation count and parameters
+	 * 2. Apply WordPress filters to generation parameters
+	 * 3. Set random seed if provided for reproducible results
+	 * 4. Generate items in a loop with error handling
+	 * 5. Apply filters to each generated item
+	 * 6. Fire completion actions
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $count Number of items to generate.
+	 * @param int $count Number of items to generate (1-100 per batch).
 	 *
-	 * @return array<string, mixed>|WP_Error Generation results or error.
+	 * @return array<int, array<string, mixed>>|WP_Error Array of generated items or error object.
 	 */
 	public function generate( int $count ) {
 		$resource_type = $this->get_resource_type();
@@ -152,12 +211,15 @@ abstract class Generator {
 		}
 
 		/**
-		 * Apply filtered generation params for the current resource type.
-		 * Allows modification of generation parameters through WordPress filters.
+		 * Filters the generation parameters for a specific resource type.
+		 *
+		 * Allows developers to modify generation parameters before they are used
+		 * by the generator. Useful for customizing default values, adding validation,
+		 * or implementing custom generation logic.
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array<string, mixed> $generation_params Generation parameters to be filtered
+		 * @param array<string, mixed> $generation_params Current generation parameters.
 		 */
 		$this->generation_params = apply_filters( "easycommerce_fakerpress_generation_params_{$resource_type}", $this->generation_params );
 
@@ -175,10 +237,11 @@ abstract class Generator {
 				/**
 				 * Fires before generating a single item of the specified resource type.
 				 *
-				 * @since 1.0.0
-				 * @see   Generator::generate()
+				 * Allows developers to perform actions before individual item generation,
+				 * such as logging, validation, or setup operations.
 				 *
-				 * @param string $resource_type The type of resource being generated (e.g. 'product', 'customer')
+				 * @since 1.0.0
+				 * @hook  easycommerce_fakerpress_before_generate_single_item_{$resource_type}
 				 */
 				do_action( "easycommerce_fakerpress_before_generate_single_item_{$resource_type}" );
 
@@ -193,25 +256,33 @@ abstract class Generator {
 					/**
 					 * Filters the generated item of the specified resource type.
 					 *
-					 * @since 1.0.0
+					 * Allows developers to modify or validate generated items before they are
+					 * added to the results array. Useful for custom validation, data transformation,
+					 * or additional processing.
 					 *
-					 * @param array<string,mixed>|WP_Error $item_result The generated item result
-					 * @param int                          $i           The current item index in the generation loop
+					 * @since 1.0.0
+					 * @hook  easycommerce_fakerpress_generated_item_{$resource_type}
+					 *
+					 * @param array<string, mixed>|WP_Error $item_result The generated item result.
+					 * @param int                           $i           The current item index in the generation loop.
 					 */
 					$item_result = apply_filters( "easycommerce_fakerpress_generated_item_{$resource_type}", $item_result, $i );
 
-					if ( $item_result ) {
+					if ( $item_result && ! is_wp_error( $item_result ) ) {
 						$results[] = $item_result;
 					}
 
 					/**
 					 * Fires after generating a single item of the specified resource type.
 					 *
-					 * @since 1.0.0
-					 * @see   Generator::generate()
+					 * Allows developers to perform actions after individual item generation,
+					 * such as cleanup, logging, or triggering related processes.
 					 *
-					 * @param array<string,mixed>|WP_Error $item_result The generated item result
-					 * @param int                          $i           The current item index in the generation loop
+					 * @since 1.0.0
+					 * @hook  easycommerce_fakerpress_after_generate_single_item_{$resource_type}
+					 *
+					 * @param array<string, mixed>|WP_Error $item_result The generated item result.
+					 * @param int                           $i           The current item index in the generation loop.
 					 */
 					do_action( "easycommerce_fakerpress_after_generate_single_item_{$resource_type}", $item_result, $i );
 				} catch ( Exception $e ) {
@@ -223,11 +294,14 @@ abstract class Generator {
 			/**
 			 * Fires after completing a batch generation of the specified resource type.
 			 *
-			 * @since 1.0.0
-			 * @see   Generator::generate()
+			 * Allows developers to perform batch-level operations after all items have been
+			 * generated, such as cache clearing, search index updates, or notification sending.
 			 *
-			 * @param array<int,mixed> $results All generated items in the batch
-			 * @param int              $count   Total number of items attempted to generate
+			 * @since 1.0.0
+			 * @hook  easycommerce_fakerpress_after_batch_generate_{$resource_type}
+			 *
+			 * @param array<int, mixed> $results All successfully generated items in the batch.
+			 * @param int               $count   Total number of items attempted to generate.
 			 */
 			do_action( "easycommerce_fakerpress_after_batch_generate_{$resource_type}", $results, $count );
 
@@ -248,33 +322,41 @@ abstract class Generator {
 	/**
 	 * Generate a single item
 	 *
-	 * Must be implemented by child classes to define item-specific generation logic.
+	 * Abstract method that must be implemented by all concrete generator classes.
+	 * Contains the specific logic for generating one item of the resource type
+	 * (product, customer, order, etc.). Should handle all business logic,
+	 * validation, and database operations for creating a single item.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array<string, mixed>|WP_Error Single item data or error.
+	 * @return array<string, mixed>|WP_Error Generated item data array or error object.
 	 */
 	abstract protected function generate_single_item();
 
 	/**
-	 * Get the resource type name (e.g., 'product', 'customer')
+	 * Get the resource type name
 	 *
-	 * Must be implemented by child classes.
+	 * Abstract method that must be implemented by all concrete generator classes.
+	 * Returns a string identifier for the type of resource being generated
+	 * (e.g., 'product', 'customer', 'order'). Used for logging, filtering,
+	 * and WordPress action/filter hook naming.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Resource type name.
+	 * @return string Resource type identifier (lowercase, no spaces).
 	 */
 	abstract protected function get_resource_type(): string;
 
 	/**
 	 * Set generation parameters
 	 *
-	 * Stores parameters for use during generation.
+	 * Stores the parameters received from the REST API request for use during
+	 * the generation process. These parameters control various aspects of
+	 * data generation including count, locale, seed, and generator-specific options.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array<string, mixed> $params Generation parameters from request.
+	 * @param array<string, mixed> $params Generation parameters from REST API request.
 	 *
 	 * @return void
 	 */
@@ -285,13 +367,15 @@ abstract class Generator {
 	/**
 	 * Validate generation count
 	 *
-	 * Ensures the count adheres to batch limits.
+	 * Ensures the requested generation count is within acceptable limits
+	 * to prevent memory exhaustion, timeout issues, and performance problems.
+	 * Validates that count is positive and doesn't exceed the maximum batch size.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param int $count Number of items to generate.
 	 *
-	 * @return true|WP_Error True if valid, WP_Error otherwise.
+	 * @return true|WP_Error True if count is valid, WP_Error with details if invalid.
 	 */
 	protected function validate_count( int $count ) {
 		if ( $count <= 0 ) {
@@ -318,13 +402,16 @@ abstract class Generator {
 	/**
 	 * Log generation activity
 	 *
-	 * Records activity for debugging, conditional on WP_DEBUG_LOG.
+	 * Records generation activities for debugging and monitoring purposes.
+	 * Only logs when WP_DEBUG_LOG is enabled to avoid performance impact
+	 * in production environments. Includes structured logging with resource
+	 * type, log level, and additional context information.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string               $message Log message.
-	 * @param string               $level   Log level (e.g., 'info', 'warning', 'error').
-	 * @param array<string, mixed> $context Additional context data.
+	 * @param string               $message Log message describing the activity.
+	 * @param string               $level   Log level ('info', 'warning', 'error', 'debug').
+	 * @param array<string, mixed> $context Additional context data for debugging.
 	 *
 	 * @return void
 	 */
