@@ -4,7 +4,7 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,10 +17,18 @@ EasyCommerce FakerPress is a robust WordPress plugin designed to generate realis
 * **10 Specialized Generators**: For products, customers, orders, coupons, variations, shipping, taxes, transactions, cart sessions, and locations.
 * **Real-Time Validation**: Ensures data integrity with dependency checks and user-friendly feedback.
 * **Advanced Configuration**: Nested parameters, intelligent defaults, and extensible hooks.
+* **Comprehensive Hook System**: 15+ filters and actions for complete data customization and workflow integration.
 * **Modern Interface**: Built with React Router v7, Tailwind CSS, and automatic WordPress admin color scheme adaptation.
 * **Enterprise-Grade Architecture**: PSR-4 compliant, with native EasyCommerce model integration and 11 REST API controllers.
 
 This plugin is ideal for enterprise development, QA testing, integration validation, and scalable performance assessments in non-production environments.
+
+**Extensibility & Customization**:
+The plugin provides a comprehensive hook system allowing developers to customize every aspect of data generation:
+- **Data Filters**: Modify generated data before creation with 10+ `easycommerce_fakerpress_*_data_before_create` filters
+- **Result Filters**: Customize returned data with `easycommerce_fakerpress_*_generation_result` filters
+- **Workflow Actions**: Integrate with generation process using strategic `easycommerce_fakerpress_after_*_created` actions
+- **API Integration**: Filter REST responses with `easycommerce_fakerpress_rest_response` for complete API customization
 
 **Data Generation Highlights**:
 - **Products**: Includes attributes, variations, categories, pricing strategies, and inventory tracking.
@@ -76,7 +84,7 @@ Data is crafted using Faker for authentic details (e.g., addresses, names) combi
 **Caution**: Use exclusively in development or staging environments. Always back up your database prior to generation, start with small datasets, and avoid live sites without thorough testing.
 
 = Can I customize generation? =
-Customization is supported via hooks for logic modifications, configuration panels for quantities/patterns, and abstract classes for extending generators.
+Yes, extensively! The plugin includes a comprehensive hook system with 15+ filters and actions for complete customization. Use `easycommerce_fakerpress_*_data_before_create` filters to modify data before creation, `easycommerce_fakerpress_*_generation_result` filters for result customization, and `easycommerce_fakerpress_after_*_created` actions for workflow integration. Configuration panels support quantities/patterns, and abstract classes enable extending generators.
 
 = What about performance for large datasets? =
 Optimizations include batch processing, memory-efficient algorithms, and resumable progress tracking to handle extensive datasets without timeouts.
@@ -110,6 +118,12 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
     *(Screenshot: Location data form)*
 
 == Changelog ==
+
+= 1.0.3 - October 29, 2025 =
+* **Hook System Enhancement**: Added comprehensive filter and action hooks for complete data customization and workflow integration
+* **Extensibility Improvements**: Implemented 15+ hooks including data filters, result filters, and strategic actions
+* **API Customization**: Added REST response filtering for complete API extensibility
+* **Code Quality**: Maintained PHPStan level 8 compliance and WordPress coding standards
 
 = 1.0.2 - October 29, 2025 =
 * **Performance Improvements**: Optimized data generation algorithms for better memory usage and faster processing
