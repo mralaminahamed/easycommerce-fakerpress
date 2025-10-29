@@ -22,31 +22,31 @@ jobs:
         with:
           fetch-depth: 0
 
-       - name: Set plugin name
-         id: plugin_name
-         run: |
-           PLUGIN_SLUG="${{ github.event.repository.name }}"
-           PLUGIN_FILE="${PLUGIN_SLUG}.php"
-           # Convert kebab-case to Title Case for display
-           PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g' | sed 's/\b\w/\U&/g')
-           echo "plugin_slug=$PLUGIN_SLUG" >> $GITHUB_OUTPUT
-           echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
+      - name: Set plugin name
+        id: plugin_name
+        run: |
+          PLUGIN_SLUG="${{ github.event.repository.name }}"
+          PLUGIN_FILE="${PLUGIN_SLUG}.php"
+          # Convert kebab-case to Title Case for display
+          PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g' | sed 's/\b\w/\U&/g')
+          echo "plugin_slug=$PLUGIN_SLUG" >> $GITHUB_OUTPUT
+          echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
            echo "plugin_name=$PLUGIN_NAME" >> $GITHUB_OUTPUT
 
-       - name: Validate tag and plugin version alignment
-         id: version_check
-         run: |
-           TAG_REF="${GITHUB_REF#refs/tags/}"
-           # Strip leading v if present
-           if [[ "$TAG_REF" =~ ^v ]]; then TAG_STRIPPED=${TAG_REF#v}; else TAG_STRIPPED=$TAG_REF; fi
-           # Extract Version from plugin header (first match)
-           PLUGIN_VERSION=$(grep -E "^[[:space:]]*\*[[:space:]]*Version:" ${{ steps.plugin_name.outputs.plugin_file }} | head -n1 | sed -E 's/.*Version:[[:space:]]*([^ ]+).*/\1/')
-           echo "Tag: $TAG_REF";
-           echo "Stripped Tag: $TAG_STRIPPED";
-           echo "Plugin Version: $PLUGIN_VERSION";
-           if [ -z "$PLUGIN_VERSION" ]; then echo "Could not determine plugin version from ${{ steps.plugin_name.outputs.plugin_file }}"; exit 1; fi
-           if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then echo "Version mismatch: tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)"; exit 1; fi
-           echo "version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
+      - name: Validate tag and plugin version alignment
+        id: version_check
+        run: |
+          TAG_REF="${GITHUB_REF#refs/tags/}"
+          # Strip leading v if present
+          if [[ "$TAG_REF" =~ ^v ]]; then TAG_STRIPPED=${TAG_REF#v}; else TAG_STRIPPED=$TAG_REF; fi
+          # Extract Version from plugin header (first match)
+          PLUGIN_VERSION=$(grep -E "^[[:space:]]*\*[[:space:]]*Version:" ${{ steps.plugin_name.outputs.plugin_file }} | head -n1 | sed -E 's/.*Version:[[:space:]]*([^ ]+).*/\1/')
+          echo "Tag: $TAG_REF";
+          echo "Stripped Tag: $TAG_STRIPPED";
+          echo "Plugin Version: $PLUGIN_VERSION";
+          if [ -z "$PLUGIN_VERSION" ]; then echo "Could not determine plugin version from ${{ steps.plugin_name.outputs.plugin_file }}"; exit 1; fi
+          if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then echo "Version mismatch: tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)"; exit 1; fi
+          echo "version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
 
       - name: Ensure composer.lock is present
         run: |
@@ -117,26 +117,26 @@ jobs:
       - name: Install SVN (Subversion)
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y subversion
+           sudo apt-get install -y subversion
 
-       - name: WordPress Plugin Deploy
-         id: deploy
-         uses: 10up/action-wordpress-plugin-deploy@stable
-         with:
-           generate-zip: true
-         env:
-           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-           SLUG: ${{ steps.plugin_name.outputs.plugin_slug }}
+      - name: WordPress Plugin Deploy
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: ${{ steps.plugin_name.outputs.plugin_slug }}
 
-       - name: Create GitHub release
-         uses: softprops/action-gh-release@v2
-         with:
-           tag_name: ${{ github.ref_name }}
-           name: Release ${{ steps.version_check.outputs.version }}
-           body: |
-             Release ${{ steps.version_check.outputs.version }} of ${{ steps.plugin_name.outputs.plugin_name }}.
-             Refer to CHANGELOG.md for full details.
-           files: ${{ steps.deploy.outputs.zip-path }}
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ steps.version_check.outputs.version }}
+          body: |
+            Release ${{ steps.version_check.outputs.version }} of ${{ steps.plugin_name.outputs.plugin_name }}.
+            Refer to CHANGELOG.md for full details.
+          files: ${{ steps.deploy.outputs.zip-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
