@@ -89,7 +89,7 @@ class Product_Variation extends Generator {
 		// Add meta data (dimensions, weight, etc.).
 		$this->add_variation_meta( $variation );
 
-		return array(
+		$result = array(
 			'id'             => $variation->get_id(),
 			'product_id'     => $variation->get_product_id(),
 			'name'           => $variation->get_name(),
@@ -110,6 +110,19 @@ class Product_Variation extends Generator {
 				'tax_class'  => $variation->get_tax_class(),
 			),
 		);
+
+		/**
+		 * Filters the product variation generation result data.
+		 *
+		 * Allows developers to modify the returned product variation data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_product_variation_generation_result
+		 *
+		 * @param array $result     The product variation generation result data.
+		 * @param int   $variation_id The created variation ID.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_product_variation_generation_result', $result, $variation->get_id() );
 	}
 
 	/**
@@ -373,7 +386,7 @@ class Product_Variation extends Generator {
 		foreach ( $variation_data as $attribute_slug => $value_slug ) {
 			// Get or create attribute.
 			$attribute = $this->get_or_create_attribute( $attribute_slug );
-			if ( ! $attribute ) {
+			if ( is_wp_error( $attribute ) ) {
 				continue;
 			}
 

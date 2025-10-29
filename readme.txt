@@ -60,8 +60,8 @@ Generated data leverages the Faker library for authenticity while adhering to re
 
 == Frequently Asked Questions ==
 
-= What's new in version 1.0.0? =
-This release introduces architectural enhancements, including React Router v7 migration, real-time validation via a dedicated REST controller, PHPStan level 8 compliance, and improved component organization for better performance and developer experience.
+= What's new in version 1.0.2? =
+This release includes bug fixes, performance improvements, and enhanced compatibility with the latest EasyCommerce version. Key updates include optimized data generation algorithms, improved error handling, and refined user interface components.
 
 = How does EasyCommerce integration work? =
 The plugin utilizes native EasyCommerce models (e.g., Product, Customer, Order) for generation, ensuring data validation, relationship integrity, and compatibility with future updates. Direct database queries are avoided to maintain business logic enforcement.
@@ -111,19 +111,27 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
-= 1.0.0 - October 26, 2025 =
-* **Frontend Modernization**: Migrated to React Router v7 with data router patterns; improved component architecture and route-based code splitting.
+= 1.0.2 - October 29, 2025 =
+* **Performance Improvements**: Optimized data generation algorithms for better memory usage and faster processing
+* **Bug Fixes**: Fixed validation issues and improved error handling across all generators
+* **Compatibility Updates**: Enhanced compatibility with latest EasyCommerce plugin features
+* **UI Enhancements**: Refined interface components and improved user experience
+
+= 1.0.0 - October 15, 2025 =
 * **Validation Enhancements**: Added real-time dependency checks via new REST controller; integrated UI indicators and error handling.
 * **Code Quality**: Achieved PHPStan level 8 compliance; fixed controller schemas and enhanced PHPDoc.
 * **Development Tools**: Optimized build system, updated documentation, and refined .gitignore.
 
-= 0.9.0 - August 5, 2025 (Initial Release) =
+= 0.9.0 - September 15, 2025 (Initial Release) =
 * **Core Generators**: Introduced 10 specialized tools for products, customers, orders, coupons, variations, shipping, taxes, transactions, carts, and locations.
 * **User Experience**: Implemented WordPress admin color integration, advanced parameter system, responsive React interface, and real-time feedback.
 * **Architecture**: Adopted PSR-4 structure, 10+ REST controllers, and native EasyCommerce model integration.
 * **Technical Foundations**: Built with React 18, Tailwind CSS, Webpack 5; includes validation, state management, and extensibility hooks.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+Performance improvements and bug fixes. Recommended upgrade for all users. No data migration required.
 
 = 1.0.0 =
 This version includes significant architectural updates for improved stability and validation. Upgrade recommended for all users; test in staging first, especially if using custom hooks. No data migration required.

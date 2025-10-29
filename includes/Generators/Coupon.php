@@ -103,7 +103,7 @@ class Coupon extends Generator {
 		// Validate coupon with sample cart to ensure rules are correctly configured.
 		$validation_result = $this->validate_coupon_with_sample_cart( $coupon, $coupon_data );
 
-		return array(
+		$result = array(
 			'id'          => $coupon->get_id(),
 			'name'        => $coupon_data['name'],
 			'code'        => $coupon_data['code'],
@@ -120,6 +120,20 @@ class Coupon extends Generator {
 			'description' => $coupon_data['description'],
 			'validation'  => $validation_result,
 		);
+
+		/**
+		 * Filters the coupon generation result data.
+		 *
+		 * Allows developers to modify the returned coupon data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_coupon_generation_result
+		 *
+		 * @param array $result      The coupon generation result data.
+		 * @param int   $coupon_id   The created coupon ID.
+		 * @param array $coupon_data The original coupon data used for creation.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_coupon_generation_result', $result, $coupon->get_id(), $coupon_data );
 	}
 
 	/**
@@ -313,7 +327,7 @@ class Coupon extends Generator {
 	 *
 	 * @return WP_Error|string Unique coupon code.
 	 */
-	private function generate_unique_code(): string {
+	private function generate_unique_code() {
 		$attempts = 0;
 		do {
 			$code     = $this->generate_coupon_code();
@@ -543,7 +557,7 @@ class Coupon extends Generator {
 		// Category restrictions (35% chance).
 		if ( $this->get_faker()->boolean( 35 ) ) {
 			$category_ids = $this->get_random_category_ids();
-			if ( ! empty( $category_ids ) ) {
+			if ( ! is_wp_error( $category_ids ) && ! empty( $category_ids ) ) {
 				$restriction_type = $this->get_faker()->randomElement( array( 'include_categories', 'exclude_categories' ) );
 				$rules[]          = array(
 					'type'  => $restriction_type,
@@ -668,7 +682,7 @@ class Coupon extends Generator {
 	 *
 	 * @return WP_Error|array Category IDs.
 	 */
-	private function get_random_category_ids(): array {
+	private function get_random_category_ids() {
 		$categories = get_terms(
 			array(
 				'taxonomy'   => 'product_cat',

@@ -68,7 +68,7 @@ class Tax_Class extends Generator {
 			return new WP_Error( 'tax-class-not-found', __( 'Tax class not found.', 'easycommerce-fakerpress' ) );
 		}
 
-		return array(
+		$result = array(
 			'id'          => $tax_class['id'],
 			'name'        => $tax_class['name'],
 			'description' => $tax_class['description'],
@@ -76,6 +76,19 @@ class Tax_Class extends Generator {
 			'rates'       => $tax_class['rates'],
 			'regions'     => $this->get_tax_class_regions( $tax_class['rates'] ),
 		);
+
+		/**
+		 * Filters the tax class generation result data.
+		 *
+		 * Allows developers to modify the returned tax class data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_tax_class_generation_result
+		 *
+		 * @param array $result    The tax class generation result data.
+		 * @param array $tax_class The created tax class data.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_tax_class_generation_result', $result, $tax_class );
 	}
 
 	/**
@@ -106,17 +119,6 @@ class Tax_Class extends Generator {
 	 * @return array Tax class data
 	 */
 	private function generate_tax_class_data(): array {
-		// Decide whether to use real CSV data or generated data (70% CSV, 30% generated).
-		// $use_csv_data = $this->get_faker()->boolean( 70 );
-		//
-		// if ( $use_csv_data ) {
-		// $csv_data = $this->generate_tax_class_from_csv();
-		// if ( $csv_data ) {
-		// return $csv_data;
-		// }
-		// Fallback to generated data if CSV import fails.
-		// }
-
 		$tax_types = array(
 			'standard' => array(
 				'name'        => 'Standard Tax Rate',
@@ -333,72 +335,7 @@ class Tax_Class extends Generator {
 		return $rates;
 	}
 
-	/**
-	 * Generate tax class from CSV data.
-	 *
-	 * Uses real tax rate data from CSV files in the EasyCommerce plugin.
-	 *
-	 * @return array|null Tax class data with real rates, or null if no CSV data available
-	 */
-	private function generate_tax_class_from_csv(): ?array {
-		$tax_model = new TaxModel();
 
-		// Countries with available CSV tax data.
-		$available_countries = array( 'US', 'CA', 'GB', 'AU', 'IN', 'BD' );
-
-		// Get countries that have CSV files.
-		$countries_with_files = $tax_model->get_tax_files_by_countries( $available_countries );
-
-		if ( empty( $countries_with_files ) ) {
-			return null;
-		}
-
-		// Select a random country with CSV data.
-		$selected_country = $this->get_faker()->randomElement( $countries_with_files );
-
-		// Get tax rates from CSV.
-		$csv_rates = $tax_model->get_country_tax_rates_from_csv( strtolower( $selected_country ) );
-
-		if ( empty( $csv_rates ) ) {
-			return null;
-		}
-
-		// Select a subset of rates (3-10 states/regions).
-		$selected_count = min( count( $csv_rates ), $this->get_faker()->numberBetween( 3, 10 ) );
-		$selected_rates = $this->get_faker()->randomElements( $csv_rates, $selected_count );
-
-		// Format rates for tax class creation.
-		$formatted_rates = array();
-		foreach ( $selected_rates as $csv_rate ) {
-			$formatted_rates[] = array(
-				'country'  => $csv_rate['country'],
-				'state'    => $csv_rate['state'] ?? '',
-				'city'     => $csv_rate['city'] ?? '',
-				'rate'     => (float) $csv_rate['combined_rate'],
-				'priority' => $this->get_faker()->numberBetween( 1, 5 ),
-				'compound' => $this->get_faker()->boolean( 15 ), // 15% chance of compound tax
-			);
-		}
-
-		$tax_class_types = array(
-			'standard' => 'Standard Tax Rate',
-			'sales'    => 'Sales Tax',
-			'vat'      => 'Value Added Tax (VAT)',
-			'gst'      => 'Goods and Services Tax (GST)',
-		);
-
-		$tax_type = $this->get_faker()->randomElement( array_keys( $tax_class_types ) );
-
-		return array(
-			'name'        => $tax_class_types[ $tax_type ] . ' - ' . $selected_country,
-			'description' => sprintf(
-				'Real tax rates for %s imported from official tax data',
-				$selected_country
-			),
-			'status'      => $this->get_faker()->boolean( 95 ), // 95% chance of being active for real data
-			'rates'       => $formatted_rates,
-		);
-	}
 
 	/**
 	 * Get global tax locations with realistic jurisdiction data.

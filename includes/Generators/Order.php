@@ -91,6 +91,46 @@ class Order extends Generator {
 		$order_meta  = $this->generate_order_meta( $customer, $subtotal, $billing_address );
 		$total       = $this->calculate_total( $subtotal, $order_meta );
 
+		/**
+		 * Filters the order data before creating the order.
+		 *
+		 * Allows developers to modify order data, items, customer, and metadata
+		 * before the order is created in the database.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_order_data_before_create
+		 *
+		 * @param array $order_data {
+		 *     Order data array.
+		 *
+		 *     @type array  $customer    Customer data.
+		 *     @type array  $variations  Product variations.
+		 *     @type array  $order_items Order items.
+		 *     @type float  $subtotal    Order subtotal.
+		 *     @type array  $order_meta  Order metadata.
+		 *     @type float  $total       Order total.
+		 * }
+		 */
+		$order_data = apply_filters(
+			'easycommerce_fakerpress_order_data_before_create',
+			array(
+				'customer'    => $customer,
+				'variations'  => $variations,
+				'order_items' => $order_items,
+				'subtotal'    => $subtotal,
+				'order_meta'  => $order_meta,
+				'total'       => $total,
+			)
+		);
+
+		// Extract filtered data.
+		$customer    = $order_data['customer'];
+		$variations  = $order_data['variations'];
+		$order_items = $order_data['order_items'];
+		$subtotal    = $order_data['subtotal'];
+		$order_meta  = $order_data['order_meta'];
+		$total       = $order_data['total'];
+
 		// Use EasyCommerce Order model with the complete data structure.
 		$order   = new OrderModel();
 		$created = $order->create(
@@ -119,7 +159,7 @@ class Order extends Generator {
 		// Update customer statistics.
 		$this->update_customer_stats( $customer['id'], $total );
 
-		return array(
+		$result = array(
 			'id'             => $order->get_id(),
 			'customer'       => $customer['name'],
 			'customer_email' => $customer['email'],
@@ -129,6 +169,37 @@ class Order extends Generator {
 			'items_count'    => $this->count_order_items( $order_items ),
 			'created_date'   => current_time( 'Y-m-d H:i:s' ),
 		);
+
+		/**
+		 * Filters the order generation result data.
+		 *
+		 * Allows developers to modify the returned order data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_order_generation_result
+		 *
+		 * @param array $result     The order generation result data.
+		 * @param int   $order_id   The created order ID.
+		 * @param array $order_data The original order data used for creation.
+		 */
+		$result = apply_filters( 'easycommerce_fakerpress_order_generation_result', $result, $order->get_id(), $order_data );
+
+		/**
+		 * Fires after an order has been successfully created.
+		 *
+		 * Allows developers to perform additional operations after order creation,
+		 * such as adding custom metadata, triggering related processes, or logging.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_after_order_created
+		 *
+		 * @param int   $order_id    The created order ID.
+		 * @param array $result      The order generation result data.
+		 * @param array $order_data  The original order data used for creation.
+		 */
+		do_action( 'easycommerce_fakerpress_after_order_created', $order->get_id(), $result, $order_data );
+
+		return $result;
 	}
 
 	/**

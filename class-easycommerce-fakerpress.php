@@ -1,6 +1,10 @@
 <?php
 /**
- * Main Plugin Class
+ * Main Plugin Class for EasyCommerce FakerPress
+ *
+ * The main plugin class that orchestrates the entire EasyCommerce FakerPress plugin functionality.
+ * This class handles plugin initialization, admin interface setup, REST API registration,
+ * asset management, and WordPress admin color scheme integration.
  *
  * @package EasyCommerceFakerPress
  * @since   1.0.0
@@ -22,19 +26,35 @@ use EasyCommerceFakerPress\Controllers\Cart_Sessions;
 use EasyCommerceFakerPress\Controllers\Locations;
 
 /**
- * Main Plugin Class
+ * Main Plugin Class for EasyCommerce FakerPress
  *
- * Comprehensive EasyCommerce test data generator featuring 10 specialized generators,
- * real-time validation system, modern React Router v7 interface, WordPress admin
- * color integration, and advanced parameter configuration.
+ * This class serves as the central orchestrator for the EasyCommerce FakerPress plugin,
+ * providing comprehensive test data generation capabilities for EasyCommerce stores.
+ * It manages 10 specialized generators, implements real-time validation, features a
+ * modern React Router v7 interface, integrates with WordPress admin color schemes,
+ * and provides advanced parameter configuration options.
+ *
+ * Key Features:
+ * - 10 specialized data generators (Products, Customers, Orders, Coupons, etc.)
+ * - Real-time validation and dependency checking
+ * - Modern React-based admin interface with Router v7
+ * - WordPress admin color scheme integration
+ * - Advanced parameter configuration system
+ * - REST API endpoints for programmatic access
+ * - Comprehensive logging and error handling
+ * - Multi-locale support for international data generation
  *
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.0.2
  */
 class EasyCommerce_FakerPress {
 
 	/**
-	 * Single instance of the class
+	 * Single instance of the plugin class
+	 *
+	 * Implements the singleton pattern to ensure only one instance of the plugin
+	 * exists throughout the WordPress execution lifecycle. This prevents multiple
+	 * initializations and ensures consistent state management.
 	 *
 	 * @since 1.0.0
 	 * @var self|null
@@ -42,7 +62,10 @@ class EasyCommerce_FakerPress {
 	private static ?self $instance = null;
 
 	/**
-	 * Plugin version
+	 * Plugin version number
+	 *
+	 * Stores the current version of the EasyCommerce FakerPress plugin.
+	 * Used for asset versioning, database migrations, and compatibility checks.
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -50,13 +73,15 @@ class EasyCommerce_FakerPress {
 	public string $version = EASYCOMMERCE_FAKERPRESS_VERSION;
 
 	/**
-	 * Get single instance of the class
+	 * Get single instance of the plugin class
 	 *
-	 * Implements singleton pattern to ensure only one instance exists.
+	 * Implements the singleton pattern to ensure only one instance of the plugin
+	 * exists throughout the WordPress execution lifecycle. This method provides
+	 * global access to the plugin instance while preventing multiple instantiations.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return self Plugin instance.
+	 * @return self The single plugin instance.
 	 */
 	public static function get_instance(): self {
 		return self::$instance ??= new self();
@@ -65,9 +90,12 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Initialize the plugin
 	 *
-	 * Sets up hooks for activation, deactivation, and core functionality.
-	 * Checks dependencies before proceeding with initialization.
-	 * Hooked to WordPress core via implicit instantiation; no explicit action needed.
+	 * Sets up all necessary WordPress hooks and actions for plugin functionality.
+	 * Registers activation/deactivation hooks, admin menus, assets, and REST routes.
+	 * Performs dependency checks to ensure EasyCommerce is available before
+	 * enabling plugin features.
+	 *
+	 * This method is called automatically during WordPress plugin loading.
 	 *
 	 * @since 1.0.0
 	 *
@@ -86,8 +114,9 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Add admin menu page
 	 *
-	 * Creates the main admin menu page for the plugin interface.
-	 * Hooked to 'admin_menu' action.
+	 * Creates the main admin menu page for the EasyCommerce FakerPress interface.
+	 * Adds a top-level menu item in the WordPress admin sidebar with the plugin icon.
+	 * Only registers the menu if dependencies are met (EasyCommerce is active).
 	 *
 	 * @since 1.0.0
 	 *
@@ -113,8 +142,9 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Render the admin page
 	 *
-	 * Outputs the React root element where the admin interface will be mounted.
-	 * Called as callback from add_menu_page().
+	 * Outputs the HTML container element where the React admin interface will be mounted.
+	 * This method serves as the callback for the WordPress add_menu_page() function,
+	 * providing the entry point for the React Router v7 application.
 	 *
 	 * @since 1.0.0
 	 *
@@ -127,11 +157,13 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Enqueue admin assets
 	 *
-	 * Loads JavaScript, CSS, and localization data for the admin interface.
-	 * Only loads on the plugin's admin page.
-	 * Hooked to 'admin_enqueue_scripts' action.
+	 * Loads and enqueues all necessary JavaScript, CSS, and localization assets
+	 * for the admin interface. Only loads assets on the plugin's admin page to
+	 * optimize performance. Includes WordPress admin color scheme integration
+	 * and locale data for the React application.
 	 *
 	 * @since 1.0.0
+	 * @hooked admin_enqueue_scripts
 	 *
 	 * @param string $hook The current admin page hook suffix.
 	 *
@@ -217,11 +249,13 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Register REST API routes
 	 *
-	 * Initializes and registers all REST API controllers for the plugin.
-	 * Includes both core generators and enhanced Version 2.0 generators.
-	 * Hooked to 'rest_api_init' action.
+	 * Initializes and registers all REST API controllers for data generation.
+	 * Creates endpoints for all 10 specialized generators including core generators
+	 * (Products, Customers, Orders, Coupons) and enhanced generators (Variations,
+	 * Shipping, Tax, Transactions, Cart Sessions, Locations).
 	 *
 	 * @since 1.0.0
+	 * @hooked rest_api_init
 	 *
 	 * @return void
 	 */
@@ -255,10 +289,13 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Flush rewrite rules on activation and deactivation
 	 *
-	 * Flushes rewrite rules to clean up any custom endpoints.
-	 * Hooked to 'register_activation_hook' and 'register_deactivation_hook'.
+	 * Ensures WordPress rewrite rules are properly flushed when the plugin is
+	 * activated or deactivated. This maintains clean URL routing and prevents
+	 * conflicts with custom endpoints.
 	 *
 	 * @since 1.0.0
+	 * @hooked register_activation_hook
+	 * @hooked register_deactivation_hook
 	 *
 	 * @return void
 	 */
@@ -270,9 +307,11 @@ class EasyCommerce_FakerPress {
 	 * Display dependency notice
 	 *
 	 * Shows an admin notice when required dependencies are not met.
-	 * Hooked to 'admin_notices' action.
+	 * Specifically checks for EasyCommerce plugin activation and displays
+	 * an error message if it's not available, preventing plugin functionality.
 	 *
 	 * @since 1.0.0
+	 * @hooked admin_notices
 	 *
 	 * @return void
 	 */
@@ -288,7 +327,9 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Check if EasyCommerce plugin is active
 	 *
-	 * Verifies that the required EasyCommerce plugin is installed and activated.
+	 * Verifies that the required EasyCommerce plugin is installed and activated
+	 * by checking the active plugins list. This is a critical dependency check
+	 * that prevents the plugin from functioning without its core requirement.
 	 *
 	 * @since 1.0.0
 	 *
@@ -303,7 +344,9 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Check plugin dependencies
 	 *
-	 * Validates that all required dependencies are met before initialization.
+	 * Validates that all required dependencies are met before enabling plugin features.
+	 * Currently checks for EasyCommerce plugin activation, but can be extended
+	 * for additional dependencies in the future.
 	 *
 	 * @since 1.0.0
 	 *
@@ -314,9 +357,10 @@ class EasyCommerce_FakerPress {
 	}
 
 	/**
-	 * Prevent cloning of the instance
+	 * Prevent cloning of the plugin instance
 	 *
-	 * Part of singleton pattern implementation.
+	 * Prevents cloning of the singleton instance to maintain the singleton pattern.
+	 * Throws an exception if attempted, ensuring only one plugin instance exists.
 	 *
 	 * @since 1.0.0
 	 *
@@ -326,14 +370,16 @@ class EasyCommerce_FakerPress {
 	}
 
 	/**
-	 * Prevent unserialization of the instance
+	 * Prevent unserialization of the plugin instance
 	 *
-	 * Part of singleton pattern implementation.
+	 * Prevents unserialization of the singleton instance to maintain the singleton pattern.
+	 * Throws a RuntimeException if attempted, ensuring plugin integrity and preventing
+	 * multiple instances through deserialization attacks.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
-	 * @throws RuntimeException When attempting to unserialize.
+	 * @throws RuntimeException When attempting to unserialize the singleton instance.
 	 */
 	public function __wakeup() {
 		throw new RuntimeException( 'Cannot unserialize singleton' );
@@ -342,23 +388,29 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Get FakerPHP locale for display purposes
 	 *
-	 * Replicates Generator locale detection logic for frontend display.
+	 * Converts WordPress locale codes to FakerPHP compatible locale codes for
+	 * the admin interface display. Applies filters for customization and provides
+	 * fallback logic for unsupported locales. Used by the React frontend to
+	 * display current locale information.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $locale WordPress locale code.
+	 * @param string $locale WordPress locale code (e.g., 'en_US', 'fr_FR').
 	 *
-	 * @return string FakerPHP compatible locale code.
+	 * @return string FakerPHP compatible locale code (defaults to 'en_US').
 	 */
 	public function get_faker_locale( string $locale ): string {
 		/**
 		 * Filters the locale used for test data generation.
 		 *
-		 * Allows developers to override the default locale used by FakerPress for generating test data.
+		 * Allows developers to override the default locale used by EasyCommerce FakerPress
+		 * for generating test data. Useful for generating data in specific languages
+		 * or regional formats regardless of the site's locale setting.
 		 *
 		 * @since 1.0.0
+		 * @hook  easycommerce_fakerpress_locale
 		 *
-		 * @param string $locale The current WordPress locale code (e.g. 'en_US').
+		 * @param string $locale The current WordPress locale code (e.g., 'en_US').
 		 */
 		$custom_locale = apply_filters( 'easycommerce_fakerpress_locale', $locale );
 
@@ -385,9 +437,13 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Get human-readable labels for all supported FakerPHP locales
 	 *
+	 * Returns a comprehensive array of supported FakerPHP locales with their
+	 * human-readable labels for use in the admin interface. Includes major
+	 * world languages and regions for international data generation support.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Associative array of locale codes and labels.
+	 * @return array<string, string> Associative array mapping locale codes to display labels.
 	 */
 	public function get_locale_labels(): array {
 		return array(

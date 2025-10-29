@@ -77,14 +77,18 @@ class Cart_Session extends Generator {
 		// Get customer for cart session.
 		$customer = $this->get_customer_for_cart();
 
+		if ( is_wp_error( $customer ) ) {
+			return $customer;
+		}
+
 		$cart_data    = $this->generate_cart_session_data( $products, $customer );
 		$cart_session = $this->create_cart_session( $cart_data );
 
-		if ( ! $cart_session ) {
-			return new WP_Error( 'cart_session_creation_failed', __( 'Failed to create cart session.', 'easycommerce-fakerpress' ) );
+		if ( is_wp_error( $cart_session ) ) {
+			return $cart_session;
 		}
 
-		return array(
+		$result = array(
 			'hash'           => $cart_session['hash'],
 			'user_id'        => $cart_session['user_id'],
 			'status'         => $cart_session['status'],
@@ -98,6 +102,19 @@ class Cart_Session extends Generator {
 			'items'          => $cart_session['items'],
 			'addresses'      => $cart_session['addresses'],
 		);
+
+		/**
+		 * Filters the cart session generation result data.
+		 *
+		 * Allows developers to modify the returned cart session data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_cart_session_generation_result
+		 *
+		 * @param array $result         The cart session generation result data.
+		 * @param array $cart_session   The created cart session data.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_cart_session_generation_result', $result, $cart_session );
 	}
 
 	/**
@@ -105,9 +122,9 @@ class Cart_Session extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Customer data or null for guest.
+	 * @return array|WP_Error Customer data, empty array for guest, or error.
 	 */
-	private function get_customer_for_cart(): array {
+	private function get_customer_for_cart() {
 		$customer_type        = $this->generation_params['customer_type'] ?? 'mixed';
 		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
 		$guest_ratio          = $this->generation_params['guest_cart_ratio'] ?? 40;
@@ -267,17 +284,17 @@ class Cart_Session extends Generator {
 			'cancelled' => 2,
 		);
 
-		$cart_statuses = ! empty( $status_distribution ) ? $status_distribution : $default_statuses;
+		$cart_statuses = ! empty( $status_distribution ) ? array_map( 'intval', $status_distribution ) : $default_statuses;
 
-		$status = $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
-					array_keys( $cart_statuses ),
-					$cart_statuses
-				)
-			)
-		);
+		$weighted_statuses = array();
+		foreach ( $cart_statuses as $status_name => $weight ) {
+			$weight_count = max( 0, $weight );
+			for ( $i = 0; $i < $weight_count; $i++ ) {
+				$weighted_statuses[] = $status_name;
+			}
+		}
+
+		$status = $this->get_faker()->randomElement( $weighted_statuses );
 
 		// Customer is already selected by get_customer_for_cart() method.
 
@@ -534,7 +551,7 @@ class Cart_Session extends Generator {
 	 *
 	 * @return WP_Error|array Created cart session data
 	 */
-	private function create_cart_session( array $data ): array {
+	private function create_cart_session( array $data ) {
 		$cart_db = new DatabaseModel( 'cart_sessions' );
 
 		// Generate unique hash.

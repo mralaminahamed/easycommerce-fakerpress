@@ -1,6 +1,10 @@
 <?php
 /**
- * Abstract REST Controller Class.
+ * Abstract REST Controller Class for EasyCommerce FakerPress
+ *
+ * Base class for all REST API controllers providing common functionality for
+ * data generation endpoints. Extends WordPress REST Controller with additional
+ * features for parameter validation, schema generation, and generator integration.
  *
  * @since   1.0.0
  * @package EasyCommerceFakerPress\Abstracts
@@ -17,8 +21,18 @@ use WP_Error;
 /**
  * Abstract REST Controller Class
  *
- * Base class for all REST API controllers with common functionality
- * for data generation endpoints.
+ * Provides the foundation for all REST API controllers in EasyCommerce FakerPress.
+ * Extends WordPress REST Controller with specialized functionality for data
+ * generation endpoints, including parameter validation, schema generation,
+ * and seamless integration with generator classes.
+ *
+ * Key Features:
+ * - WordPress REST API integration
+ * - Automatic parameter validation and sanitization
+ * - JSON Schema generation for API documentation
+ * - Generator class integration
+ * - WordPress action/filter hooks
+ * - Comprehensive error handling
  *
  * @since 1.0.0
  */
@@ -26,6 +40,9 @@ abstract class Controller extends WP_REST_Controller {
 
 	/**
 	 * REST API namespace
+	 *
+	 * Defines the namespace for all REST API endpoints in the plugin.
+	 * Follows WordPress REST API conventions for versioning and organization.
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -35,53 +52,62 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get REST base for the endpoint
 	 *
-	 * Must be implemented by child classes to define the endpoint base.
+	 * Abstract method that must be implemented by all concrete controller classes.
+	 * Defines the base path segment for the REST API endpoint (e.g., 'products',
+	 * 'customers', 'orders'). This forms part of the complete endpoint URL.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string REST base path (e.g., 'products').
+	 * @return string REST base path segment (lowercase, plural form).
 	 */
 	abstract protected function get_rest_base(): string;
 
 	/**
 	 * Get generator instance
 	 *
-	 * Must be implemented by child classes to return the appropriate generator.
+	 * Abstract method that must be implemented by all concrete controller classes.
+	 * Returns a properly configured generator instance for the specific resource type.
+	 * The generator handles the actual data creation logic for the endpoint.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Generator Generator instance for the resource.
+	 * @return Generator Configured generator instance for the resource type.
 	 */
 	abstract protected function get_generator_instance(): Generator;
 
 	/**
 	 * Get resource type name
 	 *
-	 * Must be implemented by child classes to define the resource type.
+	 * Abstract method that must be implemented by all concrete controller classes.
+	 * Returns the singular form of the resource type (e.g., 'product', 'customer').
+	 * Used for API responses, logging, and WordPress action/filter naming.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Resource type (e.g., 'product').
+	 * @return string Resource type identifier (singular, lowercase).
 	 */
 	abstract protected function get_resource_type(): string;
 
 	/**
 	 * Get human-readable label for the resource type
 	 *
-	 * Must be implemented by child classes to provide a user-friendly
-	 * label for the resource type being handled.
+	 * Abstract method that must be implemented by all concrete controller classes.
+	 * Returns a human-readable, translated label for the resource type (e.g., 'Product', 'Order').
+	 * Used in API documentation, error messages, and user-facing text.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Resource type label (e.g., 'Product', 'Order').
+	 * @return string Human-readable resource type label (title case, translated).
 	 */
 	abstract protected function get_resource_type_label(): string;
 
 	/**
 	 * Register REST API routes
 	 *
-	 * Registers the generation endpoint for the specific resource type.
-	 * Integrated via the parent plugin's 'rest_api_init' action.
+	 * Registers the data generation endpoint for the specific resource type.
+	 * Creates a POST endpoint at /{namespace}/{rest_base}/generate that accepts
+	 * generation parameters and returns created data. Includes parameter validation,
+	 * permission checks, and JSON schema for API documentation.
 	 *
 	 * @since 1.0.0
 	 *
@@ -93,15 +119,14 @@ abstract class Controller extends WP_REST_Controller {
 		/**
 		 * Filters the REST API parameters for a specific endpoint.
 		 *
-		 * Allows modifying the parameters used for data generation on a per-endpoint basis.
-		 * The dynamic portion of the filter name, `$rest_base`, refers to the endpoint's
-		 * REST base path (e.g., 'products', 'orders', etc.).
+		 * Allows developers to modify the parameter schema for specific endpoints,
+		 * such as adding custom parameters, changing validation rules, or adding
+		 * new options for particular resource types.
 		 *
 		 * @since 1.0.0
+		 * @hook  easycommerce_fakerpress_rest_params_{$rest_base}
 		 *
-		 * @param array $params The default generation parameters from get_generation_params().
-		 *
-		 * @return array Modified parameters array.
+		 * @param array<string, mixed> $params Default generation parameters from get_generation_params().
 		 */
 		$params = apply_filters( "easycommerce_fakerpress_rest_params_{$rest_base}", $this->get_generation_params() );
 
@@ -123,30 +148,19 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Generate items endpoint callback
 	 *
-	 * Handles the generation request and returns the generated data.
+	 * Handles POST requests to the generation endpoint, validates parameters,
+	 * configures the generator, and returns the generated data. Includes
+	 * comprehensive error handling, locale configuration, and WordPress action hooks
+	 * for extensibility. Fires actions before and after generation for monitoring.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full data about the REST API request.
 	 *
-	 * @return WP_REST_Response|WP_Error Response object on success, WP_Error on failure.
+	 * @return WP_REST_Response|WP_Error REST response with generated data or error details.
 	 */
 	public function generate_items( WP_REST_Request $request ) {
 		$rest_base = $this->get_rest_base();
-
-		/**
-		 * The base path for the REST API routes.
-		 *
-		 * This variable defines the foundational path segment used in REST API endpoint URLs.
-		 * It acts as a prefix for all API requests within the defined namespace, providing
-		 * a consistent structure for API routing.
-		 *
-		 * Example: If the $rest_base is set to 'example', the resulting endpoint paths would
-		 * follow the format '/wp-json/{namespace}/example/...'.
-		 *
-		 * @var WP_REST_Request $requestFull data about the request.
-		 */
-		do_action( "easycommerce_fakerpress_rest_generate_before_{$rest_base}", $request );
 
 		$count = $request->get_param( 'count' );
 
@@ -188,6 +202,19 @@ abstract class Controller extends WP_REST_Controller {
 			$total_output
 		);
 
+		/**
+		 * Filters the success message returned by the REST API generation endpoint.
+		 *
+		 * Allows developers to customize the success message or add additional information
+		 * to the API response based on the generated results.
+		 *
+		 * @since 1.0.0
+		 * @hook  easycommerce_fakerpress_rest_message
+		 *
+		 * @param string $message         The default success message.
+		 * @param array  $result          The generation results array.
+		 * @param string $resource_type   The type of resource that was generated.
+		 */
 		$message = apply_filters( 'easycommerce_fakerpress_rest_message', $message, $result, $this->get_resource_type() );
 
 		$response = array(
@@ -196,21 +223,19 @@ abstract class Controller extends WP_REST_Controller {
 		);
 
 		/**
-		 * Defines the base path for a REST API endpoint.
+		 * Filters the REST API response data.
 		 *
-		 * This variable is utilized in routing within the REST API to construct
-		 * the endpoint URL. It serves as a key component for specifying the
-		 * namespace or relative base for the API routes. Changes to this value
-		 * can affect endpoint accessibility and should be carefully managed.
+		 * Allows developers to modify the response data before it's returned to the client.
 		 *
-		 * Typically, this value is used in conjunction with other parameters or
-		 * methods to create full REST routes. Ensure it adheres to naming
-		 * conventions and does not conflict with existing endpoints.
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_rest_response
 		 *
-		 * @var array           $response The result of the fake data
-		 * @var WP_REST_Request $request Full data about the request.
+		 * @param array           $response     The REST API response data array.
+		 * @param array           $result       The generation results array.
+		 * @param string          $resource_type The type of resource that was generated.
+		 * @param WP_REST_Request $request      Full data about the original request.
 		 */
-		do_action( "easycommerce_fakerpress_rest_generate_after_{$rest_base}", $response, $request );
+		$response = apply_filters( 'easycommerce_fakerpress_rest_response', $response, $result, $this->get_resource_type(), $request );
 
 		return new WP_REST_Response( $response, 200 );
 	}
@@ -218,13 +243,15 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Check permissions for generating items
 	 *
-	 * Verifies that the current user has permission to generate data.
+	 * Verifies that the current user has the necessary permissions to generate data.
+	 * Requires the 'manage_options' capability, which is typically held by administrators.
+	 * Returns appropriate error responses for unauthorized access attempts.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request Full data about the REST API request.
 	 *
-	 * @return bool|WP_Error True if permission granted, WP_Error otherwise.
+	 * @return bool|WP_Error True if user has permission, WP_Error with details if denied.
 	 */
 	public function generate_items_permissions_check( WP_REST_Request $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -241,11 +268,14 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get generation endpoint parameters
 	 *
-	 * Returns the parameters schema for the generation endpoint.
+	 * Returns the complete parameter schema for the generation endpoint,
+	 * including base parameters (count, locale, seed) and resource-specific
+	 * parameters defined by child classes. Used for parameter validation,
+	 * API documentation, and request processing.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Associative array of parameter definitions.
+	 * @return array<string, array<string, mixed>> Parameter schema definitions.
 	 */
 	public function get_generation_params(): array {
 		$base_params = array(
@@ -340,15 +370,17 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Validate date parameter
 	 *
-	 * Ensures date is in YYYY-MM-DD format.
+	 * Validates that date parameters are in the correct YYYY-MM-DD format.
+	 * Used for date range parameters in generation requests to ensure
+	 * proper date handling and prevent invalid date-related errors.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string          $value   Date string.
-	 * @param WP_REST_Request $request Request object.
-	 * @param string          $param   Parameter name.
+	 * @param string          $value   Date string to validate.
+	 * @param WP_REST_Request $request Request object containing all parameters.
+	 * @param string          $param   Parameter name being validated.
 	 *
-	 * @return bool|WP_Error True if valid, WP_Error otherwise.
+	 * @return bool|WP_Error True if date format is valid, WP_Error if invalid.
 	 */
 	public function validate_date( string $value, WP_REST_Request $request, string $param ) {
 		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
@@ -363,15 +395,17 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Validate count parameter
 	 *
-	 * Validates the count parameter for generation requests.
+	 * Validates the count parameter for generation requests, ensuring it's
+	 * a positive integer within the allowed range (1-100). Prevents invalid
+	 * or potentially harmful generation requests.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|string|mixed $value    Parameter value to validate.
-	 * @param WP_REST_Request  $request  Request object.
-	 * @param string           $param    Parameter name.
+	 * @param int|string|mixed $value    Parameter value to validate (should be numeric).
+	 * @param WP_REST_Request  $request  Request object containing all parameters.
+	 * @param string           $param    Parameter name being validated.
 	 *
-	 * @return bool|WP_Error True if valid, WP_Error otherwise.
+	 * @return bool|WP_Error True if count is valid, WP_Error with details if invalid.
 	 */
 	public function validate_count( $value, WP_REST_Request $request, string $param ) {
 		$int_value = (int) $value;
@@ -388,11 +422,13 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get public schema for the endpoint
 	 *
-	 * Returns the schema for API documentation and validation.
+	 * Returns the JSON Schema definition for the REST API endpoint response.
+	 * Used for API documentation, client validation, and ensuring consistent
+	 * response structures. Includes base properties and resource-specific extensions.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Schema definition for the response.
+	 * @return array<string, mixed> JSON Schema definition for the API response.
 	 */
 	public function get_public_item_schema(): array {
 		$schema = array(
@@ -422,11 +458,14 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get resource-specific schema properties
 	 *
-	 * Can be overridden by child classes to add specific schema properties.
+	 * Returns additional JSON Schema properties specific to the resource type.
+	 * Can be overridden by child controller classes to add custom response
+	 * properties for their specific resource type (e.g., product attributes,
+	 * customer fields). Returns empty array by default.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Resource-specific schema properties.
+	 * @return array<string, mixed> Resource-specific schema properties array.
 	 */
 	protected function get_resource_specific_properties(): array {
 		return array();
@@ -435,11 +474,14 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get resource-specific generation parameters
 	 *
-	 * Can be overridden by child classes to add specific generation parameters.
+	 * Returns additional parameter definitions specific to the resource type.
+	 * Can be overridden by child controller classes to add custom parameters
+	 * for their specific generation requirements (e.g., product categories,
+	 * customer demographics). Returns empty array by default.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Resource-specific parameter definitions.
+	 * @return array<string, mixed> Resource-specific parameter definitions.
 	 */
 	protected function get_resource_specific_params(): array {
 		return array();
@@ -448,13 +490,16 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Sanitize array parameter
 	 *
-	 * Sanitizes array parameters for API requests.
+	 * Sanitizes array parameters for REST API requests using WordPress
+	 * sanitization functions. Ensures all array values are properly cleaned
+	 * to prevent XSS and other injection attacks. Returns empty array if
+	 * input is not an array.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $value Parameter value to sanitize.
+	 * @param mixed $value Parameter value that should be an array.
 	 *
-	 * @return array Sanitized array value.
+	 * @return array<string, mixed> Sanitized array with cleaned values.
 	 */
 	public function sanitize_array( $value ): array {
 		if ( ! is_array( $value ) ) {

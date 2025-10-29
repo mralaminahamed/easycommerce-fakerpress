@@ -76,6 +76,49 @@ class Customer extends Generator {
 		$shipping_address = $this->generate_shipping_address( $first_name, $last_name, $billing_address['country'] );
 		$customer_meta    = $this->generate_customer_meta();
 
+		/**
+		 * Filters the customer data before creating the customer.
+		 *
+		 * Allows developers to modify customer data, addresses, and metadata
+		 * before the customer is created in the database.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_customer_data_before_create
+		 *
+		 * @param array $customer_data {
+		 *     Customer data array.
+		 *
+		 *     @type string $first_name       Customer first name.
+		 *     @type string $last_name        Customer last name.
+		 *     @type string $email            Customer email.
+		 *     @type string $full_name        Customer full name.
+		 *     @type array  $billing_address  Billing address data.
+		 *     @type array  $shipping_address Shipping address data.
+		 *     @type array  $customer_meta    Customer metadata.
+		 * }
+		 */
+		$customer_data = apply_filters(
+			'easycommerce_fakerpress_customer_data_before_create',
+			array(
+				'first_name'       => $first_name,
+				'last_name'        => $last_name,
+				'email'            => $email,
+				'full_name'        => $full_name,
+				'billing_address'  => $billing_address,
+				'shipping_address' => $shipping_address,
+				'customer_meta'    => $customer_meta,
+			)
+		);
+
+		// Extract filtered data.
+		$first_name       = $customer_data['first_name'];
+		$last_name        = $customer_data['last_name'];
+		$email            = $customer_data['email'];
+		$full_name        = $customer_data['full_name'];
+		$billing_address  = $customer_data['billing_address'];
+		$shipping_address = $customer_data['shipping_address'];
+		$customer_meta    = $customer_data['customer_meta'];
+
 		// Check if user with this email already exists.
 		if ( email_exists( $email ) ) {
 			return new WP_Error( 'email_exists', __( 'A user with this email address already exists.', 'easycommerce-fakerpress' ) );
@@ -129,7 +172,7 @@ class Customer extends Generator {
 		// Initialize customer statistics based on customer age.
 		$this->initialize_customer_history( $customer, $customer_meta );
 
-		return array(
+		$result = array(
 			'id'              => $customer->get_id(),
 			'name'            => $full_name,
 			'email'           => $email,
@@ -144,6 +187,37 @@ class Customer extends Generator {
 			'total_spent'     => '$' . number_format( $customer_meta['total_spent'], 2 ),
 			'last_login'      => $customer_meta['last_login'],
 		);
+
+		/**
+		 * Filters the customer generation result data.
+		 *
+		 * Allows developers to modify the returned customer data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_customer_generation_result
+		 *
+		 * @param array $result        The customer generation result data.
+		 * @param int   $customer_id   The created customer ID.
+		 * @param array $customer_data The original customer data used for creation.
+		 */
+		$result = apply_filters( 'easycommerce_fakerpress_customer_generation_result', $result, $customer->get_id(), $customer_data );
+
+		/**
+		 * Fires after a customer has been successfully created.
+		 *
+		 * Allows developers to perform additional operations after customer creation,
+		 * such as adding custom metadata, triggering related processes, or logging.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_after_customer_created
+		 *
+		 * @param int   $customer_id   The created customer ID.
+		 * @param array $result        The customer generation result data.
+		 * @param array $customer_data The original customer data used for creation.
+		 */
+		do_action( 'easycommerce_fakerpress_after_customer_created', $customer->get_id(), $result, $customer_data );
+
+		return $result;
 	}
 
 	/**
@@ -178,9 +252,9 @@ class Customer extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Photo URL or empty string.
+	 * @return string|false Photo URL or false on failure.
 	 */
-	private function generate_customer_photo(): string {
+	private function generate_customer_photo() {
 		// Query for a random image from the media library.
 		$args = array(
 			'post_type'      => 'attachment',

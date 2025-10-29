@@ -74,7 +74,7 @@ class Shipping_Plan extends Generator {
 		// Test location lookup to verify plan can be found by its regions.
 		$location_test = $this->test_location_lookup( $shipping_plan, $shipping_plan_data['regions'] );
 
-		return array(
+		$result = array(
 			'id'               => $shipping_plan->get_id(),
 			'name'             => $shipping_plan->get_name(),
 			'description'      => $shipping_plan->get_description(),
@@ -85,6 +85,19 @@ class Shipping_Plan extends Generator {
 			'regions'          => $shipping_plan->get_regions(),
 			'location_test'    => $location_test,
 		);
+
+		/**
+		 * Filters the shipping plan generation result data.
+		 *
+		 * Allows developers to modify the returned shipping plan data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_shipping_plan_generation_result
+		 *
+		 * @param array $result          The shipping plan generation result data.
+		 * @param int   $shipping_plan_id The created shipping plan ID.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_shipping_plan_generation_result', $result, $shipping_plan->get_id() );
 	}
 
 	/**
@@ -809,7 +822,7 @@ class Shipping_Plan extends Generator {
 	 *
 	 * @return WP_Error|array Test result with lookup status.
 	 */
-	private function test_location_lookup( ShippingPlanModel $shipping_plan, array $regions ): array {
+	private function test_location_lookup( ShippingPlanModel $shipping_plan, array $regions ) {
 		if ( empty( $regions ) ) {
 			return new WP_Error( 'missing_regions', __( 'No regions found.', 'easycommerce-fakerpress' ) );
 		}

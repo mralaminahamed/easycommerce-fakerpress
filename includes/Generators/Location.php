@@ -75,13 +75,26 @@ class Location extends Generator {
 			return new WP_Error( 'location_creation_failed', __( 'Failed to create location data using EasyCommerce model.', 'easycommerce-fakerpress' ) );
 		}
 
-		return array(
+		$result = array(
 			'countries_created' => count( $location_data ),
 			'total_states'      => $this->count_states( $location_data ),
 			'total_cities'      => $this->count_cities( $location_data ),
 			'data_file_path'    => $this->get_location_file_path(),
 			'created_date'      => current_time( 'Y-m-d H:i:s' ),
 		);
+
+		/**
+		 * Filters the location generation result data.
+		 *
+		 * Allows developers to modify the returned location data after generation.
+		 *
+		 * @since 1.0.0
+		 * @hook easycommerce_fakerpress_location_generation_result
+		 *
+		 * @param array $result        The location generation result data.
+		 * @param array $location_data The generated location data.
+		 */
+		return apply_filters( 'easycommerce_fakerpress_location_generation_result', $result, $location_data );
 	}
 
 	/**
@@ -592,7 +605,7 @@ class Location extends Generator {
 	 *
 	 * @return WP_Error|bool True on success, false on failure.
 	 */
-	private function save_location_data( array $location_data ): bool {
+	private function save_location_data( array $location_data ) {
 		try {
 			$upload_dir       = wp_upload_dir();
 			$easycommerce_dir = $upload_dir['basedir'] . '/easycommerce';

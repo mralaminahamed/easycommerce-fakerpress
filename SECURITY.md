@@ -17,7 +17,8 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
 Instead, please report security vulnerabilities by emailing:
-- **Email**: security@alaminahamed.com
+
+- **Email**: me@alaminahamed.com
 - **Subject**: [SECURITY] EasyCommerce FakerPress - Brief Description
 
 ### What to Include
@@ -56,36 +57,42 @@ We follow responsible disclosure practices:
 This plugin implements comprehensive security measures across all components:
 
 ### Input Validation & Sanitization
+
 - All user inputs are sanitized using appropriate WordPress functions
 - AJAX request data validation and type checking
 - Strict data validation for generation parameters
 - Proper escaping of all output data
 
 ### Access Control & Authentication
+
 - Capability checks (`manage_options`) for all administrative functions
 - Nonce verification for all AJAX requests and form submissions
 - Proper user permission validation before data generation
 - WordPress authentication integration
 
 ### Data Generation Security
+
 - Controlled data generation limits to prevent resource exhaustion
 - Secure random data generation using WordPress and Faker libraries
 - Proper database transaction handling
 - Memory usage monitoring during bulk operations
 
 ### Admin Interface Security
+
 - React component props validation and sanitization
 - Secure AJAX endpoint communication
 - CSRF protection for all admin actions
 - XSS prevention in admin interface
 
 ### Database Security
+
 - Exclusive use of WordPress database API (`wpdb`)
 - Prepared statements for all database queries
 - No direct SQL query execution
 - Proper data sanitization before database insertion
 
 ### Asset Security
+
 - Webpack-compiled assets with integrity verification
 - Minified production assets to prevent tampering
 - Secure asset loading with proper dependency management
@@ -98,6 +105,7 @@ When contributing to this project, please follow these security guidelines:
 ### Code Security Standards
 
 #### Input Handling
+
 ```php
 // Good - Proper sanitization
 $type = sanitize_text_field( $_POST['type'] ?? '' );
@@ -110,6 +118,7 @@ if ( empty( $type ) || $count <= 0 ) {
 ```
 
 #### Output Escaping
+
 ```php
 // Good - Escaped output
 echo esc_html( $product_name );
@@ -121,6 +130,7 @@ echo wp_kses_post( $description );
 ```
 
 #### Capability Checks
+
 ```php
 // Good - Permission verification
 if ( ! current_user_can( 'manage_options' ) ) {
@@ -129,31 +139,34 @@ if ( ! current_user_can( 'manage_options' ) ) {
 ```
 
 #### Nonce Verification
+
 ```php
 // Good - CSRF protection
 check_ajax_referer( 'easycommerce_fakerpress_nonce', 'nonce' );
 ```
 
 ### React Component Security
+
 ```javascript
 // Good - Props validation
 const DataGenerator = ({ type, onGenerate }) => {
-    // Validate props
-    if (!type || typeof onGenerate !== 'function') {
-        return null;
+  // Validate props
+  if (!type || typeof onGenerate !== "function") {
+    return null;
+  }
+
+  // Secure API calls
+  const handleGenerate = (count) => {
+    if (!count || count < 1 || count > 100) {
+      return;
     }
-    
-    // Secure API calls
-    const handleGenerate = (count) => {
-        if (!count || count < 1 || count > 100) {
-            return;
-        }
-        onGenerate(type, count);
-    };
+    onGenerate(type, count);
+  };
 };
 ```
 
 ### Database Operations
+
 ```php
 // Good - Prepared statements
 $wpdb->prepare(
@@ -171,6 +184,7 @@ wp_insert_post( wp_slash( $post_data ) );
 We consider the following as security vulnerabilities:
 
 ### High Priority
+
 - **Cross-Site Scripting (XSS)** - Stored or reflected XSS vulnerabilities
 - **SQL Injection** - Any form of SQL injection attack
 - **Authentication Bypass** - Circumventing WordPress authentication
@@ -178,12 +192,14 @@ We consider the following as security vulnerabilities:
 - **Remote Code Execution** - Arbitrary code execution vulnerabilities
 
 ### Medium Priority
+
 - **Cross-Site Request Forgery (CSRF)** - Unprotected state-changing operations
 - **Information Disclosure** - Unauthorized access to sensitive data
 - **Local File Inclusion** - Unauthorized file access or directory traversal
 - **Unsafe File Operations** - Insecure file handling or uploads
 
 ### Plugin-Specific Concerns
+
 - **Data Generation Abuse** - Exploiting generation endpoints for DoS
 - **Admin Interface Bypass** - Accessing admin functions without proper auth
 - **AJAX Endpoint Abuse** - Unauthorized access to plugin AJAX endpoints
@@ -208,18 +224,21 @@ The following are generally NOT considered security vulnerabilities:
 When security vulnerabilities are confirmed:
 
 ### Severity Classification
+
 1. **Critical**: Remote code execution, authentication bypass
 2. **High**: XSS, SQL injection, privilege escalation
 3. **Medium**: CSRF, information disclosure
 4. **Low**: Minor security improvements
 
 ### Response Timeline
+
 1. **Critical vulnerabilities**: Emergency patch within 24-48 hours
 2. **High severity**: Patch within 7 days
 3. **Medium severity**: Patch within 30 days
 4. **Low severity**: Patch in next regular release
 
 ### Release Process
+
 1. **Develop fix** in private repository
 2. **Internal testing** and validation
 3. **Coordinated disclosure** with security researcher
@@ -229,18 +248,21 @@ When security vulnerabilities are confirmed:
 ## Development Security Guidelines
 
 ### Code Review Requirements
+
 - All code changes must pass security review
 - AJAX endpoints require additional scrutiny
 - Database operations must use WordPress APIs
 - User input handling requires validation review
 
 ### Testing Requirements
+
 - Security-focused unit tests for critical functions
 - Integration tests for AJAX endpoints
 - Frontend security testing for React components
 - Automated security scanning in CI/CD pipeline
 
 ### Deployment Security
+
 - Secure build process with integrity verification
 - Asset minification and obfuscation
 - Version control of security-critical files
@@ -249,15 +271,18 @@ When security vulnerabilities are confirmed:
 ## Security Resources
 
 ### WordPress Security
+
 - [WordPress Security Guidelines](https://developer.wordpress.org/plugins/security/)
 - [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/)
 - [Plugin Security Handbook](https://developer.wordpress.org/plugins/security/)
 
 ### WooCommerce Security
+
 - [WooCommerce Security Best Practices](https://woocommerce.com/document/security-best-practices/)
 - [WooCommerce Developer Security Guidelines](https://github.com/woocommerce/woocommerce/wiki/Security)
 
 ### General Security
+
 - [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [React Security Best Practices](https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml)
@@ -274,17 +299,22 @@ Security researchers who responsibly disclose vulnerabilities will be:
 ## Contact Information
 
 ### Security Team
-- **Primary Email**: security@alaminahamed.com
+
+- **Primary Email**: me@alaminahamed.com
 - **Website**: https://github.com/mralaminahamed/easycommerce-fakerpress/security
 - **Response Time**: Within 48 hours
 
 ### Encrypted Communication
+
 For sensitive security reports, encrypted communication is available:
+
 - **GPG Key**: Available upon request
 - **Signal**: Available upon request for critical issues
 
 ### Alternative Contacts
+
 If primary email is unresponsive:
+
 - **GitHub**: @mralaminahamed (for non-sensitive coordination only)
 - **WordPress.org**: Contact via plugin page (for general security questions)
 
@@ -292,4 +322,4 @@ If primary email is unresponsive:
 
 **Thank you for helping keep EasyCommerce FakerPress and its users secure!**
 
-*This security policy is reviewed and updated regularly to reflect current best practices and emerging threats.*
+_This security policy is reviewed and updated regularly to reflect current best practices and emerging threats._
