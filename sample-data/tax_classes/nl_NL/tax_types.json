@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standaard Belastingtarief",
+    "description": "Standaard verkoopbelasting toegepast op de meeste producten"
+  },
+  "reduced": {
+    "name": "Gereduceerd Belastingtarief",
+    "description": "Gereduceerd belastingtarief voor essentiële goederen en diensten"
+  },
+  "zero": {
+    "name": "Nul Belastingtarief",
+    "description": "Belastingvrije artikelen en diensten"
+  },
+  "luxury": {
+    "name": "Luxe Belastingtarief",
+    "description": "Hogere belastingtarief voor luxe goederen en diensten"
+  },
+  "digital": {
+    "name": "Digitale Diensten Belasting",
+    "description": "Belastingtarief voor digitale producten en diensten"
+  }
+}

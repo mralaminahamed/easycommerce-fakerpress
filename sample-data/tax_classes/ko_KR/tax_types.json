@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "표준 세율",
+    "description": "대부분의 제품에 적용되는 표준 판매세"
+  },
+  "reduced": {
+    "name": "감면 세율",
+    "description": "필수 상품 및 서비스에 대한 감면 세율"
+  },
+  "zero": {
+    "name": "영 세율",
+    "description": "면세 품목 및 서비스"
+  },
+  "luxury": {
+    "name": "럭셔리 세율",
+    "description": "럭셔리 상품 및 서비스에 대한 더 높은 세율"
+  },
+  "digital": {
+    "name": "디지털 서비스 세금",
+    "description": "디지털 제품 및 서비스에 대한 세율"
+  }
+}

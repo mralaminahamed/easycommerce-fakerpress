@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Tarif Pajak Standar",
+    "description": "Pajak penjualan standar yang diterapkan pada sebagian besar produk"
+  },
+  "reduced": {
+    "name": "Tarif Pajak Berkurang",
+    "description": "Tarif pajak berkurang untuk barang dan jasa penting"
+  },
+  "zero": {
+    "name": "Tarif Pajak Nol",
+    "description": "Barang dan jasa yang dibebaskan dari pajak"
+  },
+  "luxury": {
+    "name": "Tarif Pajak Mewah",
+    "description": "Tarif pajak yang lebih tinggi untuk barang dan jasa mewah"
+  },
+  "digital": {
+    "name": "Pajak Layanan Digital",
+    "description": "Tarif pajak untuk produk dan layanan digital"
+  }
+}

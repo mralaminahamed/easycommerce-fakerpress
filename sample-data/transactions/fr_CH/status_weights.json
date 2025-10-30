@@ -1,0 +1,23 @@
+{
+  "payment": {
+    "completed": 85,
+    "pending": 10,
+    "failed": 3,
+    "cancelled": 2
+  },
+  "refund": {
+    "completed": 90,
+    "pending": 8,
+    "failed": 2
+  },
+  "adjustment": {
+    "completed": 95,
+    "pending": 5
+  },
+  "fee": {
+    "completed": 100
+  },
+  "commission": {
+    "completed": 100
+  }
+}

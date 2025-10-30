@@ -1,0 +1,7 @@
+{
+  "stripe": 40,
+  "paypal": 25,
+  "bank_transfer": 15,
+  "cash_on_delivery": 10,
+  "credit_card": 10
+}

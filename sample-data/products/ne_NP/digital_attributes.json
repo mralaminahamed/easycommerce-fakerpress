@@ -1,0 +1,27 @@
+{
+  "format": {
+    "name": "ढाँचा",
+    "type": "text",
+    "values": ["PDF", "MP4", "MP3", "ZIP", "EXE", "DMG"]
+  },
+  "license": {
+    "name": "लाइसेन्स",
+    "type": "text",
+    "values": ["व्यक्तिगत", "व्यावसायिक", "विस्तारित", "उद्यम"]
+  },
+  "version": {
+    "name": "संस्करण",
+    "type": "text",
+    "values": ["1.0", "2.0", "3.0", "आधारभूत", "प्रो", "प्रिमियम"]
+  },
+  "platform": {
+    "name": "प्लेटफर्म",
+    "type": "text",
+    "values": ["Windows", "macOS", "Linux", "iOS", "Android", "Web"]
+  },
+  "subscription": {
+    "name": "सदस्यता",
+    "type": "text",
+    "values": ["मासिक", "वार्षिक", "आजीवन"]
+  }
+}

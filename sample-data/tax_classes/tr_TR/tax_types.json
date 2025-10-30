@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standart Vergi Oranı",
+    "description": "Çoğu ürüne uygulanan standart satış vergisi"
+  },
+  "reduced": {
+    "name": "İndirilmiş Vergi Oranı",
+    "description": "Temel mallar ve hizmetler için indirilmiş vergi oranı"
+  },
+  "zero": {
+    "name": "Sıfır Vergi Oranı",
+    "description": "Vergiden muaf ürünler ve hizmetler"
+  },
+  "luxury": {
+    "name": "Lüks Vergi Oranı",
+    "description": "Lüks mallar ve hizmetler için daha yüksek vergi oranı"
+  },
+  "digital": {
+    "name": "Dijital Hizmetler Vergisi",
+    "description": "Dijital ürünler ve hizmetler için vergi oranı"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Thuế suất tiêu chuẩn",
+    "description": "Thuế bán hàng tiêu chuẩn áp dụng cho hầu hết các sản phẩm"
+  },
+  "reduced": {
+    "name": "Thuế suất giảm",
+    "description": "Thuế suất giảm cho hàng hóa và dịch vụ thiết yếu"
+  },
+  "zero": {
+    "name": "Thuế suất bằng không",
+    "description": "Hàng hóa và dịch vụ miễn thuế"
+  },
+  "luxury": {
+    "name": "Thuế suất xa xỉ",
+    "description": "Thuế suất cao hơn cho hàng hóa và dịch vụ xa xỉ"
+  },
+  "digital": {
+    "name": "Thuế dịch vụ số",
+    "description": "Thuế suất cho sản phẩm và dịch vụ số"
+  }
+}

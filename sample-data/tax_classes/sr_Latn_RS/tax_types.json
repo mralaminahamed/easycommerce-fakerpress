@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standardna poreska stopa",
+    "description": "Standardni porez na prodaju koji se primjenjuje na većinu proizvoda"
+  },
+  "reduced": {
+    "name": "Snižena poreska stopa",
+    "description": "Snižena poreska stopa za osnovne robe i usluge"
+  },
+  "zero": {
+    "name": "Nula poreska stopa",
+    "description": "Proizvodi i usluge oslobođeni poreza"
+  },
+  "luxury": {
+    "name": "Poreska stopa za luksuz",
+    "description": "Viša poreska stopa za luksuzne robe i usluge"
+  },
+  "digital": {
+    "name": "Porez na digitalne usluge",
+    "description": "Poreska stopa za digitalne proizvode i usluge"
+  }
+}

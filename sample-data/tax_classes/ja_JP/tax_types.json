@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "標準税率",
+    "description": "ほとんどの製品に適用される標準消費税"
+  },
+  "reduced": {
+    "name": "軽減税率",
+    "description": "必需品およびサービスに対する軽減税率"
+  },
+  "zero": {
+    "name": "ゼロ税率",
+    "description": "免税品目およびサービス"
+  },
+  "luxury": {
+    "name": "奢侈税率",
+    "description": "奢侈品およびサービスに対する高い税率"
+  },
+  "digital": {
+    "name": "デジタルサービス税",
+    "description": "デジタル製品およびサービスに対する税率"
+  }
+}

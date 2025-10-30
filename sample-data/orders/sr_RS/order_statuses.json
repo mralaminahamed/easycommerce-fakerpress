@@ -1,0 +1,8 @@
+{
+  "pending": 25,
+  "processing": 35,
+  "completed": 30,
+  "cancelled": 5,
+  "on_hold": 3,
+  "refunded": 2
+}

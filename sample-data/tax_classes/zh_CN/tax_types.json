@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "标准税率",
+    "description": "适用于大多数产品的标准销售税"
+  },
+  "reduced": {
+    "name": "减税税率",
+    "description": "基本商品和服务减税税率"
+  },
+  "zero": {
+    "name": "零税率",
+    "description": "免税商品和服务"
+  },
+  "luxury": {
+    "name": "奢侈品税率",
+    "description": "奢侈品和服务更高的税率"
+  },
+  "digital": {
+    "name": "数字服务税",
+    "description": "数字产品和服务的税率"
+  }
+}

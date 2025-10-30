@@ -1,0 +1,58 @@
+{
+  "US": [
+    {
+      "zoneName": "America/New_York",
+      "gmtOffsetName": "UTC-05:00"
+    },
+    {
+      "zoneName": "America/Chicago",
+      "gmtOffsetName": "UTC-06:00"
+    },
+    {
+      "zoneName": "America/Denver",
+      "gmtOffsetName": "UTC-07:00"
+    },
+    {
+      "zoneName": "America/Los_Angeles",
+      "gmtOffsetName": "UTC-08:00"
+    }
+  ],
+  "CA": [
+    {
+      "zoneName": "America/Toronto",
+      "gmtOffsetName": "UTC-05:00"
+    },
+    {
+      "zoneName": "America/Vancouver",
+      "gmtOffsetName": "UTC-08:00"
+    }
+  ],
+  "GB": [
+    {
+      "zoneName": "Europe/London",
+      "gmtOffsetName": "UTC+00:00"
+    }
+  ],
+  "AU": [
+    {
+      "zoneName": "Australia/Sydney",
+      "gmtOffsetName": "UTC+10:00"
+    },
+    {
+      "zoneName": "Australia/Melbourne",
+      "gmtOffsetName": "UTC+10:00"
+    }
+  ],
+  "DE": [
+    {
+      "zoneName": "Europe/Berlin",
+      "gmtOffsetName": "UTC+01:00"
+    }
+  ],
+  "FR": [
+    {
+      "zoneName": "Europe/Paris",
+      "gmtOffsetName": "UTC+01:00"
+    }
+  ]
+}

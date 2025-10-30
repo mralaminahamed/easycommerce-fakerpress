@@ -1,0 +1,32 @@
+{
+  "standard": {
+    "name": "Standard Shipping",
+    "description": "Regular delivery within 5-7 business days",
+    "calculation_base": "price"
+  },
+  "express": {
+    "name": "Express Shipping",
+    "description": "Fast delivery within 1-3 business days",
+    "calculation_base": "price"
+  },
+  "weight": {
+    "name": "Weight-Based Shipping",
+    "description": "Shipping cost calculated by weight",
+    "calculation_base": "weight"
+  },
+  "free": {
+    "name": "Free Shipping",
+    "description": "Free shipping for orders above minimum amount",
+    "calculation_base": "price"
+  },
+  "overnight": {
+    "name": "Overnight Delivery",
+    "description": "Next business day delivery",
+    "calculation_base": "price"
+  },
+  "quantity": {
+    "name": "Quantity-Based Shipping",
+    "description": "Shipping cost based on number of items",
+    "calculation_base": "quantity"
+  }
+}

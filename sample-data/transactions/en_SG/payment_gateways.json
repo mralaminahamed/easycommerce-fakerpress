@@ -1,0 +1,10 @@
+[
+  "stripe",
+  "paypal",
+  "authorize_net",
+  "braintree",
+  "square",
+  "adyen",
+  "2checkout",
+  "worldpay"
+]

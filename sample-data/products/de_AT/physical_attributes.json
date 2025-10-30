@@ -1,0 +1,48 @@
+{
+  "color": {
+    "name": "Farbe",
+    "type": "text",
+    "values": [
+      "Rot",
+      "Blau",
+      "Grün",
+      "Schwarz",
+      "Weiß",
+      "Grau",
+      "Silber",
+      "Gold",
+      "Marine",
+      "Lila"
+    ]
+  },
+  "size": {
+    "name": "Größe",
+    "type": "text",
+    "values": ["XS", "S", "M", "L", "XL", "XXL", "Eine Größe"]
+  },
+  "material": {
+    "name": "Material",
+    "type": "text",
+    "values": [
+      "Baumwolle",
+      "Polyester",
+      "Aluminium",
+      "Edelstahl",
+      "Leder",
+      "Holz",
+      "Glas",
+      "Keramik",
+      "Silikon"
+    ]
+  },
+  "finish": {
+    "name": "Oberfläche",
+    "type": "text",
+    "values": ["Matt", "Glänzend", "Gebürstet", "Poliert", "Texturiert"]
+  },
+  "capacity": {
+    "name": "Kapazität",
+    "type": "text",
+    "values": ["16GB", "32GB", "64GB", "128GB", "256GB", "500ml", "1L", "2L"]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Staðlaður skattur",
+    "description": "Staðlaður söluskattur sem gildir um flestum vörum"
+  },
+  "reduced": {
+    "name": "Lægri skattur",
+    "description": "Lægri skattur fyrir nauðsynlegar vörur og þjónustu"
+  },
+  "zero": {
+    "name": "Núll skattur",
+    "description": "Skattfrjálsar vörur og þjónusta"
+  },
+  "luxury": {
+    "name": "Lúxus skattur",
+    "description": "Hærri skattur fyrir lúxusvörur og þjónustu"
+  },
+  "digital": {
+    "name": "Skattur á stafrænar þjónustur",
+    "description": "Skattur fyrir stafrænar vörur og þjónustur"
+  }
+}
