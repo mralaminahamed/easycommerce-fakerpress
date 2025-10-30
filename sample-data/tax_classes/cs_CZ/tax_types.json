@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standardní sazba daně",
+    "description": "Standardní daň z prodeje uplatňovaná na většinu produktů"
+  },
+  "reduced": {
+    "name": "Snížená sazba daně",
+    "description": "Snížená sazba daně pro základní zboží a služby"
+  },
+  "zero": {
+    "name": "Nulová sazba daně",
+    "description": "Položky a služby osvobozené od daně"
+  },
+  "luxury": {
+    "name": "Sazba daně z luxusu",
+    "description": "Vyšší sazba daně pro luxusní zboží a služby"
+  },
+  "digital": {
+    "name": "Daň z digitálních služeb",
+    "description": "Sazba daně pro digitální produkty a služby"
+  }
+}

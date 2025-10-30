@@ -1,0 +1,48 @@
+{
+  "color": {
+    "name": "Farge",
+    "type": "text",
+    "values": [
+      "Rød",
+      "Blå",
+      "Grønn",
+      "Svart",
+      "Hvit",
+      "Grå",
+      "Sølv",
+      "Gull",
+      "Marine",
+      "Lilla"
+    ]
+  },
+  "size": {
+    "name": "Størrelse",
+    "type": "text",
+    "values": ["XS", "S", "M", "L", "XL", "XXL", "En størrelse"]
+  },
+  "material": {
+    "name": "Materiale",
+    "type": "text",
+    "values": [
+      "Bomull",
+      "Polyester",
+      "Aluminium",
+      "Rustfritt stål",
+      "Lær",
+      "Tre",
+      "Glass",
+      "Keramikk",
+      "Silikon"
+    ]
+  },
+  "finish": {
+    "name": "Finish",
+    "type": "text",
+    "values": ["Matt", "Glanset", "Børstet", "Poliert", "Teksturert"]
+  },
+  "capacity": {
+    "name": "Kapasitet",
+    "type": "text",
+    "values": ["16GB", "32GB", "64GB", "128GB", "256GB", "500ml", "1L", "2L"]
+  }
+}

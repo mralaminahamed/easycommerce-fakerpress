@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Tasa de Impuesto Estándar",
+    "description": "Impuesto sobre las ventas estándar aplicado a la mayoría de los productos"
+  },
+  "reduced": {
+    "name": "Tasa de Impuesto Reducida",
+    "description": "Tasa de impuesto reducida para bienes y servicios esenciales"
+  },
+  "zero": {
+    "name": "Tasa de Impuesto Cero",
+    "description": "Artículos y servicios exentos de impuestos"
+  },
+  "luxury": {
+    "name": "Tasa de Impuesto de Lujo",
+    "description": "Tasa de impuesto más alta para bienes y servicios de lujo"
+  },
+  "digital": {
+    "name": "Impuesto a los Servicios Digitales",
+    "description": "Tasa de impuesto para productos y servicios digitales"
+  }
+}

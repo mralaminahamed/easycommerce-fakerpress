@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standardowa stawka podatku",
+    "description": "Standardowy podatek od sprzedaży stosowany do większości produktów"
+  },
+  "reduced": {
+    "name": "Obniżona stawka podatku",
+    "description": "Obniżona stawka podatku dla podstawowych towarów i usług"
+  },
+  "zero": {
+    "name": "Stawka podatku zerowa",
+    "description": "Towary i usługi zwolnione z podatku"
+  },
+  "luxury": {
+    "name": "Stawka podatku luksusowego",
+    "description": "Wyższa stawka podatku dla towarów i usług luksusowych"
+  },
+  "digital": {
+    "name": "Podatek od usług cyfrowych",
+    "description": "Stawka podatku dla produktów i usług cyfrowych"
+  }
+}

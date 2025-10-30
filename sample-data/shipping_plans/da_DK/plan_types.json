@@ -1,0 +1,32 @@
+{
+  "standard": {
+    "name": "Standardforsendelse",
+    "description": "Almindelig levering inden for 5-7 arbejdsdage",
+    "calculation_base": "price"
+  },
+  "express": {
+    "name": "Ekspresforsendelse",
+    "description": "Hurtig levering inden for 1-3 arbejdsdage",
+    "calculation_base": "price"
+  },
+  "weight": {
+    "name": "Vægtbaseret forsendelse",
+    "description": "Forsendelsesomkostninger beregnet efter vægt",
+    "calculation_base": "weight"
+  },
+  "free": {
+    "name": "Gratis forsendelse",
+    "description": "Gratis forsendelse for ordrer over minimumsbeløb",
+    "calculation_base": "price"
+  },
+  "overnight": {
+    "name": "Næste dags levering",
+    "description": "Levering næste arbejdsdag",
+    "calculation_base": "price"
+  },
+  "quantity": {
+    "name": "Mængdebaseret forsendelse",
+    "description": "Forsendelsesomkostninger baseret på antal varer",
+    "calculation_base": "quantity"
+  }
+}

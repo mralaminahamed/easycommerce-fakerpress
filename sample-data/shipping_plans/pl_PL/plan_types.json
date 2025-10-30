@@ -1,0 +1,32 @@
+{
+  "standard": {
+    "name": "Wysyłka standardowa",
+    "description": "Regularna dostawa w ciągu 5-7 dni roboczych",
+    "calculation_base": "price"
+  },
+  "express": {
+    "name": "Wysyłka ekspresowa",
+    "description": "Szybka dostawa w ciągu 1-3 dni roboczych",
+    "calculation_base": "price"
+  },
+  "weight": {
+    "name": "Wysyłka oparta na wadze",
+    "description": "Koszt wysyłki obliczony według wagi",
+    "calculation_base": "weight"
+  },
+  "free": {
+    "name": "Darmowa wysyłka",
+    "description": "Darmowa wysyłka dla zamówień powyżej minimalnej kwoty",
+    "calculation_base": "price"
+  },
+  "overnight": {
+    "name": "Dostawa nocna",
+    "description": "Dostawa następnego dnia roboczego",
+    "calculation_base": "price"
+  },
+  "quantity": {
+    "name": "Wysyłka oparta na ilości",
+    "description": "Koszt wysyłki na podstawie liczby przedmiotów",
+    "calculation_base": "quantity"
+  }
+}

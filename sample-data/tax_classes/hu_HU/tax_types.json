@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Szabványos adókulcs",
+    "description": "Szabványos forgalmi adó, amely a legtöbb termékre vonatkozik"
+  },
+  "reduced": {
+    "name": "Csökkentett adókulcs",
+    "description": "Csökkentett adókulcs alapvető árukra és szolgáltatásokra"
+  },
+  "zero": {
+    "name": "Nulla adókulcs",
+    "description": "Adómentes cikkek és szolgáltatások"
+  },
+  "luxury": {
+    "name": "Luxus adókulcs",
+    "description": "Magasabb adókulcs luxuscikkekre és szolgáltatásokra"
+  },
+  "digital": {
+    "name": "Digitális szolgáltatások adója",
+    "description": "Adókulcs digitális termékekre és szolgáltatásokra"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "standard": {
+    "name": "Livraison standard",
+    "description": "Livraison régulière dans les 5-7 jours ouvrables",
+    "calculation_base": "price"
+  },
+  "express": {
+    "name": "Livraison express",
+    "description": "Livraison rapide dans les 1-3 jours ouvrables",
+    "calculation_base": "price"
+  },
+  "weight": {
+    "name": "Livraison basée sur le poids",
+    "description": "Coût d'expédition calculé par poids",
+    "calculation_base": "weight"
+  },
+  "free": {
+    "name": "Livraison gratuite",
+    "description": "Livraison gratuite pour les commandes au-dessus du montant minimum",
+    "calculation_base": "price"
+  },
+  "overnight": {
+    "name": "Livraison nocturne",
+    "description": "Livraison le prochain jour ouvrable",
+    "calculation_base": "price"
+  },
+  "quantity": {
+    "name": "Livraison basée sur la quantité",
+    "description": "Coût d'expédition basé sur le nombre d'articles",
+    "calculation_base": "quantity"
+  }
+}
+}

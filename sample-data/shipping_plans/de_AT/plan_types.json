@@ -1,0 +1,32 @@
+{
+  "standard": {
+    "name": "Standardversand",
+    "description": "Regelmäßige Lieferung innerhalb von 5-7 Werktagen",
+    "calculation_base": "price"
+  },
+  "express": {
+    "name": "Expressversand",
+    "description": "Schnelle Lieferung innerhalb von 1-3 Werktagen",
+    "calculation_base": "price"
+  },
+  "weight": {
+    "name": "Gewichtsbasierter Versand",
+    "description": "Versandkosten nach Gewicht berechnet",
+    "calculation_base": "weight"
+  },
+  "free": {
+    "name": "Kostenloser Versand",
+    "description": "Kostenloser Versand für Bestellungen über Mindestbetrag",
+    "calculation_base": "price"
+  },
+  "overnight": {
+    "name": "Übernachtlieferung",
+    "description": "Lieferung am nächsten Werktag",
+    "calculation_base": "price"
+  },
+  "quantity": {
+    "name": "Mengenbasierter Versand",
+    "description": "Versandkosten basierend auf der Anzahl der Artikel",
+    "calculation_base": "quantity"
+  }
+}

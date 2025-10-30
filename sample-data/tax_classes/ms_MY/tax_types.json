@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Kadar Cukai Standard",
+    "description": "Cukai jualan standard yang dikenakan ke atas kebanyakan produk"
+  },
+  "reduced": {
+    "name": "Kadar Cukai Berkurangan",
+    "description": "Kadar cukai berkurangan untuk barangan dan perkhidmatan penting"
+  },
+  "zero": {
+    "name": "Kadar Cukai Sifar",
+    "description": "Barangan dan perkhidmatan yang dikecualikan cukai"
+  },
+  "luxury": {
+    "name": "Kadar Cukai Mewah",
+    "description": "Kadar cukai yang lebih tinggi untuk barangan dan perkhidmatan mewah"
+  },
+  "digital": {
+    "name": "Cukai Perkhidmatan Digital",
+    "description": "Kadar cukai untuk produk dan perkhidmatan digital"
+  }
+}

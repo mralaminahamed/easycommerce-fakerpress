@@ -1,0 +1,26 @@
+{
+  "Standardversand": {
+    "min": 5.99,
+    "max": 12.99,
+    "days": "5-7",
+    "weight": 50
+  },
+  "Expressversand": {
+    "min": 15.99,
+    "max": 25.99,
+    "days": "2-3",
+    "weight": 30
+  },
+  "Übernachtversand": {
+    "min": 25.99,
+    "max": 45.99,
+    "days": "1",
+    "weight": 15
+  },
+  "Abholung": {
+    "min": 0,
+    "max": 0,
+    "days": "0",
+    "weight": 5
+  }
+}

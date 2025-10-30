@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Aliquota IVA Standard",
+    "description": "IVA standard applicata alla maggior parte dei prodotti"
+  },
+  "reduced": {
+    "name": "Aliquota IVA Ridotta",
+    "description": "Aliquota IVA ridotta per beni e servizi essenziali"
+  },
+  "zero": {
+    "name": "Aliquota IVA Zero",
+    "description": "Articoli e servizi esenti da IVA"
+  },
+  "luxury": {
+    "name": "Aliquota IVA di Lusso",
+    "description": "Aliquota IVA più elevata per beni e servizi di lusso"
+  },
+  "digital": {
+    "name": "Imposta sui Servizi Digitali",
+    "description": "Aliquota IVA per prodotti e servizi digitali"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standartinis mokesčio tarifas",
+    "description": "Standartinis pardavimo mokestis, taikomas daugumai produktų"
+  },
+  "reduced": {
+    "name": "Sumažintas mokesčio tarifas",
+    "description": "Sumažintas mokesčio tarifas pagrindinėms prekėms ir paslaugoms"
+  },
+  "zero": {
+    "name": "Nulinis mokesčio tarifas",
+    "description": "Mokesčių neapmokestinamos prekės ir paslaugos"
+  },
+  "luxury": {
+    "name": "Prabangos mokesčio tarifas",
+    "description": "Aukštesnis mokesčio tarifas prabangos prekėms ir paslaugoms"
+  },
+  "digital": {
+    "name": "Skaitmeninių paslaugų mokestis",
+    "description": "Mokesčio tarifas skaitmeninėms prekėms ir paslaugoms"
+  }
+}

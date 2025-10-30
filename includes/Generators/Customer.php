@@ -34,6 +34,30 @@ class Customer extends Generator {
 	}
 
 	/**
+	 * Load sample data for the current locale
+	 *
+	 * Loads locale-specific sample data for customer generation including
+	 * countries, languages, currencies, categories, tags, phone patterns,
+	 * states/provinces, and postcode patterns.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, mixed> Sample data arrays for customer generation.
+	 */
+	protected function load_sample_data(): array {
+		return array(
+			'countries'            => $this->load_json_file( $this->get_sample_data_path( 'customers', 'countries' ) ) ?? array(),
+			'preferred_languages'  => $this->load_json_file( $this->get_sample_data_path( 'customers', 'preferred_languages' ) ) ?? array(),
+			'currencies'           => $this->load_json_file( $this->get_sample_data_path( 'customers', 'currencies' ) ) ?? array(),
+			'preferred_categories' => $this->load_json_file( $this->get_sample_data_path( 'customers', 'preferred_categories' ) ) ?? array(),
+			'customer_tags'        => $this->load_json_file( $this->get_sample_data_path( 'customers', 'customer_tags' ) ) ?? array(),
+			'phone_patterns'       => $this->load_json_file( $this->get_sample_data_path( 'customers', 'phone_patterns' ) ) ?? array(),
+			'states_provinces'     => $this->load_json_file( $this->get_sample_data_path( 'customers', 'states_provinces' ) ) ?? array(),
+			'postcode_patterns'    => $this->load_json_file( $this->get_sample_data_path( 'customers', 'postcode_patterns' ) ) ?? array(),
+		);
+	}
+
+	/**
 	 * Get supported data types for this generator.
 	 *
 	 * @return array Supported types
@@ -285,7 +309,8 @@ class Customer extends Generator {
 	 * @return array Billing address data.
 	 */
 	private function generate_billing_address( string $first_name, string $last_name, string $email ): array {
-		$country = $this->get_faker()->randomElement( array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
+		$sample_data = $this->load_sample_data();
+		$country     = $this->get_faker()->randomElement( $sample_data['countries'] ?: array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
 
 		return array(
 			'first_name' => $first_name,
@@ -320,8 +345,9 @@ class Customer extends Generator {
 		}
 
 		// 80% chance shipping address is in the same country
-		$country = $this->get_faker()->boolean( 80 ) ? $billing_country : $this->get_faker()->randomElement(
-			array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
+		$sample_data = $this->load_sample_data();
+		$country     = $this->get_faker()->boolean( 80 ) ? $billing_country : $this->get_faker()->randomElement(
+			$sample_data['countries'] ?: array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
 		);
 
 		return array(
@@ -346,8 +372,9 @@ class Customer extends Generator {
 	 * @return array Customer metadata.
 	 */
 	private function generate_customer_meta(): array {
-		$join_date  = $this->get_faker()->dateTimeBetween( '-5 years', '-1 week' );
-		$last_login = $this->get_faker()->optional( 0.85 )->dateTimeBetween( $join_date, 'now' );
+		$sample_data = $this->load_sample_data();
+		$join_date   = $this->get_faker()->dateTimeBetween( '-5 years', '-1 week' );
+		$last_login  = $this->get_faker()->optional( 0.85 )->dateTimeBetween( $join_date, 'now' );
 
 		// Generate realistic customer history based on how long they've been a customer.
 		$customer_age_days = $join_date->diff( new \DateTime() )->days;
@@ -362,15 +389,15 @@ class Customer extends Generator {
 					'email_notifications'  => $this->get_faker()->boolean( 85 ),
 					'marketing_opt_in'     => $this->get_faker()->boolean( 60 ),
 					'preferred_language'   => $this->get_faker()->randomElement(
-						array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' )
+						$sample_data['preferred_languages'] ?: array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' )
 					),
 					'currency'             => $this->get_faker()->randomElement(
-						array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
+						$sample_data['currencies'] ?: array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
 					),
 					'timezone'             => $this->get_faker()->timezone,
 					'communication_method' => $this->get_faker()->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
 					'preferred_categories' => $this->get_faker()->randomElements(
-						array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
+						$sample_data['preferred_categories'] ?: array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
 						$this->get_faker()->numberBetween( 1, 3 )
 					),
 				),
@@ -426,7 +453,8 @@ class Customer extends Generator {
 	 * @return array Customer tags.
 	 */
 	private function generate_customer_tags(): array {
-		$available_tags = array(
+		$sample_data    = $this->load_sample_data();
+		$available_tags = $sample_data['customer_tags'] ?: array(
 			'high_value_customer',
 			'frequent_shopper',
 			'bargain_seeker',
@@ -459,7 +487,8 @@ class Customer extends Generator {
 	 * @return string Phone number.
 	 */
 	private function generate_phone_number( string $country ): string {
-		$patterns = array(
+		$sample_data = $this->load_sample_data();
+		$patterns    = $sample_data['phone_patterns'] ?: array(
 			'US' => '+1-###-###-####',
 			'CA' => '+1-###-###-####',
 			'GB' => '+44-####-######',
@@ -491,19 +520,20 @@ class Customer extends Generator {
 	 * @return string State/province.
 	 */
 	private function generate_state( string $country ): string {
+		$sample_data      = $this->load_sample_data();
+		$states_provinces = $sample_data['states_provinces'] ?: array();
+
 		switch ( $country ) {
 			case 'US':
 				return $this->get_faker()->stateAbbr;
 			case 'CA':
-				$provinces = array( 'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT' );
-
+				$provinces = $states_provinces['CA'] ?? array( 'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT' );
 				return $this->get_faker()->randomElement( $provinces );
 			case 'AU':
-				$states = array( 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT' );
-
+				$states = $states_provinces['AU'] ?? array( 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT' );
 				return $this->get_faker()->randomElement( $states );
 			case 'GB':
-				$counties = array(
+				$counties = $states_provinces['GB'] ?? array(
 					'Greater London',
 					'Manchester',
 					'West Midlands',
@@ -513,10 +543,9 @@ class Customer extends Generator {
 					'South Yorkshire',
 					'Hampshire',
 				);
-
 				return $this->get_faker()->randomElement( $counties );
 			case 'JP':
-				$prefectures = array(
+				$prefectures = $states_provinces['JP'] ?? array(
 					'Tokyo',
 					'Osaka',
 					'Kyoto',
@@ -526,10 +555,9 @@ class Customer extends Generator {
 					'Kanagawa',
 					'Saitama',
 				);
-
 				return $this->get_faker()->randomElement( $prefectures );
 			case 'IN':
-				$states = array(
+				$states = $states_provinces['IN'] ?? array(
 					'Maharashtra',
 					'Delhi',
 					'Karnataka',
@@ -539,14 +567,12 @@ class Customer extends Generator {
 					'Rajasthan',
 					'Uttar Pradesh',
 				);
-
 				return $this->get_faker()->randomElement( $states );
 			case 'BR':
-				$states = array( 'SP', 'RJ', 'MG', 'RS', 'BA', 'PE', 'CE', 'PR' );
-
+				$states = $states_provinces['BR'] ?? array( 'SP', 'RJ', 'MG', 'RS', 'BA', 'PE', 'CE', 'PR' );
 				return $this->get_faker()->randomElement( $states );
 			case 'MX':
-				$states = array(
+				$states = $states_provinces['MX'] ?? array(
 					'CDMX',
 					'Jalisco',
 					'Nuevo León',
@@ -556,7 +582,6 @@ class Customer extends Generator {
 					'Yucatán',
 					'Chihuahua',
 				);
-
 				return $this->get_faker()->randomElement( $states );
 			default:
 				return $this->get_faker()->state;
@@ -573,7 +598,8 @@ class Customer extends Generator {
 	 * @return string Postcode.
 	 */
 	private function generate_postcode( string $country ): string {
-		$patterns = array(
+		$sample_data = $this->load_sample_data();
+		$patterns    = $sample_data['postcode_patterns'] ?: array(
 			'US' => '#####',
 			'CA' => '?#? #?#',
 			'GB' => '??# #??',

@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Cota standard de impozitare",
+    "description": "Impozitul pe vânzări standard aplicat majorității produselor"
+  },
+  "reduced": {
+    "name": "Cota redusă de impozitare",
+    "description": "Cota de impozit redusă pentru bunuri și servicii esențiale"
+  },
+  "zero": {
+    "name": "Cota zero de impozitare",
+    "description": "Bunuri și servicii scutite de impozit"
+  },
+  "luxury": {
+    "name": "Cota de impozitare pentru lux",
+    "description": "Cota de impozit mai mare pentru bunuri și servicii de lux"
+  },
+  "digital": {
+    "name": "Impozitul pe servicii digitale",
+    "description": "Cota de impozit pentru produse și servicii digitale"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standard Tax Rate",
+    "description": "Standard sales tax applied to most products"
+  },
+  "reduced": {
+    "name": "Reduced Tax Rate",
+    "description": "Reduced tax rate for essential goods and services"
+  },
+  "zero": {
+    "name": "Zero Tax Rate",
+    "description": "Tax-exempt items and services"
+  },
+  "luxury": {
+    "name": "Luxury Tax Rate",
+    "description": "Higher tax rate for luxury goods and services"
+  },
+  "digital": {
+    "name": "Digital Services Tax",
+    "description": "Tax rate for digital products and services"
+  }
+}

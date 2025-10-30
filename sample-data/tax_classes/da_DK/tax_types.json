@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standard skattesats",
+    "description": "Standard salgsafgift anvendt på de fleste produkter"
+  },
+  "reduced": {
+    "name": "Reduceret skattesats",
+    "description": "Reduceret skattesats for essentielle varer og tjenester"
+  },
+  "zero": {
+    "name": "Nul skattesats",
+    "description": "Skattefri varer og tjenester"
+  },
+  "luxury": {
+    "name": "Luksus skattesats",
+    "description": "Højere skattesats for luksusvarer og tjenester"
+  },
+  "digital": {
+    "name": "Digital tjenester skat",
+    "description": "Skattesats for digitale produkter og tjenester"
+  }
+}

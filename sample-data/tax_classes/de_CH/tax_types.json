@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standard-Steuersatz",
+    "description": "Standard-Mehrwertsteuer, die auf die meisten Produkte angewendet wird"
+  },
+  "reduced": {
+    "name": "Reduzierter Steuersatz",
+    "description": "Reduzierter Steuersatz für grundlegende Waren und Dienstleistungen"
+  },
+  "zero": {
+    "name": "Null-Steuersatz",
+    "description": "Steuerbefreite Artikel und Dienstleistungen"
+  },
+  "luxury": {
+    "name": "Luxus-Steuersatz",
+    "description": "Höherer Steuersatz für Luxusgüter und -dienstleistungen"
+  },
+  "digital": {
+    "name": "Steuer für digitale Dienstleistungen",
+    "description": "Steuersatz für digitale Produkte und Dienstleistungen"
+  }
+}

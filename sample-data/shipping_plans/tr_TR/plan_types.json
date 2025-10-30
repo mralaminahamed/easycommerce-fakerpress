@@ -1,0 +1,32 @@
+{
+  "standard": {
+    "name": "Standart Gönderim",
+    "description": "5-7 iş günü içinde düzenli teslimat",
+    "calculation_base": "price"
+  },
+  "express": {
+    "name": "Ekspres Gönderim",
+    "description": "1-3 iş günü içinde hızlı teslimat",
+    "calculation_base": "price"
+  },
+  "weight": {
+    "name": "Ağırlığa Dayalı Gönderim",
+    "description": "Gönderim maliyeti ağırlığa göre hesaplanır",
+    "calculation_base": "weight"
+  },
+  "free": {
+    "name": "Ücretsiz Gönderim",
+    "description": "Minimum tutarın üzerindeki siparişler için ücretsiz gönderim",
+    "calculation_base": "price"
+  },
+  "overnight": {
+    "name": "Gece Teslimatı",
+    "description": "Sonraki iş günü teslimatı",
+    "calculation_base": "price"
+  },
+  "quantity": {
+    "name": "Miktara Dayalı Gönderim",
+    "description": "Gönderim maliyeti ürün sayısına göre",
+    "calculation_base": "quantity"
+  }
+}

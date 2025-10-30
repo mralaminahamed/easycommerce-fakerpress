@@ -1,0 +1,26 @@
+{
+  "standard": {
+    "min": 5.99,
+    "max": 12.99,
+    "days": "5-7",
+    "weight": 50
+  },
+  "express": {
+    "min": 15.99,
+    "max": 25.99,
+    "days": "2-3",
+    "weight": 30
+  },
+  "overnight": {
+    "min": 25.99,
+    "max": 45.99,
+    "days": "1",
+    "weight": 15
+  },
+  "pickup": {
+    "min": 0,
+    "max": 0,
+    "days": "0",
+    "weight": 5
+  }
+}

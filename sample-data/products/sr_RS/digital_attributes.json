@@ -1,0 +1,27 @@
+{
+  "format": {
+    "name": "Format",
+    "type": "text",
+    "values": ["PDF", "MP4", "MP3", "ZIP", "EXE", "DMG"]
+  },
+  "license": {
+    "name": "License",
+    "type": "text",
+    "values": ["Personal", "Commercial", "Extended", "Enterprise"]
+  },
+  "version": {
+    "name": "Version",
+    "type": "text",
+    "values": ["1.0", "2.0", "3.0", "Basic", "Pro", "Premium"]
+  },
+  "platform": {
+    "name": "Platform",
+    "type": "text",
+    "values": ["Windows", "macOS", "Linux", "iOS", "Android", "Web"]
+  },
+  "subscription": {
+    "name": "Subscription",
+    "type": "text",
+    "values": ["Monthly", "Annual", "Lifetime"]
+  }
+}

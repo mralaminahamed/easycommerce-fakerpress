@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Vakiomääräinen verokanta",
+    "description": "Vakiomääräinen myyntivero, jota sovelletaan useimpiin tuotteisiin"
+  },
+  "reduced": {
+    "name": "Alennettu verokanta",
+    "description": "Alennettu verokanta välttämättömille tavaroille ja palveluille"
+  },
+  "zero": {
+    "name": "Nollaverokanta",
+    "description": "Verovapaat tavarat ja palvelut"
+  },
+  "luxury": {
+    "name": "Luksusverokanta",
+    "description": "Korkeampi verokanta luksustavaroille ja -palveluille"
+  },
+  "digital": {
+    "name": "Digitaalisten palveluiden vero",
+    "description": "Verokanta digitaalisille tuotteille ja palveluille"
+  }
+}

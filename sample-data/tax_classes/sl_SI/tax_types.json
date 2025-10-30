@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standardna davčna stopnja",
+    "description": "Standardni davek na prodajo, ki se uporablja za večino izdelkov"
+  },
+  "reduced": {
+    "name": "Znižana davčna stopnja",
+    "description": "Znižana davčna stopnja za osnovne dobrine in storitve"
+  },
+  "zero": {
+    "name": "Nična davčna stopnja",
+    "description": "Izdelki in storitve, oproščeni davka"
+  },
+  "luxury": {
+    "name": "Davčna stopnja za luksuz",
+    "description": "Višja davčna stopnja za luksuzne dobrine in storitve"
+  },
+  "digital": {
+    "name": "Davek na digitalne storitve",
+    "description": "Davčna stopnja za digitalne izdelke in storitve"
+  }
+}

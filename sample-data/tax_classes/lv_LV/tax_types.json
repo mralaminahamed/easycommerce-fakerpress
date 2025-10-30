@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standarta nodokļu likme",
+    "description": "Standarta pārdošanas nodoklis, kas piemērojams lielākajai daļai produktu"
+  },
+  "reduced": {
+    "name": "Samazinātā nodokļu likme",
+    "description": "Samazinātā nodokļu likme būtiskām precēm un pakalpojumiem"
+  },
+  "zero": {
+    "name": "Nulles nodokļu likme",
+    "description": "No nodokļiem atbrīvotas preces un pakalpojumi"
+  },
+  "luxury": {
+    "name": "Luksusa nodokļu likme",
+    "description": "Augstāka nodokļu likme luksusa precēm un pakalpojumiem"
+  },
+  "digital": {
+    "name": "Digitālo pakalpojumu nodoklis",
+    "description": "Nodokļu likme digitālajiem produktiem un pakalpojumiem"
+  }
+}

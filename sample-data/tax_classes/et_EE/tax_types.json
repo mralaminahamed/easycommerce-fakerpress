@@ -1,0 +1,22 @@
+{
+  "standard": {
+    "name": "Standardne maksusäte",
+    "description": "Enamiku toodete suhtes kohaldatav standardne käibemaks"
+  },
+  "reduced": {
+    "name": "Vähendatud maksusäte",
+    "description": "Vähendatud maksusäte põhivajaduste kaupadele ja teenustele"
+  },
+  "zero": {
+    "name": "Nullmaksusäte",
+    "description": "Maksuvabad kaubad ja teenused"
+  },
+  "luxury": {
+    "name": "Luksusmaksusäte",
+    "description": "Kõrgem maksusäte luksuskaupadele ja teenustele"
+  },
+  "digital": {
+    "name": "Digiteenuste maks",
+    "description": "Maksusäte digitaalsetele toodetele ja teenustele"
+  }
+}

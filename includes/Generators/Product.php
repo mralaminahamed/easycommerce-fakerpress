@@ -52,6 +52,29 @@ class Product extends Generator {
 	}
 
 	/**
+	 * Load sample data for the current locale
+	 *
+	 * Loads locale-specific sample data for product generation including
+	 * adjectives, product names, attributes, categories, brands, and tags.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, mixed> Sample data arrays for product generation.
+	 */
+	protected function load_sample_data(): array {
+		return array(
+			'adjectives'          => $this->load_json_file( $this->get_sample_data_path( 'products', 'adjectives' ) ) ?? array(),
+			'physical_products'   => $this->load_json_file( $this->get_sample_data_path( 'products', 'physical_products' ) ) ?? array(),
+			'digital_products'    => $this->load_json_file( $this->get_sample_data_path( 'products', 'digital_products' ) ) ?? array(),
+			'physical_attributes' => $this->load_json_file( $this->get_sample_data_path( 'products', 'physical_attributes' ) ) ?? array(),
+			'digital_attributes'  => $this->load_json_file( $this->get_sample_data_path( 'products', 'digital_attributes' ) ) ?? array(),
+			'categories'          => $this->load_json_file( $this->get_sample_data_path( 'products', 'categories' ) ) ?? array(),
+			'brands'              => $this->load_json_file( $this->get_sample_data_path( 'products', 'brands' ) ) ?? array(),
+			'tags'                => $this->load_json_file( $this->get_sample_data_path( 'products', 'tags' ) ) ?? array(),
+		);
+	}
+
+	/**
 	 * Get supported data types for this generator
 	 *
 	 * Returns an array of supported product generation types with descriptions.
@@ -261,7 +284,9 @@ class Product extends Generator {
 	 * @return string Product title.
 	 */
 	private function generate_product_title( string $product_type ): string {
-		$adjectives = array(
+		$sample_data = $this->load_sample_data();
+
+		$adjectives = $sample_data['adjectives'] ?: array(
 			'Premium',
 			'Deluxe',
 			'Professional',
@@ -277,7 +302,7 @@ class Product extends Generator {
 			'High-Performance',
 		);
 
-		$physical_products = array(
+		$product_names = 'physical' === $product_type ? ( $sample_data['physical_products'] ?: array(
 			'Wireless Headphones',
 			'Smart Watch',
 			'Bluetooth Speaker',
@@ -298,9 +323,7 @@ class Product extends Generator {
 			'USB-C Cable',
 			'Tempered Glass Screen Protector',
 			'Car Phone Mount',
-		);
-
-		$digital_products = array(
+		) ) : ( $sample_data['digital_products'] ?: array(
 			'Productivity Software',
 			'Graphic Design Suite',
 			'Video Editing Software',
@@ -315,10 +338,9 @@ class Product extends Generator {
 			'Audio Book',
 			'Virtual Workshop',
 			'Coding Tutorial Series',
-		);
+		) );
 
-		$product_names = 'physical' === $product_type ? $physical_products : $digital_products;
-		$brand_prefix  = $this->get_faker()->randomElement( array( '', $this->get_faker()->company . ' ' ) );
+		$brand_prefix = $this->get_faker()->randomElement( array( '', $this->get_faker()->company . ' ' ) );
 
 		return $brand_prefix . $this->get_faker()->randomElement( $adjectives ) . ' ' . $this->get_faker()->randomElement( $product_names );
 	}
@@ -495,9 +517,10 @@ class Product extends Generator {
 	 * @return array Array of product attributes with their possible values.
 	 */
 	private function get_or_create_product_attributes( string $product_type = 'physical' ): array {
-		$attributes = array();
+		$attributes  = array();
+		$sample_data = $this->load_sample_data();
 
-		$possible_attributes = 'physical' === $product_type ? array(
+		$possible_attributes = 'physical' === $product_type ? ( $sample_data['physical_attributes'] ?: array(
 			'color'    => array(
 				'name'   => 'Color',
 				'type'   => 'text',
@@ -544,7 +567,7 @@ class Product extends Generator {
 				'type'   => 'text',
 				'values' => array( '16GB', '32GB', '64GB', '128GB', '256GB', '500ml', '1L', '2L' ),
 			),
-		) : array(
+		) ) : ( $sample_data['digital_attributes'] ?: array(
 			'format'       => array(
 				'name'   => 'Format',
 				'type'   => 'text',
@@ -570,7 +593,7 @@ class Product extends Generator {
 				'type'   => 'text',
 				'values' => array( 'Monthly', 'Annual', 'Lifetime' ),
 			),
-		);
+		) );
 
 		// Select 2-4 random attributes for more variety.
 		$selected_attributes = $this->get_faker()->randomElements(
@@ -914,7 +937,8 @@ class Product extends Generator {
 	 * @return array Category IDs.
 	 */
 	private function get_or_create_product_categories(): array {
-		$category_names = array(
+		$sample_data    = $this->load_sample_data();
+		$category_names = $sample_data['categories'] ?: array(
 			'Electronics & Gadgets',
 			'Fashion & Apparel',
 			'Books & Stationery',
@@ -961,7 +985,8 @@ class Product extends Generator {
 	 * @return array Brand IDs.
 	 */
 	private function get_or_create_product_brands(): array {
-		$brand_names = array(
+		$sample_data = $this->load_sample_data();
+		$brand_names = $sample_data['brands'] ?: array(
 			'TechTrend Innovations',
 			'EcoVibe Solutions',
 			'QualityCraft',
@@ -1072,7 +1097,8 @@ class Product extends Generator {
 	 * @return void
 	 */
 	private function assign_product_tags( int $product_id ): void {
-		$tags = array(
+		$sample_data = $this->load_sample_data();
+		$tags        = $sample_data['tags'] ?: array(
 			'new-arrival',
 			'best-seller',
 			'featured',

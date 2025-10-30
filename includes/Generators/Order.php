@@ -38,6 +38,28 @@ class Order extends Generator {
 	}
 
 	/**
+	 * Load sample data for the current locale
+	 *
+	 * Loads locale-specific sample data for order generation including
+	 * order statuses, payment methods, shipping methods, fulfillment statuses,
+	 * sources, and weighted countries.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, mixed> Sample data arrays for order generation.
+	 */
+	protected function load_sample_data(): array {
+		return array(
+			'order_statuses'       => $this->load_json_file( $this->get_sample_data_path( 'orders', 'order_statuses' ) ) ?? array(),
+			'payment_methods'      => $this->load_json_file( $this->get_sample_data_path( 'orders', 'payment_methods' ) ) ?? array(),
+			'shipping_methods'     => $this->load_json_file( $this->get_sample_data_path( 'orders', 'shipping_methods' ) ) ?? array(),
+			'fulfillment_statuses' => $this->load_json_file( $this->get_sample_data_path( 'orders', 'fulfillment_statuses' ) ) ?? array(),
+			'sources'              => $this->load_json_file( $this->get_sample_data_path( 'orders', 'sources' ) ) ?? array(),
+			'weighted_countries'   => $this->load_json_file( $this->get_sample_data_path( 'orders', 'weighted_countries' ) ) ?? array(),
+		);
+	}
+
+	/**
 	 * Get supported data types for this generator.
 	 *
 	 * @return array Supported types
@@ -468,7 +490,8 @@ class Order extends Generator {
 	 * @return string Order status.
 	 */
 	private function generate_order_status(): string {
-		$statuses = array(
+		$sample_data = $this->load_sample_data();
+		$statuses    = $sample_data['order_statuses'] ?: array(
 			'pending'    => 25,  // 25% chance
 			'processing' => 35,  // 35% chance
 			'completed'  => 30,  // 30% chance
@@ -496,7 +519,8 @@ class Order extends Generator {
 	 * @return string Payment method.
 	 */
 	private function generate_payment_method(): string {
-		$methods = array(
+		$sample_data = $this->load_sample_data();
+		$methods     = $sample_data['payment_methods'] ?: array(
 			'stripe'           => 40,  // 40% chance
 			'paypal'           => 25,  // 25% chance
 			'bank_transfer'    => 15,  // 15% chance
@@ -569,7 +593,8 @@ class Order extends Generator {
 	 * @return array Shipping details.
 	 */
 	private function generate_shipping_details( float $subtotal ): array {
-		$shipping_methods = array(
+		$sample_data      = $this->load_sample_data();
+		$shipping_methods = $sample_data['shipping_methods'] ?: array(
 			'standard'  => array(
 				'min'    => 5.99,
 				'max'    => 12.99,
@@ -709,7 +734,8 @@ class Order extends Generator {
 	 * @return string Fulfillment status.
 	 */
 	private function generate_fulfillment_status(): string {
-		$statuses = array(
+		$sample_data = $this->load_sample_data();
+		$statuses    = $sample_data['fulfillment_statuses'] ?: array(
 			'unfulfilled'         => 30,
 			'partially_fulfilled' => 10,
 			'fulfilled'           => 25,
@@ -738,7 +764,8 @@ class Order extends Generator {
 	 * @return array Source information.
 	 */
 	private function generate_source_info(): array {
-		$sources = array(
+		$sample_data = $this->load_sample_data();
+		$sources     = $sample_data['sources'] ?: array(
 			'website'    => 60,
 			'mobile_app' => 25,
 			'phone'      => 10,
@@ -826,7 +853,8 @@ class Order extends Generator {
 		}
 
 		// Weighted selection favoring common shipping countries.
-		$weighted_countries = array(
+		$sample_data        = $this->load_sample_data();
+		$weighted_countries = $sample_data['weighted_countries'] ?: array(
 			'US' => 60, // 60% US.
 			'CA' => 15, // 15% Canada.
 			'GB' => 10, // 10% UK.

@@ -400,6 +400,86 @@ abstract class Generator {
 	}
 
 	/**
+	 * Load sample data for the current locale
+	 *
+	 * Loads locale-specific sample data from JSON files for use in data generation.
+	 * Each generator can override this method to specify which data files to load
+	 * based on the resource type and current locale setting.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, mixed> Array of sample data arrays loaded from JSON files.
+	 */
+	protected function load_sample_data(): array {
+		// Default implementation returns empty array.
+		// Child classes should override this method to load their specific data.
+		return array();
+	}
+
+	/**
+	 * Load JSON file and return decoded data
+	 *
+	 * Helper method to load and decode JSON files containing sample data.
+	 * Uses WordPress Filesystem API for secure file operations with proper
+	 * error handling and JSON decoding.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $file_path Path to JSON file.
+	 *
+	 * @return array|null Decoded JSON data or null on failure.
+	 */
+	protected function load_json_file( string $file_path ): ?array {
+		// Initialize WordPress Filesystem if not already available.
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		// Check if file exists using WP Filesystem.
+		if ( ! $wp_filesystem->exists( $file_path ) ) {
+			$this->log( "Sample data file not found: {$file_path}", 'warning' );
+			return null;
+		}
+
+		// Read file content using WP Filesystem.
+		$json_content = $wp_filesystem->get_contents( $file_path );
+		if ( false === $json_content ) {
+			$this->log( "Failed to read sample data file: {$file_path}", 'error' );
+			return null;
+		}
+
+		// Decode JSON content.
+		$data = json_decode( $json_content, true );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			$this->log( "Failed to decode JSON from file: {$file_path} - " . json_last_error_msg(), 'error' );
+			return null;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get sample data file path for a specific resource and locale
+	 *
+	 * Constructs the file path for sample data JSON files based on resource type
+	 * and locale. Provides a standardized way to locate sample data files.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $resource_type The resource type (e.g., 'products', 'customers').
+	 * @param string $filename      The filename without extension.
+	 *
+	 * @return string Full path to the sample data file.
+	 */
+	protected function get_sample_data_path( string $resource_type, string $filename ): string {
+		$locale = $this->get_faker_locale();
+		return plugin_dir_path( dirname( __DIR__, 2 ) ) . "sample-data/{$resource_type}/{$locale}/{$filename}.json";
+	}
+
+	/**
 	 * Log generation activity
 	 *
 	 * Records generation activities for debugging and monitoring purposes.

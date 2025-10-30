@@ -1,0 +1,9 @@
+{
+  "unfulfilled": 30,
+  "partially_fulfilled": 10,
+  "fulfilled": 25,
+  "shipped": 20,
+  "delivered": 10,
+  "returned": 3,
+  "cancelled": 2
+}
