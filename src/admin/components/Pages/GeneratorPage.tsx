@@ -51,54 +51,84 @@ export default function GeneratorPage() {
 
   return (
     <motion.div
-      className="flex gap-8"
+      className="relative flex gap-6 lg:gap-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Sidebar for other generators */}
+      {/* Sidebar for generators */}
       <motion.aside
         className="w-72 hidden lg:block"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <Card className="sticky top-4">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-              <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
-              {__("Other Generators", "easycommerce-fakerpress")}
-            </h2>
-            <ul className="space-y-3">
-              {sortedGenerators
-                .filter((gen) => gen.route !== generator.route)
-                .map((gen, index) => {
-                  const GenIconComponent = gen.icon;
-                  return (
-                    <motion.li
-                      key={gen.name}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 + index * 0.05 }}
-                    >
-                      <Link
-                        to={`/generator/${gen.route}`}
-                        className="group flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-200"
+        <div className="sticky top-4 space-y-4">
+          {/* Current Generator Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+          >
+            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50/50 shadow-md">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <IconComponent className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-blue-900">
+                      {__("Current Generator", "easycommerce-fakerpress")}
+                    </p>
+                    <p className="text-lg font-semibold text-blue-800 truncate">
+                      {generator.name}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Other Generators Card */}
+          <Card className="shadow-sm">
+            <CardContent className="p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                {__("Other Generators", "easycommerce-fakerpress")}
+              </h2>
+              <ul className="space-y-2">
+                {sortedGenerators
+                  .filter((gen) => gen.route !== generator.route)
+                  .map((gen, index) => {
+                    const GenIconComponent = gen.icon;
+                    return (
+                      <motion.li
+                        key={gen.name}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + index * 0.05 }}
                       >
-                        <GenIconComponent className="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                        <span className="font-medium">{gen.name}</span>
-                        {gen.popular && (
-                          <span className="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                            Popular
-                          </span>
-                        )}
-                      </Link>
-                    </motion.li>
-                  );
-                })}
-            </ul>
-          </CardContent>
-        </Card>
+                        <Link
+                          to={`/generator/${gen.route}`}
+                          className="group flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-200 hover:shadow-sm"
+                        >
+                          <GenIconComponent className="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                          <span className="font-medium">{gen.name}</span>
+                          {gen.popular && (
+                            <span className="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                              Popular
+                            </span>
+                          )}
+                        </Link>
+                      </motion.li>
+                    );
+                  })}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
       </motion.aside>
 
       {/* Main content with navigation and generator */}
@@ -108,6 +138,8 @@ export default function GeneratorPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
+        {/* Visual connection line for desktop */}
+        <div className="hidden lg:block absolute left-0 top-12 bottom-12 w-px bg-gradient-to-b from-blue-200 via-blue-100 to-transparent ml-2"></div>
         {/* Navigation Header */}
         <div className="mb-8 space-y-4">
           {/* Mobile Header */}
@@ -246,54 +278,91 @@ export default function GeneratorPage() {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="border border-gray-200">
-                <CardContent className="p-4">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                    {__("Other Generators", "easycommerce-fakerpress")}
-                  </h3>
-                  <ul className="space-y-2">
-                    {sortedGenerators
-                      .filter((gen) => gen.route !== generator.route)
-                      .map((gen, index) => {
-                        const GenIconComponent = gen.icon;
-                        return (
-                          <motion.li
-                            key={gen.name}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                          >
-                            <Link
-                              to={`/generator/${gen.route}`}
-                              onClick={() => setMobileMenuOpen(false)}
-                              className="group flex items-center w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-md transition-all duration-200"
+              <div className="space-y-4">
+                {/* Current Generator - Mobile */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1, duration: 0.3 }}
+                >
+                  <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50/50">
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex-shrink-0">
+                          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <IconComponent className="w-4 h-4 text-white" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-blue-900 uppercase tracking-wide">
+                            {__("Current", "easycommerce-fakerpress")}
+                          </p>
+                          <p className="text-sm font-semibold text-blue-800">
+                            {generator.name}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Other Generators - Mobile */}
+                <Card className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                      {__("Other Generators", "easycommerce-fakerpress")}
+                    </h3>
+                    <ul className="space-y-2">
+                      {sortedGenerators
+                        .filter((gen) => gen.route !== generator.route)
+                        .map((gen, index) => {
+                          const GenIconComponent = gen.icon;
+                          return (
+                            <motion.li
+                              key={gen.name}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
                             >
-                              <GenIconComponent className="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                              <span className="font-medium">{gen.name}</span>
-                              {gen.popular && (
-                                <span className="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
-                                  Popular
-                                </span>
-                              )}
-                            </Link>
-                          </motion.li>
-                        );
-                      })}
-                  </ul>
-                </CardContent>
-              </Card>
+                              <Link
+                                to={`/generator/${gen.route}`}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="group flex items-center w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-md transition-all duration-200"
+                              >
+                                <GenIconComponent className="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                                <span className="font-medium">{gen.name}</span>
+                                {gen.popular && (
+                                  <span className="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                                    Popular
+                                  </span>
+                                )}
+                              </Link>
+                            </motion.li>
+                          );
+                        })}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Generator Content */}
         <motion.div
+          className="relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
         >
-          <generator.component />
+          {/* Subtle background for content area */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50/50 to-transparent rounded-lg -mx-4 -my-2"></div>
+
+          {/* Content */}
+          <div className="relative z-10">
+            <generator.component />
+          </div>
         </motion.div>
       </motion.main>
     </motion.div>
