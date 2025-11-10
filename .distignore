@@ -107,6 +107,11 @@ wp-config-local.php
 # Exclude parent directory files
 ../*
 
+# Development configuration files
+AGENTS.md
+tsconfig.json
+components.json
+
 # Cache directories
 /.cache/
 /tmp/
