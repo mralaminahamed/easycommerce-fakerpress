@@ -69,12 +69,12 @@ _Complete order generation with payment processing and shipping calculations_
 composer install && npm install
 
 # Development
-npm run dev              # Watch mode
+npm run start            # Watch mode
 npm run build            # Production build
 
 # Code quality
-npm run lint             # Lint JS/CSS
 composer run lint        # PHP CodeSniffer
+composer run analyse     # PHP Static Analysis
 ```
 
 ## 🏗️ Technology Stack
@@ -107,4 +107,4 @@ GPL v2 or later - see [LICENSE](LICENSE) file.
 
 ---
 
-**v1.0.2** | October 29, 2025
+**v1.0.2** | November 11, 2025
