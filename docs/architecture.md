@@ -36,27 +36,27 @@ easycommerce-fakerpress/
 │       ├── 📄 Shipping_Plans.php           # Shipping plan REST controller
 │       ├── 📄 Tax_Classes.php              # Tax class REST controller
 │       └── 📄 Transactions.php             # Transaction REST controller
-├── 📁 src/                                 # Frontend source code
+├── 📁 src/                                 # Frontend source code (TypeScript)
 │   └── 📁 admin/
-│       ├── 📁 components/                  # React components
-│       │   ├── 📄 App.jsx                  # Main application router
-│       │   ├── 📄 GeneratorBase.jsx        # Base generator component
+│       ├── 📁 components/                  # React components (TypeScript)
+│       │   ├── 📄 App.tsx                  # Main application router
+│       │   ├── 📄 GeneratorBase.tsx        # Base generator component
 │       │   ├── 📁 Pages/                   # Route-based page components
-│       │   │   ├── 📄 GeneratorPage.jsx    # Individual generator pages
-│       │   │   ├── 📄 HomePage.jsx         # Generator selection dashboard
-│       │   │   └── 📄 RootLayout.jsx       # Main layout with navigation
+│       │   │   ├── 📄 GeneratorPage.tsx    # Individual generator pages
+│       │   │   ├── 📄 HomePage.tsx         # Generator selection dashboard
+│       │   │   └── 📄 RootLayout.tsx       # Main layout with navigation
 │       │   └── 📁 Generators/              # Generator-specific components
-│       │       ├── 📄 CartSessionGenerator.jsx
-│       │       ├── 📄 CouponGenerator.jsx
-│       │       ├── 📄 CustomerGenerator.jsx
-│       │       ├── 📄 LocationGenerator.jsx
-│       │       ├── 📄 OrderGenerator.jsx
-│       │       ├── 📄 ProductGenerator.jsx
-│       │       ├── 📄 ProductVariationGenerator.jsx
-│       │       ├── 📄 ShippingPlanGenerator.jsx
-│       │       ├── 📄 TaxClassGenerator.jsx
-│       │       └── 📄 TransactionGenerator.jsx
-│       ├── 📄 index.js                     # Frontend entry point
+│       │       ├── 📄 CartSessionGenerator.tsx
+│       │       ├── 📄 CouponGenerator.tsx
+│       │       ├── 📄 CustomerGenerator.tsx
+│       │       ├── 📄 LocationGenerator.tsx
+│       │       ├── 📄 OrderGenerator.tsx
+│       │       ├── 📄 ProductGenerator.tsx
+│       │       ├── 📄 ProductVariationGenerator.tsx
+│       │       ├── 📄 ShippingPlanGenerator.tsx
+│       │       ├── 📄 TaxClassGenerator.tsx
+│       │       └── 📄 TransactionGenerator.tsx
+│       ├── 📄 index.tsx                    # Frontend entry point (TypeScript)
 │       └── 📄 styles.css                   # Tailwind CSS with WordPress integration
 ├── 📁 build/                               # Compiled production assets
 ├── 📁 vendor/                              # Composer dependencies (PHP)

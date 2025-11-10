@@ -1,16 +1,17 @@
 # 🛠️ Development Guide
 
-Welcome to the EasyCommerce FakerPress development guide! This comprehensive resource will help you contribute effectively to the project.
+Welcome to the EasyCommerce FakerPress v2.0.0 development guide! This comprehensive resource will help you contribute effectively to the project, now featuring complete TypeScript support and parameter schema alignment.
 
 ## 🚀 Quick Development Setup
 
 ### Prerequisites
 
 - **PHP**: 7.4+ (8.0+ recommended)
-- **Node.js**: 16+
+- **Node.js**: 16+ (18+ recommended for TypeScript)
 - **Composer**: 2.0+
 - **WordPress**: 5.0+ with EasyCommerce plugin
 - **Git**: For version control
+- **TypeScript**: 4.5+ (included with project dependencies)
 
 ### One-Command Setup
 
@@ -20,6 +21,15 @@ git clone https://github.com/mralaminahamed/easycommerce-fakerpress.git
 cd easycommerce-fakerpress
 composer install && npm install && npm run build
 ```
+
+### v2.0.0: TypeScript Migration
+
+**All React components have been migrated to TypeScript (.tsx) for better type safety and developer experience.**
+
+- **Type Definitions**: Comprehensive interfaces for all generator parameters
+- **Parameter Validation**: Type-safe parameter schemas with proper validation
+- **API Integration**: Strongly typed API responses and error handling
+- **Build System**: Enhanced webpack configuration for TypeScript compilation
 
 ## 🏗️ Build System & Commands
 

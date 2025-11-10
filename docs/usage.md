@@ -1,6 +1,6 @@
-# 🚀 Usage Guide
+# 🚀 Usage Guide (v2.0.0)
 
-Master EasyCommerce FakerPress with this comprehensive usage guide. Learn how to generate realistic test data efficiently and safely.
+Master EasyCommerce FakerPress v2.0.0 with this comprehensive usage guide. Learn how to generate realistic test data efficiently and safely, now with complete parameter schema alignment and enhanced validation.
 
 ## 🎯 Quick Start
 
@@ -11,6 +11,15 @@ Master EasyCommerce FakerPress with this comprehensive usage guide. Learn how to
 3. **Generate Foundation Data**: Start with Locations, then Customers, then Products
 4. **Test Small Batches**: Generate 5-10 items first to verify everything works
 5. **Scale Up**: Gradually increase batch sizes as needed
+
+### v2.0.0: Enhanced Parameter Validation
+
+**All generators now feature perfectly aligned parameter schemas between frontend forms and backend API validation.**
+
+- **Real-Time Validation**: Immediate feedback on parameter compatibility
+- **Type Safety**: TypeScript-powered parameter validation prevents errors
+- **API Reliability**: Guaranteed valid data submission to backend endpoints
+- **Error Prevention**: Comprehensive validation prevents invalid parameter combinations
 
 ### Interface Overview
 

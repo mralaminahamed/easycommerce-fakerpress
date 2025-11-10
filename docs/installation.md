@@ -21,9 +21,10 @@ Before installing, ensure your system meets these requirements:
 
 ### Development Requirements (Optional)
 
-- **Node.js**: 16+ (for frontend development and building assets)
+- **Node.js**: 16+ (18+ recommended for TypeScript support)
 - **Composer**: 2.0+ (for PHP dependency management)
 - **Git**: For cloning the repository (optional)
+- **TypeScript**: 4.5+ (included with project dependencies for v2.0.0)
 
 ### Server Recommendations
 
