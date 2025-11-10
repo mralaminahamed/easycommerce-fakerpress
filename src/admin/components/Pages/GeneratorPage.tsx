@@ -110,72 +110,104 @@ export default function GeneratorPage() {
       >
         {/* Navigation Header */}
         <div className="mb-8 space-y-4">
-          {/* Mobile Menu Button and Data Locale */}
-          <div className="flex items-center justify-between lg:hidden">
-            <motion.button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
-              )}
-            </motion.button>
+          {/* Mobile Header */}
+          <div className="lg:hidden space-y-4">
+            {/* Back Button and Data Locale */}
+            <div className="flex items-center justify-between">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/" className="inline-flex items-center">
+                    <ArrowLeft className="h-4 w-4 mr-2" aria-hidden="true" />
+                    {__("Back", "easycommerce-fakerpress")}
+                  </Link>
+                </Button>
+              </motion.div>
 
-            {/* Data Locale - Mobile */}
-            <motion.div
-              className="lg:hidden"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              <div className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
-                <motion.div
-                  whileHover={{ rotate: 15 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Globe className="h-4 w-4" aria-hidden="true" />
-                </motion.div>
-                <span className="font-medium">{localeInfo.label}</span>
-              </div>
-            </motion.div>
+              {/* Data Locale - Mobile */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <div className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
+                  <motion.div
+                    whileHover={{ rotate: 15 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Globe className="h-4 w-4" aria-hidden="true" />
+                  </motion.div>
+                  <span className="font-medium">{localeInfo.label}</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex justify-start">
+              <motion.button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Menu className="h-6 w-6" aria-hidden="true" />
+                )}
+              </motion.button>
+            </div>
           </div>
 
           {/* Breadcrumb and Data Locale */}
           <div className="flex items-center justify-between">
-            <motion.nav
-              aria-label="Breadcrumb"
-              className="flex"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
-                <li>
-                  <Link
-                    to="/"
-                    className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium"
-                  >
-                    {__("Home", "easycommerce-fakerpress")}
+            <div className="flex items-center space-x-4">
+              {/* Back Button */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/" className="inline-flex items-center">
+                    <ArrowLeft className="h-4 w-4 mr-2" aria-hidden="true" />
+                    {__("Back", "easycommerce-fakerpress")}
                   </Link>
-                </li>
-                <li>
-                  <ChevronRight
-                    className="h-4 w-4 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </li>
-                <li>
-                  <span className="text-sm text-gray-900 font-semibold flex items-center">
-                    <IconComponent className="w-4 h-4 mr-2 text-blue-500" />
-                    {generator.name}
-                  </span>
-                </li>
-              </ol>
-            </motion.nav>
+                </Button>
+              </motion.div>
+
+              {/* Breadcrumb */}
+              <motion.nav
+                aria-label="Breadcrumb"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
+                  <li>
+                    <Link
+                      to="/"
+                      className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium"
+                    >
+                      {__("Home", "easycommerce-fakerpress")}
+                    </Link>
+                  </li>
+                  <li>
+                    <ChevronRight
+                      className="h-4 w-4 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </li>
+                  <li>
+                    <span className="text-sm text-gray-900 font-semibold flex items-center">
+                      <IconComponent className="w-4 h-4 mr-2 text-blue-500" />
+                      {generator.name}
+                    </span>
+                  </li>
+                </ol>
+              </motion.nav>
+            </div>
 
             {/* Data Locale - Desktop */}
             <motion.div
@@ -202,20 +234,6 @@ export default function GeneratorPage() {
               </div>
             </motion.div>
           </div>
-
-          {/* Back Button */}
-          <motion.div
-            className="flex justify-start"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Button asChild variant="outline" size="lg">
-              <Link to="/" className="inline-flex items-center">
-                <ArrowLeft className="h-4 w-4 mr-2" aria-hidden="true" />
-                {__("Back to Generators", "easycommerce-fakerpress")}
-              </Link>
-            </Button>
-          </motion.div>
         </div>
 
         {/* Mobile Menu */}
