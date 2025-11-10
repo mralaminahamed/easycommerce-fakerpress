@@ -44,7 +44,7 @@
     "prettier": "^3.6.2",
     "react": "18",
     "react-dom": "18",
-    "sass": "^1.93.2",
+    "sass": "^1.93.3",
     "sass-loader": "^16.0.6",
     "stylelint": "^16.25.0",
     "stylelint-config-prettier-scss": "^1.0.0",
@@ -67,5 +67,5 @@
   "browserslist": [
     "extends @wordpress/browserslist-config"
   ],
-  "packageManager": "yarn@4.10.3"
+  "packageManager": "yarn@4.11.0"
 }
