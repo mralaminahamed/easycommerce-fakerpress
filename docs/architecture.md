@@ -12,62 +12,62 @@ easycommerce-fakerpress/
 ├── 📄 class-easycommerce-fakerpress.php     # Main plugin class with admin integration
 ├── 📁 includes/                            # PHP backend code
 │   ├── 📁 Abstracts/                       # Abstract base classes for consistency
-│   │   ├── 📄 Generator.php                # Base generator with parameter handling
-│   │   └── 📄 REST_Controller.php           # Base REST controller with validation
+│   │   ├── 📄 Controller.php               # Base REST controller with validation
+│   │   └── 📄 Generator.php                # Base generator with parameter handling
 │   ├── 📁 Generators/                      # 10 Specialized data generators
-│   │   ├── 📄 Product.php                  # Product generation with attributes & variations
-│   │   ├── 📄 Customer.php                 # Customer profile generation
-│   │   ├── 📄 Order.php                    # Order generation with metadata
+│   │   ├── 📄 Cart_Session.php             # Cart session generation
 │   │   ├── 📄 Coupon.php                   # Coupon generation with rules
+│   │   ├── 📄 Customer.php                 # Customer profile generation
+│   │   ├── 📄 Location.php                 # Geographic location generation
+│   │   ├── 📄 Order.php                    # Order generation with metadata
+│   │   ├── 📄 Product.php                  # Product generation with attributes & variations
 │   │   ├── 📄 Product_Variation.php        # Product variation generation
 │   │   ├── 📄 Shipping_Plan.php            # Shipping plan generation
 │   │   ├── 📄 Tax_Class.php                # Tax class generation
-│   │   ├── 📄 Transaction.php              # Transaction history generation
-│   │   ├── 📄 Cart_Session.php             # Cart session generation
-│   │   └── 📄 Location.php                 # Geographic location generation
+│   │   └── 📄 Transaction.php              # Transaction history generation
 │   └── 📁 Controllers/                     # REST API controllers
-│       ├── 📄 Product_REST_Controller.php
-│       ├── 📄 Customer_REST_Controller.php
-│       ├── 📄 Order_REST_Controller.php
-│       ├── 📄 Coupon_REST_Controller.php
-│       ├── 📄 Product_Variation_REST_Controller.php
-│       ├── 📄 Shipping_Plan_REST_Controller.php
-│       ├── 📄 Tax_Class_REST_Controller.php
-│       ├── 📄 Transaction_REST_Controller.php
-│       ├── 📄 Cart_Session_REST_Controller.php
-│       └── 📄 Location_REST_Controller.php
+│       ├── 📄 Cart_Sessions.php            # Cart session REST controller
+│       ├── 📄 Coupons.php                  # Coupon REST controller
+│       ├── 📄 Customers.php                # Customer REST controller
+│       ├── 📄 Locations.php                # Location REST controller
+│       ├── 📄 Orders.php                   # Order REST controller
+│       ├── 📄 Product_Variations.php       # Product variation REST controller
+│       ├── 📄 Products.php                 # Product REST controller
+│       ├── 📄 Shipping_Plans.php           # Shipping plan REST controller
+│       ├── 📄 Tax_Classes.php              # Tax class REST controller
+│       └── 📄 Transactions.php             # Transaction REST controller
 ├── 📁 src/                                 # Frontend source code
 │   └── 📁 admin/
 │       ├── 📁 components/                  # React components
 │       │   ├── 📄 App.jsx                  # Main application router
 │       │   ├── 📄 GeneratorBase.jsx        # Base generator component
 │       │   ├── 📁 Pages/                   # Route-based page components
-│       │   │   ├── 📄 RootLayout.jsx       # Main layout with navigation
+│       │   │   ├── 📄 GeneratorPage.jsx    # Individual generator pages
 │       │   │   ├── 📄 HomePage.jsx         # Generator selection dashboard
-│       │   │   └── 📄 GeneratorPage.jsx    # Individual generator pages
+│       │   │   └── 📄 RootLayout.jsx       # Main layout with navigation
 │       │   └── 📁 Generators/              # Generator-specific components
-│       │       ├── 📄 ProductGenerator.jsx
-│       │       ├── 📄 CustomerGenerator.jsx
-│       │       ├── 📄 OrderGenerator.jsx
+│       │       ├── 📄 CartSessionGenerator.jsx
 │       │       ├── 📄 CouponGenerator.jsx
+│       │       ├── 📄 CustomerGenerator.jsx
+│       │       ├── 📄 LocationGenerator.jsx
+│       │       ├── 📄 OrderGenerator.jsx
+│       │       ├── 📄 ProductGenerator.jsx
 │       │       ├── 📄 ProductVariationGenerator.jsx
 │       │       ├── 📄 ShippingPlanGenerator.jsx
 │       │       ├── 📄 TaxClassGenerator.jsx
-│       │       ├── 📄 TransactionGenerator.jsx
-│       │       ├── 📄 CartSessionGenerator.jsx
-│       │       └── 📄 LocationGenerator.jsx
-│       ├── 📄 styles.css                  # Tailwind CSS with WordPress integration
-│       └── 📄 index.js                    # Frontend entry point
-├── 📁 build/                              # Compiled production assets
-├── 📁 vendor/                             # Composer dependencies (PHP)
-├── 📁 node_modules/                       # NPM dependencies (JavaScript)
-├── 📄 composer.json                       # PHP dependencies and autoloading
-├── 📄 package.json                        # JavaScript dependencies and scripts
-├── 📄 webpack.config.js                   # Build configuration
-├── 📄 tailwind.config.js                  # CSS framework configuration
-├── 📄 phpcs.xml.dist                      # PHP code quality rules
-├── 📄 phpstan.neon                        # Static analysis configuration
-└── 📁 docs/                               # Comprehensive documentation
+│       │       └── 📄 TransactionGenerator.jsx
+│       ├── 📄 index.js                     # Frontend entry point
+│       └── 📄 styles.css                   # Tailwind CSS with WordPress integration
+├── 📁 build/                               # Compiled production assets
+├── 📁 vendor/                              # Composer dependencies (PHP)
+├── 📁 node_modules/                        # NPM dependencies (JavaScript)
+├── 📄 composer.json                        # PHP dependencies and autoloading
+├── 📄 package.json                         # JavaScript dependencies and scripts
+├── 📄 webpack.config.js                    # Build configuration
+├── 📄 tailwind.config.js                   # CSS framework configuration
+├── 📄 phpcs.xml                            # PHP code quality rules
+├── 📄 phpstan.neon                         # Static analysis configuration
+└── 📁 docs/                                # Comprehensive documentation
 ```
 
 ### 📁 Directory Structure Explanation
@@ -142,10 +142,10 @@ abstract class Generator {
 - **Single Item Generation**: Abstract method for specific generator logic
 - **Cleanup Operations**: Post-generation cleanup and optimization
 
-#### `REST_Controller` Abstract Class
+#### `Controller` Abstract Class
 
 ```php
-abstract class REST_Controller extends WP_REST_Controller {
+abstract class Controller extends WP_REST_Controller {
     protected function validate_request_params(WP_REST_Request $request): array;
     protected function prepare_response_data(array $data): array;
     abstract protected function get_generator_instance(): Generator;

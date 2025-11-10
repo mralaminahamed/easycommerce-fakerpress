@@ -145,12 +145,16 @@ class EasyCommerce_FakerPress {
 	 * Outputs the HTML container element where the React admin interface will be mounted.
 	 * This method serves as the callback for the WordPress add_menu_page() function,
 	 * providing the entry point for the React Router v7 application.
+	 * Also ensures sample data is downloaded when the page is first visited.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
 	public function render_admin_page(): void {
+		// Ensure sample data is available when admin page is visited.
+		$this->ensure_sample_data();
+
 		echo '<div id="easycommerce-fakerpress-root"></div>';
 	}
 
@@ -289,8 +293,8 @@ class EasyCommerce_FakerPress {
 	/**
 	 * Plugin activation hook
 	 *
-	 * Handles plugin activation tasks including downloading sample data
-	 * and flushing rewrite rules.
+	 * Handles plugin activation tasks including flushing rewrite rules.
+	 * Sample data is downloaded when the admin page is first visited.
 	 *
 	 * @since 1.0.0
 	 * @hooked register_activation_hook
@@ -298,9 +302,6 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function activate_plugin(): void {
-		// Download sample data if not present.
-		$this->ensure_sample_data();
-
 		// Flush rewrite rules.
 		$this->flush_rewrite_rules();
 	}

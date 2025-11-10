@@ -27,47 +27,40 @@ composer install && npm install && npm run build
 
 ```bash
 # Start development server with hot reload
-npm run dev
-
-# Alternative development command
 npm run start
 
 # Production build (optimized for deployment)
 npm run build
 
-# Watch mode for continuous development
-npm run watch
+# Update packages
+npm run packages-update
 ```
 
 ### Code Quality Assurance
 
 ```bash
 # Full quality check suite
-npm run lint              # JavaScript, CSS, and PHP linting
 composer run lint         # PHP CodeSniffer (WordPress standards)
-composer run phpstan      # PHP static analysis (level 8)
+composer run analyse      # PHP static analysis (level 8)
 
 # Auto-fix issues where possible
-npm run fix               # Auto-fix JS/CSS formatting
-composer run fix          # Auto-fix PHP code style
+composer run format       # Auto-fix PHP code style
 
-# Individual quality checks
-npm run lint:js           # ESLint for JavaScript
-npm run lint:css          # Stylelint for CSS/SCSS
-npm run format            # Prettier code formatting
+# Build and package management
+npm run packages-update   # Update WordPress packages
 ```
 
 ### Testing Commands
 
 ```bash
 # Run PHP unit tests
-composer run test
+composer test
 
 # Run with code coverage
-composer run test:coverage
+composer test:coverage
 
 # WordPress integration tests
-./vendor/bin/phpunit -c phpunit.xml.dist
+phpunit
 ```
 
 ## 📋 Coding Standards & Quality
@@ -140,14 +133,14 @@ git checkout -b feature/your-feature-name
 
 ```bash
 # Start development server
-npm run dev
+npm run start
 
 # Make your changes following coding standards
 # Run quality checks frequently
-npm run lint && composer run lint
+composer run lint && composer run analyse
 
 # Write tests for new functionality
-composer run test
+composer test
 
 # Build and test in WordPress environment
 npm run build

@@ -118,9 +118,10 @@ yarn build
 After activation, verify everything is working:
 
 1. **Check Admin Menu**: "EC FakerPress" should appear in WordPress admin menu
-2. **Test Generator Access**: Click on any generator to ensure the interface loads
-3. **Validate Dependencies**: The interface should show green checkmarks for data dependencies
-4. **Run Test Generation**: Generate a small batch (5-10 items) to verify functionality
+2. **Visit Admin Page**: Navigate to the EC FakerPress admin page (sample data will be downloaded automatically on first visit)
+3. **Test Generator Access**: Click on any generator to ensure the interface loads
+4. **Validate Dependencies**: The interface should show green checkmarks for data dependencies
+5. **Run Test Generation**: Generate a small batch (5-10 items) to verify functionality
 
 ## 🛠️ Development Setup
 
@@ -170,16 +171,14 @@ cp wp-config-sample.php wp-config.php
 
 ```bash
 # Start frontend development server (hot reload)
-npm run dev
+npm run start
 
-# Watch for PHP changes (if using a tool like phpunit-watcher)
 # Build production assets
 npm run build
 
 # Run code quality checks
-npm run lint          # JavaScript/CSS linting
 composer run lint     # PHP CodeSniffer
-composer run phpstan  # Static analysis
+composer run analyse  # Static analysis
 ```
 
 #### 4. Testing Setup
@@ -189,10 +188,10 @@ composer run phpstan  # Static analysis
 bash tests/php/bin/install-wp-tests.sh wordpress_test root '' localhost latest
 
 # Run PHP tests
-composer run test
+composer test
 
-# Run JavaScript tests (if implemented)
-npm run test
+# Run with coverage
+composer test:coverage
 ```
 
 ### Development Tools Configuration
@@ -350,10 +349,10 @@ Common installation and setup issues with solutions.
 
 ```bash
 # Run PHP unit tests
-composer run test
+composer test
 
 # Run WordPress integration tests
-./vendor/bin/phpunit -c phpunit.xml.dist
+phpunit
 ```
 
 #### Manual Testing Checklist
