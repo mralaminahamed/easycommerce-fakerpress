@@ -35,6 +35,8 @@
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@playwright/test": "^1.56.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
     "@wordpress/eslint-plugin": "^22.20.0",
     "@wordpress/scripts": "^30.27.0",
     "@wordpress/stylelint-config": "^23.26.0",
@@ -56,13 +58,27 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toast": "^1.2.15",
     "@wordpress/api-fetch": "^7.34.0",
     "@wordpress/dom-ready": "^4.34.0",
     "@wordpress/element": "^6.34.0",
     "@wordpress/i18n": "^6.7.0",
-    "react-router-dom": "^7.9.5"
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.553.0",
+    "react-router-dom": "^7.9.5",
+    "tailwind-merge": "^3.4.0"
   },
   "browserslist": [
     "extends @wordpress/browserslist-config"

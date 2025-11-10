@@ -42,7 +42,7 @@
 - Use Tailwind CSS for styling
 - Proper i18n with `@wordpress/i18n`
 - Async/await for API calls with try/catch error handling
-- TypeScript for type safety in new files
+- TypeScript for type safety in all files
 
 ### General
 
