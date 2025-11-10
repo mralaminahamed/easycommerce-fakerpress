@@ -46,28 +46,136 @@ export default function OrderGenerator() {
     order_status: {
       description: __("Order status distribution", "easycommerce-fakerpress"),
       type: "string",
-      enum: ["pending", "processing", "completed", "cancelled", "refunded"],
-      default: "completed",
+      enum: [
+        "pending",
+        "processing",
+        "completed",
+        "cancelled",
+        "on_hold",
+        "refunded",
+        "mixed",
+      ],
+      default: "mixed",
     },
-    date_range: {
+    customer_type: {
       description: __(
-        "Date range for order creation",
+        "Type of customers for orders",
+        "easycommerce-fakerpress",
+      ),
+      type: "string",
+      enum: ["existing", "new", "mixed", "specific"],
+      default: "mixed",
+    },
+    specific_customer_id: {
+      description: __(
+        "Specific customer ID to use for all orders (when customer_type is 'specific')",
+        "easycommerce-fakerpress",
+      ),
+      type: "integer",
+      minimum: 1,
+      dependsOn: { customer_type: "specific" },
+    },
+    customer_distribution: {
+      description: __(
+        "Customer type distribution for mixed mode",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        start_date: { type: "string", format: "date" },
-        end_date: { type: "string", format: "date" },
+        existing_ratio: {
+          description: __(
+            "Percentage of existing customers (0-100)",
+            "easycommerce-fakerpress",
+          ),
+          type: "integer",
+          minimum: 0,
+          maximum: 100,
+          default: 70,
+        },
+        new_ratio: {
+          description: __(
+            "Percentage of new customers (0-100)",
+            "easycommerce-fakerpress",
+          ),
+          type: "integer",
+          minimum: 0,
+          maximum: 100,
+          default: 30,
+        },
+      },
+    },
+    order_value: {
+      description: __("Order value configuration", "easycommerce-fakerpress"),
+      type: "object",
+      properties: {
+        min_total: {
+          description: __("Minimum order total", "easycommerce-fakerpress"),
+          type: "number",
+          minimum: 0,
+          default: 10,
+        },
+        max_total: {
+          description: __("Maximum order total", "easycommerce-fakerpress"),
+          type: "number",
+          minimum: 1,
+          default: 1000,
+        },
+      },
+    },
+    items_per_order: {
+      description: __("Number of items per order", "easycommerce-fakerpress"),
+      type: "object",
+      properties: {
+        min: {
+          description: __("Minimum items per order", "easycommerce-fakerpress"),
+          type: "integer",
+          minimum: 1,
+          default: 1,
+        },
+        max: {
+          description: __("Maximum items per order", "easycommerce-fakerpress"),
+          type: "integer",
+          minimum: 1,
+          maximum: 20,
+          default: 5,
+        },
       },
     },
     payment_methods: {
-      description: __("Payment method distribution", "easycommerce-fakerpress"),
+      description: __("Payment methods to use", "easycommerce-fakerpress"),
       type: "array",
       items: {
         type: "string",
-        enum: ["credit_card", "paypal", "bank_transfer", "cash"],
+        enum: [
+          "stripe",
+          "paypal",
+          "bank_transfer",
+          "cash_on_delivery",
+          "credit_card",
+        ],
       },
-      default: ["credit_card", "paypal"],
+      default: ["stripe", "paypal", "bank_transfer"],
+    },
+    geographical_distribution: {
+      description: __(
+        "Geographic distribution of orders",
+        "easycommerce-fakerpress",
+      ),
+      type: "object",
+      properties: {
+        countries: {
+          description: __(
+            "Countries to generate orders from",
+            "easycommerce-fakerpress",
+          ),
+          type: "array",
+          items: {
+            type: "string",
+            enum: ["US", "CA", "GB", "AU", "DE", "FR"],
+          },
+          default: ["US", "CA", "GB"],
+        },
+      },
     },
   };
 

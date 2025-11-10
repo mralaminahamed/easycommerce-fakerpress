@@ -43,21 +43,82 @@ export default function ShippingPlanGenerator() {
   };
 
   const parameterConfig = {
-    shipping_type: {
+    shipping_types: {
       description: __(
-        "Type of shipping methods to generate",
+        "Types of shipping methods to generate",
         "easycommerce-fakerpress",
       ),
-      type: "string",
-      enum: ["flat_rate", "free_shipping", "local_pickup"],
-      default: "flat_rate",
+      type: "array",
+      items: {
+        type: "string",
+        enum: [
+          "standard",
+          "express",
+          "overnight",
+          "pickup",
+          "free",
+          "weight_based",
+          "flat_rate",
+        ],
+      },
+      default: ["standard", "express", "free"],
     },
-    zones_count: {
-      description: __("Number of shipping zones", "easycommerce-fakerpress"),
-      type: "integer",
-      minimum: 1,
-      maximum: 10,
-      default: 3,
+    cost_range: {
+      description: __("Shipping cost range", "easycommerce-fakerpress"),
+      type: "object",
+      properties: {
+        min: {
+          description: __("Minimum shipping cost", "easycommerce-fakerpress"),
+          type: "number",
+          minimum: 0,
+          default: 0,
+        },
+        max: {
+          description: __("Maximum shipping cost", "easycommerce-fakerpress"),
+          type: "number",
+          minimum: 0,
+          default: 50,
+        },
+      },
+    },
+    coverage_areas: {
+      description: __("Geographic coverage areas", "easycommerce-fakerpress"),
+      type: "array",
+      items: {
+        type: "string",
+        enum: ["domestic", "international", "regional", "worldwide"],
+      },
+      default: ["domestic", "international"],
+    },
+    calculation_methods: {
+      description: __(
+        "Shipping calculation methods",
+        "easycommerce-fakerpress",
+      ),
+      type: "array",
+      items: {
+        type: "string",
+        enum: ["flat_rate", "weight_based", "price_based", "quantity_based"],
+      },
+      default: ["flat_rate", "weight_based"],
+    },
+    delivery_timeframes: {
+      description: __("Delivery time ranges", "easycommerce-fakerpress"),
+      type: "object",
+      properties: {
+        min_days: {
+          description: __("Minimum delivery days", "easycommerce-fakerpress"),
+          type: "integer",
+          minimum: 0,
+          default: 1,
+        },
+        max_days: {
+          description: __("Maximum delivery days", "easycommerce-fakerpress"),
+          type: "integer",
+          minimum: 1,
+          default: 14,
+        },
+      },
     },
   };
 

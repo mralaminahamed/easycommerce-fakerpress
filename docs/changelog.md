@@ -5,6 +5,43 @@ All notable changes to EasyCommerce FakerPress will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-11-11
+
+### 🚀 Major Release: Complete Parameter Schema Alignment
+
+#### 🔧 Frontend-Backend Integration Overhaul
+
+- **Parameter Schema Alignment**: Completely aligned all 10 generator frontend forms with backend API validation rules
+- **Type Safety**: Fixed array vs string parameter mismatches across all generators
+- **Validation Consistency**: Ensured frontend forms submit valid data to backend endpoints
+- **API Compatibility**: Verified all parameter structures match expected backend schemas
+
+#### 📊 Generator-Specific Improvements
+
+- **Products Generator**: Aligned product_type enum, price_range, categories, attributes, inventory, and content_options parameters
+- **Orders Generator**: Fixed items_per_order naming, added payment_methods and geographical_distribution parameters
+- **Customers Generator**: Added complete demographics, address_preferences, purchase_history, and contact_preferences schemas
+- **Coupons Generator**: Converted discount_type to discount_types array, aligned usage_limits, added validity_period and restrictions
+- **Cart Sessions Generator**: Updated customer_type enum, renamed items_count to items_per_cart, added 6 missing backend parameters
+- **Transactions Generator**: Verified all parameters match backend schema (customer_type, transaction_types, payment_gateways, etc.)
+- **Locations Generator**: Confirmed all geographic parameters properly aligned
+- **Shipping Plans Generator**: Converted shipping_type to shipping_types array, added cost_range, coverage_areas, calculation_methods, delivery_timeframes
+- **Tax Classes Generator**: Verified tax_types array, jurisdictions, rate_ranges, and location_coverage parameters
+- **Product Variations Generator**: Complete parameter overhaul with specific_product_id, product_types, price_variance, stock_settings, variation_attributes
+
+#### 🏗️ Architecture Enhancements
+
+- **TypeScript Migration**: All React components converted to TypeScript with proper interfaces
+- **Code Quality**: Improved linting compliance and error handling
+- **Build System**: Verified successful compilation across all changes
+- **Testing Framework**: Added comprehensive parameter schema alignment tests
+
+#### 📚 Documentation Updates
+
+- **Version Synchronization**: Updated all version references to 2.0.0
+- **API Documentation**: Enhanced parameter documentation for all generators
+- **Developer Experience**: Improved code maintainability and extensibility
+
 ## [1.0.2] - 2025-11-11
 
 ### 🐛 Bug Fixes
