@@ -6,7 +6,7 @@ on:
       - "*"
 
 permissions:
-  contents: write  # needed to create GitHub release
+  contents: write # needed to create GitHub release
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -58,15 +58,15 @@ jobs:
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "7.4"
           coverage: none
           tools: composer:v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Cache Composer dependencies
         uses: actions/cache@v4
@@ -118,6 +118,21 @@ jobs:
         run: |
           sudo apt-get update -y
            sudo apt-get install -y subversion
+
+      - name: Clean up sample-data directories from SVN
+        run: |
+          # Checkout the SVN repository to clean up any existing sample-data directories
+          svn checkout "https://plugins.svn.wordpress.org/${{ steps.plugin_name.outputs.plugin_slug }}/trunk" svn-trunk --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}" --non-interactive --quiet
+
+          # Remove any sample-data directories if they exist
+          if [ -d "svn-trunk/sample-data" ]; then
+            echo "Removing sample-data directory from SVN..."
+            svn delete svn-trunk/sample-data --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}" --non-interactive --quiet
+            svn commit svn-trunk -m "Remove incorrectly deployed sample-data directory" --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}" --non-interactive --quiet
+          fi
+
+          # Clean up the temporary checkout
+          rm -rf svn-trunk
 
       - name: WordPress Plugin Deploy
         id: deploy
