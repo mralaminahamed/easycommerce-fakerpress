@@ -49,7 +49,7 @@ export default function ProductGenerator() {
         "easycommerce-fakerpress",
       ),
       type: "string",
-      enum: ["physical", "digital", "mixed"],
+      enum: ["simple", "variable", "grouped", "external", "digital", "mixed"],
       default: "mixed",
     },
     price_range: {
@@ -65,232 +65,101 @@ export default function ProductGenerator() {
     },
     categories: {
       description: __(
-        "Product categories and taxonomy configuration",
+        "Product categories configuration",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        create_new_categories: { type: "boolean", default: true },
-        max_categories_per_product: {
+        create_new: {
+          description: __(
+            "Create new categories if needed",
+            "easycommerce-fakerpress",
+          ),
+          type: "boolean",
+          default: true,
+        },
+        max_per_product: {
+          description: __(
+            "Maximum categories per product",
+            "easycommerce-fakerpress",
+          ),
           type: "integer",
           minimum: 1,
           maximum: 10,
-          default: 3,
-        },
-        create_brands: { type: "boolean", default: true },
-        max_brands_per_product: {
-          type: "integer",
-          minimum: 1,
-          maximum: 3,
-          default: 1,
-        },
-        assign_tags: { type: "boolean", default: true },
-        tags_per_product: {
-          type: "integer",
-          minimum: 1,
-          maximum: 8,
           default: 3,
         },
       },
     },
     attributes: {
       description: __(
-        "Product attributes and variations configuration",
+        "Product attributes configuration",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        include_attributes: { type: "boolean", default: true },
-        attributes_per_product: {
-          type: "integer",
-          minimum: 1,
-          maximum: 6,
-          default: 3,
+        include_attributes: {
+          description: __(
+            "Include product attributes",
+            "easycommerce-fakerpress",
+          ),
+          type: "boolean",
+          default: true,
         },
-        max_variations: {
+        variation_count: {
+          description: __(
+            "Number of variations for variable products",
+            "easycommerce-fakerpress",
+          ),
           type: "integer",
           minimum: 1,
           maximum: 20,
-          default: 10,
+          default: 5,
         },
-        variation_pricing_variance: {
-          type: "number",
-          minimum: 0.1,
-          maximum: 0.8,
-          default: 0.3,
-        },
-        use_physical_attributes: { type: "boolean", default: true },
-        use_digital_attributes: { type: "boolean", default: true },
       },
     },
     inventory: {
       description: __(
-        "Inventory and stock management settings",
+        "Inventory settings for generated products",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        manage_stock: { type: "boolean", default: true },
+        manage_stock: {
+          description: __("Enable stock management", "easycommerce-fakerpress"),
+          type: "boolean",
+          default: true,
+        },
         stock_range: {
+          description: __("Stock quantity range", "easycommerce-fakerpress"),
           type: "object",
           properties: {
             min: { type: "integer", minimum: 0, default: 0 },
-            max: { type: "integer", minimum: 1, default: 150 },
-          },
-        },
-        stock_status_distribution: {
-          type: "object",
-          properties: {
-            in_stock_ratio: {
-              type: "integer",
-              minimum: 0,
-              maximum: 100,
-              default: 70,
-            },
-            low_stock_ratio: {
-              type: "integer",
-              minimum: 0,
-              maximum: 100,
-              default: 15,
-            },
-            out_of_stock_ratio: {
-              type: "integer",
-              minimum: 0,
-              maximum: 100,
-              default: 10,
-            },
-            backorder_ratio: {
-              type: "integer",
-              minimum: 0,
-              maximum: 100,
-              default: 5,
-            },
-          },
-        },
-        stock_limits: {
-          type: "object",
-          properties: {
-            min_limit: {
-              type: "integer",
-              minimum: 5,
-              maximum: 100,
-              default: 10,
-            },
-            max_limit: {
-              type: "integer",
-              minimum: 10,
-              maximum: 200,
-              default: 50,
-            },
+            max: { type: "integer", minimum: 1, default: 100 },
           },
         },
       },
     },
     content_options: {
       description: __(
-        "Content generation and media options",
+        "Product content generation options",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        include_images: { type: "boolean", default: false },
-        gallery_image_count: {
-          type: "integer",
-          minimum: 1,
-          maximum: 12,
-          default: 4,
+        include_images: {
+          description: __("Generate product images", "easycommerce-fakerpress"),
+          type: "boolean",
+          default: false,
         },
         description_length: {
+          description: __(
+            "Product description length",
+            "easycommerce-fakerpress",
+          ),
           type: "string",
           enum: ["short", "medium", "long"],
           default: "medium",
         },
-        generate_seo_data: { type: "boolean", default: true },
-        include_specifications: { type: "boolean", default: true },
-      },
-    },
-    sales_options: {
-      description: __(
-        "Sales and pricing configuration",
-        "easycommerce-fakerpress",
-      ),
-      type: "object",
-      properties: {
-        sale_price_probability: {
-          type: "integer",
-          minimum: 0,
-          maximum: 100,
-          default: 40,
-        },
-        sale_discount_range: {
-          type: "object",
-          properties: {
-            min_discount: {
-              type: "number",
-              minimum: 0.05,
-              maximum: 0.5,
-              default: 0.1,
-            },
-            max_discount: {
-              type: "number",
-              minimum: 0.1,
-              maximum: 0.7,
-              default: 0.4,
-            },
-          },
-        },
-        tax_class_distribution: {
-          type: "array",
-          items: {
-            type: "string",
-            enum: ["standard", "reduced-rate", "zero-rate"],
-          },
-          default: ["standard", "reduced-rate"],
-        },
-        featured_probability: {
-          type: "integer",
-          minimum: 0,
-          maximum: 50,
-          default: 25,
-        },
-      },
-    },
-    digital_options: {
-      description: __(
-        "Digital product specific settings",
-        "easycommerce-fakerpress",
-      ),
-      type: "object",
-      properties: {
-        download_files_per_product: {
-          type: "integer",
-          minimum: 1,
-          maximum: 8,
-          default: 2,
-        },
-        download_limit_probability: {
-          type: "integer",
-          minimum: 0,
-          maximum: 100,
-          default: 80,
-        },
-        download_expiry_probability: {
-          type: "integer",
-          minimum: 0,
-          maximum: 100,
-          default: 60,
-        },
-        file_formats: {
-          type: "array",
-          items: {
-            type: "string",
-            enum: ["pdf", "mp4", "mp3", "zip", "exe", "dmg"],
-          },
-          default: ["pdf", "zip", "mp4"],
-        },
-      },
-      dependsOn: {
-        product_type: ["digital", "mixed"],
       },
     },
   };

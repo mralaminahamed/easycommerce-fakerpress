@@ -43,48 +43,124 @@ export default function CustomerGenerator() {
   };
 
   const parameterConfig = {
-    customer_type: {
+    customer_types: {
       description: __(
-        "Type of customers to generate",
+        "Types of customers to generate",
         "easycommerce-fakerpress",
       ),
-      type: "string",
-      enum: ["individual", "business", "mixed"],
-      default: "mixed",
+      type: "array",
+      items: {
+        type: "string",
+        enum: ["regular", "vip", "wholesale", "guest", "returning"],
+      },
+      default: ["regular", "returning"],
     },
-    registration_date_range: {
-      description: __(
-        "Date range for customer registration",
-        "easycommerce-fakerpress",
-      ),
+    demographics: {
+      description: __("Demographic distribution", "easycommerce-fakerpress"),
       type: "object",
       properties: {
-        start_date: { type: "string", format: "date" },
-        end_date: { type: "string", format: "date" },
+        age_groups: {
+          description: __("Age group distribution", "easycommerce-fakerpress"),
+          type: "array",
+          items: {
+            type: "string",
+            enum: ["18-25", "26-35", "36-45", "46-55", "56-65", "65+"],
+          },
+          default: ["26-35", "36-45", "46-55"],
+        },
+        gender_distribution: {
+          description: __(
+            "Gender distribution weight",
+            "easycommerce-fakerpress",
+          ),
+          type: "object",
+          properties: {
+            male: { type: "integer", minimum: 0, maximum: 100, default: 45 },
+            female: { type: "integer", minimum: 0, maximum: 100, default: 45 },
+            other: { type: "integer", minimum: 0, maximum: 100, default: 10 },
+          },
+        },
       },
     },
-    order_history: {
+    address_preferences: {
       description: __(
-        "Customer order history configuration",
+        "Address generation preferences",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        min_orders: { type: "integer", minimum: 0, default: 0 },
-        max_orders: { type: "integer", minimum: 1, default: 50 },
-        average_order_value: { type: "number", minimum: 10, default: 75 },
+        include_billing: {
+          description: __(
+            "Include billing addresses",
+            "easycommerce-fakerpress",
+          ),
+          type: "boolean",
+          default: true,
+        },
+        include_shipping: {
+          description: __(
+            "Include shipping addresses",
+            "easycommerce-fakerpress",
+          ),
+          type: "boolean",
+          default: true,
+        },
+        different_addresses_ratio: {
+          description: __(
+            "Percentage with different billing/shipping (0-100)",
+            "easycommerce-fakerpress",
+          ),
+          type: "integer",
+          minimum: 0,
+          maximum: 100,
+          default: 30,
+        },
+      },
+    },
+    purchase_history: {
+      description: __("Purchase history simulation", "easycommerce-fakerpress"),
+      type: "object",
+      properties: {
+        simulate_history: {
+          description: __(
+            "Generate purchase history metadata",
+            "easycommerce-fakerpress",
+          ),
+          type: "boolean",
+          default: true,
+        },
+        loyalty_tiers: {
+          description: __(
+            "Include loyalty tier assignments",
+            "easycommerce-fakerpress",
+          ),
+          type: "boolean",
+          default: true,
+        },
       },
     },
     contact_preferences: {
       description: __(
-        "Customer contact and communication preferences",
+        "Contact and communication preferences",
         "easycommerce-fakerpress",
       ),
       type: "object",
       properties: {
-        marketing_emails: { type: "boolean", default: true },
-        sms_notifications: { type: "boolean", default: false },
-        newsletter_subscription: { type: "boolean", default: true },
+        phone_numbers: {
+          description: __("Include phone numbers", "easycommerce-fakerpress"),
+          type: "boolean",
+          default: true,
+        },
+        marketing_opt_in_ratio: {
+          description: __(
+            "Percentage opted in for marketing (0-100)",
+            "easycommerce-fakerpress",
+          ),
+          type: "integer",
+          minimum: 0,
+          maximum: 100,
+          default: 65,
+        },
       },
     },
   };
