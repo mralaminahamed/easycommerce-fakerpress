@@ -68,8 +68,8 @@ Generated data leverages the Faker library for authenticity while adhering to re
 
 == Frequently Asked Questions ==
 
-= What's new in version 1.0.2? =
-This release includes bug fixes, performance improvements, and enhanced compatibility with the latest EasyCommerce version. Key updates include optimized data generation algorithms, improved error handling, and refined user interface components.
+= What's new in version 2.0.0? =
+This major release includes complete parameter schema alignment between frontend forms and backend API validation. All 10 generators now have perfectly aligned parameter structures, ensuring reliable data generation. Key updates include TypeScript migration, comprehensive parameter validation, and enterprise-grade frontend-backend integration.
 
 = How does EasyCommerce integration work? =
 The plugin utilizes native EasyCommerce models (e.g., Product, Customer, Order) for generation, ensuring data validation, relationship integrity, and compatibility with future updates. Direct database queries are avoided to maintain business logic enforcement.
@@ -119,10 +119,16 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
-= 1.0.4 - November 10, 2025 =
-* **Bug fixes**: Resolve a deployment issue with the plugin's build process.
+= 2.0.0 - November 11, 2025 =
+* **Major Release**: Complete parameter schema alignment for all 10 generators
+* **Frontend-Backend Integration**: Perfect alignment between React forms and REST API validation
+* **Type Safety**: Full TypeScript migration with proper interfaces and validation
+* **Parameter Fixes**: Corrected array vs string mismatches, naming inconsistencies, and missing parameters
+* **API Reliability**: Guaranteed valid data submission from frontend to backend endpoints
+* **Code Quality**: Enhanced error handling, linting compliance, and build verification
+* **Breaking Changes**: Parameter schemas updated - review custom integrations before upgrading
 
-= 1.0.3 - October 29, 2025 =
+= 1.0.4 - November 10, 2025 =
 * **Hook System Enhancement**: Added comprehensive filter and action hooks for complete data customization and workflow integration
 * **Extensibility Improvements**: Implemented 15+ hooks including data filters, result filters, and strategic actions
 * **API Customization**: Added REST response filtering for complete API extensibility
@@ -147,10 +153,10 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Upgrade Notice ==
 
-= 1.0.4 =
-* **Bug fixes**: Resolve a deployment issue with the plugin's build process.
+= 2.0.0 =
+* **Major Update**: Complete parameter schema alignment. Test custom integrations in staging before upgrading. Parameter structures have changed for all generators - review API usage and custom hooks.
 
-= 1.0.2 =
+= 1.0.4 =
 Performance improvements and bug fixes. Recommended upgrade for all users. No data migration required.
 
 = 1.0.0 =
