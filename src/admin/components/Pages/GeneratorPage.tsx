@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ArrowLeft, Menu, X } from "lucide-react";
+import { ChevronRight, ArrowLeft, Menu, X, Globe } from "lucide-react";
 
 import { __ } from "@wordpress/i18n";
 import { Card, CardContent } from "../ui/card";
@@ -18,6 +18,13 @@ export default function GeneratorPage() {
   const navigate = useNavigate();
   const generator = generators.find((gen) => gen.route === type);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Get locale information from localized script
+  const localeInfo = (window as any).easycommerceFakerpressApi?.locale || {
+    faker: "en_US",
+    label: "English (United States)",
+    wordpress: "en_US",
+  };
 
   if (!generator) {
     navigate("/");
@@ -103,7 +110,7 @@ export default function GeneratorPage() {
       >
         {/* Navigation Header */}
         <div className="mb-8 space-y-4">
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button and Data Locale */}
           <div className="flex items-center justify-between lg:hidden">
             <motion.button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -117,39 +124,84 @@ export default function GeneratorPage() {
                 <Menu className="h-6 w-6" aria-hidden="true" />
               )}
             </motion.button>
+
+            {/* Data Locale - Mobile */}
+            <motion.div
+              className="lg:hidden"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <div className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
+                <motion.div
+                  whileHover={{ rotate: 15 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Globe className="h-4 w-4" aria-hidden="true" />
+                </motion.div>
+                <span className="font-medium">{localeInfo.label}</span>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Breadcrumb */}
-          <motion.nav
-            aria-label="Breadcrumb"
-            className="flex"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
-              <li>
-                <Link
-                  to="/"
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium"
+          {/* Breadcrumb and Data Locale */}
+          <div className="flex items-center justify-between">
+            <motion.nav
+              aria-label="Breadcrumb"
+              className="flex"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
+                <li>
+                  <Link
+                    to="/"
+                    className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium"
+                  >
+                    {__("Home", "easycommerce-fakerpress")}
+                  </Link>
+                </li>
+                <li>
+                  <ChevronRight
+                    className="h-4 w-4 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </li>
+                <li>
+                  <span className="text-sm text-gray-900 font-semibold flex items-center">
+                    <IconComponent className="w-4 h-4 mr-2 text-blue-500" />
+                    {generator.name}
+                  </span>
+                </li>
+              </ol>
+            </motion.nav>
+
+            {/* Data Locale - Desktop */}
+            <motion.div
+              className="hidden lg:block"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <div className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-3 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
+                <motion.div
+                  whileHover={{ rotate: 15 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  {__("Home", "easycommerce-fakerpress")}
-                </Link>
-              </li>
-              <li>
-                <ChevronRight
-                  className="h-4 w-4 text-gray-400"
-                  aria-hidden="true"
-                />
-              </li>
-              <li>
-                <span className="text-sm text-gray-900 font-semibold flex items-center">
-                  <IconComponent className="w-4 h-4 mr-2 text-blue-500" />
-                  {generator.name}
-                </span>
-              </li>
-            </ol>
-          </motion.nav>
+                  <Globe className="h-5 w-5" aria-hidden="true" />
+                </motion.div>
+                <div className="flex flex-col">
+                  <span className="text-xs text-blue-600 font-semibold uppercase tracking-wide">
+                    {__("Data Locale", "easycommerce-fakerpress")}
+                  </span>
+                  <span className="text-blue-800 font-medium">
+                    {localeInfo.label}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
 
           {/* Back Button */}
           <motion.div
