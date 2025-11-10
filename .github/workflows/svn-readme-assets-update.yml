@@ -9,7 +9,7 @@ on:
 
 jobs:
   trunk:
-    name: Push
+    name: Update
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
