@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   releaseToWPOrg:
-    name: Release to WordPress.org
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
