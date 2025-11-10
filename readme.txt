@@ -4,7 +4,7 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,9 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
+= 1.0.4 - November 10, 2025 =
+* **Bug fixes**: Resolve a deployment issue with the plugin's build process.
+
 = 1.0.3 - October 29, 2025 =
 * **Hook System Enhancement**: Added comprehensive filter and action hooks for complete data customization and workflow integration
 * **Extensibility Improvements**: Implemented 15+ hooks including data filters, result filters, and strategic actions
@@ -143,6 +146,9 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 * **Technical Foundations**: Built with React 18, Tailwind CSS, Webpack 5; includes validation, state management, and extensibility hooks.
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+* **Bug fixes**: Resolve a deployment issue with the plugin's build process.
 
 = 1.0.2 =
 Performance improvements and bug fixes. Recommended upgrade for all users. No data migration required.

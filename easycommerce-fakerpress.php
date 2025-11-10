@@ -11,7 +11,7 @@
  * Plugin Name:       EasyCommerce FakerPress
  * Plugin URI:        https://github.com/mralaminahamed/easycommerce-fakerpress
  * Description:       Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, modern React Router v7 interface, and extensive hook system for complete customization.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Requires at least: 5.0
  * Requires PHP:      7.4
  * Author:            Al Amin Ahamed
