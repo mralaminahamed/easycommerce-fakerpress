@@ -102,7 +102,7 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function init(): void {
-		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
+		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'activate_plugin' ) );
 		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 
 		add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
@@ -287,6 +287,230 @@ class EasyCommerce_FakerPress {
 	}
 
 	/**
+	 * Plugin activation hook
+	 *
+	 * Handles plugin activation tasks including downloading sample data
+	 * and flushing rewrite rules.
+	 *
+	 * @since 1.0.0
+	 * @hooked register_activation_hook
+	 *
+	 * @return void
+	 */
+	public function activate_plugin(): void {
+		// Download sample data if not present
+		$this->ensure_sample_data();
+
+		// Flush rewrite rules
+		$this->flush_rewrite_rules();
+	}
+
+	/**
+	 * Ensure sample data is available
+	 *
+	 * Downloads and extracts sample data from the remote repository if not already present.
+	 * This ensures the plugin has access to locale-specific sample data for generation.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool True if sample data is available, false on failure.
+	 */
+	public function ensure_sample_data(): bool {
+		$sample_data_dir = $this->get_sample_data_directory();
+
+		// Check if sample data already exists
+		if ( $this->sample_data_exists() ) {
+			return true;
+		}
+
+		// Create sample data directory if it doesn't exist
+		if ( ! wp_mkdir_p( $sample_data_dir ) ) {
+			error_log( 'EasyCommerce FakerPress: Failed to create sample data directory: ' . $sample_data_dir );
+			return false;
+		}
+
+		// Download and extract sample data
+		return $this->download_sample_data();
+	}
+
+	/**
+	 * Check if sample data exists
+	 *
+	 * Verifies that the required sample data directories and files are present.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool True if sample data exists, false otherwise.
+	 */
+	public function sample_data_exists(): bool {
+		$sample_data_dir = $this->get_sample_data_directory();
+
+		// Check for key directories that should exist
+		$required_dirs = array( 'products', 'customers', 'orders' );
+
+		foreach ( $required_dirs as $dir ) {
+			if ( ! is_dir( $sample_data_dir . '/' . $dir ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get sample data directory path
+	 *
+	 * Returns the path where sample data should be stored.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Path to sample data directory.
+	 */
+	public function get_sample_data_directory(): string {
+		$upload_dir = wp_upload_dir();
+		return $upload_dir['basedir'] . '/easycommerce-fakerpress-sample-data';
+	}
+
+	/**
+	 * Download sample data from remote repository
+	 *
+	 * Downloads the sample data archive from GitHub and extracts it to the local directory.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool True on success, false on failure.
+	 */
+	private function download_sample_data(): bool {
+		// GitHub repository details - adjust these as needed
+		$repo_owner = 'mralaminahamed'; // Replace with actual GitHub username/org
+		$repo_name  = 'easycommerce-fakerpress-sample-data';
+		$branch     = 'main'; // or 'master' depending on the default branch
+
+		// GitHub API URL for downloading the repository as zip
+		$download_url = "https://github.com/{$repo_owner}/{$repo_name}/archive/refs/heads/{$branch}.zip";
+
+		$sample_data_dir = $this->get_sample_data_directory();
+		$temp_zip_file   = $sample_data_dir . '/sample-data-temp.zip';
+		$extracted_dir   = $sample_data_dir . '/temp-extract';
+
+		// Initialize WordPress filesystem
+		global $wp_filesystem;
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		// Download the zip file
+		$response = wp_remote_get( $download_url, array(
+			'timeout' => 300, // 5 minutes timeout
+		) );
+
+		if ( is_wp_error( $response ) ) {
+			error_log( 'EasyCommerce FakerPress: Failed to download sample data: ' . $response->get_error_message() );
+			return false;
+		}
+
+		$zip_content = wp_remote_retrieve_body( $response );
+		if ( empty( $zip_content ) ) {
+			error_log( 'EasyCommerce FakerPress: Empty response when downloading sample data' );
+			return false;
+		}
+
+		// Save zip file temporarily
+		if ( ! $wp_filesystem->put_contents( $temp_zip_file, $zip_content ) ) {
+			error_log( 'EasyCommerce FakerPress: Failed to save temporary zip file' );
+			return false;
+		}
+
+		// Extract the zip file
+		if ( ! $this->extract_zip( $temp_zip_file, $extracted_dir ) ) {
+			error_log( 'EasyCommerce FakerPress: Failed to extract sample data zip file' );
+			$wp_filesystem->delete( $temp_zip_file );
+			return false;
+		}
+
+		// Move extracted contents to the final location
+		$extracted_contents = $wp_filesystem->dirlist( $extracted_dir );
+		if ( ! empty( $extracted_contents ) ) {
+			$source_dir = $extracted_dir . '/' . key( $extracted_contents );
+			$this->move_directory_contents( $source_dir, $sample_data_dir );
+		}
+
+		// Clean up temporary files
+		$wp_filesystem->delete( $temp_zip_file );
+		$wp_filesystem->delete( $extracted_dir, true );
+
+		return $this->sample_data_exists();
+	}
+
+	/**
+	 * Extract ZIP file
+	 *
+	 * Extracts a ZIP file to the specified directory using WordPress filesystem.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $zip_file Path to the ZIP file.
+	 * @param string $extract_to Directory to extract to.
+	 *
+	 * @return bool True on success, false on failure.
+	 */
+	private function extract_zip( string $zip_file, string $extract_to ): bool {
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			error_log( 'EasyCommerce FakerPress: ZipArchive class not available' );
+			return false;
+		}
+
+		$zip = new ZipArchive();
+		if ( $zip->open( $zip_file ) !== true ) {
+			error_log( 'EasyCommerce FakerPress: Failed to open zip file' );
+			return false;
+		}
+
+		if ( ! $zip->extractTo( $extract_to ) ) {
+			error_log( 'EasyCommerce FakerPress: Failed to extract zip file' );
+			$zip->close();
+			return false;
+		}
+
+		$zip->close();
+		return true;
+	}
+
+	/**
+	 * Move directory contents
+	 *
+	 * Moves all contents from one directory to another.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $source_dir Source directory.
+	 * @param string $dest_dir Destination directory.
+	 *
+	 * @return void
+	 */
+	private function move_directory_contents( string $source_dir, string $dest_dir ): void {
+		global $wp_filesystem;
+
+		$items = $wp_filesystem->dirlist( $source_dir );
+		foreach ( $items as $item ) {
+			$source_path = $source_dir . '/' . $item['name'];
+			$dest_path   = $dest_dir . '/' . $item['name'];
+
+			if ( 'd' === $item['type'] ) {
+				// Directory
+				if ( ! $wp_filesystem->exists( $dest_path ) ) {
+					$wp_filesystem->mkdir( $dest_path );
+				}
+				$this->move_directory_contents( $source_path, $dest_path );
+			} else {
+				// File
+				$wp_filesystem->move( $source_path, $dest_path );
+			}
+		}
+	}
+
+	/**
 	 * Flush rewrite rules on activation and deactivation
 	 *
 	 * Ensures WordPress rewrite rules are properly flushed when the plugin is
@@ -294,7 +518,6 @@ class EasyCommerce_FakerPress {
 	 * conflicts with custom endpoints.
 	 *
 	 * @since 1.0.0
-	 * @hooked register_activation_hook
 	 * @hooked register_deactivation_hook
 	 *
 	 * @return void
