@@ -298,10 +298,10 @@ class EasyCommerce_FakerPress {
 	 * @return void
 	 */
 	public function activate_plugin(): void {
-		// Download sample data if not present
+		// Download sample data if not present.
 		$this->ensure_sample_data();
 
-		// Flush rewrite rules
+		// Flush rewrite rules.
 		$this->flush_rewrite_rules();
 	}
 
@@ -318,18 +318,17 @@ class EasyCommerce_FakerPress {
 	public function ensure_sample_data(): bool {
 		$sample_data_dir = $this->get_sample_data_directory();
 
-		// Check if sample data already exists
+		// Check if sample data already exists.
 		if ( $this->sample_data_exists() ) {
 			return true;
 		}
 
-		// Create sample data directory if it doesn't exist
+		// Create sample data directory if it doesn't exist.
 		if ( ! wp_mkdir_p( $sample_data_dir ) ) {
-			error_log( 'EasyCommerce FakerPress: Failed to create sample data directory: ' . $sample_data_dir );
 			return false;
 		}
 
-		// Download and extract sample data
+		// Download and extract sample data.
 		return $this->download_sample_data();
 	}
 
@@ -345,7 +344,7 @@ class EasyCommerce_FakerPress {
 	public function sample_data_exists(): bool {
 		$sample_data_dir = $this->get_sample_data_directory();
 
-		// Check for key directories that should exist
+		// Check for key directories that should exist.
 		$required_dirs = array( 'products', 'customers', 'orders' );
 
 		foreach ( $required_dirs as $dir ) {
@@ -381,62 +380,60 @@ class EasyCommerce_FakerPress {
 	 * @return bool True on success, false on failure.
 	 */
 	private function download_sample_data(): bool {
-		// GitHub repository details - adjust these as needed
-		$repo_owner = 'mralaminahamed'; // Replace with actual GitHub username/org
+		$repo_owner = 'mralaminahamed';
 		$repo_name  = 'easycommerce-fakerpress-sample-data';
-		$branch     = 'main'; // or 'master' depending on the default branch
+		$branch     = 'trunk';
 
-		// GitHub API URL for downloading the repository as zip
+		// GitHub API URL for downloading the repository as zip.
 		$download_url = "https://github.com/{$repo_owner}/{$repo_name}/archive/refs/heads/{$branch}.zip";
 
 		$sample_data_dir = $this->get_sample_data_directory();
 		$temp_zip_file   = $sample_data_dir . '/sample-data-temp.zip';
 		$extracted_dir   = $sample_data_dir . '/temp-extract';
 
-		// Initialize WordPress filesystem
+		// Initialize WordPress filesystem.
 		global $wp_filesystem;
 		if ( ! $wp_filesystem ) {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
 			WP_Filesystem();
 		}
 
-		// Download the zip file
-		$response = wp_remote_get( $download_url, array(
-			'timeout' => 300, // 5 minutes timeout
-		) );
+		// Download the zip file.
+		$response = wp_remote_get(
+			$download_url,
+			array(
+				'timeout' => 300, // 5 minutes timeout
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'EasyCommerce FakerPress: Failed to download sample data: ' . $response->get_error_message() );
 			return false;
 		}
 
 		$zip_content = wp_remote_retrieve_body( $response );
 		if ( empty( $zip_content ) ) {
-			error_log( 'EasyCommerce FakerPress: Empty response when downloading sample data' );
 			return false;
 		}
 
 		// Save zip file temporarily
 		if ( ! $wp_filesystem->put_contents( $temp_zip_file, $zip_content ) ) {
-			error_log( 'EasyCommerce FakerPress: Failed to save temporary zip file' );
 			return false;
 		}
 
-		// Extract the zip file
+		// Extract the zip file.
 		if ( ! $this->extract_zip( $temp_zip_file, $extracted_dir ) ) {
-			error_log( 'EasyCommerce FakerPress: Failed to extract sample data zip file' );
 			$wp_filesystem->delete( $temp_zip_file );
 			return false;
 		}
 
-		// Move extracted contents to the final location
+		// Move extracted contents to the final location.
 		$extracted_contents = $wp_filesystem->dirlist( $extracted_dir );
 		if ( ! empty( $extracted_contents ) ) {
 			$source_dir = $extracted_dir . '/' . key( $extracted_contents );
 			$this->move_directory_contents( $source_dir, $sample_data_dir );
 		}
 
-		// Clean up temporary files
+		// Clean up temporary files.
 		$wp_filesystem->delete( $temp_zip_file );
 		$wp_filesystem->delete( $extracted_dir, true );
 
