@@ -310,7 +310,7 @@ class Customer extends Generator {
 	 */
 	private function generate_billing_address( string $first_name, string $last_name, string $email ): array {
 		$sample_data = $this->load_sample_data();
-		$country     = $this->get_faker()->randomElement( $sample_data['countries'] ?: array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
+		$country     = $this->get_faker()->randomElement( $sample_data['countries'] ? $sample_data['countries'] : array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' ) );
 
 		return array(
 			'first_name' => $first_name,
@@ -347,7 +347,7 @@ class Customer extends Generator {
 		// 80% chance shipping address is in the same country
 		$sample_data = $this->load_sample_data();
 		$country     = $this->get_faker()->boolean( 80 ) ? $billing_country : $this->get_faker()->randomElement(
-			$sample_data['countries'] ?: array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
+			$sample_data['countries'] ? $sample_data['countries'] : array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'JP', 'IN', 'BR', 'MX' )
 		);
 
 		return array(
@@ -389,15 +389,15 @@ class Customer extends Generator {
 					'email_notifications'  => $this->get_faker()->boolean( 85 ),
 					'marketing_opt_in'     => $this->get_faker()->boolean( 60 ),
 					'preferred_language'   => $this->get_faker()->randomElement(
-						$sample_data['preferred_languages'] ?: array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' )
+						$sample_data['preferred_languages'] ? $sample_data['preferred_languages'] : array( 'en_US', 'es_ES', 'fr_FR', 'de_DE', 'it_IT', 'ja_JP', 'pt_BR', 'hi_IN' )
 					),
 					'currency'             => $this->get_faker()->randomElement(
-						$sample_data['currencies'] ?: array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
+						$sample_data['currencies'] ? $sample_data['currencies'] : array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
 					),
 					'timezone'             => $this->get_faker()->timezone,
 					'communication_method' => $this->get_faker()->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
 					'preferred_categories' => $this->get_faker()->randomElements(
-						$sample_data['preferred_categories'] ?: array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
+						$sample_data['preferred_categories'] ? $sample_data['preferred_categories'] : array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
 						$this->get_faker()->numberBetween( 1, 3 )
 					),
 				),
@@ -454,7 +454,7 @@ class Customer extends Generator {
 	 */
 	private function generate_customer_tags(): array {
 		$sample_data    = $this->load_sample_data();
-		$available_tags = $sample_data['customer_tags'] ?: array(
+		$available_tags = $sample_data['customer_tags'] ? $sample_data['customer_tags'] : array(
 			'high_value_customer',
 			'frequent_shopper',
 			'bargain_seeker',
@@ -488,7 +488,7 @@ class Customer extends Generator {
 	 */
 	private function generate_phone_number( string $country ): string {
 		$sample_data = $this->load_sample_data();
-		$patterns    = $sample_data['phone_patterns'] ?: array(
+		$patterns    = $sample_data['phone_patterns'] ? $sample_data['phone_patterns'] : array(
 			'US' => '+1-###-###-####',
 			'CA' => '+1-###-###-####',
 			'GB' => '+44-####-######',
@@ -521,7 +521,7 @@ class Customer extends Generator {
 	 */
 	private function generate_state( string $country ): string {
 		$sample_data      = $this->load_sample_data();
-		$states_provinces = $sample_data['states_provinces'] ?: array();
+		$states_provinces = $sample_data['states_provinces'] ? $sample_data['states_provinces'] : array();
 
 		switch ( $country ) {
 			case 'US':
@@ -599,7 +599,7 @@ class Customer extends Generator {
 	 */
 	private function generate_postcode( string $country ): string {
 		$sample_data = $this->load_sample_data();
-		$patterns    = $sample_data['postcode_patterns'] ?: array(
+		$patterns    = $sample_data['postcode_patterns'] ? $sample_data['postcode_patterns'] : array(
 			'US' => '#####',
 			'CA' => '?#? #?#',
 			'GB' => '??# #??',

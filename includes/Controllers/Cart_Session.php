@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Cart_Session;
+use EasyCommerceFakerPress\Generators\Cart_Session as CartSessionGenerator;
 
 /**
  * Cart Session REST Controller Class
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Cart_Session;
  *
  * @since 1.0.0
  */
-class Cart_Sessions extends Controller {
+class Cart_Session extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Cart_Sessions extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Cart_Session Generator instance.
+	 * @return CartSessionGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Cart_Session {
-		return new Cart_Session();
+	protected function get_generator_instance(): CartSessionGenerator {
+		return new CartSessionGenerator();
 	}
 
 	/**

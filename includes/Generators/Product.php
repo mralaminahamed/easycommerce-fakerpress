@@ -286,7 +286,7 @@ class Product extends Generator {
 	private function generate_product_title( string $product_type ): string {
 		$sample_data = $this->load_sample_data();
 
-		$adjectives = $sample_data['adjectives'] ?: array(
+		$adjectives = $sample_data['adjectives'] ? $sample_data['adjectives'] : array(
 			'Premium',
 			'Deluxe',
 			'Professional',
@@ -302,7 +302,7 @@ class Product extends Generator {
 			'High-Performance',
 		);
 
-		$product_names = 'physical' === $product_type ? ( $sample_data['physical_products'] ?: array(
+		$product_names = 'physical' === $product_type ? ( $sample_data['physical_products'] ? $sample_data['physical_products'] : array(
 			'Wireless Headphones',
 			'Smart Watch',
 			'Bluetooth Speaker',
@@ -323,7 +323,7 @@ class Product extends Generator {
 			'USB-C Cable',
 			'Tempered Glass Screen Protector',
 			'Car Phone Mount',
-		) ) : ( $sample_data['digital_products'] ?: array(
+		) ) : ( $sample_data['digital_products'] ? $sample_data['digital_products'] : array(
 			'Productivity Software',
 			'Graphic Design Suite',
 			'Video Editing Software',
@@ -520,7 +520,7 @@ class Product extends Generator {
 		$attributes  = array();
 		$sample_data = $this->load_sample_data();
 
-		$possible_attributes = 'physical' === $product_type ? ( $sample_data['physical_attributes'] ?: array(
+		$possible_attributes = 'physical' === $product_type ? ( $sample_data['physical_attributes'] ? $sample_data['physical_attributes'] : array(
 			'color'    => array(
 				'name'   => 'Color',
 				'type'   => 'text',
@@ -567,7 +567,7 @@ class Product extends Generator {
 				'type'   => 'text',
 				'values' => array( '16GB', '32GB', '64GB', '128GB', '256GB', '500ml', '1L', '2L' ),
 			),
-		) ) : ( $sample_data['digital_attributes'] ?: array(
+		) ) : ( $sample_data['digital_attributes'] ? $sample_data['digital_attributes'] : array(
 			'format'       => array(
 				'name'   => 'Format',
 				'type'   => 'text',
@@ -938,7 +938,7 @@ class Product extends Generator {
 	 */
 	private function get_or_create_product_categories(): array {
 		$sample_data    = $this->load_sample_data();
-		$category_names = $sample_data['categories'] ?: array(
+		$category_names = $sample_data['categories'] ? $sample_data['categories'] : array(
 			'Electronics & Gadgets',
 			'Fashion & Apparel',
 			'Books & Stationery',
@@ -986,7 +986,7 @@ class Product extends Generator {
 	 */
 	private function get_or_create_product_brands(): array {
 		$sample_data = $this->load_sample_data();
-		$brand_names = $sample_data['brands'] ?: array(
+		$brand_names = $sample_data['brands'] ? $sample_data['brands'] : array(
 			'TechTrend Innovations',
 			'EcoVibe Solutions',
 			'QualityCraft',
@@ -1098,7 +1098,7 @@ class Product extends Generator {
 	 */
 	private function assign_product_tags( int $product_id ): void {
 		$sample_data = $this->load_sample_data();
-		$tags        = $sample_data['tags'] ?: array(
+		$tags        = $sample_data['tags'] ? $sample_data['tags'] : array(
 			'new-arrival',
 			'best-seller',
 			'featured',

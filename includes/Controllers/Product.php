@@ -12,7 +12,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Product;
+use EasyCommerceFakerPress\Generators\Product as ProductGenerator;
 
 /**
  * Product Generator REST Controller
@@ -33,7 +33,7 @@ use EasyCommerceFakerPress\Generators\Product;
  *
  * @since 1.0.0
  */
-class Products extends Controller {
+class Product extends Controller {
 
 	/**
 	 * Get resource type name
@@ -76,10 +76,10 @@ class Products extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Product Generator instance.
+	 * @return ProductGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Product {
-		return new Product();
+	protected function get_generator_instance(): ProductGenerator {
+		return new ProductGenerator();
 	}
 
 	/**

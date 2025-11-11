@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Shipping_Plan;
+use EasyCommerceFakerPress\Generators\Shipping_Plan as ShippingPlanGenerator;
 
 /**
  * Shipping Plan REST Controller Class
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Shipping_Plan;
  *
  * @since 1.0.0
  */
-class Shipping_Plans extends Controller {
+class Shipping_Plan extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Shipping_Plans extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Shipping_Plan Generator instance.
+	 * @return ShippingPlanGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Shipping_Plan {
-		return new Shipping_Plan();
+	protected function get_generator_instance(): ShippingPlanGenerator {
+		return new ShippingPlanGenerator();
 	}
 
 	/**

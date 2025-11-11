@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Order;
+use EasyCommerceFakerPress\Generators\Order as OrderGenerator;
 
 /**
  * Order Generator REST Controller
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Order;
  *
  * @since 1.0.0
  */
-class Orders extends Controller {
+class Order extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Orders extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Order Generator instance.
+	 * @return OrderGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Order {
-		return new Order();
+	protected function get_generator_instance(): OrderGenerator {
+		return new OrderGenerator();
 	}
 
 	/**

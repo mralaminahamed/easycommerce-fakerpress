@@ -3,16 +3,16 @@
 namespace EasyCommerceFakerPress\Tests\Controllers;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Controllers\Products;
-use EasyCommerceFakerPress\Controllers\Orders;
-use EasyCommerceFakerPress\Controllers\Customers;
-use EasyCommerceFakerPress\Controllers\Coupons;
-use EasyCommerceFakerPress\Controllers\Cart_Sessions;
-use EasyCommerceFakerPress\Controllers\Transactions;
-use EasyCommerceFakerPress\Controllers\Locations;
-use EasyCommerceFakerPress\Controllers\Shipping_Plans;
-use EasyCommerceFakerPress\Controllers\Tax_Classes;
-use EasyCommerceFakerPress\Controllers\Product_Variations;
+use EasyCommerceFakerPress\Controllers\Product;
+use EasyCommerceFakerPress\Controllers\Order;
+use EasyCommerceFakerPress\Controllers\Customer;
+use EasyCommerceFakerPress\Controllers\Coupon;
+use EasyCommerceFakerPress\Controllers\Cart_Session;
+use EasyCommerceFakerPress\Controllers\Transaction;
+use EasyCommerceFakerPress\Controllers\Location;
+use EasyCommerceFakerPress\Controllers\Shipping_Plan;
+use EasyCommerceFakerPress\Controllers\Tax_Class;
+use EasyCommerceFakerPress\Controllers\Product_Variation;
 use WP_REST_Request;
 
 /**
@@ -21,16 +21,16 @@ use WP_REST_Request;
  * Tests that all 10 generators have properly aligned frontend and backend parameter schemas
  * after the parameter schema alignment work was completed.
  *
- * @covers \EasyCommerceFakerPress\Controllers\Products
- * @covers \EasyCommerceFakerPress\Controllers\Orders
- * @covers \EasyCommerceFakerPress\Controllers\Customers
- * @covers \EasyCommerceFakerPress\Controllers\Coupons
- * @covers \EasyCommerceFakerPress\Controllers\Cart_Sessions
- * @covers \EasyCommerceFakerPress\Controllers\Transactions
- * @covers \EasyCommerceFakerPress\Controllers\Locations
- * @covers \EasyCommerceFakerPress\Controllers\Shipping_Plans
- * @covers \EasyCommerceFakerPress\Controllers\Tax_Classes
- * @covers \EasyCommerceFakerPress\Controllers\Product_Variations
+ * @covers \EasyCommerceFakerPress\Controllers\Product
+ * @covers \EasyCommerceFakerPress\Controllers\Order
+ * @covers \EasyCommerceFakerPress\Controllers\Customer
+ * @covers \EasyCommerceFakerPress\Controllers\Coupon
+ * @covers \EasyCommerceFakerPress\Controllers\Cart_Session
+ * @covers \EasyCommerceFakerPress\Controllers\Transaction
+ * @covers \EasyCommerceFakerPress\Controllers\Location
+ * @covers \EasyCommerceFakerPress\Controllers\Shipping_Plan
+ * @covers \EasyCommerceFakerPress\Controllers\Tax_Class
+ * @covers \EasyCommerceFakerPress\Controllers\Product_Variation
  */
 class ParameterSchemaAlignmentTest extends EasyCommerceFakerPressUnitTestCase {
 
@@ -57,16 +57,16 @@ class ParameterSchemaAlignmentTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Initialize all controllers
 		$this->controllers = [
-			'products' => new Products(),
-			'orders' => new Orders(),
-			'customers' => new Customers(),
-			'coupons' => new Coupons(),
-			'cart_sessions' => new Cart_Sessions(),
-			'transactions' => new Transactions(),
-			'locations' => new Locations(),
-			'shipping_plans' => new Shipping_Plans(),
-			'tax_classes' => new Tax_Classes(),
-			'product_variations' => new Product_Variations(),
+			'products' => new Product(),
+			'orders' => new Order(),
+			'customers' => new Customer(),
+			'coupons' => new Coupon(),
+			'cart_sessions' => new Cart_Session(),
+			'transactions' => new Transaction(),
+			'locations' => new Location(),
+			'shipping_plans' => new Shipping_Plan(),
+			'tax_classes' => new Tax_Class(),
+			'product_variations' => new Product_Variation(),
 		];
 
 		// Register routes for all controllers

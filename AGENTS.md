@@ -52,6 +52,29 @@
 - Single quotes for strings (PHP), template literals for JS
 - 4 spaces indentation (PHP), tabs (JS per WordPress standards)
 
+## Project Structure & Architecture
+
+### Generator System
+
+- **PHP Generators**: Located in `includes/Generators/` - Handle data creation logic
+- **Controllers**: Located in `includes/Controllers/` - REST API endpoints for generators
+- **React Components**: Located in `src/admin/components/Generators/` - Frontend UI for generators
+- **Data Flow**: React components → REST API → Controllers → Generators → EasyCommerce models
+
+### Key Patterns Established
+
+- **Generator Data Structures**: All generators now provide complete data structures matching EasyCommerce model expectations
+- **Dependency Injection**: Controllers use generator instances via `get_generator_instance()`
+- **Parameter Validation**: REST endpoints validate parameters using JSON Schema configurations
+- **Error Handling**: Consistent WP_Error usage with proper error codes and messages
+
+### Recent Improvements (2025)
+
+- **Order Generator**: Fixed data structure to include subtotal, tax_amount, shipping_amount, discount_amount, currency, addresses, notes, coupons
+- **GeneratorBase Component**: Added `dependsOn` support for conditional form fields
+- **API Consistency**: All React components now call correct REST endpoints matching PHP controllers
+- **Code Quality**: Fixed all PHP coding standard violations and short ternary operators
+
 ## Copilot Instructions
 
 - Follow WordPress PHP coding standards for all PHP files
@@ -69,5 +92,13 @@
 - Document public APIs and important functions/classes
 - Use Copilot to suggest code, but always review and test before committing
 - Do not accept Copilot suggestions that violate project standards or introduce security risks
-- Refactor Copilot-generated code to match project conventions if needed</content>
+- Refactor Copilot-generated code to match project conventions if needed
+
+### Generator Development Guidelines
+
+- **Data Structure Alignment**: Ensure generator `create()` calls match EasyCommerce model expectations exactly
+- **Parameter Dependencies**: Use `dependsOn` in React parameter configs for conditional fields
+- **API Endpoint Naming**: REST bases should be plural (e.g., `orders`, `products`, `customers`)
+- **Result Formatting**: Return consistent result arrays with `id`, `message`, and relevant metadata
+- **Error Handling**: Use WP_Error with descriptive error codes and user-friendly messages</content>
   <parameter name="filePath">/Users/alamin/Sites/woocommerce/wp-content/plugins/easycommerce-fakerpress/AGENTS.md

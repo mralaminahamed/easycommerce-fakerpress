@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Product_Variation;
+use EasyCommerceFakerPress\Generators\Product_Variation as ProductVariationGenerator;
 
 /**
  * Product Variation REST Controller Class
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Product_Variation;
  *
  * @since 1.0.0
  */
-class Product_Variations extends Controller {
+class Product_Variation extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Product_Variations extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Product_Variation Generator instance.
+	 * @return ProductVariationGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Product_Variation {
-		return new Product_Variation();
+	protected function get_generator_instance(): ProductVariationGenerator {
+		return new ProductVariationGenerator();
 	}
 
 	/**
