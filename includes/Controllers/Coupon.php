@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Coupon;
+use EasyCommerceFakerPress\Generators\Coupon as CouponGenerator;
 
 /**
  * Coupon Generator REST Controller
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Coupon;
  *
  * @since 1.0.0
  */
-class Coupons extends Controller {
+class Coupon extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Coupons extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Coupon Generator instance.
+	 * @return CouponGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Coupon {
-		return new Coupon();
+	protected function get_generator_instance(): CouponGenerator {
+		return new CouponGenerator();
 	}
 
 	/**

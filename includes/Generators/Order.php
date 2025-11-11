@@ -158,19 +158,46 @@ class Order extends Generator {
 		$created = $order->create(
 			array(
 				// Required fields.
-				'customer_id'    => $customer['id'],
-				'total'          => $total,
+				'customer_id'      => $customer['id'],
+				'total'            => $total,
+				'subtotal'         => $subtotal,
+				'items'            => $order_items,
 
-				// Optional core fields.
-				'status'         => $this->generate_order_status(),
-				'fulfill_status' => $this->generate_fulfillment_status(),
-				'payment_method' => $this->generate_payment_method(),
+				// Order amounts.
+				'tax_amount'       => $order_meta['tax_details']['total'],
+				'shipping_amount'  => $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'],
+				'discount_amount'  => $order_meta['coupon_details']['discount'],
 
-				// Order items (required).
-				'items'          => $order_items,
+				// Order details.
+				'currency'         => 'USD', // Default currency, can be made configurable.
+				'status'           => $this->generate_order_status(),
+				'fulfill_status'   => $this->generate_fulfillment_status(),
+				'payment_method'   => $this->generate_payment_method(),
+
+				// Addresses.
+				'billing_address'  => $order_meta['addresses']['billing'],
+				'shipping_address' => $order_meta['addresses']['shipping'],
+
+				// Additional metadata.
+				'notes'            => ! empty( $order_meta['order_notes'] ) ? array(
+					array(
+						'note'       => $order_meta['order_notes'],
+						'type'       => 'customer',
+						'created_at' => current_time( 'Y-m-d H:i:s' ),
+					),
+				) : array(),
+				'coupons'          => $order_meta['coupon_details']['applied'] ? array_map(
+					function ( $coupon ) {
+						return array(
+							'code'            => $coupon['code'] ?? '',
+							'discount_amount' => $coupon['discount_applied'] ?? 0,
+						);
+					},
+					$order_meta['coupon_details']['coupons']
+				) : array(),
 
 				// Order metadata.
-				'meta'           => $order_meta,
+				'meta'             => $order_meta,
 			)
 		);
 
@@ -182,14 +209,37 @@ class Order extends Generator {
 		$this->update_customer_stats( $customer['id'], $total );
 
 		$result = array(
-			'id'             => $order->get_id(),
-			'customer'       => $customer['name'],
-			'customer_email' => $customer['email'],
-			'total'          => '$' . number_format( $total, 2 ),
-			'status'         => $order->get_status(),
-			'payment_method' => $order_meta['payment_details']['method'],
-			'items_count'    => $this->count_order_items( $order_items ),
-			'created_date'   => current_time( 'Y-m-d H:i:s' ),
+			'id'               => $order->get_id(),
+			'order_number'     => $order->get_order_number() ?? 'ORD-' . $order->get_id(),
+			'customer_id'      => $customer['id'],
+			'status'           => $order->get_status(),
+			'total'            => $total,
+			'subtotal'         => $subtotal,
+			'tax_amount'       => $order_meta['tax_details']['total'],
+			'shipping_amount'  => $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'],
+			'discount_amount'  => $order_meta['coupon_details']['discount'],
+			'currency'         => 'USD',
+			'payment_method'   => $order_meta['payment_details']['method'],
+			'order_date'       => current_time( 'Y-m-d H:i:s' ),
+			'items'            => $this->format_order_items_for_result( $order_items ),
+			'billing_address'  => $order_meta['addresses']['billing'],
+			'shipping_address' => $order_meta['addresses']['shipping'],
+			'notes'            => ! empty( $order_meta['order_notes'] ) ? array(
+				array(
+					'note'       => $order_meta['order_notes'],
+					'type'       => 'customer',
+					'created_at' => current_time( 'Y-m-d H:i:s' ),
+				),
+			) : array(),
+			'coupons'          => $order_meta['coupon_details']['applied'] ? array_map(
+				function ( $coupon ) {
+					return array(
+						'code'            => $coupon['code'] ?? '',
+						'discount_amount' => $coupon['discount_applied'] ?? 0,
+					);
+				},
+				$order_meta['coupon_details']['coupons']
+			) : array(),
 		);
 
 		/**
@@ -491,7 +541,7 @@ class Order extends Generator {
 	 */
 	private function generate_order_status(): string {
 		$sample_data = $this->load_sample_data();
-		$statuses    = $sample_data['order_statuses'] ?: array(
+		$statuses    = $sample_data['order_statuses'] ? $sample_data['order_statuses'] : array(
 			'pending'    => 25,  // 25% chance
 			'processing' => 35,  // 35% chance
 			'completed'  => 30,  // 30% chance
@@ -520,7 +570,7 @@ class Order extends Generator {
 	 */
 	private function generate_payment_method(): string {
 		$sample_data = $this->load_sample_data();
-		$methods     = $sample_data['payment_methods'] ?: array(
+		$methods     = $sample_data['payment_methods'] ? $sample_data['payment_methods'] : array(
 			'stripe'           => 40,  // 40% chance
 			'paypal'           => 25,  // 25% chance
 			'bank_transfer'    => 15,  // 15% chance
@@ -594,7 +644,7 @@ class Order extends Generator {
 	 */
 	private function generate_shipping_details( float $subtotal ): array {
 		$sample_data      = $this->load_sample_data();
-		$shipping_methods = $sample_data['shipping_methods'] ?: array(
+		$shipping_methods = $sample_data['shipping_methods'] ? $sample_data['shipping_methods'] : array(
 			'standard'  => array(
 				'min'    => 5.99,
 				'max'    => 12.99,
@@ -735,7 +785,7 @@ class Order extends Generator {
 	 */
 	private function generate_fulfillment_status(): string {
 		$sample_data = $this->load_sample_data();
-		$statuses    = $sample_data['fulfillment_statuses'] ?: array(
+		$statuses    = $sample_data['fulfillment_statuses'] ? $sample_data['fulfillment_statuses'] : array(
 			'unfulfilled'         => 30,
 			'partially_fulfilled' => 10,
 			'fulfilled'           => 25,
@@ -765,7 +815,7 @@ class Order extends Generator {
 	 */
 	private function generate_source_info(): array {
 		$sample_data = $this->load_sample_data();
-		$sources     = $sample_data['sources'] ?: array(
+		$sources     = $sample_data['sources'] ? $sample_data['sources'] : array(
 			'website'    => 60,
 			'mobile_app' => 25,
 			'phone'      => 10,
@@ -836,6 +886,33 @@ class Order extends Generator {
 	}
 
 	/**
+	 * Format order items for result array
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $order_items Order items array.
+	 *
+	 * @return array Formatted order items.
+	 */
+	private function format_order_items_for_result( array $order_items ): array {
+		$formatted_items = array();
+
+		foreach ( $order_items as $product_id => $variations ) {
+			foreach ( $variations as $price_id => $item ) {
+				$formatted_items[] = array(
+					'product_id'   => $product_id,
+					'variation_id' => $price_id,
+					'quantity'     => $item['quantity'],
+					'price'        => $item['rate'],
+					'total'        => $item['price'],
+				);
+			}
+		}
+
+		return $formatted_items;
+	}
+
+	/**
 	 * Generate fallback address if customer doesn't have one
 	 *
 	 * @since 1.0.0
@@ -854,7 +931,7 @@ class Order extends Generator {
 
 		// Weighted selection favoring common shipping countries.
 		$sample_data        = $this->load_sample_data();
-		$weighted_countries = $sample_data['weighted_countries'] ?: array(
+		$weighted_countries = $sample_data['weighted_countries'] ? $sample_data['weighted_countries'] : array(
 			'US' => 60, // 60% US.
 			'CA' => 15, // 15% Canada.
 			'GB' => 10, // 10% UK.

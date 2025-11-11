@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Transaction;
+use EasyCommerceFakerPress\Generators\Transaction as TransactionGenerator;
 
 /**
  * Transaction REST Controller Class
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Transaction;
  *
  * @since 1.0.0
  */
-class Transactions extends Controller {
+class Transaction extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Transactions extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Transaction Generator instance.
+	 * @return TransactionGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Transaction {
-		return new Transaction();
+	protected function get_generator_instance(): TransactionGenerator {
+		return new TransactionGenerator();
 	}
 
 	/**

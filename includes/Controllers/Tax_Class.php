@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Tax_Class;
+use EasyCommerceFakerPress\Generators\Tax_Class as TaxClassGenerator;
 
 /**
  * Tax REST Controller Class
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Tax_Class;
  *
  * @since 1.0.0
  */
-class Tax_Classes extends Controller {
+class Tax_Class extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Tax_Classes extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Tax_Class Generator instance.
+	 * @return TaxClassGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Tax_Class {
-		return new Tax_Class();
+	protected function get_generator_instance(): TaxClassGenerator {
+		return new TaxClassGenerator();
 	}
 
 	/**

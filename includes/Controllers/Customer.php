@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Customer;
+use EasyCommerceFakerPress\Generators\Customer as CustomerGenerator;
 
 /**
  * Customer Generator REST Controller
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Customer;
  *
  * @since 1.0.0
  */
-class Customers extends Controller {
+class Customer extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Customers extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Customer Generator instance.
+	 * @return CustomerGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Customer {
-		return new Customer();
+	protected function get_generator_instance(): CustomerGenerator {
+		return new CustomerGenerator();
 	}
 
 	/**

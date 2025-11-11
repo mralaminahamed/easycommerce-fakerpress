@@ -9,7 +9,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
-use EasyCommerceFakerPress\Generators\Location;
+use EasyCommerceFakerPress\Generators\Location as LocationGenerator;
 
 /**
  * Location REST Controller Class
@@ -18,7 +18,7 @@ use EasyCommerceFakerPress\Generators\Location;
  *
  * @since 1.0.0
  */
-class Locations extends Controller {
+class Location extends Controller {
 
 	/**
 	 * Get resource type name
@@ -58,10 +58,10 @@ class Locations extends Controller {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return Location Generator instance.
+	 * @return LocationGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): Location {
-		return new Location();
+	protected function get_generator_instance(): LocationGenerator {
+		return new LocationGenerator();
 	}
 
 	/**

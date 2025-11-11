@@ -41,6 +41,7 @@ interface ParameterConfig {
     enum?: string[];
   };
   properties?: Record<string, ParameterConfig>;
+  dependsOn?: Record<string, any>;
 }
 
 interface GeneratorResult {
@@ -137,6 +138,25 @@ export default function GeneratorBase({
     return displayName
       .replace(/_/g, " ")
       .replace(/\b\w/g, (l: string) => l.toUpperCase());
+  };
+
+  const shouldShowParameter = (
+    paramName: string,
+    config: ParameterConfig,
+  ): boolean => {
+    if (!config.dependsOn) {
+      return true;
+    }
+
+    // Check if all dependencies are met
+    for (const [depParam, requiredValue] of Object.entries(config.dependsOn)) {
+      const currentValue = parameters[depParam];
+      if (currentValue !== requiredValue) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const renderParameterField = (
@@ -321,14 +341,18 @@ export default function GeneratorBase({
           <div className="space-y-4">
             {config.properties &&
               Object.entries(config.properties).map(
-                ([propName, propConfig]) => (
-                  <div key={propName}>
-                    {renderParameterField(
-                      `${paramName}.${propName}`,
-                      propConfig,
-                    )}
-                  </div>
-                ),
+                ([propName, propConfig]) => {
+                  const fullParamName = `${paramName}.${propName}`;
+                  if (!shouldShowParameter(fullParamName, propConfig)) {
+                    return null;
+                  }
+
+                  return (
+                    <div key={propName}>
+                      {renderParameterField(fullParamName, propConfig)}
+                    </div>
+                  );
+                },
               )}
           </div>
         );
@@ -547,16 +571,22 @@ export default function GeneratorBase({
 
               <CollapsibleContent className="space-y-6">
                 {Object.entries(parameterConfig).map(
-                  ([paramName, config], index) => (
-                    <motion.div
-                      key={paramName}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      {renderParameterField(paramName, config)}
-                    </motion.div>
-                  ),
+                  ([paramName, config], index) => {
+                    if (!shouldShowParameter(paramName, config)) {
+                      return null;
+                    }
+
+                    return (
+                      <motion.div
+                        key={paramName}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        {renderParameterField(paramName, config)}
+                      </motion.div>
+                    );
+                  },
                 )}
               </CollapsibleContent>
             </Collapsible>

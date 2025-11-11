@@ -14,16 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use EasyCommerceFakerPress\Controllers\Products;
-use EasyCommerceFakerPress\Controllers\Customers;
-use EasyCommerceFakerPress\Controllers\Orders;
-use EasyCommerceFakerPress\Controllers\Coupons;
-use EasyCommerceFakerPress\Controllers\Product_Variations;
-use EasyCommerceFakerPress\Controllers\Shipping_Plans;
-use EasyCommerceFakerPress\Controllers\Tax_Classes;
-use EasyCommerceFakerPress\Controllers\Transactions;
-use EasyCommerceFakerPress\Controllers\Cart_Sessions;
-use EasyCommerceFakerPress\Controllers\Locations;
+use EasyCommerceFakerPress\Controllers\Product;
+use EasyCommerceFakerPress\Controllers\Customer;
+use EasyCommerceFakerPress\Controllers\Order;
+use EasyCommerceFakerPress\Controllers\Coupon;
+use EasyCommerceFakerPress\Controllers\Product_Variation;
+use EasyCommerceFakerPress\Controllers\Shipping_Plan;
+use EasyCommerceFakerPress\Controllers\Tax_Class;
+use EasyCommerceFakerPress\Controllers\Transaction;
+use EasyCommerceFakerPress\Controllers\Cart_Session;
+use EasyCommerceFakerPress\Controllers\Location;
 
 /**
  * Main Plugin Class for EasyCommerce FakerPress
@@ -271,18 +271,18 @@ class EasyCommerce_FakerPress {
 
 		$controllers = array(
 			// Core generators.
-			new Products(),
-			new Customers(),
-			new Orders(),
-			new Coupons(),
+			new Product(),
+			new Customer(),
+			new Order(),
+			new Coupon(),
 
 			// Enhanced generators (Version 2.0).
-			new Product_Variations(),
-			new Shipping_Plans(),
-			new Tax_Classes(),
-			new Transactions(),
-			new Cart_Sessions(),
-			new Locations(),
+			new Product_Variation(),
+			new Shipping_Plan(),
+			new Tax_Class(),
+			new Transaction(),
+			new Cart_Session(),
+			new Location(),
 		);
 
 		foreach ( $controllers as $controller ) {
