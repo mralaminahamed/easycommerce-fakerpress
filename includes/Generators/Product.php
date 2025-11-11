@@ -183,7 +183,7 @@ class Product extends Generator {
 				// Optional core fields.
 				'slug'        => sanitize_title( $product_title . '-' . uniqid( '', true ) ),
 				'content'     => $this->generate_product_description( $product_type ),
-				'status'      => $this->get_faker()->randomElement( array( 'publish', 'draft', 'pending' ) ),
+				'status'      => $this->get_faker()->randomElement( array( 'publish', 'draft', 'trash' ) ),
 				'description' => $this->generate_short_description( $product_type ),
 				'summary'     => $this->get_faker()->sentence( 20, true ),
 				'thumbnail'   => $this->generate_thumbnail(),
