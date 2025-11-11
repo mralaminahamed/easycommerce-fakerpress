@@ -49,7 +49,7 @@ export default function ProductGenerator() {
         "easycommerce-fakerpress",
       ),
       type: "string",
-      enum: ["simple", "variable", "grouped", "external", "digital", "mixed"],
+      enum: ["physical", "digital", "mixed"],
       default: "mixed",
     },
     price_range: {
