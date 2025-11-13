@@ -3,17 +3,12 @@
 /src/
 webpack.config.js
 package.json
-composer.lock
 package-lock.json
 yarn.lock
 .babelrc
 .eslintrc.js
 postcss.config.js
 tailwind.config.js
-
-# Composer development files
-# composer.json - Needed for production dependencies
-# composer.lock - Needed for production dependencies
 
 # Development tools and configuration
 /.yarn/
@@ -27,16 +22,13 @@ phpcs.xml
 phpcs.plugin-review.xml
 phpstan.neon
 phpunit.xml
+phpunit.xml.dist
 .eslintcache
 .stylelintcache
 
 # Documentation and project files
 README.md
-CHANGELOG.md
-CONTRIBUTING.md
 SECURITY.md
-plugin-submission-review.md
-LICENSE
 /docs/
 /drafts/
 
@@ -45,7 +37,6 @@ tests/
 .github/
 .travis.yml
 .circleci/
-phpunit.xml.dist
 /.phpstan-cache/
 /coverage/
 /test-results/
@@ -66,10 +57,12 @@ Thumbs.db
 # Build and release directories
 /release/
 /dist/
+/build/
 
 # Git files
 /.git/
 .gitattributes
+.gitmodules
 
 # Environment files
 .env
@@ -111,7 +104,22 @@ wp-config-local.php
 AGENTS.md
 tsconfig.json
 components.json
+copilot-instructions.md
+git-commit-instructions.md
 
 # Cache directories
 /.cache/
 /tmp/
+
+# Additional common exclusions
+.nyc_output/
+.vscode/settings.json
+.vscode/launch.json
+*.tgz
+*.tar
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+.hugo_build.lock
