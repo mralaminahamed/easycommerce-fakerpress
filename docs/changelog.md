@@ -5,6 +5,14 @@ All notable changes to EasyCommerce FakerPress will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2025-11-13
+
+### 🐛 Bug Fixes & Improvements
+
+- **Minor Bug Fixes**: Addressed various small issues and improvements
+- **Code Quality**: Minor code quality enhancements and optimizations
+- **Documentation**: Updated version references and documentation
+
 ## [2.0.0] - 2025-11-11
 
 ### 🚀 Major Release: Complete Parameter Schema Alignment
@@ -140,7 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 📊 Version Information
 
-- **Current Version**: 1.0.2
+- **Current Version**: 2.0.1
 - **PHP Requirement**: 7.4+
 - **WordPress Requirement**: 5.0+
 - **EasyCommerce Requirement**: Latest version

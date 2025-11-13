@@ -4,7 +4,7 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,11 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
+= 2.0.1 - November 13, 2025 =
+* **Bug Fixes**: Minor bug fixes and improvements
+* **Code Quality**: Code quality enhancements and optimizations
+* **Documentation**: Updated version references and documentation
+
 = 2.0.0 - November 11, 2025 =
 * **Major Release**: Complete parameter schema alignment for all 10 generators
 * **Frontend-Backend Integration**: Perfect alignment between React forms and REST API validation
@@ -152,6 +157,9 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 * **Technical Foundations**: Built with React 18, Tailwind CSS, Webpack 5; includes validation, state management, and extensibility hooks.
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+Minor bug fixes and improvements. Recommended upgrade for all users.
 
 = 2.0.0 =
 * **Major Update**: Complete parameter schema alignment. Test custom integrations in staging before upgrading. Parameter structures have changed for all generators - review API usage and custom hooks.

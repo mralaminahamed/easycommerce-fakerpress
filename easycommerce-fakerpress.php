@@ -11,7 +11,7 @@
  * Plugin Name:       EasyCommerce FakerPress
  * Plugin URI:        https://github.com/mralaminahamed/easycommerce-fakerpress
  * Description:       Create realistic test data for your EasyCommerce store in seconds! Generate products, customers, orders, coupons and more with our intuitive admin interface. Perfect for development, testing, and demos. Features smart defaults, real-time validation, and seamless WordPress integration.
- * Version:           2.0.0
+ * Version:           2.0.1
  * Requires at least: 5.0
  * Requires PHP:      7.4
  * Author:            Al Amin Ahamed
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EASYCOMMERCE_FAKERPRESS_VERSION', '2.0.0' );
+define( 'EASYCOMMERCE_FAKERPRESS_VERSION', '2.0.1' );
 define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE', __FILE__ );
 define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
