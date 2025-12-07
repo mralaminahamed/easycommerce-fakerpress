@@ -11,7 +11,7 @@ Welcome to the EasyCommerce FakerPress v2.0.1 development guide! This comprehens
 - **Composer**: 2.0+
 - **WordPress**: 5.0+ with EasyCommerce plugin
 - **Git**: For version control
-- **TypeScript**: 4.5+ (included with project dependencies)
+- **TypeScript**: 5.x+ (included with project dependencies for v2.0.1)
 
 ### One-Command Setup
 
@@ -22,14 +22,15 @@ cd easycommerce-fakerpress
 composer install && npm install && npm run build
 ```
 
-### v2.0.0: TypeScript Migration
+### v2.0.1: Complete TypeScript Migration
 
 **All React components have been migrated to TypeScript (.tsx) for better type safety and developer experience.**
 
-- **Type Definitions**: Comprehensive interfaces for all generator parameters
-- **Parameter Validation**: Type-safe parameter schemas with proper validation
+- **Type Definitions**: Comprehensive interfaces for all generator parameters and API responses
+- **Parameter Schema Alignment**: Type-safe parameter schemas matching backend validation
 - **API Integration**: Strongly typed API responses and error handling
 - **Build System**: Enhanced webpack configuration for TypeScript compilation
+- **Schema Validation**: Frontend forms perfectly aligned with backend API validation
 
 ## 🏗️ Build System & Commands
 
@@ -404,16 +405,18 @@ EasyCommerce FakerPress leverages modern web technologies and development practi
 
 ### Frontend Architecture
 
-#### React Ecosystem
+#### React 18 + TypeScript Ecosystem
 
 - **React 18**: Latest React with concurrent features and automatic batching
 - **React Router v7**: Modern data router with hash-based routing for WordPress
+- **TypeScript 5.x**: Full type safety with proper interfaces and validation
 - **Tailwind CSS**: Utility-first CSS framework with WordPress admin integration
 - **Headless UI**: Accessible, unstyled UI components for consistent design
 
 #### Build Tools
 
 - **Webpack 5**: Advanced module bundling with code splitting and optimization
+- **TypeScript Compiler**: Full TypeScript compilation with type checking
 - **Babel**: JavaScript transpilation for browser compatibility
 - **PostCSS**: CSS processing with Autoprefixer and CSS variables
 - **ESLint + Prettier**: Code linting and consistent formatting
