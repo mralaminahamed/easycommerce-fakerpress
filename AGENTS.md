@@ -68,7 +68,7 @@
 - **Parameter Validation**: REST endpoints validate parameters using JSON Schema configurations
 - **Error Handling**: Consistent WP_Error usage with proper error codes and messages
 
-### Recent Improvements (2025)
+### Recent Improvements (v2.0.1 - November 13, 2025)
 
 - **Order Generator**: Fixed data structure to include subtotal, tax_amount, shipping_amount, discount_amount, currency, addresses, notes, coupons
 - **GeneratorBase Component**: Added `dependsOn` support for conditional form fields
