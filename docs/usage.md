@@ -1,6 +1,6 @@
-# 🚀 Usage Guide (v2.0.0)
+# 🚀 Usage Guide (v2.0.1)
 
-Master EasyCommerce FakerPress v2.0.0 with this comprehensive usage guide. Learn how to generate realistic test data efficiently and safely, now with complete parameter schema alignment and enhanced validation.
+Master EasyCommerce FakerPress v2.0.1 with this comprehensive usage guide. Learn how to generate realistic test data efficiently and safely, now with complete parameter schema alignment and enhanced validation.
 
 ## 🎯 Quick Start
 
