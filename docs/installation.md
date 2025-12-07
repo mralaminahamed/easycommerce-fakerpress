@@ -1,6 +1,6 @@
-# 📦 Installation Guide
+# 📦 Installation Guide (v2.0.1)
 
-Welcome to EasyCommerce FakerPress! This comprehensive installation guide will help you get up and running quickly and safely.
+Welcome to EasyCommerce FakerPress v2.0.1! This comprehensive installation guide will help you get up and running quickly and safely with our complete parameter schema alignment and TypeScript-powered interface.
 
 ## ✅ System Requirements
 
@@ -12,6 +12,7 @@ Before installing, ensure your system meets these requirements:
 - **PHP**: 7.4 or higher (8.0+ recommended for optimal performance)
 - **MySQL/MariaDB**: 5.6 or higher
 - **Memory**: 256MB minimum (512MB recommended for large datasets)
+- **EasyCommerce**: Latest version required (active and properly configured)
 
 ### EasyCommerce Integration
 
@@ -24,7 +25,7 @@ Before installing, ensure your system meets these requirements:
 - **Node.js**: 16+ (18+ recommended for TypeScript support)
 - **Composer**: 2.0+ (for PHP dependency management)
 - **Git**: For cloning the repository (optional)
-- **TypeScript**: 4.5+ (included with project dependencies for v2.0.1)
+- **TypeScript**: 5.x+ (included with project dependencies for v2.0.1)
 
 ### Server Recommendations
 
@@ -102,7 +103,8 @@ yarn build
 
 **Build Output:**
 
-- Compiled JavaScript and CSS files in `/build/`
+- Compiled JavaScript, TypeScript, and CSS files in `/build/`
+- TypeScript type checking and compilation
 - Optimized bundles with code splitting
 - Source maps for debugging (development builds only)
 
@@ -171,15 +173,15 @@ cp wp-config-sample.php wp-config.php
 #### 3. Development Workflow
 
 ```bash
-# Start frontend development server (hot reload)
+# Start development server with hot reload and TypeScript checking
 npm run start
 
-# Build production assets
+# Build production assets with TypeScript compilation
 npm run build
 
 # Run code quality checks
 composer run lint     # PHP CodeSniffer
-composer run analyse  # Static analysis
+composer run analyse  # Static analysis (PHPStan Level 8)
 ```
 
 #### 4. Testing Setup
