@@ -3,7 +3,7 @@
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-8892BF.svg)](https://php.net/)
-[![Version](https://img.shields.io/badge/Version-2.0.0-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-2.0.1-green.svg)]()
 
 🚀 **Generate realistic test data for your EasyCommerce store in seconds!** Create products, customers, orders, coupons, and more with our intuitive admin interface. Perfect for development, testing, and creating stunning demos. Features smart defaults, real-time validation, and seamless WordPress integration.
 
@@ -132,4 +132,4 @@ GPL v2 or later - see [LICENSE](LICENSE) file.
 
 ---
 
-**v1.0.2** | November 11, 2025
+**v2.0.1** | November 13, 2025
