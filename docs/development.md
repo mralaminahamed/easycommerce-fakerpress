@@ -1,6 +1,6 @@
 # 🛠️ Development Guide
 
-Welcome to the EasyCommerce FakerPress v2.0.0 development guide! This comprehensive resource will help you contribute effectively to the project, now featuring complete TypeScript support and parameter schema alignment.
+Welcome to the EasyCommerce FakerPress v2.0.1 development guide! This comprehensive resource will help you contribute effectively to the project, now featuring complete TypeScript support and parameter schema alignment.
 
 ## 🚀 Quick Development Setup
 

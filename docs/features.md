@@ -1,6 +1,6 @@
 # ✨ Features Overview
 
-Welcome to EasyCommerce FakerPress v2.0.0 - your comprehensive solution for generating realistic test data for EasyCommerce stores. This guide showcases the powerful features that make testing, development, and demonstration effortless, now with complete parameter schema alignment and TypeScript support.
+Welcome to EasyCommerce FakerPress v2.0.1 - your comprehensive solution for generating realistic test data for EasyCommerce stores. This guide showcases the powerful features that make testing, development, and demonstration effortless, now with complete parameter schema alignment and TypeScript support.
 
 ## 🚀 v2.0.0: Complete Parameter Schema Alignment
 
