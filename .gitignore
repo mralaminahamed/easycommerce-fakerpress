@@ -39,6 +39,7 @@ Thumbs.db
 /.cache/
 .eslintcache
 .stylelintcache
+.phpstan-result-cache.php
 
 # Testing
 /coverage/
