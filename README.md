@@ -4,8 +4,9 @@
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-8892BF.svg)](https://php.net/)
 [![Version](https://img.shields.io/badge/Version-2.0.2-green.svg)]()
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.1.18-blue.svg)](https://tailwindcss.com/)
 
-🚀 **Generate realistic test data for your EasyCommerce store in seconds!** Create products, customers, orders, coupons, and more with our intuitive admin interface. Perfect for development, testing, and creating stunning demos. Features smart defaults, real-time validation, and seamless WordPress integration.
+🚀 **Generate realistic test data for your EasyCommerce store in seconds!** Create products, customers, orders, coupons, and more with our modern React interface powered by Tailwind CSS v4. Features smart defaults, real-time validation, WordPress admin integration, and a "Get Started" quick access link. Perfect for development, testing, and creating stunning demos.
 
 ## ❓ What is EasyCommerce FakerPress?
 
@@ -43,9 +44,18 @@ npm run build
 
 - 🛍️ **10 Smart Generators** - Create realistic products, customers, orders, coupons, and more
 - 🎯 **One-Click Generation** - Smart defaults with easy customization options
-- 🎨 **Beautiful Interface** - Modern design that matches your WordPress admin theme
+- 🎨 **Beautiful Interface** - Modern React UI with Tailwind CSS v4 and WordPress admin integration
 - ⚡ **Lightning Fast** - Generate thousands of items in seconds
-- 🔧 **Developer Friendly** - Extensive customization options and API access
+- 🔗 **Quick Access** - "Get Started" link directly from the plugins page
+- 🔧 **Developer Friendly** - Extensive customization options, TypeScript support, and comprehensive API
+
+## 🚀 What's New in v2.0.2
+
+- **Tailwind CSS v4**: Upgraded to the latest version with improved performance and modern CSS features
+- **Enhanced UI**: Fixed visual inconsistencies in success messages and breadcrumb navigation
+- **Quick Access**: Added "Get Started" link directly from the WordPress plugins page
+- **Build Optimization**: Updated PostCSS configuration for better development workflow
+- **Code Quality**: Enhanced linting and modern development practices
 
 ## 📸 Screenshots
 
@@ -85,22 +95,23 @@ _Complete order generation with payment processing and shipping calculations_
 - **WordPress**: 5.0+
 - **PHP**: 7.4+
 - **EasyCommerce Plugin**: Required
-- **Node.js**: 16+ (development)
+- **Node.js**: 20+ (development, required for Tailwind CSS v4)
 - **Composer**: For PHP dependencies
 
 ## 🛠️ Quick Commands
 
 ```bash
 # Install dependencies
-composer install && npm install
+composer install && yarn install
 
 # Development
-npm run start            # Watch mode
-npm run build            # Production build
+yarn start               # Watch mode with hot reload
+yarn build               # Production build with Tailwind v4
 
 # Code quality
-composer run lint        # PHP CodeSniffer
-composer run analyse     # PHP Static Analysis
+composer lint            # PHP CodeSniffer (WordPress standards)
+composer analyse         # PHP Static Analysis (PHPStan level 8)
+composer test            # PHPUnit tests
 ```
 
 ## 🏗️ Built for Reliability
@@ -132,4 +143,6 @@ GPL v2 or later - see [LICENSE](LICENSE) file.
 
 ---
 
-**v2.0.2** | December 15, 2025
+**EasyCommerce FakerPress v2.0.2** | December 15, 2025
+
+_Modern test data generation for EasyCommerce stores_
