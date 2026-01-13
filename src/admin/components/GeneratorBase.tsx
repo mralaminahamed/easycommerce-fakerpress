@@ -662,7 +662,7 @@ export default function GeneratorBase({
         )}
 
         {result && (
-          <div className="mt-4 rounded-md bg-green-50 p-4">
+          <div className="mt-4 rounded-md bg-green-50 p-4 border border-green-400">
             <div className="flex">
               <div className="shrink-0">
                 <svg
@@ -679,7 +679,7 @@ export default function GeneratorBase({
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">
+                <h3 className="text-sm font-medium text-green-800 m-0">
                   {result.message}
                 </h3>
                 {/*
