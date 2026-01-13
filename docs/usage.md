@@ -1,6 +1,6 @@
-# 🚀 Usage Guide (v2.0.0)
+# 🚀 Usage Guide (v2.0.1)
 
-Master EasyCommerce FakerPress v2.0.0 with this comprehensive usage guide. Learn how to generate realistic test data efficiently and safely, now with complete parameter schema alignment and enhanced validation.
+Master EasyCommerce FakerPress v2.0.1 with this comprehensive usage guide. Learn how to generate realistic test data efficiently and safely, now with complete parameter schema alignment, TypeScript support, and enhanced validation.
 
 ## 🎯 Quick Start
 
@@ -12,20 +12,21 @@ Master EasyCommerce FakerPress v2.0.0 with this comprehensive usage guide. Learn
 4. **Test Small Batches**: Generate 5-10 items first to verify everything works
 5. **Scale Up**: Gradually increase batch sizes as needed
 
-### v2.0.0: Enhanced Parameter Validation
+### v2.0.1: Complete Parameter Schema Alignment & TypeScript
 
-**All generators now feature perfectly aligned parameter schemas between frontend forms and backend API validation.**
+**All generators now feature perfectly aligned parameter schemas between TypeScript frontend forms and backend API validation.**
 
-- **Real-Time Validation**: Immediate feedback on parameter compatibility
-- **Type Safety**: TypeScript-powered parameter validation prevents errors
-- **API Reliability**: Guaranteed valid data submission to backend endpoints
+- **Type-Safe Validation**: Full TypeScript interface validation prevents errors
+- **Real-Time Feedback**: Immediate feedback on parameter compatibility
+- **API Reliability**: Guaranteed valid data submission from frontend to backend endpoints
+- **Schema Consistency**: Frontend and backend parameter structures are perfectly aligned
 - **Error Prevention**: Comprehensive validation prevents invalid parameter combinations
 
 ### Interface Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  EC FakerPress - EasyCommerce Test Data Generator          │
+│  EC FakerPress v2.0.1 - TypeScript-Powered Data Generator   │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─ Generator Selection ──────────────────┐                 │
 │  │  🛍️ Products        📦 Orders           │                 │
@@ -39,6 +40,7 @@ Master EasyCommerce FakerPress v2.0.0 with this comprehensive usage guide. Learn
 │  │  Count: [50]    ┌─ Advanced Options ─┐                 │ │
 │  │  Categories: [✓] │ □ Include Sales   │                 │ │
 │  │  Attributes: [✓] │ □ Virtual Products│                 │ │
+│  │  TypeScript: [✓] │ □ Schema Validated│                 │ │
 │  │                 └─────────────────────┘                 │ │
 │  └─────────────────────────────────────────────────────────┘ │
 │                                                             │

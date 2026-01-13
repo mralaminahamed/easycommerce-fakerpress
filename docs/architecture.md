@@ -1,81 +1,82 @@
-# Architecture Documentation
+# 🏗️ Architecture Documentation (v2.0.1)
 
-Welcome to the comprehensive architecture guide for EasyCommerce FakerPress. This document provides detailed insights into the plugin's modern, enterprise-grade architecture designed for scalability, maintainability, and developer experience.
+Welcome to the comprehensive architecture guide for EasyCommerce FakerPress v2.0.1. This document provides detailed insights into the plugin's modern, enterprise-grade architecture designed for scalability, maintainability, and developer experience, now featuring complete TypeScript support and parameter schema alignment.
 
 ## 🏗️ Modern Plugin Structure
 
-EasyCommerce FakerPress follows a clean, modular architecture that separates concerns while maintaining tight integration with WordPress and EasyCommerce standards.
+EasyCommerce FakerPress v2.0.1 follows a clean, modular architecture that separates concerns while maintaining tight integration with WordPress and EasyCommerce standards.
 
 ```
 easycommerce-fakerpress/
-├── 📄 easycommerce-fakerpress.php           # Main plugin file with WordPress headers
+├── 📄 easycommerce-fakerpress.php           # Main plugin file with WordPress headers (v2.0.1)
 ├── 📄 class-easycommerce-fakerpress.php     # Main plugin class with admin integration
-├── 📁 includes/                            # PHP backend code
+├── 📁 includes/                            # PHP backend code (PSR-4 compliant)
 │   ├── 📁 Abstracts/                       # Abstract base classes for consistency
 │   │   ├── 📄 Controller.php               # Base REST controller with validation
 │   │   └── 📄 Generator.php                # Base generator with parameter handling
 │   ├── 📁 Generators/                      # 10 Specialized data generators
-│   │   ├── 📄 Cart_Session.php             # Cart session generation
-│   │   ├── 📄 Coupon.php                   # Coupon generation with rules
+│   │   ├── 📄 Cart_Session.php             # Cart session generation logic
+│   │   ├── 📄 Coupon.php                   # Coupon generation with advanced rules
 │   │   ├── 📄 Customer.php                 # Customer profile generation
 │   │   ├── 📄 Location.php                 # Geographic location generation
-│   │   ├── 📄 Order.php                    # Order generation with metadata
+│   │   ├── 📄 Order.php                    # Order generation with complete metadata
 │   │   ├── 📄 Product.php                  # Product generation with attributes & variations
 │   │   ├── 📄 Product_Variation.php        # Product variation generation
 │   │   ├── 📄 Shipping_Plan.php            # Shipping plan generation
 │   │   ├── 📄 Tax_Class.php                # Tax class generation
 │   │   └── 📄 Transaction.php              # Transaction history generation
-│   └── 📁 Controllers/                     # REST API controllers
-│       ├── 📄 Cart_Sessions.php            # Cart session REST controller
-│       ├── 📄 Coupons.php                  # Coupon REST controller
-│       ├── 📄 Customers.php                # Customer REST controller
-│       ├── 📄 Locations.php                # Location REST controller
-│       ├── 📄 Orders.php                   # Order REST controller
-│       ├── 📄 Product_Variations.php       # Product variation REST controller
-│       ├── 📄 Products.php                 # Product REST controller
-│       ├── 📄 Shipping_Plans.php           # Shipping plan REST controller
-│       ├── 📄 Tax_Classes.php              # Tax class REST controller
-│       └── 📄 Transactions.php             # Transaction REST controller
+│   └── 📁 Controllers/                     # REST API controllers (10 total)
+│       ├── 📄 Cart_Session.php             # Cart session REST API endpoint
+│       ├── 📄 Coupon.php                   # Coupon REST API endpoint
+│       ├── 📄 Customer.php                 # Customer REST API endpoint
+│       ├── 📄 Location.php                 # Location REST API endpoint
+│       ├── 📄 Order.php                    # Order REST API endpoint
+│       ├── 📄 Product.php                  # Product REST API endpoint
+│       ├── 📄 Product_Variation.php        # Product variation REST API endpoint
+│       ├── 📄 Shipping_Plan.php            # Shipping plan REST API endpoint
+│       ├── 📄 Tax_Class.php                # Tax class REST API endpoint
+│       └── 📄 Transaction.php              # Transaction REST API endpoint
 ├── 📁 src/                                 # Frontend source code (TypeScript)
 │   └── 📁 admin/
-│       ├── 📁 components/                  # React components (TypeScript)
-│       │   ├── 📄 App.tsx                  # Main application router
-│       │   ├── 📄 GeneratorBase.tsx        # Base generator component
+│       ├── 📁 components/                  # React 18 components (TypeScript)
+│       │   ├── 📄 App.tsx                  # Main application router (React Router v7)
+│       │   ├── 📄 GeneratorBase.tsx        # Base generator component with schema validation
 │       │   ├── 📁 Pages/                   # Route-based page components
 │       │   │   ├── 📄 GeneratorPage.tsx    # Individual generator pages
 │       │   │   ├── 📄 HomePage.tsx         # Generator selection dashboard
 │       │   │   └── 📄 RootLayout.tsx       # Main layout with navigation
-│       │   └── 📁 Generators/              # Generator-specific components
-│       │       ├── 📄 CartSessionGenerator.tsx
-│       │       ├── 📄 CouponGenerator.tsx
-│       │       ├── 📄 CustomerGenerator.tsx
-│       │       ├── 📄 LocationGenerator.tsx
-│       │       ├── 📄 OrderGenerator.tsx
-│       │       ├── 📄 ProductGenerator.tsx
-│       │       ├── 📄 ProductVariationGenerator.tsx
-│       │       ├── 📄 ShippingPlanGenerator.tsx
-│       │       ├── 📄 TaxClassGenerator.tsx
-│       │       └── 📄 TransactionGenerator.tsx
+│       │   └── 📁 Generators/              # Generator-specific components (TypeScript)
+│       │       ├── 📄 CartSessionGenerator.tsx    # Cart session generator UI
+│       │       ├── 📄 CouponGenerator.tsx         # Coupon generator UI
+│       │       ├── 📄 CustomerGenerator.tsx       # Customer generator UI
+│       │       ├── 📄 LocationGenerator.tsx       # Location generator UI
+│       │       ├── 📄 OrderGenerator.tsx          # Order generator UI
+│       │       ├── 📄 ProductGenerator.tsx        # Product generator UI
+│       │       ├── 📄 ProductVariationGenerator.tsx # Product variation generator UI
+│       │       ├── 📄 ShippingPlanGenerator.tsx   # Shipping plan generator UI
+│       │       ├── 📄 TaxClassGenerator.tsx       # Tax class generator UI
+│       │       └── 📄 TransactionGenerator.tsx    # Transaction generator UI
 │       ├── 📄 index.tsx                    # Frontend entry point (TypeScript)
 │       └── 📄 styles.css                   # Tailwind CSS with WordPress integration
-├── 📁 build/                               # Compiled production assets
+├── 📁 build/                               # Compiled production assets (Webpack 5)
 ├── 📁 vendor/                              # Composer dependencies (PHP)
-├── 📁 node_modules/                        # NPM dependencies (JavaScript)
-├── 📄 composer.json                        # PHP dependencies and autoloading
-├── 📄 package.json                         # JavaScript dependencies and scripts
-├── 📄 webpack.config.js                    # Build configuration
+├── 📁 node_modules/                        # NPM dependencies (JavaScript/TypeScript)
+├── 📄 composer.json                        # PHP dependencies and PSR-4 autoloading
+├── 📄 package.json                         # JavaScript/TypeScript dependencies and scripts
+├── 📄 webpack.config.js                    # Build configuration (WordPress scripts)
 ├── 📄 tailwind.config.js                   # CSS framework configuration
-├── 📄 phpcs.xml                            # PHP code quality rules
-├── 📄 phpstan.neon                         # Static analysis configuration
+├── 📄 tsconfig.json                        # TypeScript configuration (v2.0.1)
+├── 📄 phpcs.xml                            # PHP code quality rules (WordPress standards)
+├── 📄 phpstan.neon                         # Static analysis configuration (Level 8)
 └── 📁 docs/                                # Comprehensive documentation
 ```
 
 ### 📁 Directory Structure Explanation
 
-- **`includes/`**: Contains all PHP backend logic with clear separation between generators and controllers
-- **`src/admin/`**: Modern React frontend with component-based architecture
-- **`build/`**: Production-ready compiled assets
-- **`docs/`**: Complete documentation for users and developers
+- **`includes/`**: PHP backend with PSR-4 autoloading, 10 generators, and 10 REST controllers
+- **`src/admin/`**: TypeScript React 18 frontend with React Router v7 and complete parameter schema alignment
+- **`build/`**: Webpack 5 compiled assets with code splitting and optimization
+- **`docs/`**: Comprehensive documentation for v2.0.1 features and development
 
 ## 🔗 Deep EasyCommerce Integration
 
@@ -213,11 +214,11 @@ The frontend is built with React 18 and React Router v7, providing a modern, mai
 
 ### 🚦 React Router v7 Implementation
 
-EasyCommerce FakerPress uses React Router v7's data router for optimal WordPress admin integration:
+EasyCommerce FakerPress v2.0.1 uses React Router v7's modern routing architecture for optimal WordPress admin integration:
 
 #### Router Configuration
 
-```javascript
+```typescript
 const router = createHashRouter([
   {
     path: "/",
@@ -231,8 +232,8 @@ const router = createHashRouter([
         path: "generator/:type",
         element: <GeneratorPage />,
         loader: async ({ params }) => {
-          // Data loading for generator configuration
-          return loadGeneratorConfig(params.type);
+          // Type-safe data loading for generator configuration
+          return loadGeneratorConfig(params.type as GeneratorType);
         },
       },
     ],
@@ -242,10 +243,11 @@ const router = createHashRouter([
 
 **Key Benefits:**
 
+- **Type-Safe Routing**: Full TypeScript integration with proper type definitions
 - **Hash-Based Routing**: Compatible with WordPress admin's URL structure
-- **Data Loading**: Pre-load generator configurations and dependencies
-- **Error Boundaries**: Graceful error handling for failed data loads
-- **Code Splitting**: Automatic route-based code splitting for performance
+- **Data Loading**: Pre-load generator configurations with schema validation
+- **Error Boundaries**: Comprehensive error handling with user-friendly messages
+- **Code Splitting**: Automatic route-based code splitting for optimal performance
 
 ### 🧩 Component Architecture
 
