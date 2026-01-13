@@ -68,6 +68,9 @@ Generated data leverages the Faker library for authenticity while adhering to re
 
 == Frequently Asked Questions ==
 
+= What's new in version 2.0.2? =
+This release brings UI enhancements, Tailwind CSS v4 upgrade, and improved user experience. Key updates include a "Get Started" plugin action link, modern CSS features with better performance, fixed visual inconsistencies, and updated build system compatibility.
+
 = What's new in version 2.0.0? =
 This major release includes complete parameter schema alignment between frontend forms and backend API validation. All 10 generators now have perfectly aligned parameter structures, ensuring reliable data generation. Key updates include TypeScript migration, comprehensive parameter validation, and enterprise-grade frontend-backend integration.
 
@@ -119,6 +122,12 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
+= 2.0.2 - December 15, 2025 =
+* **New Features**: Added "Get Started" plugin action link for easier access
+* **Tailwind CSS v4**: Upgraded to Tailwind CSS v4.1.18 with improved performance
+* **UI Improvements**: Fixed visual inconsistencies in success messages and navigation
+* **Technical Updates**: Enhanced build system and dependency compatibility
+
 = 2.0.1 - November 13, 2025 =
 * **Bug Fixes**: Minor bug fixes and improvements
 * **Code Quality**: Code quality enhancements and optimizations
@@ -157,6 +166,9 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 * **Technical Foundations**: Built with React 18, Tailwind CSS, Webpack 5; includes validation, state management, and extensibility hooks.
 
 == Upgrade Notice ==
+
+= 2.0.2 =
+UI enhancements and Tailwind CSS v4 upgrade. Recommended upgrade for improved user experience.
 
 = 2.0.1 =
 Minor bug fixes and improvements. Recommended upgrade for all users.
