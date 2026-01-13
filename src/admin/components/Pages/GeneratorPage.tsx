@@ -216,7 +216,7 @@ export default function GeneratorPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-xs border border-gray-100">
+                <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-xs border border-gray-100 list-none">
                   <li>
                     <Link
                       to="/"
