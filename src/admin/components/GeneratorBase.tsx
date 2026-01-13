@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Button } from "./ui/button";
 import {
   Card,
