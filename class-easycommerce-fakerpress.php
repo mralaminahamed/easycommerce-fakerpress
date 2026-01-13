@@ -45,7 +45,7 @@ use EasyCommerceFakerPress\Controllers\Location;
  * - Multi-locale support for international data generation
  *
  * @since 1.0.0
- * @version 2.0.0
+ * @version 2.0.2
  */
 class EasyCommerce_FakerPress {
 
