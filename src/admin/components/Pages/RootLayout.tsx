@@ -31,7 +31,7 @@ export default function RootLayout() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30"
+      className="min-h-screen bg-linear-to-br from-gray-50 via-white to-blue-50/30"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
@@ -67,19 +67,19 @@ export default function RootLayout() {
                   )}
                 </motion.p>
                 <motion.div
-                  className="mt-4 h-1 w-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+                  className="mt-4 h-1 w-32 bg-linear-to-r from-blue-500 to-purple-600 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: 128 }}
                   transition={{ delay: 0.7, duration: 0.8 }}
                 />
               </div>
               <motion.div
-                className="ml-6 flex-shrink-0"
+                className="ml-6 shrink-0"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
               >
-                <div className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-3 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
+                <div className="inline-flex items-center gap-3 rounded-xl bg-linear-to-r from-blue-50 to-purple-50 px-4 py-3 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-xs">
                   <motion.div
                     whileHover={{ rotate: 15 }}
                     transition={{ type: "spring", stiffness: 300 }}

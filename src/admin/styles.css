@@ -1,16 +1,52 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer utilities {
+@theme {
+  --color-wp-admin-primary: var(--wp-admin-primary, #2271b1);
+  --color-wp-admin-secondary: var(--wp-admin-secondary, #135e96);
+  --color-wp-admin-highlight: var(--wp-admin-highlight, #043f54);
+  --color-wp-admin-accent: var(--wp-admin-accent, #0a4b78);
 
-  .animate-collapsible-down {
-    animation: collapsible-down 0.2s ease-out;
+  --color-wp-blue: #0073aa;
+  --color-wp-blue-dark: #005177;
+  --color-wp-gray: #f1f1f1;
+  --color-wp-gray-dark: #ddd;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: var(--wp-admin-primary, #3b82f6);
+  --color-blue-600: var(--wp-admin-secondary, #2563eb);
+  --color-blue-700: var(--wp-admin-highlight, #1d4ed8);
+  --color-blue-800: var(--wp-admin-accent, #1e40af);
+  --color-blue-900: #1e3a8a;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
+}
 
-  .animate-collapsible-up {
-    animation: collapsible-up 0.2s ease-out;
-  }
+@utility animate-collapsible-down {
+  animation: collapsible-down 0.2s ease-out;
+}
+
+@utility animate-collapsible-up {
+  animation: collapsible-up 0.2s ease-out;
 }
 
 @keyframes collapsible-down {

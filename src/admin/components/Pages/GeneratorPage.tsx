@@ -70,10 +70,10 @@ export default function GeneratorPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.4 }}
           >
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50/50 shadow-md">
+            <Card className="border-2 border-blue-200 bg-linear-to-br from-blue-50 to-purple-50/50 shadow-md">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                       <IconComponent className="w-5 h-5 text-white" />
                     </div>
@@ -92,7 +92,7 @@ export default function GeneratorPage() {
           </motion.div>
 
           {/* Other Generators Card */}
-          <Card className="shadow-sm">
+          <Card className="shadow-xs">
             <CardContent className="p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
@@ -112,7 +112,7 @@ export default function GeneratorPage() {
                       >
                         <Link
                           to={`/generator/${gen.route}`}
-                          className="group flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-200 hover:shadow-sm"
+                          className="group flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-lg transition-all duration-200 border border-transparent hover:border-blue-200 hover:shadow-xs"
                         >
                           <GenIconComponent className="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" />
                           <span className="font-medium">{gen.name}</span>
@@ -139,7 +139,7 @@ export default function GeneratorPage() {
         transition={{ delay: 0.3, duration: 0.6 }}
       >
         {/* Visual connection line for desktop */}
-        <div className="hidden lg:block absolute left-0 top-12 bottom-12 w-px bg-gradient-to-b from-blue-200 via-blue-100 to-transparent ml-2"></div>
+        <div className="hidden lg:block absolute left-0 top-12 bottom-12 w-px bg-linear-to-b from-blue-200 via-blue-100 to-transparent ml-2"></div>
         {/* Navigation Header */}
         <div className="mb-8 space-y-4">
           {/* Mobile Header */}
@@ -164,7 +164,7 @@ export default function GeneratorPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
               >
-                <div className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-linear-to-r from-blue-50 to-purple-50 px-3 py-2 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-xs">
                   <motion.div
                     whileHover={{ rotate: 15 }}
                     transition={{ type: "spring", stiffness: 300 }}
@@ -180,7 +180,7 @@ export default function GeneratorPage() {
             <div className="flex justify-start">
               <motion.button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-blue-500"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -216,7 +216,7 @@ export default function GeneratorPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
+                <ol className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg shadow-xs border border-gray-100">
                   <li>
                     <Link
                       to="/"
@@ -248,7 +248,7 @@ export default function GeneratorPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <div className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-3 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-sm">
+              <div className="inline-flex items-center gap-3 rounded-xl bg-linear-to-r from-blue-50 to-purple-50 px-4 py-3 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-xs">
                 <motion.div
                   whileHover={{ rotate: 15 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -285,10 +285,10 @@ export default function GeneratorPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1, duration: 0.3 }}
                 >
-                  <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50/50">
+                  <Card className="border-2 border-blue-200 bg-linear-to-br from-blue-50 to-purple-50/50">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                             <IconComponent className="w-4 h-4 text-white" />
                           </div>
@@ -328,7 +328,7 @@ export default function GeneratorPage() {
                               <Link
                                 to={`/generator/${gen.route}`}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="group flex items-center w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-md transition-all duration-200"
+                                className="group flex items-center w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 rounded-md transition-all duration-200"
                               >
                                 <GenIconComponent className="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" />
                                 <span className="font-medium">{gen.name}</span>
@@ -357,7 +357,7 @@ export default function GeneratorPage() {
           transition={{ delay: 0.5, duration: 0.6 }}
         >
           {/* Subtle background for content area */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50/50 to-transparent rounded-lg -mx-4 -my-2"></div>
+          <div className="absolute inset-0 bg-linear-to-r from-transparent via-gray-50/50 to-transparent rounded-lg -mx-4 -my-2"></div>
 
           {/* Content */}
           <div className="relative z-10">
