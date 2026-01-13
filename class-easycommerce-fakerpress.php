@@ -109,6 +109,7 @@ class EasyCommerce_FakerPress {
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
 	}
 
 	/**
@@ -156,6 +157,24 @@ class EasyCommerce_FakerPress {
 		$this->ensure_sample_data();
 
 		echo '<div id="easycommerce-fakerpress-root"></div>';
+	}
+
+	/**
+	 * Add plugin action links
+	 *
+	 * Adds a "Get Started" link to the plugin's action links on the plugins page.
+	 * Provides quick access to the admin page for new users.
+	 *
+	 * @since 1.0.0
+	 * @hooked plugin_action_links_{plugin-file}
+	 *
+	 * @param array $links Existing plugin action links.
+	 *
+	 * @return array Modified plugin action links.
+	 */
+	public function add_plugin_action_links( array $links ): array {
+		$links[] = '<a href="' . admin_url( 'admin.php?page=easycommerce-fakerpress' ) . '">' . __( 'Get Started', 'easycommerce-fakerpress' ) . '</a>';
+		return $links;
 	}
 
 	/**
@@ -416,7 +435,7 @@ class EasyCommerce_FakerPress {
 			return false;
 		}
 
-		// Save zip file temporarily
+		// Save zip file temporarily.
 		if ( ! $wp_filesystem->put_contents( $temp_zip_file, $zip_content ) ) {
 			return false;
 		}
