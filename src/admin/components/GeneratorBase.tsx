@@ -416,7 +416,7 @@ export default function GeneratorBase({
           {description}
         </motion.p>
         <motion.div
-          className="mt-6 h-1 w-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto"
+          className="mt-6 h-1 w-32 bg-linear-to-r from-blue-500 to-purple-600 rounded-full mx-auto"
           initial={{ width: 0 }}
           animate={{ width: 128 }}
           transition={{ delay: 0.6, duration: 0.8 }}
@@ -635,7 +635,7 @@ export default function GeneratorBase({
         {error && (
           <div className="mt-4 rounded-md bg-red-50 p-4">
             <div className="flex">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-5 w-5 text-red-400"
                   viewBox="0 0 20 20"
@@ -664,7 +664,7 @@ export default function GeneratorBase({
         {result && (
           <div className="mt-4 rounded-md bg-green-50 p-4">
             <div className="flex">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-5 w-5 text-green-400"
                   viewBox="0 0 20 20"

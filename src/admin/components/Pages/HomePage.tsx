@@ -307,7 +307,7 @@ export default function HomePage() {
               )}
             </h2>
             <motion.div
-              className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto"
+              className="h-1 w-24 bg-linear-to-r from-blue-500 to-purple-600 rounded-full mx-auto"
               initial={{ width: 0 }}
               animate={{ width: 96 }}
               transition={{ delay: categoryIndex * 0.1 + 0.5, duration: 0.8 }}
@@ -333,11 +333,11 @@ export default function HomePage() {
                       to={`/generator/${generator.route}`}
                       className="block h-full"
                     >
-                      <Card className="h-full transition-all duration-300 hover:shadow-lg border-2 hover:border-blue-200 bg-gradient-to-br from-white to-gray-50/50">
+                      <Card className="h-full transition-all duration-300 hover:shadow-lg border-2 hover:border-blue-200 bg-linear-to-br from-white to-gray-50/50">
                         <CardHeader className="pb-4">
                           <div className="flex items-start justify-between">
                             <motion.div
-                              className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl mb-4"
+                              className="flex items-center justify-center w-12 h-12 bg-linear-to-br from-blue-100 to-purple-100 rounded-xl mb-4"
                               whileHover={{ scale: 1.1, rotate: 5 }}
                               transition={{ type: "spring", stiffness: 300 }}
                             >
@@ -355,7 +355,7 @@ export default function HomePage() {
                               >
                                 <Badge
                                   variant="secondary"
-                                  className="bg-gradient-to-r from-orange-400 to-red-500 text-white border-0"
+                                  className="bg-linear-to-r from-orange-400 to-red-500 text-white border-0"
                                 >
                                   <Star className="w-3 h-3 mr-1" />
                                   {__("Popular", "easycommerce-fakerpress")}

@@ -325,7 +325,7 @@ function productGenerator() {
 ```css
 /* ✅ Good: Tailwind with WordPress integration */
 .generator-card {
-  @apply bg-white border rounded-lg shadow-sm p-6;
+  @apply bg-white border rounded-lg shadow-xs p-6;
   border-color: var(--wp-admin-theme-color);
 }
 
