@@ -1,6 +1,6 @@
 module.exports = {
     extends: [
-        '@wordpress/stylelint-config/scss',
+        '@wordpress/stylelint-config',
         'stylelint-config-prettier-scss',
         'stylelint-config-recess-order',
         'stylelint-config-tailwindcss'
@@ -22,24 +22,7 @@ module.exports = {
                     'font-face',
                     'use',
                     'forward',
-                ],
-            },
-        ],
-        'scss/at-rule-no-unknown': [
-            true,
-            {
-                ignoreAtRules: [
-                    'tailwind',
-                    'apply',
-                    'variants',
-                    'responsive',
-                    'screen',
-                    'layer',
-                    'config',
-                    'theme',
-                    'font-face',
-                    'use',
-                    'forward',
+                    'utility',
                 ],
             },
         ],
