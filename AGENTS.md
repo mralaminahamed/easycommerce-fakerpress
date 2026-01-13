@@ -39,10 +39,11 @@
 - Functional components with hooks (no class components)
 - Import order: WordPress core, external libraries, local components
 - camelCase for variables/functions, PascalCase for components
-- Use Tailwind CSS for styling
+- Use Tailwind CSS v4 for styling with @theme and @utility directives
 - Proper i18n with `@wordpress/i18n`
 - Async/await for API calls with try/catch error handling
 - TypeScript for type safety in all files
+- Node.js 20+ required for Tailwind v4 and build process
 
 ### General
 
@@ -68,12 +69,14 @@
 - **Parameter Validation**: REST endpoints validate parameters using JSON Schema configurations
 - **Error Handling**: Consistent WP_Error usage with proper error codes and messages
 
-### Recent Improvements (v2.0.1 - November 13, 2025)
+### Recent Improvements (v2.0.2 - December 15, 2025)
 
-- **Order Generator**: Fixed data structure to include subtotal, tax_amount, shipping_amount, discount_amount, currency, addresses, notes, coupons
-- **GeneratorBase Component**: Added `dependsOn` support for conditional form fields
-- **API Consistency**: All React components now call correct REST endpoints matching PHP controllers
-- **Code Quality**: Fixed all PHP coding standard violations and short ternary operators
+- **Tailwind CSS v4**: Upgraded to Tailwind CSS v4.1.18 with improved performance and modern CSS features
+- **Plugin Action Link**: Added "Get Started" link to plugin actions for easier access from plugins page
+- **UI Design Consistency**: Fixed visual inconsistencies in success messages and breadcrumb navigation
+- **Build System**: Updated PostCSS configuration for v4 compatibility with layer-based imports
+- **Node.js Requirement**: Updated to Node.js 20+ for Tailwind v4 and TypeScript support
+- **Code Quality**: Enhanced linting configuration for modern CSS standards
 
 ## Copilot Instructions
 
