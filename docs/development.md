@@ -1,17 +1,17 @@
 # 🛠️ Development Guide
 
-Welcome to the EasyCommerce FakerPress v2.0.1 development guide! This comprehensive resource will help you contribute effectively to the project, now featuring complete TypeScript support and parameter schema alignment.
+Welcome to the EasyCommerce FakerPress v2.0.2 development guide! This comprehensive resource will help you contribute effectively to the project, now featuring Tailwind CSS v4, complete TypeScript support, and enhanced UI consistency.
 
 ## 🚀 Quick Development Setup
 
 ### Prerequisites
 
 - **PHP**: 7.4+ (8.0+ recommended)
-- **Node.js**: 16+ (18+ recommended for TypeScript)
+- **Node.js**: 20+ (required for Tailwind CSS v4 and TypeScript)
 - **Composer**: 2.0+
 - **WordPress**: 5.0+ with EasyCommerce plugin
 - **Git**: For version control
-- **TypeScript**: 5.x+ (included with project dependencies for v2.0.1)
+- **TypeScript**: 5.x+ (included with project dependencies)
 
 ### One-Command Setup
 
@@ -22,15 +22,15 @@ cd easycommerce-fakerpress
 composer install && npm install && npm run build
 ```
 
-### v2.0.1: Complete TypeScript Migration
+### v2.0.2: Tailwind CSS v4 & UI Enhancements
 
-**All React components have been migrated to TypeScript (.tsx) for better type safety and developer experience.**
+**Upgraded to Tailwind CSS v4.1.18 with modern CSS features and improved UI consistency.**
 
-- **Type Definitions**: Comprehensive interfaces for all generator parameters and API responses
-- **Parameter Schema Alignment**: Type-safe parameter schemas matching backend validation
-- **API Integration**: Strongly typed API responses and error handling
-- **Build System**: Enhanced webpack configuration for TypeScript compilation
-- **Schema Validation**: Frontend forms perfectly aligned with backend API validation
+- **Tailwind CSS v4**: Upgraded from v3 to v4 with better performance and modern CSS features
+- **UI Design Consistency**: Fixed visual inconsistencies in success messages and navigation
+- **PostCSS Configuration**: Updated for v4 compatibility with layer-based imports
+- **Plugin Action Link**: Added "Get Started" link for easier plugin access
+- **Build Optimization**: Enhanced build system with updated dependencies
 
 ## 🏗️ Build System & Commands
 
@@ -428,7 +428,7 @@ EasyCommerce FakerPress leverages modern web technologies and development practi
   "react": "^18.2.0",
   "react-router-dom": "^7.7.1",
   "@wordpress/scripts": "^30.20.0",
-  "tailwindcss": "^3.3.5",
+  "tailwindcss": "^4.1.18",
   "webpack": "^5.89.0"
 }
 ```

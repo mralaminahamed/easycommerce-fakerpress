@@ -1,6 +1,6 @@
 # 📦 Installation Guide (v2.0.1)
 
-Welcome to EasyCommerce FakerPress v2.0.1! This comprehensive installation guide will help you get up and running quickly and safely with our complete parameter schema alignment and TypeScript-powered interface.
+Welcome to EasyCommerce FakerPress v2.0.2! This comprehensive installation guide will help you get up and running quickly and safely with our Tailwind CSS v4-powered interface and enhanced user experience.
 
 ## ✅ System Requirements
 
