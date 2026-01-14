@@ -17,22 +17,17 @@ module.exports = {
     ajaxurl: "readonly",
     console: "readonly",
   },
-  parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    project: "./tsconfig.json",
-    tsconfigRootDir: __dirname,
   },
-  globals: {
-    wp: "readonly",
-    easycommerceFakerpressApi: "readonly",
-    ajaxurl: "readonly",
-    console: "readonly",
-  },
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: "module",
+  settings: {
+    "import/resolver": {
+      alias: {
+        map: [["@", "./src"]],
+        extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+      },
+    },
   },
   rules: {
     // Custom rules for this project
@@ -44,6 +39,39 @@ module.exports = {
     "prefer-arrow-callback": "error",
     "arrow-spacing": "error",
     "prefer-template": "error",
+
+    // Import order enforcement
+    "import/order": [
+      "error",
+      {
+        groups: [
+          "external", // External libraries (React, third-party)
+          "builtin", // Node.js built-ins
+          "internal", // WordPress packages (@wordpress/*)
+          "parent", // Parent directories
+          "sibling", // Same level
+          "index", // Index files
+        ],
+        pathGroups: [
+          {
+            pattern: "@wordpress/**",
+            group: "internal",
+            position: "before",
+          },
+          {
+            pattern: "@/**",
+            group: "parent",
+            position: "after",
+          },
+        ],
+        pathGroupsExcludedImportTypes: ["builtin"],
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+        "newlines-between": "always",
+      },
+    ],
 
     // Enforce consistent use of single quotes
     "prettier/prettier": "off",
@@ -65,6 +93,10 @@ module.exports = {
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
+      parser: "@typescript-eslint/parser",
+      parserOptions: {
+        project: true,
+      },
       extends: [
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
