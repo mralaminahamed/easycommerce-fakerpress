@@ -24,6 +24,7 @@ use EasyCommerceFakerPress\Controllers\Tax_Class;
 use EasyCommerceFakerPress\Controllers\Transaction;
 use EasyCommerceFakerPress\Controllers\Cart_Session;
 use EasyCommerceFakerPress\Controllers\Location;
+use EasyCommerceFakerPress\Controllers\Product_Review;
 
 /**
  * Main Plugin Class for EasyCommerce FakerPress
@@ -302,6 +303,9 @@ class EasyCommerce_FakerPress {
 			new Transaction(),
 			new Cart_Session(),
 			new Location(),
+
+			// Additional generators (Version 2.0.3).
+			new Product_Review(),
 		);
 
 		foreach ( $controllers as $controller ) {

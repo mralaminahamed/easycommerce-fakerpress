@@ -37,6 +37,7 @@ import TaxClassGenerator from "../Generators/TaxClassGenerator";
 import TransactionGenerator from "../Generators/TransactionGenerator";
 import CartSessionGenerator from "../Generators/CartSessionGenerator";
 import LocationGenerator from "../Generators/LocationGenerator";
+import ProductReviewGenerator from "../Generators/ProductReviewGenerator";
 
 interface Generator {
   name: string;
@@ -201,11 +202,11 @@ const generators: Generator[] = [
   {
     name: __("Locations", "easycommerce-fakerpress"),
     component: LocationGenerator,
-    category: __("Advanced", "easycommerce-fakerpress"),
-    order: 6,
+    category: __("Enhanced", "easycommerce-fakerpress"),
+    order: 10,
     icon: MapPin,
     description: __(
-      "Populate geographic data with countries, states, and cities. Foundation data for shipping, taxes, and regional features.",
+      "Generate geographic data including countries, states, and cities for multi-region stores.",
       "easycommerce-fakerpress",
     ),
     useCase: __(
@@ -213,6 +214,22 @@ const generators: Generator[] = [
       "easycommerce-fakerpress",
     ),
     route: "locations",
+  },
+  {
+    name: __("Product Reviews", "easycommerce-fakerpress"),
+    component: ProductReviewGenerator,
+    category: __("Enhanced", "easycommerce-fakerpress"),
+    order: 11,
+    icon: Star,
+    description: __(
+      "Create realistic product reviews with ratings and customer feedback. Reviews are automatically linked to existing products and customers.",
+      "easycommerce-fakerpress",
+    ),
+    useCase: __(
+      "Store owners, theme developers testing review displays",
+      "easycommerce-fakerpress",
+    ),
+    route: "product-reviews",
   },
 ];
 
