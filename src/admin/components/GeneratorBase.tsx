@@ -1,31 +1,32 @@
-import { ChevronDown } from "lucide-react";
 import { motion, Variants } from "framer-motion";
-import { Button } from "./ui/button";
+import { ChevronDown } from "lucide-react";
+
+import { useState, RawHTML } from "@wordpress/element";
+import { __, sprintf } from "@wordpress/i18n";
+
+import { Button } from "@/admin/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+} from "@/admin/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/admin/components/ui/collapsible";
+import { Input } from "@/admin/components/ui/input";
+import { Label } from "@/admin/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Switch } from "./ui/switch";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
-
-import { useState, RawHTML } from "@wordpress/element";
-import { __, sprintf } from "@wordpress/i18n";
+} from "@/admin/components/ui/select";
+import { Switch } from "@/admin/components/ui/switch";
 
 // TypeScript interfaces
 interface ParameterConfig {
@@ -66,6 +67,11 @@ interface GeneratorBaseProps {
 declare global {
   interface Window {
     easycommerceFakerpressApi?: {
+      restUrl?: string;
+      restNonce?: string;
+      ajaxUrl?: string;
+      adminColors?: Record<string, string>;
+      colorScheme?: string;
       locale?: {
         faker?: string;
         label?: string;
@@ -682,45 +688,6 @@ export default function GeneratorBase({
                 <h3 className="text-sm font-medium text-green-800 m-0">
                   {result.message}
                 </h3>
-                {/*
-
-							<h3 className="text-sm font-medium text-green-800">{ __( 'Success!', 'easycommerce-fakerpress' ) }</h3>
-							<div className="mt-2 text-sm text-green-700">
-								{ /\* translators: %1$d: Number of items generated, %2$s: Resource type (e.g., products, customers, orders) *\/
-								sprintf( __( 'Generated %1$d %2$s.', 'easycommerce-fakerpress' ), result.generated, type ) }
-							</div>
-
-							*/}
-
-                {/*
-							{ ( () => {
-								// Get the plural form of the type to match backend response structure
-								const pluralType = `${ type }s`;
-								const items = result[ pluralType ] || [];
-
-								return items.length > 0 && (
-									<div className="mt-4">
-										<h4 className="text-sm font-medium text-gray-900">{ __( 'Generated items:', 'easycommerce-fakerpress' ) }</h4>
-										<ul className="mt-2 text-sm text-gray-600 divide-y divide-gray-200">
-											{ items.slice( 0, 5 ).map( ( item, index ) => (
-												<li key={ index } className="flex justify-between py-2">
-													<span>{ item.name || item.title || item.code || item.id }</span>
-													<span className="text-gray-500">
-														{ item.email || item.price || item.total || item.amount || item.status }
-													</span>
-												</li>
-											) ) }
-											{ items.length > 5 && (
-												<li className="py-2 text-gray-500 italic">
-													{ //\* translators: %d: Number of additional items not shown in the list \*\/
-														sprintf( __( '… and %d more', 'easycommerce-fakerpress' ), items.length - 5 ) }
-												</li>
-											) }
-										</ul>
-									</div>
-								);
-							} )() }
-								*/}
               </div>
             </div>
           </div>
