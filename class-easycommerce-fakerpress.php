@@ -147,16 +147,12 @@ class EasyCommerce_FakerPress {
 	 * Outputs the HTML container element where the React admin interface will be mounted.
 	 * This method serves as the callback for the WordPress add_menu_page() function,
 	 * providing the entry point for the React Router v7 application.
-	 * Also ensures sample data is downloaded when the page is first visited.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
 	public function render_admin_page(): void {
-		// Ensure sample data is available when admin page is visited.
-		$this->ensure_sample_data();
-
 		echo '<div id="easycommerce-fakerpress-root"></div>';
 	}
 
@@ -200,7 +196,7 @@ class EasyCommerce_FakerPress {
 			return;
 		}
 
-		$asset_file = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'build/admin.asset.php';
+		$asset_file = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'build/index.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
@@ -256,6 +252,7 @@ class EasyCommerce_FakerPress {
 			array(
 				'restUrl'     => rest_url( 'easycommerce-fakerpress/v1/' ),
 				'restNonce'   => wp_create_nonce( 'wp_rest' ),
+				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
 				'adminColors' => $admin_colors,
 				'colorScheme' => $current_color,
 				'locale'      => array(
@@ -311,6 +308,17 @@ class EasyCommerce_FakerPress {
 		foreach ( $controllers as $controller ) {
 			$controller->register_routes();
 		}
+
+		// Register download sample data endpoint.
+		register_rest_route(
+			'easycommerce-fakerpress/v1',
+			'/download-sample',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_download_sample_data' ),
+				'permission_callback' => array( $this, 'rest_permission_check' ),
+			)
+		);
 	}
 
 	/**
@@ -519,13 +527,13 @@ class EasyCommerce_FakerPress {
 			$dest_path   = $dest_dir . '/' . $item['name'];
 
 			if ( 'd' === $item['type'] ) {
-				// Directory
+				// Directory.
 				if ( ! $wp_filesystem->exists( $dest_path ) ) {
 					$wp_filesystem->mkdir( $dest_path );
 				}
 				$this->move_directory_contents( $source_path, $dest_path );
 			} else {
-				// File
+				// File.
 				$wp_filesystem->move( $source_path, $dest_path );
 			}
 		}
@@ -676,6 +684,46 @@ class EasyCommerce_FakerPress {
 
 		// Default fallback.
 		return 'en_US';
+	}
+
+	/**
+	 * REST API handler for downloading sample data
+	 *
+	 * Handles asynchronous download of sample data via REST API to avoid blocking
+	 * the admin page load. Only accessible to users with manage_options capability.
+	 *
+	 * @since 2.0.4
+	 *
+	 * @param WP_REST_Request $request REST request object.
+	 *
+	 * @return WP_REST_Response|WP_Error Response object or error.
+	 */
+	public function rest_download_sample_data( WP_REST_Request $request ) {
+		$result = $this->ensure_sample_data();
+		if ( $result ) {
+			return new WP_REST_Response(
+				array(
+					'success' => true,
+					'message' => 'Sample data downloaded successfully',
+				),
+				200
+			);
+		} else {
+			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
+		}
+	}
+
+	/**
+	 * REST API permission check
+	 *
+	 * Verifies that the current user has the required permissions for REST API operations.
+	 *
+	 * @since 2.0.4
+	 *
+	 * @return bool True if user has permissions, false otherwise.
+	 */
+	public function rest_permission_check(): bool {
+		return current_user_can( 'manage_options' );
 	}
 
 	/**
