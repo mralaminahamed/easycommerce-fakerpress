@@ -153,40 +153,28 @@ class Order extends Generator {
 		$order_meta  = $order_data['order_meta'];
 		$total       = $order_data['total'];
 
-		// Use EasyCommerce Order model with the complete data structure.
-		$order   = new OrderModel();
-		$created = $order->create(
+		// Prepare complete meta data including all order details.
+		$complete_meta = array_merge(
+			$order_meta,
 			array(
-				// Required fields.
-				'customer_id'      => $customer['id'],
-				'total'            => $total,
-				'subtotal'         => $subtotal,
-				'items'            => $order_items,
+				// Order amounts stored in meta.
+				'subtotal'        => $subtotal,
+				'tax_amount'      => $order_meta['tax_details']['total'],
+				'shipping_amount' => $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'],
+				'discount_amount' => $order_meta['coupon_details']['discount'],
+				'currency'        => 'USD', // Default currency, can be made configurable.
 
-				// Order amounts.
-				'tax_amount'       => $order_meta['tax_details']['total'],
-				'shipping_amount'  => $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'],
-				'discount_amount'  => $order_meta['coupon_details']['discount'],
-
-				// Order details.
-				'currency'         => 'USD', // Default currency, can be made configurable.
-				'status'           => $this->generate_order_status(),
-				'fulfill_status'   => $this->generate_fulfillment_status(),
-				'payment_method'   => $this->generate_payment_method(),
-
-				// Addresses.
-				'billing_address'  => $order_meta['addresses']['billing'],
-				'shipping_address' => $order_meta['addresses']['shipping'],
-
-				// Additional metadata.
-				'notes'            => ! empty( $order_meta['order_notes'] ) ? array(
+				// Order notes.
+				'notes'           => ! empty( $order_meta['order_notes'] ) ? array(
 					array(
 						'note'       => $order_meta['order_notes'],
 						'type'       => 'customer',
 						'created_at' => current_time( 'Y-m-d H:i:s' ),
 					),
 				) : array(),
-				'coupons'          => $order_meta['coupon_details']['applied'] ? array_map(
+
+				// Applied coupons.
+				'coupons'         => $order_meta['coupon_details']['applied'] ? array_map(
 					function ( $coupon ) {
 						return array(
 							'code'            => $coupon['code'] ?? '',
@@ -195,9 +183,23 @@ class Order extends Generator {
 					},
 					$order_meta['coupon_details']['coupons']
 				) : array(),
+			)
+		);
 
-				// Order metadata.
-				'meta'             => $order_meta,
+		// Use EasyCommerce Order model with correct data structure.
+		$order   = new OrderModel();
+		$created = $order->create(
+			array(
+				// Required fields for Order model.
+				'customer_id'     => $customer['id'],
+				'total'           => $total,
+				'status'          => $this->generate_order_status(),
+				'fulfill_status'  => $this->generate_fulfillment_status(),
+				'payment_method'  => $this->generate_payment_method(),
+				'items'           => $order_items,
+
+				// All additional data goes in meta.
+				'meta'            => $complete_meta,
 			)
 		);
 
