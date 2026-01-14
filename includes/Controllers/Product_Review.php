@@ -12,6 +12,7 @@
 namespace EasyCommerceFakerPress\Controllers;
 
 use EasyCommerceFakerPress\Abstracts\Controller;
+use EasyCommerceFakerPress\Generators\Product_Review as ProductReviewGenerator;
 
 /**
  * Product Review Controller Class
@@ -22,17 +23,6 @@ use EasyCommerceFakerPress\Abstracts\Controller;
  * @since 2.0.3
  */
 class Product_Review extends Controller {
-
-	/**
-	 * Get the generator class name
-	 *
-	 * @since 2.0.3
-	 *
-	 * @return string Generator class name.
-	 */
-	protected function get_generator_class(): string {
-		return 'EasyCommerceFakerPress\\Generators\\Product_Review';
-	}
 
 	/**
 	 * Get the resource name for this controller
@@ -64,8 +54,7 @@ class Product_Review extends Controller {
 	 * @return \EasyCommerceFakerPress\Abstracts\Generator Generator instance.
 	 */
 	protected function get_generator_instance(): \EasyCommerceFakerPress\Abstracts\Generator {
-		$generator_class = $this->get_generator_class();
-		return new $generator_class();
+		return new ProductReviewGenerator();
 	}
 
 	/**
@@ -122,11 +111,13 @@ class Product_Review extends Controller {
 	 */
 	protected function validate_parameters( array $params ) {
 		// Check if products exist.
-		$product_query = new \WP_Query( array(
-			'post_type'      => 'product',
-			'post_status'    => 'publish',
-			'posts_per_page' => 1,
-		) );
+		$product_query = new \WP_Query(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+			)
+		);
 
 		if ( ! $product_query->have_posts() ) {
 			return new \WP_Error(
@@ -136,10 +127,12 @@ class Product_Review extends Controller {
 		}
 
 		// Check if customers exist.
-		$customer_query = get_users( array(
-			'role'   => 'customer',
-			'number' => 1,
-		) );
+		$customer_query = get_users(
+			array(
+				'role'   => 'customer',
+				'number' => 1,
+			)
+		);
 
 		if ( empty( $customer_query ) ) {
 			return new \WP_Error(
