@@ -65,9 +65,11 @@
 ### Key Patterns Established
 
 - **Generator Data Structures**: All generators now provide complete data structures matching EasyCommerce model expectations
+- **Model Integration**: Generators properly use EasyCommerce models (Product, Customer, Order, etc.) with correct data formats
+- **Meta Data Management**: Related data properly stored using meta models (Order_Meta, Product_Meta, etc.)
 - **Dependency Injection**: Controllers use generator instances via `get_generator_instance()`
 - **Parameter Validation**: REST endpoints validate parameters using JSON Schema configurations
-- **Error Handling**: Consistent WP_Error usage with proper error codes and messages
+- **Error Handling**: Consistent WP_Error usage with proper error codes and user-friendly messages
 
 ### Recent Improvements (v2.0.3 - December 15, 2025)
 
@@ -75,7 +77,11 @@
 - **Review Rating System**: Implemented weighted rating distribution favoring higher ratings (realistic patterns)
 - **WordPress Comments Integration**: Leverages WordPress comment system for review storage
 - **Verified Purchase Tracking**: Reviews can be marked as verified purchases for enhanced credibility
+- **Order Generator Data Structure Fix**: Corrected Order generator to match EasyCommerce Order model expectations
+- **Order Notes Integration**: Added proper order notes creation using Order_Notes model
+- **Comprehensive Model Review**: Validated all 11 EasyCommerce models for proper generator integration
 - **Controller Pattern Alignment**: Updated Product_Review controller to match existing controller patterns
+- **Complete Model Validation**: Validated all generators against EasyCommerce models for data consistency
 - **API Schema Consistency**: Added proper resource-specific properties and parameter validation
 
 ## Copilot Instructions
@@ -99,9 +105,13 @@
 
 ### Generator Development Guidelines
 
+- **Model Integration**: Always use appropriate EasyCommerce model classes for data creation
 - **Data Structure Alignment**: Ensure generator `create()` calls match EasyCommerce model expectations exactly
+- **Meta Data Handling**: Use meta arrays for additional data not handled by base model properties
+- **Related Model Usage**: Implement proper relationships using dedicated models (e.g., Order_Notes for order comments)
 - **Parameter Dependencies**: Use `dependsOn` in React parameter configs for conditional fields
 - **API Endpoint Naming**: REST bases should be plural (e.g., `orders`, `products`, `customers`)
 - **Result Formatting**: Return consistent result arrays with `id`, `message`, and relevant metadata
-- **Error Handling**: Use WP_Error with descriptive error codes and user-friendly messages</content>
+- **Error Handling**: Use WP_Error with descriptive error codes and user-friendly messages
+- **Model Validation**: Regularly validate generators against updated EasyCommerce models</content>
   <parameter name="filePath">/Users/alamin/Sites/woocommerce/wp-content/plugins/easycommerce-fakerpress/AGENTS.md
