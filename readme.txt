@@ -8,7 +8,7 @@ Stable tag: 2.0.3
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic EasyCommerce test data: 10 specialized generators, real-time validation, advanced config, and seamless admin integration.
+Generate realistic EasyCommerce test data: 11 specialized generators, real-time validation, advanced config, and seamless admin integration.
 
 == Description ==
 
@@ -68,6 +68,9 @@ Generated data leverages the Faker library for authenticity while adhering to re
 
 == Frequently Asked Questions ==
 
+= What's new in version 2.0.3? =
+This release adds the Product Review generator and fixes Order data structure issues. Key updates include realistic product review generation with rating distribution, WordPress comments integration for reviews, proper Order_Notes model usage, and enhanced data integrity across all generators.
+
 = What's new in version 2.0.2? =
 This release brings UI enhancements, Tailwind CSS v4 upgrade, and improved user experience. Key updates include a "Get Started" plugin action link, modern CSS features with better performance, fixed visual inconsistencies, and updated build system compatibility.
 
@@ -122,7 +125,17 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Changelog ==
 
-= 2.0.2 - December 15, 2025 =
+= 2.0.3 - January 15, 2026 =
+* **Product Review Generator**: Added new generator for creating realistic product reviews with ratings
+* **Review Rating System**: Implemented weighted rating distribution favoring higher ratings (realistic patterns)
+* **WordPress Comments Integration**: Leverages WordPress comment system for review storage
+* **Verified Purchase Tracking**: Reviews can be marked as verified purchases for enhanced credibility
+* **Order Generator Data Structure Fix**: Corrected Order generator to match EasyCommerce Order model expectations
+* **Order Notes Integration**: Added proper order notes creation using Order_Notes model
+* **Controller Pattern Alignment**: Updated Product_Review controller to match existing controller patterns
+* **API Schema Consistency**: Added proper resource-specific properties and parameter validation
+
+= 2.0.2 - January 15, 2026 =
 * **New Features**: Added "Get Started" plugin action link for easier access
 * **Tailwind CSS v4**: Upgraded to Tailwind CSS v4.1.18 with improved performance
 * **UI Improvements**: Fixed visual inconsistencies in success messages and navigation
@@ -166,6 +179,9 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 * **Technical Foundations**: Built with React 18, Tailwind CSS, Webpack 5; includes validation, state management, and extensibility hooks.
 
 == Upgrade Notice ==
+
+= 2.0.3 =
+Product Review generator and Order data structure fixes. Recommended upgrade for enhanced functionality and data integrity.
 
 = 2.0.2 =
 UI enhancements and Tailwind CSS v4 upgrade. Recommended upgrade for improved user experience.
