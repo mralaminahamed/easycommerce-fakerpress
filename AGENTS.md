@@ -69,14 +69,14 @@
 - **Parameter Validation**: REST endpoints validate parameters using JSON Schema configurations
 - **Error Handling**: Consistent WP_Error usage with proper error codes and messages
 
-### Recent Improvements (v2.0.2 - December 15, 2025)
+### Recent Improvements (v2.0.3 - December 15, 2025)
 
-- **Tailwind CSS v4**: Upgraded to Tailwind CSS v4.1.18 with improved performance and modern CSS features
-- **Plugin Action Link**: Added "Get Started" link to plugin actions for easier access from plugins page
-- **UI Design Consistency**: Fixed visual inconsistencies in success messages and breadcrumb navigation
-- **Build System**: Updated PostCSS configuration for v4 compatibility with layer-based imports
-- **Node.js Requirement**: Updated to Node.js 20+ for Tailwind v4 and TypeScript support
-- **Code Quality**: Enhanced linting configuration for modern CSS standards
+- **Product Review Generator**: Added new generator for creating realistic product reviews with ratings
+- **Review Rating System**: Implemented weighted rating distribution favoring higher ratings (realistic patterns)
+- **WordPress Comments Integration**: Leverages WordPress comment system for review storage
+- **Verified Purchase Tracking**: Reviews can be marked as verified purchases for enhanced credibility
+- **Controller Pattern Alignment**: Updated Product_Review controller to match existing controller patterns
+- **API Schema Consistency**: Added proper resource-specific properties and parameter validation
 
 ## Copilot Instructions
 

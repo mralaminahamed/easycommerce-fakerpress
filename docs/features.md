@@ -18,9 +18,9 @@ Welcome to EasyCommerce FakerPress v2.0.2 - your comprehensive solution for gene
 - **Code Quality**: Enhanced linting configuration for modern CSS standards
 - **Dependency Management**: Updated composer and npm packages for better compatibility
 
-## 🗂️ 10 Specialized Generators
+## 🗂️ 11 Specialized Generators
 
-EasyCommerce FakerPress provides 10 comprehensive data generators, each designed to create production-ready test data with full EasyCommerce integration and now featuring perfect parameter schema alignment.
+EasyCommerce FakerPress provides 11 comprehensive data generators, each designed to create production-ready test data with full EasyCommerce integration and now featuring perfect parameter schema alignment.
 
 ### 🛍️ Product Generator
 
@@ -126,6 +126,18 @@ EasyCommerce FakerPress provides 10 comprehensive data generators, each designed
 - **Abandonment Scenarios**: Various abandonment points with recovery potential
 - **Value Analysis**: Cart value distribution and conversion funnel data
 - **Recovery Simulation**: Email campaigns and follow-up automation data
+
+### ⭐ Product Review Generator
+
+**Realistic Customer Feedback and Rating System**
+
+- **Weighted Rating Distribution**: Realistic 5-4-3-2-1 star patterns favoring higher ratings
+- **Intelligent Review Content**: Context-aware review text based on rating levels
+- **WordPress Comments Integration**: Leverages native comment system for review storage
+- **Verified Purchase Tracking**: Reviews can be marked as verified purchases
+- **Customer-Product Linking**: Automatic association with existing customers and products
+- **Review Metadata**: Complete review information including timestamps and approval status
+- **Multi-language Support**: Localized review content generation
 
 ### 🌍 Location Generator
 

@@ -31,12 +31,12 @@ use EasyCommerceFakerPress\Controllers\Product_Review;
  *
  * This class serves as the central orchestrator for the EasyCommerce FakerPress plugin,
  * providing comprehensive test data generation capabilities for EasyCommerce stores.
- * It manages 10 specialized generators, implements real-time validation, features a
+ * It manages 11 specialized generators, implements real-time validation, features a
  * modern React Router v7 interface, integrates with WordPress admin color schemes,
  * and provides advanced parameter configuration options.
  *
  * Key Features:
- * - 10 specialized data generators (Products, Customers, Orders, Coupons, etc.)
+ * - 11 specialized data generators (Products, Customers, Orders, Coupons, Reviews, etc.)
  * - Real-time validation and dependency checking
  * - Modern React-based admin interface with Router v7
  * - WordPress admin color scheme integration
@@ -274,7 +274,7 @@ class EasyCommerce_FakerPress {
 	 * Register REST API routes
 	 *
 	 * Initializes and registers all REST API controllers for data generation.
-	 * Creates endpoints for all 10 specialized generators including core generators
+	 * Creates endpoints for all 11 specialized generators including core generators
 	 * (Products, Customers, Orders, Coupons) and enhanced generators (Variations,
 	 * Shipping, Tax, Transactions, Cart Sessions, Locations).
 	 *
