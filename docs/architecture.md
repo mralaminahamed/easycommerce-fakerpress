@@ -14,7 +14,7 @@ easycommerce-fakerpress/
 │   ├── 📁 Abstracts/                       # Abstract base classes for consistency
 │   │   ├── 📄 Controller.php               # Base REST controller with validation
 │   │   └── 📄 Generator.php                # Base generator with parameter handling
-│   ├── 📁 Generators/                      # 10 Specialized data generators
+│   ├── 📁 Generators/                      # 11 Specialized data generators
 │   │   ├── 📄 Cart_Session.php             # Cart session generation logic
 │   │   ├── 📄 Coupon.php                   # Coupon generation with advanced rules
 │   │   ├── 📄 Customer.php                 # Customer profile generation
@@ -73,7 +73,7 @@ easycommerce-fakerpress/
 
 ### 📁 Directory Structure Explanation
 
-- **`includes/`**: PHP backend with PSR-4 autoloading, 10 generators, and 10 REST controllers
+- **`includes/`**: PHP backend with PSR-4 autoloading, 11 generators, and 11 REST controllers
 - **`src/admin/`**: TypeScript React 18 frontend with React Router v7 and complete parameter schema alignment
 - **`build/`**: Webpack 5 compiled assets with code splitting and optimization
 - **`docs/`**: Comprehensive documentation for v2.0.1 features and development

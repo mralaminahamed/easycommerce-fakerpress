@@ -18,7 +18,7 @@ use WP_REST_Request;
 /**
  * API Integration Test for Parameter Schema Alignment
  *
- * Tests that all 10 generators have properly aligned frontend and backend parameter schemas
+ * Tests that all 11 generators have properly aligned frontend and backend parameter schemas
  * after the parameter schema alignment work was completed.
  *
  * @covers \EasyCommerceFakerPress\Controllers\Product
