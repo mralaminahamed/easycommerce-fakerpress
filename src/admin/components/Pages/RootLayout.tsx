@@ -62,7 +62,7 @@ export default function RootLayout() {
                   transition={{ delay: 0.5, duration: 0.6 }}
                 >
                   {__(
-                    "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, and modern interface.",
+                    "Comprehensive EasyCommerce test data generator with 11 specialized generators, real-time validation, and modern interface.",
                     "easycommerce-fakerpress",
                   )}
                 </motion.p>
