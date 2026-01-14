@@ -5,25 +5,29 @@ All notable changes to EasyCommerce FakerPress will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.2] - 2025-12-15
+## [2.0.3] - 2025-12-15
 
 ### ✨ New Features & Enhancements
+
+- **Product Review Generator**: Added new generator for creating realistic product reviews with ratings and customer feedback
+- **Review Rating Distribution**: Implemented weighted rating system favoring higher ratings (realistic 5-4-3-2-1 star distribution)
+- **Review Content Generation**: Added intelligent review content generation based on rating levels
+- **Verified Purchase Tracking**: Reviews can be marked as verified purchases for enhanced credibility
+
+### 🔧 Technical Improvements
+
+- **WordPress Comments Integration**: Leverages WordPress comment system for review storage and management
+- **REST API Endpoint**: New `/product-reviews/generate` endpoint for programmatic review generation
+- **Frontend Component**: Added ProductReviewGenerator React component with parameter configuration
+- **Type Safety**: Full TypeScript support for review generation parameters and API responses
+
+### 🐛 Previous Version Fixes
 
 - **Plugin Action Link**: Added "Get Started" link to the plugin's action links on the plugins page for easier access
 - **Tailwind CSS v4 Upgrade**: Upgraded to Tailwind CSS v4.1.18 with improved performance and modern CSS features
 - **UI Design Fixes**: Fixed visual inconsistencies in success messages and breadcrumb navigation
-
-### 🔧 Technical Improvements
-
 - **Build System Updates**: Updated PostCSS configuration for Tailwind v4 compatibility
 - **Code Quality**: Enhanced linting configuration for modern CSS standards
-- **Dependency Updates**: Updated development dependencies for better compatibility
-
-### 🐛 Bug Fixes
-
-- **GeneratorBase**: Added proper border styling to success message containers
-- **GeneratorPage**: Removed unwanted list styling from breadcrumb navigation
-- **Composer Dependencies**: Updated PHP utility libraries for improved performance
 
 ## [2.0.1] - 2025-11-13
 
@@ -168,7 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 📊 Version Information
 
-- **Current Version**: 2.0.2
+- **Current Version**: 2.0.3
 - **PHP Requirement**: 7.4+
 - **WordPress Requirement**: 5.0+
 - **EasyCommerce Requirement**: Latest version

@@ -3,7 +3,7 @@
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-8892BF.svg)](https://php.net/)
-[![Version](https://img.shields.io/badge/Version-2.0.2-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-2.0.3-green.svg)]()
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.1.18-blue.svg)](https://tailwindcss.com/)
 
 🚀 **Generate realistic test data for your EasyCommerce store in seconds!** Create products, customers, orders, coupons, and more with our modern React interface powered by Tailwind CSS v4. Features smart defaults, real-time validation, WordPress admin integration, and a "Get Started" quick access link. Perfect for development, testing, and creating stunning demos.
@@ -49,10 +49,17 @@ npm run build
 - 🔗 **Quick Access** - "Get Started" link directly from the plugins page
 - 🔧 **Developer Friendly** - Extensive customization options, TypeScript support, and comprehensive API
 
+## 🚀 What's New in v2.0.3
+
+- **Product Review Generator**: New generator for creating realistic product reviews with ratings
+- **Review Rating System**: Weighted rating distribution favoring higher ratings (realistic patterns)
+- **WordPress Comments Integration**: Leverages WordPress comment system for review storage
+- **Verified Purchase Tracking**: Reviews can be marked as verified purchases
+
 ## 🚀 What's New in v2.0.2
 
 - **Tailwind CSS v4**: Upgraded to the latest version with improved performance and modern CSS features
-- **Enhanced UI**: Fixed visual inconsistencies in success messages and breadcrumb navigation
+- **Enhanced UI**: Fixed visual inconsistencies in success messages and navigation elements
 - **Quick Access**: Added "Get Started" link directly from the WordPress plugins page
 - **Build Optimization**: Updated PostCSS configuration for better development workflow
 - **Code Quality**: Enhanced linting and modern development practices
@@ -143,6 +150,6 @@ GPL v2 or later - see [LICENSE](LICENSE) file.
 
 ---
 
-**EasyCommerce FakerPress v2.0.2** | December 15, 2025
+**EasyCommerce FakerPress v2.0.3** | December 15, 2025
 
 _Modern test data generation for EasyCommerce stores_
