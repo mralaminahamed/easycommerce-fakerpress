@@ -150,6 +150,6 @@ GPL v2 or later - see [LICENSE](LICENSE) file.
 
 ---
 
-**EasyCommerce FakerPress v2.0.3** | December 15, 2025
+**EasyCommerce FakerPress v2.0.3** | January 15, 2026
 
 _Modern test data generation for EasyCommerce stores_

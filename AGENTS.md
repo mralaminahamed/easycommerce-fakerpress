@@ -71,7 +71,7 @@
 - **Parameter Validation**: REST endpoints validate parameters using JSON Schema configurations
 - **Error Handling**: Consistent WP_Error usage with proper error codes and user-friendly messages
 
-### Recent Improvements (v2.0.3 - December 15, 2025)
+### Recent Improvements (v2.0.3 - January 15, 2026)
 
 - **Product Review Generator**: Added new generator for creating realistic product reviews with ratings
 - **Review Rating System**: Implemented weighted rating distribution favoring higher ratings (realistic patterns)
@@ -113,5 +113,4 @@
 - **API Endpoint Naming**: REST bases should be plural (e.g., `orders`, `products`, `customers`)
 - **Result Formatting**: Return consistent result arrays with `id`, `message`, and relevant metadata
 - **Error Handling**: Use WP_Error with descriptive error codes and user-friendly messages
-- **Model Validation**: Regularly validate generators against updated EasyCommerce models</content>
-  <parameter name="filePath">/Users/alamin/Sites/woocommerce/wp-content/plugins/easycommerce-fakerpress/AGENTS.md
+- **Model Validation**: Regularly validate generators against updated EasyCommerce models
