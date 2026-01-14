@@ -25,18 +25,29 @@ use EasyCommerceFakerPress\Generators\Product_Review as ProductReviewGenerator;
 class Product_Review extends Controller {
 
 	/**
-	 * Get the resource name for this controller
+	 * Get resource type name
 	 *
 	 * @since 2.0.3
 	 *
-	 * @return string Resource name.
+	 * @return string Resource type.
 	 */
-	protected function get_resource_name(): string {
-		return 'product-reviews';
+	protected function get_resource_type(): string {
+		return 'product-review';
 	}
 
 	/**
-	 * Get the REST base for this controller
+	 * Get resource type label for product reviews
+	 *
+	 * @since 2.0.3
+	 *
+	 * @return string The translated label for product review resource type.
+	 */
+	protected function get_resource_type_label(): string {
+		return __( 'Product Review', 'easycommerce-fakerpress' );
+	}
+
+	/**
+	 * Get REST base for the endpoint
 	 *
 	 * @since 2.0.3
 	 *
@@ -51,50 +62,66 @@ class Product_Review extends Controller {
 	 *
 	 * @since 2.0.3
 	 *
-	 * @return \EasyCommerceFakerPress\Abstracts\Generator Generator instance.
+	 * @return ProductReviewGenerator Generator instance.
 	 */
-	protected function get_generator_instance(): \EasyCommerceFakerPress\Abstracts\Generator {
+	protected function get_generator_instance(): ProductReviewGenerator {
 		return new ProductReviewGenerator();
 	}
 
 	/**
-	 * Get resource type
+	 * Get resource-specific generation parameters
 	 *
 	 * @since 2.0.3
 	 *
-	 * @return string Resource type.
+	 * @return array Resource-specific parameters.
 	 */
-	protected function get_resource_type(): string {
-		return 'product-review';
-	}
-
-	/**
-	 * Get resource type label
-	 *
-	 * @since 2.0.3
-	 *
-	 * @return string Resource type label.
-	 */
-	protected function get_resource_type_label(): string {
-		return __( 'Product Review', 'easycommerce-fakerpress' );
-	}
-
-	/**
-	 * Get parameter configuration for product review generation
-	 *
-	 * @since 2.0.3
-	 *
-	 * @return array Parameter configuration.
-	 */
-	protected function get_parameter_config(): array {
+	protected function get_resource_specific_params(): array {
 		return array(
 			'count' => array(
-				'description' => __( 'Number of product reviews to generate', 'easycommerce-fakerpress' ),
+				'description' => __( 'Number of product reviews to generate.', 'easycommerce-fakerpress' ),
 				'type'        => 'integer',
 				'minimum'     => 1,
 				'maximum'     => 1000,
 				'default'     => 10,
 				'required'    => false,
+			),
+		);
+	}
+
+	/**
+	 * Get resource-specific schema properties
+	 *
+	 * @since 2.0.3
+	 *
+	 * @return array Resource-specific properties.
+	 */
+	protected function get_resource_specific_properties(): array {
+		return array(
+			'reviews' => array(
+				'description' => __( 'Generated product reviews data.', 'easycommerce-fakerpress' ),
+				'type'        => 'array',
+				'context'     => array( 'view' ),
+				'readonly'    => true,
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => array(
+						'id'          => array(
+							'type' => 'integer',
+						),
+						'product_id'  => array(
+							'type' => 'integer',
+						),
+						'customer_id' => array(
+							'type' => 'integer',
+						),
+						'rating'      => array(
+							'type' => 'integer',
+						),
+						'content'     => array(
+							'type' => 'string',
+						),
+					),
+				),
 			),
 		);
 	}
