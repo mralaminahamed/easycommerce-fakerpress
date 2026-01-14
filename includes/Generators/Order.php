@@ -207,6 +207,11 @@ class Order extends Generator {
 			return new WP_Error( 'order_creation_failed', __( 'Failed to create order using EasyCommerce model.', 'easycommerce-fakerpress' ) );
 		}
 
+		// Create order notes if they exist.
+		if ( ! empty( $complete_meta['notes'] ) ) {
+			$this->create_order_notes( $order->get_id(), $complete_meta['notes'] );
+		}
+
 		// Update customer statistics.
 		$this->update_customer_stats( $customer['id'], $total );
 
@@ -1062,6 +1067,34 @@ class Order extends Generator {
 		$current_points = (int) get_user_meta( $customer_id, 'loyalty_points', true );
 		$points_earned  = floor( $order_total );
 		update_user_meta( $customer_id, 'loyalty_points', $current_points + $points_earned );
+	}
+
+	/**
+	 * Create order notes for the order.
+	 *
+	 * @since 2.0.4
+	 *
+	 * @param int   $order_id Order ID.
+	 * @param array $notes    Array of note data.
+	 *
+	 * @return void
+	 */
+	private function create_order_notes( int $order_id, array $notes ): void {
+		if ( ! class_exists( 'EasyCommerce\\Models\\Order_Notes' ) ) {
+			return;
+		}
+
+		$order_notes_model = new \EasyCommerce\Models\Order_Notes();
+
+		foreach ( $notes as $note ) {
+			if ( is_array( $note ) && isset( $note['note'] ) ) {
+				$order_notes_model->add(
+					$order_id,
+					isset( $note['type'] ) ? $note['type'] : 'customer',
+					$note['note']
+				);
+			}
+		}
 	}
 
 	/**
