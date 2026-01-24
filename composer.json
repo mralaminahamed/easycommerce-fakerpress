@@ -1,6 +1,6 @@
 {
     "name": "mralaminahamed/easycommerce-fakerpress",
-    "description": "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
+    "description": "Comprehensive EasyCommerce test data generator with 11 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
     "license": "GPL-2.0-or-later",
     "type": "wordpress-plugin",
     "authors": [
