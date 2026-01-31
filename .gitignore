@@ -66,6 +66,9 @@ Thumbs.db
 # Claude AI files
 /.claude/
 
+# Session notes
+/.remember/
+
 # Superpowers planning docs
 /docs/superpowers/
 
