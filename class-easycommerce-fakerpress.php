@@ -218,7 +218,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_script(
 			'easycommerce-fakerpress-admin',
-			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/admin.js',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/index.js',
 			$deps,
 			$version,
 			true
@@ -226,7 +226,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_style(
 			'easycommerce-fakerpress-admin',
-			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/admin.css',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/index.css',
 			array(),
 			$version
 		);
