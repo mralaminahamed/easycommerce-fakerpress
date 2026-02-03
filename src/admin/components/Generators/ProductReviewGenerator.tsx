@@ -42,18 +42,7 @@ export default function ProductReviewGenerator() {
 		}
 	};
 
-	const parameterConfig = {
-		count: {
-			description: __(
-				'Number of product reviews to generate',
-				'easycommerce-fakerpress',
-			),
-			type: 'number',
-			min: 1,
-			max: 100,
-			default: 10,
-		},
-	};
+	const parameterConfig = {};
 
 	return (
 		<GeneratorBase
