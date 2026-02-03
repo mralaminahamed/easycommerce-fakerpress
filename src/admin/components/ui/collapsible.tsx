@@ -5,7 +5,21 @@ import { cn } from '@/admin/lib/utils';
 
 const Collapsible = CollapsiblePrimitive.Root;
 
-const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
+const CollapsibleTrigger = React.forwardRef<
+  React.ElementRef<typeof CollapsiblePrimitive.CollapsibleTrigger>,
+  React.ComponentPropsWithoutRef<
+    typeof CollapsiblePrimitive.CollapsibleTrigger
+  > & { 'aria-label'?: string }
+>( ( { className, 'aria-label': ariaLabel, ...props }, ref ) => (
+	<CollapsiblePrimitive.CollapsibleTrigger
+		ref={ ref }
+		className={ cn( 'flex', className ) }
+		aria-label={ ariaLabel || 'Toggle collapsible section' }
+		{ ...props }
+	/>
+) );
+CollapsibleTrigger.displayName =
+  CollapsiblePrimitive.CollapsibleTrigger.displayName;
 
 const CollapsibleContent = React.forwardRef<
   React.ElementRef<typeof CollapsiblePrimitive.CollapsibleContent>,
