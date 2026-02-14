@@ -72,7 +72,7 @@ class CouponRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 2 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -90,11 +90,11 @@ class CouponRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/coupons/generate' );
 		$request->set_param( 'count', 1 );
-		$request->set_param( 'discount_types', ['percentage'] );
-		$request->set_param( 'usage_limits', ['max_uses' => 100] );
+		$request->set_param( 'discount_types', array( 'percentage' ) );
+		$request->set_param( 'usage_limits', array( 'max_uses' => 100 ) );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );

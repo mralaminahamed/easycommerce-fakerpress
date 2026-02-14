@@ -16,7 +16,7 @@ use WP_Error;
 class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 *\* @var Customer
+	 * \* @var Customer
 	 */
 	private $controller;
 
@@ -44,7 +44,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->controller = new Customer();
 		$this->controller->register_routes();
 
-		$this->admin_user_id = $this->create_admin_user();
+		$this->admin_user_id    = $this->create_admin_user();
 		$this->customer_user_id = $this->create_customer_user();
 	}
 
@@ -67,7 +67,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test route registration
 	 */
 	public function test_route_registration(): void {
-		$routes = $this->server->get_routes();
+		$routes    = $this->server->get_routes();
 		$namespace = '/' . $this->namespace;
 
 		$this->assertArrayHasKey( $namespace . '/customers/generate', $routes );
@@ -87,7 +87,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 5 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -107,7 +107,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 401, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
@@ -123,7 +123,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
@@ -139,7 +139,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 1 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -176,7 +176,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'loyalty_tier', 'gold' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -200,13 +200,16 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/customers/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'demographics', array(
-			'age_group'    => '25-34',
-			'income_level' => 'high'
-		) );
+		$request->set_param(
+			'demographics',
+			array(
+				'age_group'    => '25-34',
+				'income_level' => 'high',
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -221,14 +224,17 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/customers/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'address_options', array(
-			'include_billing'  => true,
-			'include_shipping' => true,
-			'different_shipping' => true
-		) );
+		$request->set_param(
+			'address_options',
+			array(
+				'include_billing'    => true,
+				'include_shipping'   => true,
+				'different_shipping' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -261,14 +267,17 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/customers/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'preferences', array(
-			'marketing_emails' => true,
-			'newsletter' => false,
-			'preferred_currency' => 'USD'
-		) );
+		$request->set_param(
+			'preferences',
+			array(
+				'marketing_emails'   => true,
+				'newsletter'         => false,
+				'preferred_currency' => 'USD',
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -283,14 +292,17 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/customers/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'order_history', array(
-			'generate_orders' => true,
-			'min_orders' => 1,
-			'max_orders' => 5
-		) );
+		$request->set_param(
+			'order_history',
+			array(
+				'generate_orders' => true,
+				'min_orders'      => 1,
+				'max_orders'      => 5,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -308,7 +320,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'loyalty_tier', 'invalid_tier' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		// Should return validation error or ignore invalid tier
 		$this->assertTrue(
@@ -329,17 +341,23 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'seed', 98765 );
 		$request->set_param( 'status', 'active' );
 		$request->set_param( 'loyalty_tier', 'silver' );
-		$request->set_param( 'demographics', array(
-			'age_group' => '35-44',
-			'income_level' => 'medium'
-		) );
-		$request->set_param( 'address_options', array(
-			'include_billing' => true,
-			'include_shipping' => true
-		) );
+		$request->set_param(
+			'demographics',
+			array(
+				'age_group'    => '35-44',
+				'income_level' => 'medium',
+			)
+		);
+		$request->set_param(
+			'address_options',
+			array(
+				'include_billing'  => true,
+				'include_shipping' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -377,7 +395,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 5 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -426,7 +444,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 10 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -457,20 +475,23 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/customers/generate' );
 		$request->set_param( 'count', 3 );
-		$request->set_param( 'address_options', array(
-			'include_billing' => true,
-			'include_shipping' => true
-		) );
+		$request->set_param(
+			'address_options',
+			array(
+				'include_billing'  => true,
+				'include_shipping' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
 		if ( isset( $data['customers'] ) ) {
 			foreach ( $data['customers'] as $customer ) {
 				if ( isset( $customer['billing_address'] ) ) {
-					$billing = $customer['billing_address'];
+					$billing         = $customer['billing_address'];
 					$required_fields = array( 'street', 'city', 'country' );
 
 					foreach ( $required_fields as $field ) {
@@ -489,7 +510,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 				}
 
 				if ( isset( $customer['shipping_address'] ) ) {
-					$shipping = $customer['shipping_address'];
+					$shipping        = $customer['shipping_address'];
 					$required_fields = array( 'street', 'city', 'country' );
 
 					foreach ( $required_fields as $field ) {
@@ -512,7 +533,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 2 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -549,7 +570,7 @@ class CustomerRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 100 ); // Maximum allowed
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );

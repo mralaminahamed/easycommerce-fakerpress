@@ -79,9 +79,9 @@ trait Wp_Rest_Request_Trait {
 	/**
 	 * Assert REST response has expected status code
 	 *
-	 * @param int                $expected_status Expected status code
-	 * @param \WP_REST_Response  $response REST response
-	 * @param string             $message Optional assertion message
+	 * @param int               $expected_status Expected status code
+	 * @param \WP_REST_Response $response REST response
+	 * @param string            $message Optional assertion message
 	 */
 	protected function assertResponseStatus( int $expected_status, $response, string $message = '' ): void {
 		$actual_status = $response->get_status();

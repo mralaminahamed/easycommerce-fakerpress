@@ -52,7 +52,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_get_resource_type(): void {
 		$reflection = new \ReflectionClass( $this->generator );
-		$method = $reflection->getMethod( 'get_resource_type' );
+		$method     = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
 
 		$this->assertEquals( 'product_variation', $method->invoke( $this->generator ) );
@@ -62,7 +62,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with valid count
 	 */
 	public function test_generate_with_valid_count(): void {
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		$this->assertIsArray( $result );
@@ -184,7 +184,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 			// Common attribute types that should be present
 			$possible_attributes = array( 'size', 'color', 'storage', 'band', 'format', 'language' );
-			$variation_keys = array_keys( $variation['attributes'] );
+			$variation_keys      = array_keys( $variation['attributes'] );
 
 			// At least one common attribute should be present
 			$intersection = array_intersect( $possible_attributes, $variation_keys );
@@ -206,7 +206,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		// Name should contain attribute values separated by ' - '
 		$attribute_values = array_values( $variation['attributes'] );
-		$expected_name = implode( ' - ', $attribute_values );
+		$expected_name    = implode( ' - ', $attribute_values );
 
 		$this->assertEquals( $expected_name, $variation['name'] );
 	}
@@ -236,7 +236,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 5 );
 
 		$this->assertIsArray( $result );
-		$skus = array_column( $result['product_variations'], 'sku' );
+		$skus        = array_column( $result['product_variations'], 'sku' );
 		$unique_skus = array_unique( $skus );
 
 		// All variation SKUs should be unique
@@ -334,8 +334,8 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_variation_generation_performance(): void {
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -351,8 +351,8 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_memory_usage_during_generation(): void {
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 15 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 15 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -419,7 +419,7 @@ class ProductVariationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate_multiple method
 	 */
 	public function test_generate_multiple_method(): void {
-		$count = 5;
+		$count  = 5;
 		$result = $this->generator->generate_multiple( $count );
 
 		$this->assertIsArray( $result );

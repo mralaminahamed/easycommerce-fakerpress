@@ -1,4 +1,9 @@
 <?php
+/**
+ * Base test case for all EasyCommerce FakerPress tests.
+ *
+ * @package EasyCommerceFakerPress\Tests
+ */
 
 namespace EasyCommerceFakerPress\Tests;
 
@@ -85,8 +90,8 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Create a WP_REST_Request object
 	 *
-	 * @param string $method HTTP method
-	 * @param string $route REST route
+	 * @param string $method HTTP method.
+	 * @param string $route REST route.
 	 * @return WP_REST_Request
 	 */
 	protected function get_wp_rest_request( string $method, string $route ): WP_REST_Request {
@@ -96,7 +101,7 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Get the full route with namespace
 	 *
-	 * @param string $route The route path
+	 * @param string $route The route path.
 	 * @return string Full route
 	 */
 	protected function get_route( string $route ): string {
@@ -132,7 +137,7 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Assert that an action hook was fired
 	 *
-	 * @param string $action_name Action name
+	 * @param string $action_name Action name.
 	 */
 	protected function assertActionFired( string $action_name ): void {
 		$this->assertTrue( did_action( $action_name ) > 0, "Action '{$action_name}' was not fired." );
@@ -141,7 +146,7 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Assert that a filter hook was applied
 	 *
-	 * @param string $filter_name Filter name
+	 * @param string $filter_name Filter name.
 	 */
 	protected function assertFilterApplied( string $filter_name ): void {
 		$this->assertTrue( has_filter( $filter_name ) !== false, "Filter '{$filter_name}' was not applied." );
@@ -150,12 +155,12 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Spy on an action hook
 	 *
-	 * @param string $action_name Action name
+	 * @param string $action_name Action name.
 	 * @return callable Spy function
 	 */
 	protected function spy_on_action( string $action_name ): callable {
 		$spy = function () use ( $action_name ) {
-			// Action spy - just track that it was called
+			// Action spy - just track that it was called.
 		};
 
 		add_action( $action_name, $spy );
@@ -165,12 +170,12 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Spy on a filter hook
 	 *
-	 * @param string $filter_name Filter name
+	 * @param string $filter_name Filter name.
 	 * @return callable Spy function
 	 */
 	protected function spy_on_filter( string $filter_name ): callable {
 		$spy = function ( $value ) {
-			return $value; // Filter spy - pass through value
+			return $value; // Filter spy - pass through value.
 		};
 
 		add_filter( $filter_name, $spy );
@@ -181,17 +186,35 @@ abstract class EasyCommerceFakerPressUnitTestCase extends WP_UnitTestCase {
 	 * Clean up generated test data
 	 */
 	protected function cleanup_test_data(): void {
-		// Clean up any test data created during tests
+		// Clean up any test data created during tests.
 		global $wpdb;
 
-		// Delete test posts
-		$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_title LIKE '%test_%'" );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
-		// Delete test users (except admin)
-		$wpdb->query( "DELETE FROM {$wpdb->users} WHERE user_login LIKE '%test_%'" );
+		// Delete test posts.
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->posts} WHERE post_title LIKE %s", '%test_%' ) );
 
-		// Clean up meta tables
-		$wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE post_id NOT IN (SELECT ID FROM {$wpdb->posts})" );
-		$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE user_id NOT IN (SELECT ID FROM {$wpdb->users})" );
+		// Delete test users (except admin).
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->users} WHERE user_login LIKE %s", '%test_%' ) );
+
+		// Clean up meta tables.
+		$post_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts}" );
+		$user_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->users}" );
+
+		if ( ! empty( $post_ids ) ) {
+			$post_ids_placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE post_id NOT IN ($post_ids_placeholders)", $post_ids ) );
+		} else {
+			$wpdb->query( "DELETE FROM {$wpdb->postmeta}" );
+		}
+
+		if ( ! empty( $user_ids ) ) {
+			$user_ids_placeholders = implode( ',', array_fill( 0, count( $user_ids ), '%d' ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->usermeta} WHERE user_id NOT IN ($user_ids_placeholders)", $user_ids ) );
+		} else {
+			$wpdb->query( "DELETE FROM {$wpdb->usermeta}" );
+		}
+
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	}
 }

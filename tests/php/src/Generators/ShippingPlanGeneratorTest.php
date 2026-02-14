@@ -53,7 +53,7 @@ class ShippingPlanGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			$this->markTestSkipped( 'Shipping_Plan_Generator class not found' );
 		}
 
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		// Check result structure
@@ -154,7 +154,7 @@ class ShippingPlanGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			foreach ( $result['shipping_plans'] as $shipping_plan ) {
 				// Shipping plans should have valid methods
 				$this->assertArrayHasKey( 'method', $shipping_plan );
-				$this->assertContains( $shipping_plan['method'], ['flat_rate', 'weight_based', 'distance_based'] );
+				$this->assertContains( $shipping_plan['method'], array( 'flat_rate', 'weight_based', 'distance_based' ) );
 			}
 		}
 	}
@@ -168,8 +168,8 @@ class ShippingPlanGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -190,8 +190,8 @@ class ShippingPlanGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 15 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 15 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -214,7 +214,7 @@ class ShippingPlanGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 5 );
 
 		if ( $result['success'] && isset( $result['shipping_plans'] ) ) {
-			$names = array_column( $result['shipping_plans'], 'name' );
+			$names        = array_column( $result['shipping_plans'], 'name' );
 			$unique_names = array_unique( $names );
 
 			// All shipping plan names should be unique

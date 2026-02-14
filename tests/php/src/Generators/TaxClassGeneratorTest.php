@@ -53,7 +53,7 @@ class TaxClassGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			$this->markTestSkipped( 'Tax_Class_Generator class not found' );
 		}
 
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		// Check result structure
@@ -154,7 +154,7 @@ class TaxClassGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			foreach ( $result['tax_classes'] as $tax_class ) {
 				// Tax classes should have valid types
 				$this->assertArrayHasKey( 'type', $tax_class );
-				$this->assertContains( $tax_class['type'], ['standard', 'reduced', 'zero', 'exempt'] );
+				$this->assertContains( $tax_class['type'], array( 'standard', 'reduced', 'zero', 'exempt' ) );
 			}
 		}
 	}
@@ -168,8 +168,8 @@ class TaxClassGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -190,8 +190,8 @@ class TaxClassGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 15 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 15 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -214,7 +214,7 @@ class TaxClassGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 5 );
 
 		if ( $result['success'] && isset( $result['tax_classes'] ) ) {
-			$names = array_column( $result['tax_classes'], 'name' );
+			$names        = array_column( $result['tax_classes'], 'name' );
 			$unique_names = array_unique( $names );
 
 			// All tax class names should be unique

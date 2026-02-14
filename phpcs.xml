@@ -35,4 +35,33 @@
 
     <!-- Show sniff codes in all reports -->
     <arg value="s"/>
+
+    <!-- WordPress Internationalization -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="easycommerce-fakerpress"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- WordPress Naming Conventions -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="easycommerce_fakerpress"/>
+                <element value="EASYCOMMERCE_FAKERPRESS"/>
+                <element value="EasyCommerceFakerPress"/>
+                <element value="EasyCommerce_FakerPress"/>
+            </property>
+        </properties>
+        <exclude-pattern>*/templates/*</exclude-pattern> <!-- Exclude template files from global prefix check -->
+    </rule>
+
+    <rule ref="Squiz.Commenting.InlineComment.InvalidEndChar">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.PHP.CommentedOutCode.Found">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
 </ruleset>

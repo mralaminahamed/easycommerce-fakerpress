@@ -53,7 +53,7 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			$this->markTestSkipped( 'Product_Generator class not found' );
 		}
 
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		// Check result structure
@@ -179,8 +179,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -201,8 +201,8 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 20 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 20 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -225,7 +225,7 @@ class ProductGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 5 );
 
 		if ( $result['success'] && isset( $result['products'] ) ) {
-			$titles = array_column( $result['products'], 'title' );
+			$titles        = array_column( $result['products'], 'title' );
 			$unique_titles = array_unique( $titles );
 
 			// All product titles should be unique

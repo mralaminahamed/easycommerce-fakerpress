@@ -64,7 +64,7 @@ class ProductVariationRESTControllerTest extends EasyCommerceFakerPressUnitTestC
 		$request->set_param( 'count', 2 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );

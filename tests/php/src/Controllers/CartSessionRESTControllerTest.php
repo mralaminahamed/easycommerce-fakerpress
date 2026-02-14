@@ -44,7 +44,7 @@ class CartSessionRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->controller = new Cart_Session();
 		$this->controller->register_routes();
 
-		$this->admin_user_id = $this->create_admin_user();
+		$this->admin_user_id    = $this->create_admin_user();
 		$this->customer_user_id = $this->create_customer_user();
 	}
 
@@ -81,7 +81,7 @@ class CartSessionRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 2 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -143,7 +143,7 @@ class CartSessionRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'abandonment_rate', 25 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -176,7 +176,7 @@ class CartSessionRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 1 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
