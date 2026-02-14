@@ -2,9 +2,9 @@
 
 namespace EasyCommerceFakerPress\Tests\Generators;
 
-use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Order;
 use EasyCommerce\Models\Order;
+use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
+use EasyCommerceFakerPress\Generators\Order as OrderGenerator;
 
 /**
  * Test class for Order Generator
@@ -14,7 +14,7 @@ use EasyCommerce\Models\Order;
 class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Order
+	 * @var OrderGenerator
 	 */
 	private $generator;
 
@@ -25,11 +25,11 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		parent::setUp();
 
 		// Skip if EasyCommerce plugin is not active
-		if ( ! class_exists( 'EasyCommerce\Models\Order' ) ) {
+		if ( ! class_exists( Order::class ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
 
-		$this->generator = new Order();
+		$this->generator = new OrderGenerator();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Order::class, $this->generator );
+		$this->assertInstanceOf( OrderGenerator::class, $this->generator );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_get_resource_type(): void {
 		$reflection = new \ReflectionClass( $this->generator );
-		$method = $reflection->getMethod( 'get_resource_type' );
+		$method     = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
 
 		$this->assertEquals( 'order', $method->invoke( $this->generator ) );
@@ -62,7 +62,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with valid count
 	 */
 	public function test_generate_with_valid_count(): void {
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		$this->assertIsArray( $result );
@@ -264,7 +264,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$result = $this->generator->generate( 5 );
 
 		$this->assertIsArray( $result );
-		$order_numbers = array_column( $result['orders'], 'order_number' );
+		$order_numbers  = array_column( $result['orders'], 'order_number' );
 		$unique_numbers = array_unique( $order_numbers );
 
 		// All order numbers should be unique
@@ -291,8 +291,8 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_order_generation_performance(): void {
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -308,8 +308,8 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_memory_usage_during_generation(): void {
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 15 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 15 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -375,7 +375,7 @@ class OrderGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate_multiple method
 	 */
 	public function test_generate_multiple_method(): void {
-		$count = 5;
+		$count  = 5;
 		$result = $this->generator->generate_multiple( $count );
 
 		$this->assertIsArray( $result );

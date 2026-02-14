@@ -2,9 +2,11 @@
 
 namespace EasyCommerceFakerPress\Tests\Generators;
 
-use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
-use EasyCommerceFakerPress\Generators\Coupon;
 use EasyCommerce\Models\Coupon;
+use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
+use EasyCommerceFakerPress\Generators\Coupon as CouponGenerator;
+use ReflectionClass;
+use WP_Error;
 
 /**
  * Test class for Coupon Generator
@@ -14,7 +16,7 @@ use EasyCommerce\Models\Coupon;
 class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Coupon
+	 * @var CouponGenerator
 	 */
 	private $generator;
 
@@ -24,12 +26,12 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		// Skip if EasyCommerce plugin is not active
-		if ( ! class_exists( 'EasyCommerce\Models\Coupon' ) ) {
+		// Skip if EasyCommerce plugin is not active.
+		if ( ! class_exists( Coupon::class ) ) {
 			$this->markTestSkipped( 'EasyCommerce plugin not active' );
 		}
 
-		$this->generator = new Coupon();
+		$this->generator = new CouponGenerator();
 	}
 
 	/**
@@ -44,15 +46,15 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		$this->assertInstanceOf( Coupon::class, $this->generator );
+		$this->assertInstanceOf( CouponGenerator::class, $this->generator );
 	}
 
 	/**
 	 * Test get_resource_type method
 	 */
 	public function test_get_resource_type(): void {
-		$reflection = new \ReflectionClass( $this->generator );
-		$method = $reflection->getMethod( 'get_resource_type' );
+		$reflection = new ReflectionClass( $this->generator );
+		$method     = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
 
 		$this->assertEquals( 'coupon', $method->invoke( $this->generator ) );
@@ -62,7 +64,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with valid count
 	 */
 	public function test_generate_with_valid_count(): void {
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		$this->assertIsArray( $result );
@@ -78,7 +80,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_generate_with_zero_count(): void {
 		$result = $this->generator->generate( 0 );
 
-		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'invalid_count', $result->get_error_code() );
 	}
 
@@ -88,7 +90,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_generate_with_negative_count(): void {
 		$result = $this->generator->generate( -1 );
 
-		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'invalid_count', $result->get_error_code() );
 	}
 
@@ -98,7 +100,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function test_generate_with_large_count(): void {
 		$result = $this->generator->generate( 150 );
 
-		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'count_too_large', $result->get_error_code() );
 	}
 
@@ -114,7 +116,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$coupon = $result['coupons'][0];
 
-		// Check required coupon fields
+		// Check required coupon fields.
 		$this->assertArrayHasKey( 'id', $coupon );
 		$this->assertArrayHasKey( 'code', $coupon );
 		$this->assertArrayHasKey( 'type', $coupon );
@@ -127,7 +129,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->assertArrayHasKey( 'minimum_amount', $coupon );
 		$this->assertArrayHasKey( 'maximum_amount', $coupon );
 
-		// Validate data types
+		// Validate data types.
 		$this->assertIsInt( $coupon['id'] );
 		$this->assertIsString( $coupon['code'] );
 		$this->assertIsString( $coupon['type'] );
@@ -136,7 +138,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->assertIsInt( $coupon['usage_limit'] );
 		$this->assertIsInt( $coupon['usage_count'] );
 
-		// Validate coupon code format
+		// Validate coupon code format.
 		$this->assertMatchesRegularExpression( '/^[A-Z0-9]+$/', $coupon['code'] );
 		$this->assertGreaterThanOrEqual( 4, strlen( $coupon['code'] ) );
 	}
@@ -178,15 +180,15 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->assertIsArray( $result );
 
 		foreach ( $result['coupons'] as $coupon ) {
-			if ( $coupon['type'] === 'percentage' ) {
-				// Percentage discounts should be between 1-100
+			if ( 'percentage' === $coupon['type'] ) {
+				// Percentage discounts should be between 1-100.
 				$this->assertGreaterThan( 0, $coupon['amount'] );
 				$this->assertLessThanOrEqual( 100, $coupon['amount'] );
-			} elseif ( $coupon['type'] === 'fixed_amount' ) {
-				// Fixed amount discounts should be positive
+			} elseif ( 'fixed_amount' === $coupon['type'] ) {
+				// Fixed amount discounts should be positive.
 				$this->assertGreaterThan( 0, $coupon['amount'] );
-			} elseif ( $coupon['type'] === 'free_shipping' ) {
-				// Free shipping coupons typically have 0 amount
+			} elseif ( 'free_shipping' === $coupon['type'] ) {
+				// Free shipping coupons typically have 0 amount.
 				$this->assertGreaterThanOrEqual( 0, $coupon['amount'] );
 			}
 		}
@@ -202,7 +204,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$coupon_codes = array_column( $result['coupons'], 'code' );
 		$unique_codes = array_unique( $coupon_codes );
 
-		// All coupon codes should be unique
+		// All coupon codes should be unique.
 		$this->assertCount( count( $coupon_codes ), $unique_codes, 'Generated coupons should have unique codes' );
 	}
 
@@ -230,7 +232,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->assertIsArray( $result );
 		$coupon = $result['coupons'][0];
 
-		// Validate date formats
+		// Validate date formats.
 		if ( ! is_null( $coupon['start_date'] ) ) {
 			$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $coupon['start_date'] );
 		}
@@ -239,10 +241,10 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $coupon['end_date'] );
 		}
 
-		// End date should be after start date if both exist
+		// End date should be after start date if both exist.
 		if ( ! is_null( $coupon['start_date'] ) && ! is_null( $coupon['end_date'] ) ) {
 			$start_timestamp = strtotime( $coupon['start_date'] );
-			$end_timestamp = strtotime( $coupon['end_date'] );
+			$end_timestamp   = strtotime( $coupon['end_date'] );
 			$this->assertGreaterThan( $start_timestamp, $end_timestamp );
 		}
 	}
@@ -289,7 +291,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 				$this->assertGreaterThan( 0, $coupon['maximum_amount'] );
 			}
 
-			// Maximum should be greater than minimum if both exist
+			// Maximum should be greater than minimum if both exist.
 			if ( ! is_null( $coupon['minimum_amount'] ) && ! is_null( $coupon['maximum_amount'] ) ) {
 				$this->assertGreaterThan( $coupon['minimum_amount'], $coupon['maximum_amount'] );
 			}
@@ -301,12 +303,12 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_coupon_generation_performance(): void {
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
-		// Generation should complete within reasonable time (3 seconds)
+		// Generation should complete within reasonable time (3 seconds).
 		$this->assertLessThan( 3, $execution_time, 'Coupon generation took too long' );
 
 		$this->assertIsArray( $result );
@@ -318,12 +320,12 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_memory_usage_during_generation(): void {
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 20 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 20 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
-		// Memory usage should be reasonable (less than 3MB for 20 coupons)
+		// Memory usage should be reasonable (less than 3MB for 20 coupons).
 		$this->assertLessThan( 3 * 1024 * 1024, $memory_used, 'Memory usage too high during generation' );
 
 		$this->assertIsArray( $result );
@@ -355,13 +357,13 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test BOGO (Buy One Get One) coupon specific fields
 	 */
 	public function test_bogo_coupon_fields(): void {
-		// Generate enough coupons to likely get a BOGO type
+		// Generate enough coupons to likely get a BOGO type.
 		$result = $this->generator->generate( 20 );
 
 		$this->assertIsArray( $result );
 
 		foreach ( $result['coupons'] as $coupon ) {
-			if ( $coupon['type'] === 'bogo' ) {
+			if ( 'bogo' === $coupon['type'] ) {
 				$this->assertArrayHasKey( 'bogo_settings', $coupon );
 				$bogo = $coupon['bogo_settings'];
 
@@ -386,13 +388,13 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test tiered coupon specific fields
 	 */
 	public function test_tiered_coupon_fields(): void {
-		// Generate enough coupons to likely get a tiered type
+		// Generate enough coupons to likely get a tiered type.
 		$result = $this->generator->generate( 20 );
 
 		$this->assertIsArray( $result );
 
 		foreach ( $result['coupons'] as $coupon ) {
-			if ( $coupon['type'] === 'tiered' ) {
+			if ( 'tiered' === $coupon['type'] ) {
 				$this->assertArrayHasKey( 'tier_settings', $coupon );
 				$tiers = $coupon['tier_settings'];
 
@@ -422,7 +424,7 @@ class CouponGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate_multiple method
 	 */
 	public function test_generate_multiple_method(): void {
-		$count = 5;
+		$count  = 5;
 		$result = $this->generator->generate_multiple( $count );
 
 		$this->assertIsArray( $result );

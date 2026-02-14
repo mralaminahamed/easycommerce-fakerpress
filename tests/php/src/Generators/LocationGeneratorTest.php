@@ -2,7 +2,8 @@
 
 namespace EasyCommerceFakerPress\Tests\Generators;
 
-use EasyCommerceFakerPress\Generators\Location;
+use EasyCommerce\Models\Location;
+use EasyCommerceFakerPress\Generators\Location as LocationGenerator;
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
 
 /**
@@ -13,7 +14,7 @@ use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
 class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 * @var Location
+	 * @var LocationGenerator
 	 */
 	private $generator;
 
@@ -23,7 +24,12 @@ class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->generator = new Location();
+		// Skip if EasyCommerce plugin is not active.
+		if ( ! class_exists( Location::class ) ) {
+			$this->markTestSkipped( 'EasyCommerce plugin not active' );
+		}
+
+		$this->generator = new LocationGenerator();
 	}
 
 	/**
@@ -38,11 +44,7 @@ class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generator instantiation
 	 */
 	public function test_generator_instantiation(): void {
-		if ( ! class_exists( '\EasyCommerceFakerPress\Generators\Location' ) ) {
-			$this->markTestSkipped( 'Location_Generator class not found' );
-		}
-
-		$this->assertInstanceOf( Location::class, $this->generator );
+		$this->assertInstanceOf( LocationGenerator::class, $this->generator );
 	}
 
 	/**
@@ -53,7 +55,7 @@ class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 			$this->markTestSkipped( 'Location_Generator class not found' );
 		}
 
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		// Check result structure
@@ -168,8 +170,8 @@ class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -190,8 +192,8 @@ class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		}
 
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 20 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 20 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -215,7 +217,7 @@ class LocationGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		if ( $result['success'] && isset( $result['locations'] ) ) {
 			$country_codes = array_column( $result['locations'], 'country_code' );
-			$unique_codes = array_unique( $country_codes );
+			$unique_codes  = array_unique( $country_codes );
 
 			// All country codes should be unique
 			$this->assertCount( count( $country_codes ), $unique_codes, 'Generated locations should have unique country codes' );

@@ -44,7 +44,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->controller = new Product();
 		$this->controller->register_routes();
 
-		$this->admin_user_id = $this->create_admin_user();
+		$this->admin_user_id    = $this->create_admin_user();
 		$this->customer_user_id = $this->create_customer_user();
 	}
 
@@ -67,7 +67,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test route registration
 	 */
 	public function test_route_registration(): void {
-		$routes = $this->server->get_routes();
+		$routes    = $this->server->get_routes();
 		$namespace = '/' . $this->namespace;
 
 		$this->assertArrayHasKey( $namespace . '/products/generate', $routes );
@@ -87,7 +87,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -106,7 +106,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request = $this->get_wp_rest_request( 'POST', '/products/generate' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertInstanceOf( WP_Error::class, $response );
@@ -123,7 +123,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 0 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'invalid_count', $data['code'] );
@@ -139,7 +139,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', -5 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'invalid_count', $data['code'] );
@@ -155,7 +155,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 150 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'invalid_count', $data['code'] );
@@ -171,7 +171,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 401, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
@@ -187,7 +187,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
@@ -204,7 +204,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'locale', 'fr_FR' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -222,7 +222,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'seed', 12345 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -234,7 +234,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request2->set_param( 'seed', 12345 );
 
 		$response2 = $this->server->dispatch( $request2 );
-		$data2 = $response2->get_data();
+		$data2     = $response2->get_data();
 
 		$this->assertEquals( 200, $response2->get_status() );
 		$this->assertEquals( 2, $data2['generated'] );
@@ -251,7 +251,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'status', 'active' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -275,13 +275,16 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/products/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'date_range', array(
-			'start' => '2024-01-01',
-			'end'   => '2024-12-31',
-		) );
+		$request->set_param(
+			'date_range',
+			array(
+				'start' => '2024-01-01',
+				'end'   => '2024-12-31',
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -296,13 +299,16 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/products/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'relationships', array(
-			'create_missing' => true,
-			'link_existing'  => false,
-		) );
+		$request->set_param(
+			'relationships',
+			array(
+				'create_missing' => true,
+				'link_existing'  => false,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -317,13 +323,16 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/products/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'meta_options', array(
-			'include_meta'  => true,
-			'custom_fields' => true,
-		) );
+		$request->set_param(
+			'meta_options',
+			array(
+				'include_meta'  => true,
+				'custom_fields' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -341,7 +350,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'locale', 'invalid_locale' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		// Should return validation error for invalid locale
 		$this->assertEquals( 400, $response->get_status() );
@@ -359,7 +368,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'status', 'invalid_status' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		// Should return validation error for invalid status
 		$this->assertEquals( 400, $response->get_status() );
@@ -376,7 +385,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 1 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -409,7 +418,7 @@ class ProductRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 100 ); // Maximum allowed
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );

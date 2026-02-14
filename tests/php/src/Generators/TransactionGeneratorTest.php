@@ -52,7 +52,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_get_resource_type(): void {
 		$reflection = new \ReflectionClass( $this->generator );
-		$method = $reflection->getMethod( 'get_resource_type' );
+		$method     = $reflection->getMethod( 'get_resource_type' );
 		$method->setAccessible( true );
 
 		$this->assertEquals( 'transaction', $method->invoke( $this->generator ) );
@@ -62,7 +62,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate method with valid count
 	 */
 	public function test_generate_with_valid_count(): void {
-		$count = 3;
+		$count  = 3;
 		$result = $this->generator->generate( $count );
 
 		$this->assertIsArray( $result );
@@ -189,7 +189,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->assertIsArray( $result );
 
 		foreach ( $result['transactions'] as $transaction ) {
-			$gateway = $transaction['payment_gateway'];
+			$gateway        = $transaction['payment_gateway'];
 			$transaction_id = $transaction['transaction_id'];
 
 			switch ( $gateway ) {
@@ -252,7 +252,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->assertIsArray( $result );
 
 		foreach ( $result['transactions'] as $transaction ) {
-			$type = $transaction['type'];
+			$type   = $transaction['type'];
 			$amount = $transaction['amount'];
 
 			switch ( $type ) {
@@ -290,8 +290,8 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_transaction_generation_performance(): void {
 		$start_time = microtime( true );
-		$result = $this->generator->generate( 10 );
-		$end_time = microtime( true );
+		$result     = $this->generator->generate( 10 );
+		$end_time   = microtime( true );
 
 		$execution_time = $end_time - $start_time;
 
@@ -307,8 +307,8 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_memory_usage_during_generation(): void {
 		$memory_before = memory_get_usage();
-		$result = $this->generator->generate( 20 );
-		$memory_after = memory_get_usage();
+		$result        = $this->generator->generate( 20 );
+		$memory_after  = memory_get_usage();
 
 		$memory_used = $memory_after - $memory_before;
 
@@ -324,12 +324,12 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 */
 	public function test_generate_for_order_method(): void {
 		// Create a mock order ID for testing
-		$order_id = 123;
+		$order_id          = 123;
 		$transaction_count = 3;
 
 		// This test checks that the method exists and handles parameters correctly
 		$reflection = new \ReflectionClass( $this->generator );
-		$method = $reflection->getMethod( 'generate_for_order' );
+		$method     = $reflection->getMethod( 'generate_for_order' );
 
 		$this->assertTrue( $method->isPublic() );
 		$this->assertEquals( 2, $method->getNumberOfParameters() );
@@ -339,7 +339,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test generate_multiple method
 	 */
 	public function test_generate_multiple_method(): void {
-		$count = 5;
+		$count  = 5;
 		$result = $this->generator->generate_multiple( $count );
 
 		$this->assertIsArray( $result );
@@ -361,7 +361,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$this->assertIsArray( $result );
 		$transaction_ids = array_column( $result['transactions'], 'transaction_id' );
-		$unique_ids = array_unique( $transaction_ids );
+		$unique_ids      = array_unique( $transaction_ids );
 
 		// All transaction IDs should be unique
 		$this->assertCount( count( $transaction_ids ), $unique_ids, 'Generated transactions should have unique transaction IDs' );
@@ -377,7 +377,7 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$status_counts = array();
 		foreach ( $result['transactions'] as $transaction ) {
-			$status = $transaction['status'];
+			$status                   = $transaction['status'];
 			$status_counts[ $status ] = ( $status_counts[ $status ] ?? 0 ) + 1;
 		}
 
@@ -464,9 +464,12 @@ class TransactionGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$this->assertIsArray( $result );
 
-		$refund_transactions = array_filter( $result['transactions'], function( $transaction ) {
-			return $transaction['type'] === 'refund';
-		});
+		$refund_transactions = array_filter(
+			$result['transactions'],
+			function ( $transaction ) {
+				return $transaction['type'] === 'refund';
+			}
+		);
 
 		if ( ! empty( $refund_transactions ) ) {
 			foreach ( $refund_transactions as $refund ) {

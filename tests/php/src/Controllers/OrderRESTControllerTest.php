@@ -16,7 +16,7 @@ use WP_Error;
 class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 	/**
-	 *\* @var Order
+	 * \* @var Order
 	 */
 	private $controller;
 
@@ -44,7 +44,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$this->controller = new Order();
 		$this->controller->register_routes();
 
-		$this->admin_user_id = $this->create_admin_user();
+		$this->admin_user_id    = $this->create_admin_user();
 		$this->customer_user_id = $this->create_customer_user();
 	}
 
@@ -67,7 +67,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 	 * Test route registration
 	 */
 	public function test_route_registration(): void {
-		$routes = $this->server->get_routes();
+		$routes    = $this->server->get_routes();
 		$namespace = '/' . $this->namespace;
 
 		$this->assertArrayHasKey( $namespace . '/orders/generate', $routes );
@@ -87,7 +87,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 4 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -107,7 +107,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 401, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
@@ -123,7 +123,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
@@ -139,7 +139,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 1 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -182,7 +182,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'order_status', 'completed' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -209,7 +209,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'payment_method', 'stripe' );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -233,13 +233,16 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/orders/generate' );
 		$request->set_param( 'count', 3 );
-		$request->set_param( 'customer_assignment', array(
-			'link_existing' => true,
-			'create_missing' => true
-		) );
+		$request->set_param(
+			'customer_assignment',
+			array(
+				'link_existing'  => true,
+				'create_missing' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -254,13 +257,16 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/orders/generate' );
 		$request->set_param( 'count', 3 );
-		$request->set_param( 'order_value', array(
-			'min_total' => 50.00,
-			'max_total' => 500.00
-		) );
+		$request->set_param(
+			'order_value',
+			array(
+				'min_total' => 50.00,
+				'max_total' => 500.00,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -285,13 +291,16 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/orders/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'shipping_options', array(
-			'include_shipping' => true,
-			'different_billing' => true
-		) );
+		$request->set_param(
+			'shipping_options',
+			array(
+				'include_shipping'  => true,
+				'different_billing' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -319,13 +328,16 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$request = $this->get_wp_rest_request( 'POST', '/orders/generate' );
 		$request->set_param( 'count', 2 );
-		$request->set_param( 'tax_options', array(
-			'include_tax' => true,
-			'tax_rate' => 8.5
-		) );
+		$request->set_param(
+			'tax_options',
+			array(
+				'include_tax' => true,
+				'tax_rate'    => 8.5,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -342,7 +354,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 5 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -395,7 +407,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 2 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -437,7 +449,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 3 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -468,7 +480,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 10 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -523,19 +535,28 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'seed', 54321 );
 		$request->set_param( 'order_status', 'processing' );
 		$request->set_param( 'payment_method', 'credit_card' );
-		$request->set_param( 'order_value', array(
-			'min_total' => 25.00,
-			'max_total' => 200.00
-		) );
-		$request->set_param( 'customer_assignment', array(
-			'link_existing' => true
-		) );
-		$request->set_param( 'shipping_options', array(
-			'include_shipping' => true
-		) );
+		$request->set_param(
+			'order_value',
+			array(
+				'min_total' => 25.00,
+				'max_total' => 200.00,
+			)
+		);
+		$request->set_param(
+			'customer_assignment',
+			array(
+				'link_existing' => true,
+			)
+		);
+		$request->set_param(
+			'shipping_options',
+			array(
+				'include_shipping' => true,
+			)
+		);
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
@@ -553,7 +574,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 2 );
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 
@@ -601,7 +622,7 @@ class OrderRESTControllerTest extends EasyCommerceFakerPressUnitTestCase {
 		$request->set_param( 'count', 100 ); // Maximum allowed
 
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $data );
