@@ -218,7 +218,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_script(
 			'easycommerce-fakerpress-admin',
-			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/index.js',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/app.js',
 			$deps,
 			$version,
 			true
@@ -226,7 +226,7 @@ class EasyCommerce_FakerPress {
 
 		wp_enqueue_style(
 			'easycommerce-fakerpress-admin',
-			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/index.css',
+			EASYCOMMERCE_FAKERPRESS_PLUGIN_URL . 'build/app.css',
 			array(),
 			$version
 		);
@@ -486,18 +486,18 @@ class EasyCommerce_FakerPress {
 	 */
 	private function extract_zip( string $zip_file, string $extract_to ): bool {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			error_log( 'EasyCommerce FakerPress: ZipArchive class not available' );
+			error_log( 'EasyCommerce FakerPress: ZipArchive class not available' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return false;
 		}
 
 		$zip = new ZipArchive();
 		if ( $zip->open( $zip_file ) !== true ) {
-			error_log( 'EasyCommerce FakerPress: Failed to open zip file' );
+			error_log( 'EasyCommerce FakerPress: Failed to open zip file' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return false;
 		}
 
 		if ( ! $zip->extractTo( $extract_to ) ) {
-			error_log( 'EasyCommerce FakerPress: Failed to extract zip file' );
+			error_log( 'EasyCommerce FakerPress: Failed to extract zip file' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			$zip->close();
 			return false;
 		}
@@ -694,23 +694,21 @@ class EasyCommerce_FakerPress {
 	 *
 	 * @since 2.0.4
 	 *
-	 * @param WP_REST_Request $request REST request object.
-	 *
 	 * @return WP_REST_Response|WP_Error Response object or error.
 	 */
-	public function rest_download_sample_data( WP_REST_Request $request ) {
+	public function rest_download_sample_data() {
 		$result = $this->ensure_sample_data();
-		if ( $result ) {
-			return new WP_REST_Response(
-				array(
-					'success' => true,
-					'message' => 'Sample data downloaded successfully',
-				),
-				200
-			);
-		} else {
+		if ( ! $result ) {
 			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
 		}
+
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'message' => 'Sample data downloaded successfully',
+			),
+			200
+		);
 	}
 
 	/**
