@@ -6,6 +6,9 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
 module.exports = {
 	...defaultConfig,
+	entry: {
+		app: './src/index.tsx',
+	},
 	resolve: {
 		...defaultConfig.resolve,
 		alias: {
@@ -42,5 +45,12 @@ module.exports = {
 		hints: false,
 		maxEntrypointSize: 512000,
 		maxAssetSize: 512000,
+	},
+	stats: {
+		...defaultConfig.stats,
+		reasons: true,
+		source: true,
+		errorDetails: true,
+		logging: 'error',
 	},
 };
