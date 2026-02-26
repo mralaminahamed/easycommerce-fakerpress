@@ -4,7 +4,7 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,9 @@ Generated data leverages the Faker library for authenticity while adhering to re
 - 100MB disk space for files and data
 
 == Frequently Asked Questions ==
+
+= What's new in version 2.0.4? =
+This release includes bug fixes and code improvements. Key updates include fixed route vs type mismatch in generators, extracted shared type definitions for better code reuse, removed duplicate Window interface declarations, added missing default values in TransactionGenerator, removed console statements from production code, and improved asset path configuration.
 
 = What's new in version 2.0.3? =
 This release adds the Product Review generator and fixes Order data structure issues. Key updates include realistic product review generation with rating distribution, WordPress comments integration for reviews, proper Order_Notes model usage, and enhanced data integrity across all generators.
