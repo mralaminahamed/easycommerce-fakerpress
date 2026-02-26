@@ -5,7 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { __ } from '@wordpress/i18n';
 
-import '@/admin/types/global.d';
+import '@/admin/types';
 
 export default function RootLayout() {
 	const location = useLocation();
