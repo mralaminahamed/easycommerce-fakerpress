@@ -196,7 +196,7 @@ class EasyCommerce_FakerPress {
 			return;
 		}
 
-		$asset_file = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'build/index.asset.php';
+		$asset_file = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'build/app.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
