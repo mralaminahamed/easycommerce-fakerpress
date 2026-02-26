@@ -152,5 +152,3 @@ export default function HomePage() {
 		</motion.div>
 	);
 }
-
-// Generators imported from lib

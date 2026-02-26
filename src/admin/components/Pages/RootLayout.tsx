@@ -5,24 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { __ } from '@wordpress/i18n';
 
-// Extend window object for WordPress API
-declare global {
-  interface Window {
-    easycommerceFakerpressApi?: {
-      restUrl?: string;
-      restNonce?: string;
-      ajaxUrl?: string;
-      adminColors?: Record<string, string>;
-      colorScheme?: string;
-      locale?: {
-        faker?: string;
-        label?: string;
-        wordpress?: string;
-        allLocales?: Record<string, string>;
-      };
-    };
-  }
-}
+import '@/admin/types/global.d';
 
 export default function RootLayout() {
 	const location = useLocation();
@@ -42,14 +25,12 @@ export default function RootLayout() {
 		} )
 			.then( ( response ) => response.json() )
 			.then( ( data: any ) => {
-				if ( data.success ) {
-					console.log( 'Sample data downloaded successfully' );
-				} else {
-					console.warn( 'Failed to download sample data:', data.message );
+				if ( ! data.success ) {
+					// Silent fail - sample data may already exist or endpoint handles it
 				}
 			} )
-			.catch( ( error ) => {
-				console.error( 'Error downloading sample data:', error );
+			.catch( () => {
+				// Silent fail - sample data will be fetched when needed
 			} );
 	}, [] );
 
