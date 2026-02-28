@@ -1,8 +1,8 @@
 {
     "name": "mralaminahamed/easycommerce-fakerpress",
     "description": "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
-    "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
+    "type": "wordpress-plugin",
     "authors": [
         {
             "name": "Al Amin Ahamed",
@@ -15,72 +15,60 @@
         "issues": "https://github.com/mralaminahamed/easycommerce-fakerpress/issues",
         "source": "https://github.com/mralaminahamed/easycommerce-fakerpress"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
-        "fakerphp/faker": "^1.23",
-        "bluemmb/faker-picsum-photos-provider": "^2.0"
+        "bluemmb/faker-picsum-photos-provider": "^2.0",
+        "fakerphp/faker": "^1.23"
     },
     "require-dev": {
         "brain/monkey": "^2.6",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "ergebnis/composer-normalize": "^2.50",
+        "php-stubs/wordpress-stubs": "^6.4",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^9.6",
         "squizlabs/php_codesniffer": "^3.7",
         "szepeviktor/phpstan-wordpress": "^2.0",
-        "phpunit/phpunit": "^9.6",
-        "wp-phpunit/wp-phpunit": "^6.8",
         "wp-coding-standards/wpcs": "^3.1",
-        "yoast/phpunit-polyfills": "^4.0",
-        "php-stubs/wordpress-stubs": "^6.4",
-        "phpstan/extension-installer": "^1.4"
+        "wp-phpunit/wp-phpunit": "^6.8",
+        "yoast/phpunit-polyfills": "^4.0"
     },
-    "config": {
-        "platform": {
-            "php": "7.4"
-        },
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "phpstan/extension-installer": true
-        },
-        "optimize-autoloader": true
-    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
-        "classmap": [
-            "class-easycommerce-fakerpress.php"
-        ],
         "psr-4": {
             "EasyCommerceFakerPress\\": "includes/"
-        }
+        },
+        "classmap": [
+            "class-easycommerce-fakerpress.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "EasyCommerceFakerPress\\Tests\\": "tests/php/src/"
         }
     },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "phpstan/extension-installer": true
+        },
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "7.4"
+        }
+    },
     "scripts": {
-        "phpcs": [
-            "Composer\\Config::disableProcessTimeout",
-            "phpcs --standard=phpcs.xml"
-        ],
-        "phpcbf": [
-            "Composer\\Config::disableProcessTimeout",
-            "phpcbf --standard=phpcs.xml"
-        ],
-        "phpcs:plugin-review": [
-            "Composer\\Config::disableProcessTimeout",
-            "phpcs --standard=phpcs.plugin-review.xml"
-        ],
-        "phpcbf:plugin-review": [
-            "Composer\\Config::disableProcessTimeout",
-            "phpcbf --standard=phpcs.plugin-review.xml"
-        ],
-        "phpstan": "phpstan analyse --memory-limit 2G",
-        "test": "phpunit",
-        "test:coverage": "phpunit --coverage-html=tests/coverage/html",
         "makepot": "wp i18n make-pot . languages/easycommerce-fakerpress.pot --exclude=node_modules,vendor,drafts,docs,build,release,tests",
+        "phpcbf":  "phpcbf --standard=phpcs.xml",
+        "phpcbf:plugin-review": "phpcbf --standard=phpcs.plugin-review.xml",
+        "phpcs":  "phpcs --standard=phpcs.xml",
+        "phpcs:plugin-review":  "phpcs --standard=phpcs.plugin-review.xml",
+        "phpstan": "phpstan analyse --memory-limit 2G",
         "release": [
             "@lint",
             "@analyse",
@@ -93,9 +81,7 @@
             "cd release && zip -r easycommerce-fakerpress.zip easycommerce-fakerpress/",
             "composer install"
         ],
-        "format": "@phpcbf",
-        "lint": "@phpcs",
-        "analyse": "@phpstan",
-        "fix": "@phpcbf"
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html=tests/coverage/html"
     }
 }
