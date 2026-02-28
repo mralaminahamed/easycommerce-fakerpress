@@ -1,4 +1,4 @@
-name: Deploy and Release Plugin to WP.org
+name: Release Plugin to WP.org
 
 on:
   push:
@@ -13,12 +13,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  releaseToWPOrg:
+  release:
     name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -31,7 +31,7 @@ jobs:
           PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g' | sed 's/\b\w/\U&/g')
           echo "plugin_slug=$PLUGIN_SLUG" >> $GITHUB_OUTPUT
           echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
-           echo "plugin_name=$PLUGIN_NAME" >> $GITHUB_OUTPUT
+          echo "plugin_name=$PLUGIN_NAME" >> $GITHUB_OUTPUT
 
       - name: Validate tag and plugin version alignment
         id: version_check
@@ -63,13 +63,12 @@ jobs:
           tools: composer:v2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "18"
-          cache: "npm"
+          node-version: "24"
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.composer/cache
@@ -83,7 +82,7 @@ jobs:
         with:
           path: |
             node_modules
-          key: node-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}
+          key: node-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             node-${{ runner.os }}-
 
@@ -91,16 +90,12 @@ jobs:
         run: |
           composer install --no-interaction --prefer-dist
 
-      - name: Build assets (npm)
+      - name: Build assets (yarn)
         run: |
-          if [ -f yarn.lock ]; then
-            corepack enable yarn || true
-            yarn install --frozen-lockfile
-            yarn build
-          else
-            npm ci || npm install
-            npm run build
-          fi
+           corepack enable yarn
+           yarn set version stable
+           yarn install --frozen-lockfile
+           yarn build
 
       - name: Optimize production autoloader (remove dev deps)
         run: |
