@@ -1,12 +1,35 @@
 {
-  "$schema": "https://opencode.ai/schemas/opencode.json",
-  "exclude": [
-    "node_modules/**",
-    "vendor/**",
-    "src/**",
-    "tests/**",
-    ".git/**",
-    "*.log",
-    ".cache/**"
-  ]
+  "$schema": "https://opencode.ai/config.json",
+  "watcher": {
+    "ignore": [
+      "node_modules/**",
+      "vendor/**",
+      ".git/**",
+      "*.log",
+      ".cache/**",
+      "assets/**"
+    ]
+  },
+  "command": {
+    "lint:js": {
+      "description": "Run JavaScript linting",
+      "template": "Run yarn lint:js and report any errors",
+      "agent": "general"
+    },
+    "lint:php": {
+      "description": "Run PHP linting",
+      "template": "Run composer lint and report any errors",
+      "agent": "general"
+    },
+    "test": {
+      "description": "Run all tests",
+      "template": "Run composer test and report results",
+      "agent": "general"
+    },
+    "build": {
+      "description": "Build the plugin assets",
+      "template": "Run yarn build and verify build succeeds",
+      "agent": "general"
+    }
+  }
 }
