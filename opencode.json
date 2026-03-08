@@ -12,24 +12,25 @@
   },
   "command": {
     "lint:js": {
-      "description": "Run JavaScript linting",
       "template": "Run yarn lint:js and report any errors",
+      "description": "Run JavaScript linting",
       "agent": "general"
     },
     "lint:php": {
-      "description": "Run PHP linting",
       "template": "Run composer lint and report any errors",
+      "description": "Run PHP linting",
       "agent": "general"
     },
     "test": {
-      "description": "Run all tests",
       "template": "Run composer test and report results",
+      "description": "Run all tests",
       "agent": "general"
     },
     "build": {
-      "description": "Build the plugin assets",
       "template": "Run yarn build and verify build succeeds",
+      "description": "Build the plugin assets",
       "agent": "general"
     }
-  }
+  },
+  "instructions": ["AGENTS.md"]
 }
