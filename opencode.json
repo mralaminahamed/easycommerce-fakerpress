@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/schemas/opencode.json",
+  "exclude": [
+    "node_modules/**",
+    "vendor/**",
+    "src/**",
+    "tests/**",
+    ".git/**",
+    "*.log",
+    ".cache/**"
+  ]
+}
