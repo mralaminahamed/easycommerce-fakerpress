@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "ollama/qwen3-coder-next:cloud",
+  "model": "ollama/big-pickle",
   "small_model": "ollama/gemma3:4b",
   "watcher": {
     "ignore": [
@@ -11,28 +11,6 @@
       ".cache/**",
       "assets/**"
     ]
-  },
-  "command": {
-    "lint:js": {
-      "template": "Run yarn lint:js and report any errors",
-      "description": "Run JavaScript linting",
-      "agent": "general"
-    },
-    "lint:php": {
-      "template": "Run composer lint and report any errors",
-      "description": "Run PHP linting",
-      "agent": "general"
-    },
-    "test": {
-      "template": "Run composer test and report results",
-      "description": "Run all tests",
-      "agent": "general"
-    },
-    "build": {
-      "template": "Run yarn build and verify build succeeds",
-      "description": "Build the plugin assets",
-      "agent": "general"
-    }
   },
   "instructions": ["AGENTS.md"]
 }
