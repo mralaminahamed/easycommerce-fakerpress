@@ -4,9 +4,6 @@ namespace EasyCommerceFakerPress\Tests\Controllers;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
 use EasyCommerceFakerPress\Controllers\Cart_Session;
-use WP_REST_Request;
-use WP_REST_Response;
-use WP_Error;
 
 /**
  * Test class for Cart Session REST Controller

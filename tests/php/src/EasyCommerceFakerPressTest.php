@@ -20,7 +20,7 @@ class EasyCommerceFakerPressTest extends EasyCommerceFakerPressUnitTestCase {
 	/**
 	 * @var EasyCommerce_FakerPress
 	 */
-	private $plugin;
+	private EasyCommerce_FakerPress $plugin;
 
 	/**
 	 * Set up before each test.

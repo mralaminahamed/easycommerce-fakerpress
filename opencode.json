@@ -1,7 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "ollama/big-pickle",
-  "small_model": "ollama/gemma3:4b",
+  "model": "zen/big-pickle",
   "watcher": {
     "ignore": [
       "node_modules/**",
