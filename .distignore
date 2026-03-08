@@ -106,6 +106,7 @@ tsconfig.json
 components.json
 copilot-instructions.md
 git-commit-instructions.md
+opencode.json
 
 # Cache directories
 /.cache/
