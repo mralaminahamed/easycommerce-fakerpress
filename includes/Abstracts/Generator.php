@@ -475,9 +475,9 @@ abstract class Generator {
 	 * @return string Full path to the sample data file.
 	 */
 	protected function get_sample_data_path( string $resource_type, string $filename ): string {
-		$locale     = $this->get_faker_locale();
-		$upload_dir = wp_upload_dir();
-		return $upload_dir['basedir'] . "/easycommerce-fakerpress-sample-data/{$resource_type}/{$locale}/{$filename}.json";
+		$locale      = $this->get_faker_locale();
+		$sample_path = easycommerce_fakerpress()->get_sample_data_directory();
+		return $sample_path . "/{$resource_type}/{$locale}/{$filename}.json";
 	}
 
 	/**
