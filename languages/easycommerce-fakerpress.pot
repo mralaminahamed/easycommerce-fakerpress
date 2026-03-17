@@ -1,23 +1,22 @@
-# Copyright (C) 2025 Al Amin Ahamed
+# Copyright (C) 2026 Al Amin Ahamed
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: EasyCommerce FakerPress 1.0.2\n"
+"Project-Id-Version: EasyCommerce FakerPress 2.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easycommerce-fakerpress\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-29T15:55:27+00:00\n"
+"POT-Creation-Date: 2026-03-17T16:47:05+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: easycommerce-fakerpress\n"
 
 #. Plugin Name of the plugin
 #: easycommerce-fakerpress.php
-#: class-easycommerce-fakerpress.php:132
-#: src/admin/components/Pages/RootLayout.jsx:20
+#: class-easycommerce-fakerpress.php:134
 msgid "EasyCommerce FakerPress"
 msgstr ""
 
@@ -28,7 +27,7 @@ msgstr ""
 
 #. Description of the plugin
 #: easycommerce-fakerpress.php
-msgid "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface."
+msgid "Create realistic test data for your EasyCommerce store in seconds! Generate products, customers, orders, coupons and more with our intuitive admin interface. Perfect for development, testing, and demos. Features smart defaults, real-time validation, and seamless WordPress integration."
 msgstr ""
 
 #. Author of the plugin
@@ -41,99 +40,103 @@ msgstr ""
 msgid "https://github.com/mralaminahamed/"
 msgstr ""
 
-#: class-easycommerce-fakerpress.php:133
+#: class-easycommerce-fakerpress.php:135
 msgid "EC FakerPress"
 msgstr ""
 
-#: class-easycommerce-fakerpress.php:322
+#: class-easycommerce-fakerpress.php:173
+msgid "Get Started"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:574
 msgid "EasyCommerce FakerPress requires EasyCommerce plugin to be installed and active."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:183
+#: includes/Abstracts/Controller.php:170
 msgid "Count parameter is required and must be greater than 0."
 msgstr ""
 
 #. translators: Total output.
-#: includes/Abstracts/Controller.php:214
+#: includes/Abstracts/Controller.php:201
 #, php-format
 msgid "%1$s item successfully created."
 msgid_plural "%1$s items successfully created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Abstracts/Controller.php:272
+#: includes/Abstracts/Controller.php:260
 msgid "You do not have permission to generate data."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:295
+#: includes/Abstracts/Controller.php:283
 msgid "Number of items to generate."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:304
+#: includes/Abstracts/Controller.php:292
 msgid "Locale for generated data (e.g., en_US, fr_FR, de_DE)."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:311
+#: includes/Abstracts/Controller.php:299
 msgid "Random seed for reproducible data generation."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:317
+#: includes/Abstracts/Controller.php:305
 msgid "Status filter for generated items."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:323
+#: includes/Abstracts/Controller.php:311
 msgid "Date range for generated items."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:327
-#: includes/Controllers/Transactions.php:123
+#: includes/Abstracts/Controller.php:315
+#: includes/Controllers/Transaction.php:123
 msgid "Start date (YYYY-MM-DD format)."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:334
-#: includes/Controllers/Transactions.php:128
+#: includes/Abstracts/Controller.php:322
+#: includes/Controllers/Transaction.php:128
 msgid "End date (YYYY-MM-DD format)."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:343
+#: includes/Abstracts/Controller.php:331
 msgid "Control relationship creation with existing data."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:347
+#: includes/Abstracts/Controller.php:335
 msgid "Create missing related items if needed."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:352
+#: includes/Abstracts/Controller.php:340
 msgid "Link to existing items when possible."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:359
+#: includes/Abstracts/Controller.php:347
 msgid "Metadata generation options."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:363
+#: includes/Abstracts/Controller.php:351
 msgid "Include additional metadata."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:368
+#: includes/Abstracts/Controller.php:356
 msgid "Generate custom fields."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:401
+#: includes/Abstracts/Controller.php:389
 msgid "Date must be in YYYY-MM-DD format."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:427
+#: includes/Abstracts/Controller.php:415
 msgid "Count must be a number between 1 and 100."
 msgstr ""
 
 #. translators: Resource type.
-#: includes/Abstracts/Controller.php:449
+#: includes/Abstracts/Controller.php:437
 #, php-format
 msgid "%s Generation Response"
 msgstr ""
 
-#: includes/Abstracts/Controller.php:453
+#: includes/Abstracts/Controller.php:441
 msgid "Number of items generated."
 msgstr ""
 
@@ -153,529 +156,548 @@ msgstr ""
 msgid "Count cannot exceed %d items per batch."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:42
+#: includes/Controllers/Cart_Session.php:42
 msgid "Cart Session"
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:77
+#: includes/Controllers/Cart_Session.php:77
 msgid "Type of customers for cart sessions."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:84
+#: includes/Controllers/Cart_Session.php:84
 msgid "Specific customer ID for cart sessions (when customer_type is \"specific\")."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:90
+#: includes/Controllers/Cart_Session.php:90
 msgid "Percentage of guest carts (0-100) when customer_type is \"mixed\"."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:98
+#: includes/Controllers/Cart_Session.php:98
 msgid "Cart abandonment rate percentage (0-100)."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:106
+#: includes/Controllers/Cart_Session.php:106
 msgid "Custom cart status distribution."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:110
+#: includes/Controllers/Cart_Session.php:110
 msgid "Percentage of pending carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:116
+#: includes/Controllers/Cart_Session.php:116
 msgid "Percentage of abandoned carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:122
+#: includes/Controllers/Cart_Session.php:122
 msgid "Percentage of completed carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:128
+#: includes/Controllers/Cart_Session.php:128
 msgid "Percentage of cancelled carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:136
+#: includes/Controllers/Cart_Session.php:136
 msgid "Cart value range for generated sessions."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:140
+#: includes/Controllers/Cart_Session.php:140
 msgid "Minimum cart value."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:146
+#: includes/Controllers/Cart_Session.php:146
 msgid "Maximum cart value."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:154
+#: includes/Controllers/Cart_Session.php:154
 msgid "Number of items per cart session."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:158
+#: includes/Controllers/Cart_Session.php:158
 msgid "Minimum items per cart."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:164
+#: includes/Controllers/Cart_Session.php:164
 msgid "Maximum items per cart."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:173
+#: includes/Controllers/Cart_Session.php:173
 msgid "Abandonment tracking settings."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:177
+#: includes/Controllers/Cart_Session.php:177
 msgid "Generate abandoned cart reminders."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:182
+#: includes/Controllers/Cart_Session.php:182
 msgid "Maximum number of reminders to generate."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:189
+#: includes/Controllers/Cart_Session.php:189
 msgid "Cart recovery rate percentage (0-100)."
 msgstr ""
 
-#: includes/Controllers/Cart_Sessions.php:210
+#: includes/Controllers/Cart_Session.php:210
 msgid "Generated cart sessions with items and customer data."
 msgstr ""
 
-#: includes/Controllers/Coupons.php:42
+#: includes/Controllers/Coupon.php:42
 msgid "Coupon"
 msgstr ""
 
-#: includes/Controllers/Coupons.php:77
-#: src/admin/components/Generators/CouponGenerator.jsx:34
+#: includes/Controllers/Coupon.php:77
 msgid "Types of discount coupons to generate"
 msgstr ""
 
-#: includes/Controllers/Coupons.php:87
+#: includes/Controllers/Coupon.php:87
 msgid "Discount value range"
 msgstr ""
 
-#: includes/Controllers/Coupons.php:115
+#: includes/Controllers/Coupon.php:115
 msgid "Usage limitation settings"
 msgstr ""
 
-#: includes/Controllers/Coupons.php:137
+#: includes/Controllers/Coupon.php:137
 msgid "Coupon validity period configuration"
 msgstr ""
 
-#: includes/Controllers/Coupons.php:155
+#: includes/Controllers/Coupon.php:155
 msgid "Coupon usage restrictions"
 msgstr ""
 
-#: includes/Controllers/Coupons.php:189
+#: includes/Controllers/Coupon.php:189
 msgid "Generated coupons data."
 msgstr ""
 
-#: includes/Controllers/Customers.php:42
+#: includes/Controllers/Customer.php:42
 msgid "Customer"
 msgstr ""
 
-#: includes/Controllers/Customers.php:77
+#: includes/Controllers/Customer.php:77
 msgid "Types of customers to generate."
 msgstr ""
 
-#: includes/Controllers/Customers.php:87
+#: includes/Controllers/Customer.php:87
 msgid "Demographic distribution."
 msgstr ""
 
-#: includes/Controllers/Customers.php:91
+#: includes/Controllers/Customer.php:91
 msgid "Age group distribution."
 msgstr ""
 
-#: includes/Controllers/Customers.php:101
+#: includes/Controllers/Customer.php:101
 msgid "Gender distribution weight."
 msgstr ""
 
-#: includes/Controllers/Customers.php:127
+#: includes/Controllers/Customer.php:127
 msgid "Address generation preferences."
 msgstr ""
 
-#: includes/Controllers/Customers.php:131
+#: includes/Controllers/Customer.php:131
 msgid "Include billing addresses."
 msgstr ""
 
-#: includes/Controllers/Customers.php:136
+#: includes/Controllers/Customer.php:136
 msgid "Include shipping addresses."
 msgstr ""
 
-#: includes/Controllers/Customers.php:141
+#: includes/Controllers/Customer.php:141
 msgid "Percentage with different billing/shipping (0-100)."
 msgstr ""
 
-#: includes/Controllers/Customers.php:150
+#: includes/Controllers/Customer.php:150
 msgid "Purchase history simulation."
 msgstr ""
 
-#: includes/Controllers/Customers.php:154
+#: includes/Controllers/Customer.php:154
 msgid "Generate purchase history metadata."
 msgstr ""
 
-#: includes/Controllers/Customers.php:159
+#: includes/Controllers/Customer.php:159
 msgid "Include loyalty tier assignments."
 msgstr ""
 
-#: includes/Controllers/Customers.php:166
+#: includes/Controllers/Customer.php:166
 msgid "Contact and communication preferences."
 msgstr ""
 
-#: includes/Controllers/Customers.php:170
+#: includes/Controllers/Customer.php:170
 msgid "Include phone numbers."
 msgstr ""
 
-#: includes/Controllers/Customers.php:175
+#: includes/Controllers/Customer.php:175
 msgid "Percentage opted in for marketing (0-100)."
 msgstr ""
 
-#: includes/Controllers/Customers.php:196
+#: includes/Controllers/Customer.php:196
 msgid "Generated customers data."
 msgstr ""
 
-#: includes/Controllers/Locations.php:42
+#: includes/Controllers/Location.php:42
 msgid "Location"
 msgstr ""
 
-#: includes/Controllers/Locations.php:77
+#: includes/Controllers/Location.php:77
 msgid "Geographic regions to generate locations for."
 msgstr ""
 
-#: includes/Controllers/Locations.php:104
+#: includes/Controllers/Location.php:104
 msgid "Specific countries to generate (ISO2, ISO3, or full names)."
 msgstr ""
 
-#: includes/Controllers/Locations.php:112
+#: includes/Controllers/Location.php:112
 msgid "Maximum number of countries to generate."
 msgstr ""
 
-#: includes/Controllers/Locations.php:120
+#: includes/Controllers/Location.php:120
 msgid "Include states/provinces for countries."
 msgstr ""
 
-#: includes/Controllers/Locations.php:125
+#: includes/Controllers/Location.php:125
 msgid "Include cities for states/provinces."
 msgstr ""
 
-#: includes/Controllers/Locations.php:130
+#: includes/Controllers/Location.php:130
 msgid "Maximum cities per state/province."
 msgstr ""
 
-#: includes/Controllers/Locations.php:134
+#: includes/Controllers/Location.php:134
 msgid "Minimum cities per state."
 msgstr ""
 
-#: includes/Controllers/Locations.php:140
+#: includes/Controllers/Location.php:140
 msgid "Maximum cities per state."
 msgstr ""
 
-#: includes/Controllers/Locations.php:161
+#: includes/Controllers/Location.php:161
 msgid "Generated location hierarchy with countries, states, and cities."
 msgstr ""
 
-#: includes/Controllers/Orders.php:42
+#: includes/Controllers/Order.php:42
 msgid "Order"
 msgstr ""
 
-#: includes/Controllers/Orders.php:77
+#: includes/Controllers/Order.php:77
 msgid "Order status distribution."
 msgstr ""
 
-#: includes/Controllers/Orders.php:92
+#: includes/Controllers/Order.php:92
 msgid "Type of customers for orders."
 msgstr ""
 
-#: includes/Controllers/Orders.php:99
+#: includes/Controllers/Order.php:99
 msgid "Specific customer ID to use for all orders (when customer_type is \"specific\")."
 msgstr ""
 
-#: includes/Controllers/Orders.php:105
+#: includes/Controllers/Order.php:105
 msgid "Customer type distribution for mixed mode."
 msgstr ""
 
-#: includes/Controllers/Orders.php:109
+#: includes/Controllers/Order.php:109
 msgid "Percentage of existing customers (0-100)."
 msgstr ""
 
-#: includes/Controllers/Orders.php:116
+#: includes/Controllers/Order.php:116
 msgid "Percentage of new customers (0-100)."
 msgstr ""
 
-#: includes/Controllers/Orders.php:125
+#: includes/Controllers/Order.php:125
 msgid "Order value configuration."
 msgstr ""
 
-#: includes/Controllers/Orders.php:129
+#: includes/Controllers/Order.php:129
 msgid "Minimum order total."
 msgstr ""
 
-#: includes/Controllers/Orders.php:135
+#: includes/Controllers/Order.php:135
 msgid "Maximum order total."
 msgstr ""
 
-#: includes/Controllers/Orders.php:143
+#: includes/Controllers/Order.php:143
 msgid "Number of items per order."
 msgstr ""
 
-#: includes/Controllers/Orders.php:147
+#: includes/Controllers/Order.php:147
 msgid "Minimum items per order."
 msgstr ""
 
-#: includes/Controllers/Orders.php:153
+#: includes/Controllers/Order.php:153
 msgid "Maximum items per order."
 msgstr ""
 
-#: includes/Controllers/Orders.php:162
+#: includes/Controllers/Order.php:162
 msgid "Payment methods to use."
 msgstr ""
 
-#: includes/Controllers/Orders.php:172
+#: includes/Controllers/Order.php:172
 msgid "Geographic distribution of orders."
 msgstr ""
 
-#: includes/Controllers/Orders.php:176
+#: includes/Controllers/Order.php:176
 msgid "Countries to generate orders from."
 msgstr ""
 
-#: includes/Controllers/Orders.php:200
+#: includes/Controllers/Order.php:200
 msgid "Generated orders data."
 msgstr ""
 
-#: includes/Controllers/Products.php:57
+#: includes/Controllers/Product.php:57
 msgid "Product"
 msgstr ""
 
-#: includes/Controllers/Products.php:95
+#: includes/Controllers/Product.php:95
 msgid "Type of products to generate."
 msgstr ""
 
-#: includes/Controllers/Products.php:102
+#: includes/Controllers/Product.php:102
 msgid "Price range for generated products."
 msgstr ""
 
-#: includes/Controllers/Products.php:106
+#: includes/Controllers/Product.php:106
 msgid "Minimum price."
 msgstr ""
 
-#: includes/Controllers/Products.php:112
+#: includes/Controllers/Product.php:112
 msgid "Maximum price."
 msgstr ""
 
-#: includes/Controllers/Products.php:120
+#: includes/Controllers/Product.php:120
 msgid "Product categories configuration."
 msgstr ""
 
-#: includes/Controllers/Products.php:124
+#: includes/Controllers/Product.php:124
 msgid "Create new categories if needed."
 msgstr ""
 
-#: includes/Controllers/Products.php:129
+#: includes/Controllers/Product.php:129
 msgid "Maximum categories per product."
 msgstr ""
 
-#: includes/Controllers/Products.php:138
+#: includes/Controllers/Product.php:138
 msgid "Product attributes configuration."
 msgstr ""
 
-#: includes/Controllers/Products.php:142
+#: includes/Controllers/Product.php:142
 msgid "Include product attributes."
 msgstr ""
 
-#: includes/Controllers/Products.php:147
+#: includes/Controllers/Product.php:147
 msgid "Number of variations for variable products."
 msgstr ""
 
-#: includes/Controllers/Products.php:156
+#: includes/Controllers/Product.php:156
 msgid "Inventory settings for generated products."
 msgstr ""
 
-#: includes/Controllers/Products.php:160
+#: includes/Controllers/Product.php:160
 msgid "Enable stock management."
 msgstr ""
 
-#: includes/Controllers/Products.php:165
-#: includes/Controllers/Product_Variations.php:130
+#: includes/Controllers/Product.php:165
+#: includes/Controllers/Product_Variation.php:130
 msgid "Stock quantity range."
 msgstr ""
 
-#: includes/Controllers/Products.php:183
+#: includes/Controllers/Product.php:183
 msgid "Product content generation options."
 msgstr ""
 
-#: includes/Controllers/Products.php:187
+#: includes/Controllers/Product.php:187
 msgid "Generate product images."
 msgstr ""
 
-#: includes/Controllers/Products.php:192
+#: includes/Controllers/Product.php:192
 msgid "Product description length."
 msgstr ""
 
-#: includes/Controllers/Products.php:212
+#: includes/Controllers/Product.php:212
 msgid "Generated products data."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:42
+#: includes/Controllers/Product_Review.php:46
+msgid "Product Review"
+msgstr ""
+
+#: includes/Controllers/Product_Review.php:81
+msgid "Number of product reviews to generate."
+msgstr ""
+
+#: includes/Controllers/Product_Review.php:101
+msgid "Generated product reviews data."
+msgstr ""
+
+#: includes/Controllers/Product_Review.php:152
+msgid "No published products found. Please generate products before creating reviews."
+msgstr ""
+
+#: includes/Controllers/Product_Review.php:167
+msgid "No customers found. Please generate customers before creating reviews."
+msgstr ""
+
+#: includes/Controllers/Product_Variation.php:42
 msgid "Product Variation"
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:77
+#: includes/Controllers/Product_Variation.php:77
 msgid "Specific product ID to generate variations for."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:83
+#: includes/Controllers/Product_Variation.php:83
 msgid "Product types to consider for variation generation."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:93
+#: includes/Controllers/Product_Variation.php:93
 msgid "Product IDs to exclude from variation generation."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:101
+#: includes/Controllers/Product_Variation.php:101
 msgid "Price variance settings for variations."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:105
+#: includes/Controllers/Product_Variation.php:105
 msgid "Minimum price variance percentage from base product."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:112
+#: includes/Controllers/Product_Variation.php:112
 msgid "Maximum price variance percentage from base product."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:121
+#: includes/Controllers/Product_Variation.php:121
 msgid "Stock management settings for variations."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:125
+#: includes/Controllers/Product_Variation.php:125
 msgid "Enable stock management for variations."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:148
+#: includes/Controllers/Product_Variation.php:148
 msgid "Attribute generation settings."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:152
+#: includes/Controllers/Product_Variation.php:152
 msgid "Create missing attributes if needed."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:157
+#: includes/Controllers/Product_Variation.php:157
 msgid "Maximum attributes per variation."
 msgstr ""
 
-#: includes/Controllers/Product_Variations.php:178
+#: includes/Controllers/Product_Variation.php:178
 msgid "Generated product variations with attributes."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:42
+#: includes/Controllers/Shipping_Plan.php:42
 msgid "Shipping Plan"
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:77
+#: includes/Controllers/Shipping_Plan.php:77
 msgid "Types of shipping methods to generate."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:95
+#: includes/Controllers/Shipping_Plan.php:95
 msgid "Shipping cost range."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:99
+#: includes/Controllers/Shipping_Plan.php:99
 msgid "Minimum shipping cost."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:105
+#: includes/Controllers/Shipping_Plan.php:105
 msgid "Maximum shipping cost."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:113
+#: includes/Controllers/Shipping_Plan.php:113
 msgid "Geographic coverage areas."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:123
+#: includes/Controllers/Shipping_Plan.php:123
 msgid "Shipping calculation methods."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:133
+#: includes/Controllers/Shipping_Plan.php:133
 msgid "Delivery time ranges."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:137
+#: includes/Controllers/Shipping_Plan.php:137
 msgid "Minimum delivery days."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:143
+#: includes/Controllers/Shipping_Plan.php:143
 msgid "Maximum delivery days."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plans.php:163
+#: includes/Controllers/Shipping_Plan.php:163
 msgid "Generated shipping plans with methods and regions."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:42
+#: includes/Controllers/Tax_Class.php:42
 msgid "Tax Class"
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:77
+#: includes/Controllers/Tax_Class.php:77
 msgid "Types of tax classes to generate."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:87
+#: includes/Controllers/Tax_Class.php:87
 msgid "Tax jurisdictions to generate rates for."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:97
+#: includes/Controllers/Tax_Class.php:97
 msgid "Tax rate ranges by type."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:101
+#: includes/Controllers/Tax_Class.php:101
 msgid "Standard tax rate range."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:119
+#: includes/Controllers/Tax_Class.php:119
 msgid "Reduced tax rate range."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:139
+#: includes/Controllers/Tax_Class.php:139
 msgid "Geographic coverage for tax rates."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:143
+#: includes/Controllers/Tax_Class.php:143
 msgid "Countries to generate tax rates for."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:152
+#: includes/Controllers/Tax_Class.php:152
 msgid "Include compound tax rates."
 msgstr ""
 
-#: includes/Controllers/Tax_Classes.php:171
+#: includes/Controllers/Tax_Class.php:171
 msgid "Generated tax classes with location-based rates."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:42
+#: includes/Controllers/Transaction.php:42
 msgid "Transaction"
 msgstr ""
 
-#: includes/Controllers/Transactions.php:77
+#: includes/Controllers/Transaction.php:77
 msgid "Type of customers for transactions."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:84
+#: includes/Controllers/Transaction.php:84
 msgid "Specific customer ID for transactions (when customer_type is \"specific\")."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:90
+#: includes/Controllers/Transaction.php:90
 msgid "Filter orders by status for transaction generation."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:99
+#: includes/Controllers/Transaction.php:99
 msgid "Types of transactions to generate."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:109
+#: includes/Controllers/Transaction.php:109
 msgid "Payment gateways to use for transactions."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:119
+#: includes/Controllers/Transaction.php:119
 msgid "Date range for transaction generation."
 msgstr ""
 
-#: includes/Controllers/Transactions.php:147
+#: includes/Controllers/Transaction.php:147
 msgid "Generated payment transactions with realistic data."
 msgstr ""
 
@@ -695,14 +717,14 @@ msgstr ""
 msgid "No products found"
 msgstr ""
 
-#: includes/Generators/Cart_Session.php:165
-#: includes/Generators/Cart_Session.php:200
-#: includes/Generators/Order.php:180
-#: includes/Generators/Order.php:209
+#: includes/Generators/Cart_Session.php:178
+#: includes/Generators/Cart_Session.php:213
+#: includes/Generators/Order.php:330
+#: includes/Generators/Order.php:359
 msgid "No customers found."
 msgstr ""
 
-#: includes/Generators/Cart_Session.php:612
+#: includes/Generators/Cart_Session.php:625
 msgid "There was an error creating the cart."
 msgstr ""
 
@@ -726,39 +748,39 @@ msgstr ""
 msgid "Failed to create coupon using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Coupon.php:325
+#: includes/Generators/Coupon.php:339
 msgid "Unable to generate unique coupon code after 10 attempts."
 msgstr ""
 
-#: includes/Generators/Coupon.php:762
+#: includes/Generators/Coupon.php:776
 msgid "Coupon is active and configured"
 msgstr ""
 
-#: includes/Generators/Coupon.php:762
+#: includes/Generators/Coupon.php:776
 msgid "Coupon is inactive"
 msgstr ""
 
-#: includes/Generators/Customer.php:43
+#: includes/Generators/Customer.php:67
 msgid "Customer Profiles with Addresses and Metadata"
 msgstr ""
 
-#: includes/Generators/Customer.php:53
+#: includes/Generators/Customer.php:77
 msgid "Generates realistic customer profiles with comprehensive personal information, billing/shipping addresses, preferences, purchase history, loyalty tiers, and engagement metrics for testing ecommerce customer management systems."
 msgstr ""
 
-#: includes/Generators/Customer.php:66
+#: includes/Generators/Customer.php:90
 msgid "EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Customer.php:81
+#: includes/Generators/Customer.php:148
 msgid "A user with this email address already exists."
 msgstr ""
 
-#: includes/Generators/Customer.php:119
+#: includes/Generators/Customer.php:186
 msgid "Failed to create customer using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Customer.php:170
+#: includes/Generators/Customer.php:268
 msgid "Unable to generate unique username after 10 attempts."
 msgstr ""
 
@@ -778,48 +800,60 @@ msgstr ""
 msgid "Failed to create location data using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Order.php:47
+#: includes/Generators/Order.php:69
 msgid "Customer Orders with Items, Shipping, and Payment Details"
 msgstr ""
 
-#: includes/Generators/Order.php:57
+#: includes/Generators/Order.php:79
 msgid "Generates realistic customer orders with multiple items, comprehensive metadata (addresses, payment methods, shipping, taxes), status tracking, and relationship management for testing ecommerce order processing systems."
 msgstr ""
 
-#: includes/Generators/Order.php:70
+#: includes/Generators/Order.php:92
 msgid "EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Order.php:77
+#: includes/Generators/Order.php:99
 msgid "No customers found for order generation. Please create customers first."
 msgstr ""
 
-#: includes/Generators/Order.php:81
+#: includes/Generators/Order.php:103
 msgid "No product variations found for order generation. Please create products with variations first."
 msgstr ""
 
-#: includes/Generators/Order.php:116
+#: includes/Generators/Order.php:207
 msgid "Failed to create order using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Order.php:261
+#: includes/Generators/Order.php:411
 msgid "No variations found."
 msgstr ""
 
-#: includes/Generators/Product.php:66
+#: includes/Generators/Product.php:89
 msgid "Products with Attributes, Variations, and Categories"
 msgstr ""
 
-#: includes/Generators/Product.php:81
+#: includes/Generators/Product.php:104
 msgid "Generates realistic product data with attributes, variations, pricing, inventory management, categories, brands, tags, and comprehensive meta data for testing ecommerce functionality."
 msgstr ""
 
-#: includes/Generators/Product.php:99
+#: includes/Generators/Product.php:122
 msgid "EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Product.php:159
+#: includes/Generators/Product.php:222
 msgid "Failed to create product using EasyCommerce model."
+msgstr ""
+
+#: includes/Generators/Product_Review.php:63
+msgid "No products found. Please generate products first."
+msgstr ""
+
+#: includes/Generators/Product_Review.php:70
+msgid "No customers found. Please generate customers first."
+msgstr ""
+
+#: includes/Generators/Product_Review.php:141
+msgid "Failed to create product review."
 msgstr ""
 
 #: includes/Generators/Product_Variation.php:45
@@ -866,15 +900,15 @@ msgstr ""
 msgid "Failed to create shipping plan."
 msgstr ""
 
-#: includes/Generators/Shipping_Plan.php:814
+#: includes/Generators/Shipping_Plan.php:827
 msgid "No regions found."
 msgstr ""
 
-#: includes/Generators/Shipping_Plan.php:850
+#: includes/Generators/Shipping_Plan.php:863
 msgid "Plan successfully found by location"
 msgstr ""
 
-#: includes/Generators/Shipping_Plan.php:850
+#: includes/Generators/Shipping_Plan.php:863
 msgid "Plan not found in location lookup"
 msgstr ""
 
@@ -898,689 +932,6 @@ msgstr ""
 msgid "Failed to create transaction."
 msgstr ""
 
-#: includes/Generators/Transaction.php:365
+#: includes/Generators/Transaction.php:379
 msgid "Order not found."
-msgstr ""
-
-#. translators: %s: Field description (e.g., status, type)
-#: src/admin/components/GeneratorBase.jsx:78
-#: src/admin/components/GeneratorBase.jsx:87
-#, js-format
-msgid "Select %s"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:235
-msgid "Basic Settings"
-msgstr ""
-
-#. translators: %s: Resource type (e.g., products, customers, orders)
-#: src/admin/components/GeneratorBase.jsx:241
-#, js-format
-msgid "Number of %s to generate"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:256
-msgid "Locale"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:266
-msgid "Select Locale"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:289
-msgid "Random Seed (optional)"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:294
-msgid "For reproducible data"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:309
-msgid "Include additional metadata"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:321
-msgid "Advanced Parameters"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:352
-msgid "Generating…"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:355
-msgid "Generate"
-msgstr ""
-
-#: src/admin/components/GeneratorBase.jsx:369
-msgid "Error"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:26
-msgid "An error occurred while generating cart sessions."
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:34
-msgid "Type of customers for cart sessions"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:40
-msgid "Specific customer ID for cart sessions (when customer_type is \"specific\")"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:46
-msgid "Percentage of guest carts (0–100) when customer_type is \"mixed\""
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:54
-msgid "Cart abandonment rate percentage (0–100)"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:61
-msgid "Custom cart status distribution"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:65
-msgid "Percentage of pending carts"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:71
-msgid "Percentage of abandoned carts"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:77
-msgid "Percentage of completed carts"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:83
-msgid "Percentage of cancelled carts"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:91
-msgid "Cart value range for generated sessions"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:95
-msgid "Minimum cart value"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:101
-msgid "Maximum cart value"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:109
-msgid "Number of items per cart session"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:113
-msgid "Minimum items per cart"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:119
-msgid "Maximum items per cart"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:128
-msgid "Abandonment tracking settings"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:132
-msgid "Generate abandoned cart reminders"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:137
-msgid "Maximum number of reminders to generate"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:144
-msgid "Cart recovery rate percentage (0–100)"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:156
-msgid "Generate Cart Sessions"
-msgstr ""
-
-#: src/admin/components/Generators/CartSessionGenerator.jsx:157
-msgid "Create shopping cart sessions with abandonment scenarios for analyzing cart recovery and customer behavior."
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:26
-msgid "An error occurred while generating coupons."
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:43
-msgid "Discount value ranges by type"
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:70
-msgid "Usage limitation and restrictions settings"
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:93
-msgid "Coupon validity period and scheduling"
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:115
-msgid "Advanced coupon usage restrictions and rules"
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:179
-msgid "Advanced coupon features and behaviors"
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:217
-msgid "Generate Coupons"
-msgstr ""
-
-#: src/admin/components/Generators/CouponGenerator.jsx:218
-msgid "Create discount coupons with configurable types, discount values, usage limits, validity periods, and usage restrictions."
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:26
-msgid "An error occurred while generating customers."
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:34
-msgid "Types of customers to generate"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:43
-msgid "Demographic distribution and customer characteristics"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:65
-msgid "Address generation preferences"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:74
-msgid "Purchase history simulation"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:82
-msgid "Contact and communication preferences"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:92
-msgid "Customer loyalty and engagement settings"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:101
-msgid "Customer segmentation and targeting"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:126
-msgid "Generate Customers"
-msgstr ""
-
-#: src/admin/components/Generators/CustomerGenerator.jsx:127
-msgid "Create realistic customer accounts with demographics, addresses, contact information, and purchase history simulation."
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:26
-msgid "An error occurred while generating location data."
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:34
-msgid "Geographic regions to generate locations for"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:47
-msgid "Specific countries to generate (ISO2, ISO3, or full names)"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:54
-msgid "Maximum number of countries to generate"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:61
-msgid "Include states/provinces for countries"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:66
-msgid "Include cities for states/provinces"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:71
-msgid "Maximum cities per state/province"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:75
-msgid "Minimum cities per state"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:81
-msgid "Maximum cities per state"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:90
-msgid "Include latitude/longitude coordinates"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:95
-msgid "Include currency information"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:104
-msgid "Generate Location Data"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:105
-msgid "Create comprehensive location hierarchy data (countries, states, cities) for the EasyCommerce system. This populates the locations.json file used throughout the system."
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:115
-msgid "Important Note"
-msgstr ""
-
-#: src/admin/components/Generators/LocationGenerator.jsx:117
-msgid "The Location Generator creates the foundational geographic data used by other generators. It's recommended to run this first, especially before generating customers and orders that rely on realistic address data. The generated data is saved to the EasyCommerce locations.json file."
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:26
-msgid "An error occurred while generating orders."
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:34
-msgid "Order status distribution"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:40
-msgid "Type of customers for orders"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:46
-msgid "Specific customer ID to use for all orders (when customer_type is \"specific\")"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:52
-msgid "Customer type distribution for mixed mode"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:57
-msgid "Percentage of existing customers (0–100)"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:64
-msgid "Percentage of new customers (0–100)"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:73
-msgid "Order value configuration"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:81
-msgid "Number of items per order"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:89
-msgid "Payment methods to use"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:98
-msgid "Geographic distribution of orders"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:115
-msgid "Generate Orders"
-msgstr ""
-
-#: src/admin/components/Generators/OrderGenerator.jsx:116
-msgid "Create realistic orders with comprehensive data including customers, products, payments, shipping, and taxes. Enhanced with Order_Item_Meta and location-based addresses."
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:26
-msgid "An error occurred while generating products."
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:34
-msgid "Type of products to generate"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:40
-msgid "Price range for generated products"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:48
-msgid "Product categories and taxonomy configuration"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:60
-msgid "Product attributes and variations configuration"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:72
-msgid "Inventory and stock management settings"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:102
-msgid "Content generation and media options"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:113
-msgid "Sales and pricing configuration"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:136
-msgid "Digital product specific settings"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:159
-msgid "Generate Products"
-msgstr ""
-
-#: src/admin/components/Generators/ProductGenerator.jsx:160
-msgid "Create fake products with random names, descriptions, prices, and attributes. Configure product types, pricing, categories, and inventory settings."
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:26
-msgid "An error occurred while generating product variations."
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:34
-msgid "Specific product ID to generate variations for"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:39
-msgid "Product types to consider for variation generation"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:48
-msgid "Product IDs to exclude from variation generation"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:55
-msgid "Price variance settings for variations"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:59
-msgid "Minimum price variance percentage from base product"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:66
-msgid "Maximum price variance percentage from base product"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:75
-msgid "Stock management settings for variations"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:79
-msgid "Enable stock management for variations"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:84
-msgid "Stock quantity range"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:102
-msgid "Attribute generation settings"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:106
-msgid "Create missing attributes if needed"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:111
-msgid "Maximum attributes per variation"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:123
-msgid "Generate Product Variations"
-msgstr ""
-
-#: src/admin/components/Generators/ProductVariationGenerator.jsx:124
-msgid "Create realistic product variations with different attributes, prices, and stock levels. Requires existing products to create variations for."
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:26
-msgid "An error occurred while generating shipping plans."
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:34
-msgid "Types of shipping plans to generate"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:43
-msgid "Shipping cost range"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:51
-msgid "Geographic coverage areas and regional scope"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:60
-msgid "Shipping calculation methods"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:69
-msgid "Delivery time ranges and scheduling"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:77
-msgid "Shipping plan configuration settings"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:95
-msgid "Generate Shipping Plans"
-msgstr ""
-
-#: src/admin/components/Generators/ShippingPlanGenerator.jsx:96
-msgid "Create comprehensive shipping plans with different methods, costs, coverage areas, and delivery timeframes."
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:26
-msgid "An error occurred while generating tax classes."
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:34
-msgid "Types of tax classes to generate"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:43
-msgid "Tax jurisdictions to generate rates for"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:52
-msgid "Tax rate ranges by type"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:56
-msgid "Standard tax rate range"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:74
-msgid "Reduced tax rate range"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:94
-msgid "Geographic coverage for tax rates"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:98
-msgid "Countries to generate tax rates for"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:106
-msgid "Include compound tax rates"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:116
-msgid "Generate Tax Classes"
-msgstr ""
-
-#: src/admin/components/Generators/TaxClassGenerator.jsx:117
-msgid "Create tax classes with location-based rates for different jurisdictions and product types."
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:26
-msgid "An error occurred while generating transactions."
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:34
-msgid "Type of customers for transactions"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:40
-msgid "Specific customer ID for transactions (when customer_type is \"specific\")"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:46
-msgid "Filter orders by status for transaction generation"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:54
-msgid "Types of transactions to generate"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:63
-msgid "Payment gateways to use for transactions"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:72
-msgid "Date range for transaction generation"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:76
-msgid "Start date (YYYY-MM-DD format)"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:81
-msgid "End date (YYYY-MM-DD format)"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:88
-msgid "Transaction amount range"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:96
-msgid "Transaction status distribution"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:108
-msgid "Generate Transactions"
-msgstr ""
-
-#: src/admin/components/Generators/TransactionGenerator.jsx:109
-msgid "Create realistic payment transaction history with different gateways, amounts, and status distributions."
-msgstr ""
-
-#: src/admin/components/Pages/GeneratorPage.jsx:36
-msgid "Other Generators"
-msgstr ""
-
-#: src/admin/components/Pages/GeneratorPage.jsx:65
-msgid "Back to Generators"
-msgstr ""
-
-#: src/admin/components/Pages/GeneratorPage.jsx:74
-msgid "Home"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:18
-msgid "Products"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:20
-#: src/admin/components/Pages/HomePage.jsx:31
-#: src/admin/components/Pages/HomePage.jsx:42
-#: src/admin/components/Pages/HomePage.jsx:53
-msgid "Core"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:22
-msgid "Generate fake product data for testing."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:29
-msgid "Customers"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:33
-msgid "Generate fake customer data for testing."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:40
-msgid "Orders"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:44
-msgid "Generate fake order data for testing."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:51
-msgid "Coupons"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:55
-msgid "Generate fake coupon data for testing."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:62
-msgid "Product Variations"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:64
-#: src/admin/components/Pages/HomePage.jsx:75
-#: src/admin/components/Pages/HomePage.jsx:86
-#: src/admin/components/Pages/HomePage.jsx:97
-#: src/admin/components/Pages/HomePage.jsx:108
-#: src/admin/components/Pages/HomePage.jsx:119
-msgid "Enhanced"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:66
-msgid "Generate fake product variation data."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:73
-msgid "Shipping Plans"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:77
-msgid "Generate fake shipping plan data."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:84
-msgid "Tax Classes"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:88
-msgid "Generate fake tax class data."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:95
-msgid "Transactions"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:99
-msgid "Generate fake transaction data."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:106
-msgid "Cart Sessions"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:110
-msgid "Generate fake cart session data."
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:117
-msgid "Locations"
-msgstr ""
-
-#: src/admin/components/Pages/HomePage.jsx:121
-msgid "Generate fake location data."
-msgstr ""
-
-#. translators: %s: Category name (e.g., Core, Enhanced)
-#: src/admin/components/Pages/HomePage.jsx:146
-#, js-format
-msgid "%s Generators"
-msgstr ""
-
-#: src/admin/components/Pages/RootLayout.jsx:23
-msgid "Comprehensive EasyCommerce test data generator with 10 specialized generators, real-time validation, and modern interface."
-msgstr ""
-
-#: src/admin/components/Pages/RootLayout.jsx:33
-msgid "Data Locale:"
 msgstr ""
