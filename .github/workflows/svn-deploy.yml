@@ -209,6 +209,7 @@ jobs:
         run: composer install --no-dev --no-interaction --prefer-dist -o
 
       - name: Upload built plugin as workflow artifact
+        if: ${{ env.ACT != 'true' }}
         uses: actions/upload-artifact@v7
         with:
           name: plugin-build-${{ needs.meta.outputs.version }}
@@ -232,10 +233,45 @@ jobs:
 
     steps:
       - name: Download built plugin artifact
+        if: ${{ env.ACT != 'true' }}
         uses: actions/download-artifact@v8
         with:
           name: plugin-build-${{ needs.meta.outputs.version }}
           path: .
+
+      - name: Install Subversion
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y subversion
+
+      - name: Remove stale sample-data directory from SVN trunk (if present)
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          PLUGIN_SLUG:  ${{ needs.meta.outputs.plugin_slug }}
+        run: |
+          SVN_TRUNK="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/trunk"
+
+          svn checkout "$SVN_TRUNK" svn-trunk \
+            --username  "$SVN_USERNAME" \
+            --password  "$SVN_PASSWORD" \
+            --non-interactive --quiet
+
+          if [ -d "svn-trunk/sample-data" ]; then
+            echo "Removing stale sample-data directory from SVN trunk…"
+            svn delete svn-trunk/sample-data \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+              --non-interactive --quiet
+            svn commit svn-trunk \
+              -m "chore: remove incorrectly deployed sample-data directory" \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+              --non-interactive --quiet
+            echo "sample-data removed and committed."
+          else
+            echo "No sample-data directory found — nothing to clean up."
+          fi
+
+          rm -rf svn-trunk
 
       - name: Deploy plugin to WordPress.org via SVN
         id: deploy
