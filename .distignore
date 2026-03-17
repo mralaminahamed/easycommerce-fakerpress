@@ -14,6 +14,7 @@ tailwind.config.js
 
 # Development tools and configuration
 /.yarn/
+.actrc
 .ncurc.json
 .stylelintrc.js
 .yarnrc.yml
