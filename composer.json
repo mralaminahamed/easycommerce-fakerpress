@@ -63,6 +63,7 @@
         }
     },
     "scripts": {
+        "github:svn:test": "act push --eventpath .github/act-tag-event.json -W ./.github/workflows/svn-deploy.yml",
         "makepot": "wp i18n make-pot . languages/easycommerce-fakerpress.pot --exclude=node_modules,vendor,drafts,docs,build,release,tests",
         "phpcbf":  "phpcbf --standard=phpcs.xml",
         "phpcbf:plugin-review": "phpcbf --standard=phpcs.plugin-review.xml",
