@@ -8,8 +8,8 @@ on:
       - trunk
 
 jobs:
-  trunk:
-    name: Push
+  sync:
+    name: Sync
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

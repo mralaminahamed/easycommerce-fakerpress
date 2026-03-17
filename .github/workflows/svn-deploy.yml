@@ -6,54 +6,137 @@ on:
       - "*"
 
 permissions:
-  contents: write # needed to create GitHub release
+  contents: write # Required to create a GitHub release
 
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
+# ---------------------------------------------------------------------------
+# Shared defaults applied to every job
+# ---------------------------------------------------------------------------
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  release:
-    name: Release
+
+  # -------------------------------------------------------------------------
+  # JOB 1 — meta
+  # Derives plugin identifiers and validates tag/version alignment.
+  # Outputs are consumed by every downstream job so nothing is re-computed.
+  # -------------------------------------------------------------------------
+  meta:
+    name: "Meta: Resolve plugin info & validate version"
     runs-on: ubuntu-latest
+    outputs:
+      plugin_slug:    ${{ steps.plugin_name.outputs.plugin_slug }}
+      plugin_file:    ${{ steps.plugin_name.outputs.plugin_file }}
+      plugin_name:    ${{ steps.plugin_name.outputs.plugin_name }}
+      version:        ${{ steps.version_check.outputs.version }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Set plugin name
+      - name: Derive plugin identifiers from repository name
         id: plugin_name
         run: |
+          # github.event.repository.name is empty under `act` (local CI simulation).
+          # Resolution order:
+          #   1. GitHub Actions context  (real CI)
+          #   2. Git remote URL slug     (act + git remote configured)
+          #   3. Working directory name  (act fallback)
           PLUGIN_SLUG="${{ github.event.repository.name }}"
-          PLUGIN_FILE="${PLUGIN_SLUG}.php"
-          # Convert kebab-case to Title Case for display
-          PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g' | sed 's/\b\w/\U&/g')
-          echo "plugin_slug=$PLUGIN_SLUG" >> $GITHUB_OUTPUT
-          echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
-          echo "plugin_name=$PLUGIN_NAME" >> $GITHUB_OUTPUT
 
-      - name: Validate tag and plugin version alignment
+          if [ -z "$PLUGIN_SLUG" ]; then
+            REMOTE_URL=$(git remote get-url origin 2>/dev/null || true)
+            if [ -n "$REMOTE_URL" ]; then
+              PLUGIN_SLUG=$(basename "$REMOTE_URL" .git)
+            fi
+          fi
+
+          if [ -z "$PLUGIN_SLUG" ]; then
+            PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
+          fi
+
+          if [ -z "$PLUGIN_SLUG" ]; then
+            echo "::error::Could not determine plugin slug from any source." >&2
+            exit 1
+          fi
+
+          PLUGIN_FILE="${PLUGIN_SLUG}.php"
+          # Convert kebab-case slug → Title Case display name
+          PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g; s/\b\w/\U&/g')
+
+          echo "Resolved slug : $PLUGIN_SLUG"
+          echo "Resolved file : $PLUGIN_FILE"
+          echo "Resolved name : $PLUGIN_NAME"
+
+          echo "plugin_slug=$PLUGIN_SLUG" >> "$GITHUB_OUTPUT"
+          echo "plugin_file=$PLUGIN_FILE"  >> "$GITHUB_OUTPUT"
+          echo "plugin_name=$PLUGIN_NAME"  >> "$GITHUB_OUTPUT"
+
+      - name: Validate tag / plugin-header version alignment
         id: version_check
         run: |
           TAG_REF="${GITHUB_REF#refs/tags/}"
-          # Strip leading v if present
-          if [[ "$TAG_REF" =~ ^v ]]; then TAG_STRIPPED=${TAG_REF#v}; else TAG_STRIPPED=$TAG_REF; fi
-          # Extract Version from plugin header (first match)
-          PLUGIN_VERSION=$(grep -E "^[[:space:]]*\*[[:space:]]*Version:" ${{ steps.plugin_name.outputs.plugin_file }} | head -n1 | sed -E 's/.*Version:[[:space:]]*([^ ]+).*/\1/')
-          echo "Tag: $TAG_REF";
-          echo "Stripped Tag: $TAG_STRIPPED";
-          echo "Plugin Version: $PLUGIN_VERSION";
-          if [ -z "$PLUGIN_VERSION" ]; then echo "Could not determine plugin version from ${{ steps.plugin_name.outputs.plugin_file }}"; exit 1; fi
-          if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then echo "Version mismatch: tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)"; exit 1; fi
-          echo "version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
+          # Strip an optional leading "v" (e.g. v1.2.3 → 1.2.3)
+          TAG_STRIPPED="${TAG_REF#v}"
 
-      - name: Ensure composer.lock is present
-        run: |
-          if [ ! -f composer.lock ]; then
-            echo "composer.lock is missing. Please commit it before tagging a release." >&2
+          PLUGIN_FILE="${{ steps.plugin_name.outputs.plugin_file }}"
+
+          if [ ! -f "$PLUGIN_FILE" ]; then
+            echo "::error::Plugin main file '$PLUGIN_FILE' not found in workspace. Ensure the repository name matches the plugin slug." >&2
             exit 1
           fi
+
+          PLUGIN_VERSION=$(
+            grep -E "^[[:space:]]*\*[[:space:]]*Version:" "$PLUGIN_FILE" \
+              | head -n1 \
+              | sed -E 's/.*Version:[[:space:]]*([^[:space:]]+).*/\1/'
+          )
+
+          echo "Tag          : $TAG_REF"
+          echo "Stripped tag : $TAG_STRIPPED"
+          echo "Plugin header: $PLUGIN_VERSION"
+
+          if [ -z "$PLUGIN_VERSION" ]; then
+            echo "::error::Could not extract Version from $PLUGIN_FILE" >&2
+            exit 1
+          fi
+
+          if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then
+            echo "::error::Version mismatch — tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)" >&2
+            exit 1
+          fi
+
+          echo "version=$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Verify composer.lock is committed
+        run: |
+          if [ ! -f composer.lock ]; then
+            echo "::error::composer.lock is missing. Commit it before tagging a release." >&2
+            exit 1
+          fi
+
+  # -------------------------------------------------------------------------
+  # JOB 2 — build
+  # Installs dependencies, compiles frontend assets, and uploads the built
+  # plugin tree as a workflow artifact consumed by the deploy job.
+  # -------------------------------------------------------------------------
+  build:
+    name: "Build: Install deps & compile assets"
+    runs-on: ubuntu-latest
+    needs: meta
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
@@ -62,7 +145,26 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - name: Setup Node.js
+      - name: Bootstrap Node.js runtime (act compatibility)
+        # actions/setup-node@v6 is itself a Node.js action and requires `node` to
+        # already exist in $PATH to bootstrap. The catthehacker/ubuntu:act-latest
+        # image does not ship Node.js, so this step installs it via nvm when the
+        # ACT environment variable is set (injected automatically by act).
+        # On real GitHub-hosted runners this step is skipped entirely.
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+            curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+          fi
+          . "$NVM_DIR/nvm.sh"
+          nvm install 24
+          nvm use 24
+          nvm alias default 24
+          # Persist nvm node path for subsequent steps in this job
+          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> "$GITHUB_PATH"
+
+      - name: Setup Node.js 24 (LTS)
         uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -75,61 +177,67 @@ jobs:
             vendor
           key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            composer-${{ runner.os }}-
+            composer-${{ runner.os }}-php74-
 
-      - name: Cache Node modules
-        uses: actions/cache@v4
+      - name: Cache Yarn node_modules
+        uses: actions/cache@v5
         with:
-          path: |
-            node_modules
-          key: node-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          path: node_modules
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            node-${{ runner.os }}-
+            yarn-${{ runner.os }}-
 
-      - name: Install PHP dependencies (with dev for build tooling)
+      - name: Install PHP dependencies (including dev — needed for build tooling)
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Node dependencies & build assets
         run: |
-          composer install --no-interaction --prefer-dist
+          corepack enable yarn
+          yarn set version stable
+          yarn install --frozen-lockfile
+          yarn build
 
-      - name: Build assets (yarn)
-        run: |
-           corepack enable yarn
-           yarn set version stable
-           yarn install --frozen-lockfile
-           yarn build
-
-      - name: Optimize production autoloader (remove dev deps)
-        run: |
-          composer install --no-dev --no-interaction --prefer-dist -o
-
-      - name: "Guard: composer.lock unchanged after build"
+      - name: Guard — composer.lock must not change during build
         run: |
           if ! git diff --quiet --exit-code composer.lock; then
-            echo "composer.lock changed during build. Commit updated lock file before release." >&2
+            echo "::error::composer.lock was modified during the build. Commit the updated lock file before releasing." >&2
             git --no-pager diff composer.lock | head -n 100
             exit 1
           fi
 
-      - name: Install SVN (Subversion)
-        run: |
-          sudo apt-get update -y
-           sudo apt-get install -y subversion
+      - name: Optimise Composer autoloader for production (strip dev deps)
+        run: composer install --no-dev --no-interaction --prefer-dist -o
 
-      - name: Clean up sample-data directories from SVN
-        run: |
-          # Checkout the SVN repository to clean up any existing sample-data directories
-          svn checkout "https://plugins.svn.wordpress.org/${{ steps.plugin_name.outputs.plugin_slug }}/trunk" svn-trunk --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}" --non-interactive --quiet
+      - name: Upload built plugin as workflow artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-build-${{ needs.meta.outputs.version }}
+          path: |
+            .
+            !.git
+            !node_modules
+            !tests
+            !.github
+          retention-days: 1
 
-          # Remove any sample-data directories if they exist
-          if [ -d "svn-trunk/sample-data" ]; then
-            echo "Removing sample-data directory from SVN..."
-            svn delete svn-trunk/sample-data --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}" --non-interactive --quiet
-            svn commit svn-trunk -m "Remove incorrectly deployed sample-data directory" --username "${{ secrets.SVN_USERNAME }}" --password "${{ secrets.SVN_PASSWORD }}" --non-interactive --quiet
-          fi
+  # -------------------------------------------------------------------------
+  # JOB 3 — deploy
+  # Cleans SVN trunk, deploys the built plugin to WordPress.org, and creates
+  # the corresponding GitHub release with the generated ZIP attached.
+  # -------------------------------------------------------------------------
+  deploy:
+    name: "Deploy: Publish to WP.org & create GitHub release"
+    runs-on: ubuntu-latest
+    needs: [meta, build]
 
-          # Clean up the temporary checkout
-          rm -rf svn-trunk
+    steps:
+      - name: Download built plugin artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: plugin-build-${{ needs.meta.outputs.version }}
+          path: .
 
-      - name: WordPress Plugin Deploy
+      - name: Deploy plugin to WordPress.org via SVN
         id: deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
@@ -137,16 +245,17 @@ jobs:
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: ${{ steps.plugin_name.outputs.plugin_slug }}
+          SLUG:         ${{ needs.meta.outputs.plugin_slug }}
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ steps.version_check.outputs.version }}
+          name: "Release ${{ needs.meta.outputs.version }}"
           body: |
-            Release ${{ steps.version_check.outputs.version }} of ${{ steps.plugin_name.outputs.plugin_name }}.
-            Refer to CHANGELOG.md for full details.
+            ## ${{ needs.meta.outputs.plugin_name }} — v${{ needs.meta.outputs.version }}
+
+            Refer to [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full details.
           files: ${{ steps.deploy.outputs.zip-path }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
