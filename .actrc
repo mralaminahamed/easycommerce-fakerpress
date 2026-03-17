@@ -1,0 +1,3 @@
+# Project-level act configuration
+--action-offline-mode
+-P ubuntu-latest=ghcr.io/catthehacker/ubuntu:full-22.04
