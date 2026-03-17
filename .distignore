@@ -2,6 +2,8 @@
 /node_modules/
 /src/
 webpack.config.js
+composer.json
+composer.lock
 package.json
 package-lock.json
 yarn.lock
@@ -88,24 +90,10 @@ Thumbs.db
 /.claude/
 CLAUDE.md
 
-# WordPress specific files
-/.wordpress-org/
-wp-config.php
-wp-config-local.php
-
-# Sample data (downloaded at runtime from separate repository)
-/sample-data/
-/../easycommerce-fakerpress-sample-data/
-/easycommerce-fakerpress-sample-data/
-# Exclude parent directory files
-../*
-
 # Development configuration files
 AGENTS.md
 tsconfig.json
 components.json
-copilot-instructions.md
-git-commit-instructions.md
 opencode.json
 
 # Cache directories
