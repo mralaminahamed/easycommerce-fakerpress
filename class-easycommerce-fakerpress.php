@@ -25,6 +25,7 @@ use EasyCommerceFakerPress\Controllers\Transaction;
 use EasyCommerceFakerPress\Controllers\Cart_Session;
 use EasyCommerceFakerPress\Controllers\Location;
 use EasyCommerceFakerPress\Controllers\Product_Review;
+use EasyCommerceFakerPress\MCP\MCP_Server;
 
 /**
  * Main Plugin Class for EasyCommerce FakerPress
@@ -111,6 +112,29 @@ class EasyCommerce_FakerPress {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
+
+		$this->init_mcp();
+	}
+
+	/**
+	 * Initialise the MCP server integration.
+	 *
+	 * Boots the MCP_Server class which registers abilities via the
+	 * WordPress Abilities API and exposes them as MCP tools through the
+	 * mcp-adapter plugin.
+	 *
+	 * If neither the abilities-api nor the mcp-adapter is present, this
+	 * method exits silently — no errors are thrown so existing functionality
+	 * is completely unaffected.
+	 *
+	 * @since 2.1.0
+	 * @return void
+	 */
+	private function init_mcp(): void {
+		// Both the abilities-api action hook and the mcp-adapter action hook
+		// are checked at their respective fire-times; here we just wire up the
+		// MCP_Server instance unconditionally so it can listen for those hooks.
+		( new MCP_Server() )->init();
 	}
 
 	/**
@@ -574,6 +598,18 @@ class EasyCommerce_FakerPress {
 				esc_html__( 'EasyCommerce FakerPress requires EasyCommerce plugin to be installed and active.', 'easycommerce-fakerpress' )
 			);
 		}
+
+		if ( ! $this->is_mcp_adapter_active() ) {
+			printf(
+				'<div class="notice notice-info is-dismissible"><p>%s</p></div>',
+				sprintf(
+				/* translators: 1: opening anchor tag, 2: closing anchor tag */
+					esc_html__( 'EasyCommerce FakerPress MCP Server: The %1$smcp-adapter%2$s plugin is not installed. Install it to enable AI-client access (Claude Desktop, VS Code Copilot, etc.).', 'easycommerce-fakerpress' ),
+					'<a href="https://github.com/WordPress/mcp-adapter/releases" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				)
+			);
+		}
 	}
 
 	/**
@@ -588,9 +624,20 @@ class EasyCommerce_FakerPress {
 	 * @return bool True if EasyCommerce is active, false otherwise.
 	 */
 	public function is_easycommerce_active(): bool {
-		$plugin = 'easycommerce/easycommerce.php';
+		return is_plugin_active( 'easycommerce/easycommerce.php' );
+	}
 
-		return in_array( $plugin, (array) get_option( 'active_plugins', array() ), true );
+	/**
+	 * Check if the mcp-adapter plugin is active.
+	 *
+	 * The adapter registers the `mcp_adapter_init` action hook and the
+	 * \WP\MCP\Transport\HttpTransport class when active.
+	 *
+	 * @since 2.1.0
+	 * @return bool
+	 */
+	public function is_mcp_adapter_active(): bool {
+		return class_exists( '\WP\MCP\Transport\HttpTransport' );
 	}
 
 	/**
@@ -635,6 +682,54 @@ class EasyCommerce_FakerPress {
 	 */
 	public function __wakeup() {
 		throw new RuntimeException( 'Cannot unserialize singleton' );
+	}
+
+	/**
+	 * REST API handler for downloading sample data
+	 *
+	 * Handles asynchronous download of sample data via REST API to avoid blocking
+	 * the admin page load. Only accessible to users with manage_options capability.
+	 *
+	 * @since 2.0.4
+	 *
+	 * @return WP_REST_Response|WP_Error Response object or error.
+	 */
+	public function rest_download_sample_data() {
+		$result = $this->ensure_sample_data();
+		if ( ! $result ) {
+			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
+		}
+
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'message' => 'Sample data downloaded successfully',
+			),
+			200
+		);
+	}
+
+	/**
+	 * REST API permission check
+	 *
+	 * Verifies that the current user has the required permissions for REST API operations.
+	 *
+	 * @since 2.0.4
+	 *
+	 * @return bool True if user has permissions, false otherwise.
+	 */
+	public function rest_permission_check(): bool {
+		return current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * REST API handler for downloading sample data.
+	 *
+	 * @since 2.0.4
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function rest_mcp_endpoint_url(): string {
+		return rest_url( 'easycommerce-fakerpress-mcp/mcp' );
 	}
 
 	/**
@@ -684,44 +779,6 @@ class EasyCommerce_FakerPress {
 
 		// Default fallback.
 		return 'en_US';
-	}
-
-	/**
-	 * REST API handler for downloading sample data
-	 *
-	 * Handles asynchronous download of sample data via REST API to avoid blocking
-	 * the admin page load. Only accessible to users with manage_options capability.
-	 *
-	 * @since 2.0.4
-	 *
-	 * @return WP_REST_Response|WP_Error Response object or error.
-	 */
-	public function rest_download_sample_data() {
-		$result = $this->ensure_sample_data();
-		if ( ! $result ) {
-			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
-		}
-
-		return new WP_REST_Response(
-			array(
-				'success' => true,
-				'message' => 'Sample data downloaded successfully',
-			),
-			200
-		);
-	}
-
-	/**
-	 * REST API permission check
-	 *
-	 * Verifies that the current user has the required permissions for REST API operations.
-	 *
-	 * @since 2.0.4
-	 *
-	 * @return bool True if user has permissions, false otherwise.
-	 */
-	public function rest_permission_check(): bool {
-		return current_user_can( 'manage_options' );
 	}
 
 	/**
