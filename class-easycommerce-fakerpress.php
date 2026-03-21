@@ -107,11 +107,12 @@ class EasyCommerce_FakerPress {
 		register_activation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'activate_plugin' ) );
 		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 
+		add_filter( 'plugin_action_links_' . plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
 		add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		add_filter( 'admin_body_class', array( $this, 'filter_admin_body_class' ), PHP_INT_MAX );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
 
 		$this->init_mcp();
 	}
@@ -196,6 +197,34 @@ class EasyCommerce_FakerPress {
 	public function add_plugin_action_links( array $links ): array {
 		$links[] = '<a href="' . admin_url( 'admin.php?page=easycommerce-fakerpress' ) . '">' . __( 'Get Started', 'easycommerce-fakerpress' ) . '</a>';
 		return $links;
+	}
+
+	/**
+	 * Filter admin body classes
+	 *
+	 * Removes 'easycommerce' and 'folded' classes from the admin body when viewing
+	 * the EasyCommerce FakerPress admin page to provide a cleaner UI experience.
+	 *
+	 * @since 2.1.0
+	 * @hooked admin_body_class
+	 *
+	 * @param string $classes Space-separated list of admin body classes.
+	 *
+	 * @return string Modified list of admin body classes.
+	 */
+	public function filter_admin_body_class( string $classes ): string {
+		$screen = get_current_screen();
+
+		if ( null === $screen || 'toplevel_page_easycommerce-fakerpress' !== $screen->id ) {
+			return $classes;
+		}
+
+		$classes = array_filter(
+			explode( ' ', $classes ),
+			fn( $css_class ) => ! in_array( $css_class, array( 'easycommerce', 'folded' ), true )
+		);
+
+		return implode( ' ', $classes );
 	}
 
 	/**
