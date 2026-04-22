@@ -134,7 +134,7 @@ class MCP_Server {
 			self::REST_NAMESPACE,
 			self::REST_ROUTE,
 			__( 'EasyCommerce FakerPress', 'easycommerce-fakerpress' ),
-			__( 'Generate realistic test data for EasyCommerce stores. Supports products, customers, orders, coupons, product reviews, product variations, shipping plans, tax classes, payment transactions, cart sessions, and geographic locations.', 'easycommerce-fakerpress' ),
+			__( 'Generate realistic test data for EasyCommerce stores. Supports products, customers, orders, coupons, product reviews, product variations, shipping plans, tax classes, payment transactions, cart sessions, geographic locations, and product attributes.', 'easycommerce-fakerpress' ),
 			EASYCOMMERCE_FAKERPRESS_VERSION,
 			array(
 				\WP\MCP\Transport\HttpTransport::class,
@@ -629,6 +629,28 @@ class MCP_Server {
 				),
 				'output_schema'       => $this->build_output_schema( 'locations', __( 'Array of location-batch result objects with countries_created, total_states, total_cities, data_file_path, and created_date.', 'easycommerce-fakerpress' ) ),
 				'execute_callback'    => array( Abilities\Generate_Locations::class, 'execute' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+			),
+
+			'easycommerce-fakerpress/generate-attributes'  => array(
+				'label'               => __( 'Generate Attributes', 'easycommerce-fakerpress' ),
+				'description'         => __( 'Generate EasyCommerce product attributes (Color, Size, Material, etc.) with option values. Returns an array of created attribute IDs, names, types, and values.', 'easycommerce-fakerpress' ),
+				'category'            => 'easycommerce-fakerpress',
+				'input_schema'        => $this->build_input_schema(
+					array(
+						'attribute_types' => array(
+							'type'        => 'array',
+							'description' => __( 'Attribute types to generate. Allowed: Text, Color, Image. Default: [Text, Color].', 'easycommerce-fakerpress' ),
+							'items'       => array(
+								'type' => 'string',
+								'enum' => array( 'Text', 'Color', 'Image' ),
+							),
+							'default'     => array( 'Text', 'Color' ),
+						),
+					)
+				),
+				'output_schema'       => $this->build_output_schema( 'attributes', __( 'Array of generated attribute objects with id, name, type, slug, and values array.', 'easycommerce-fakerpress' ) ),
+				'execute_callback'    => array( Abilities\Generate_Attributes::class, 'execute' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 			),
 
