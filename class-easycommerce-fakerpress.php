@@ -25,6 +25,7 @@ use EasyCommerceFakerPress\Controllers\Transaction;
 use EasyCommerceFakerPress\Controllers\Cart_Session;
 use EasyCommerceFakerPress\Controllers\Location;
 use EasyCommerceFakerPress\Controllers\Product_Review;
+use EasyCommerceFakerPress\Controllers\Attribute;
 use EasyCommerceFakerPress\MCP\MCP_Server;
 
 /**
@@ -356,6 +357,9 @@ class EasyCommerce_FakerPress {
 
 			// Additional generators (Version 2.0.3).
 			new Product_Review(),
+
+			// Attribute generator (Version 2.1.0).
+			new Attribute(),
 		);
 
 		foreach ( $controllers as $controller ) {
