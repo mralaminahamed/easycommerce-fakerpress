@@ -11,11 +11,13 @@ import {
   CreditCard,
   ShoppingBag,
   MapPin,
+  Layers,
 } from "lucide-react";
 
 import { __ } from "@wordpress/i18n";
 
 import type { Generator } from "@/admin/types";
+import AttributeGenerator from "@/admin/components/Generators/AttributeGenerator";
 import CartSessionGenerator from "@/admin/components/Generators/CartSessionGenerator";
 import CouponGenerator from "@/admin/components/Generators/CouponGenerator";
 import CustomerGenerator from "@/admin/components/Generators/CustomerGenerator";
@@ -177,6 +179,22 @@ export const generators: Generator[] = [
       "easycommerce-fakerpress",
     ),
     route: "cart-sessions",
+  },
+  {
+    name: __("Attributes", "easycommerce-fakerpress"),
+    component: AttributeGenerator,
+    category: __("Advanced", "easycommerce-fakerpress"),
+    order: 6,
+    icon: Layers,
+    description: __(
+      "Generate product attributes such as Text, Color, and Image types. Attributes can be used to define product variations and filtering options.",
+      "easycommerce-fakerpress",
+    ),
+    useCase: __(
+      "E-commerce developers, product catalog managers",
+      "easycommerce-fakerpress",
+    ),
+    route: "attributes",
   },
   {
     name: __("Locations", "easycommerce-fakerpress"),
