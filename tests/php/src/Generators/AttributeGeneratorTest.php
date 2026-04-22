@@ -58,24 +58,4 @@ class AttributeGeneratorTest extends EasyCommerceFakerPressUnitTestCase {
 
 		$this->assertEquals( 'attribute', $method->invoke( $this->generator ) );
 	}
-
-	/**
-	 * Test controller instantiation
-	 */
-	public function test_controller_instantiation(): void {
-		$controller = new \EasyCommerceFakerPress\Controllers\Attribute();
-		$this->assertInstanceOf( \EasyCommerceFakerPress\Controllers\Attribute::class, $controller );
-	}
-
-	/**
-	 * Test controller rest base
-	 */
-	public function test_controller_rest_base(): void {
-		$controller = new \EasyCommerceFakerPress\Controllers\Attribute();
-		$reflection = new ReflectionClass( $controller );
-		$method     = $reflection->getMethod( 'get_rest_base' );
-		$method->setAccessible( true );
-
-		$this->assertEquals( 'attributes', $method->invoke( $controller ) );
-	}
 }

@@ -9,6 +9,8 @@
 namespace EasyCommerceFakerPress\Generators;
 
 use EasyCommerceFakerPress\Abstracts\Generator;
+use EasyCommerce\Models\Attribute as AttributeModel;
+use EasyCommerce\Models\Attribute_Value as AttributeValueModel;
 use WP_Error;
 
 /**
@@ -76,6 +78,30 @@ class Attribute extends Generator {
 	}
 
 	/**
+	 * Get supported data types for this generator.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Supported types
+	 */
+	public function get_supported_types(): array {
+		return array(
+			'attributes' => __( 'Product Attributes with Values', 'easycommerce-fakerpress' ),
+		);
+	}
+
+	/**
+	 * Get generator description.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Description
+	 */
+	public function get_description(): string {
+		return 'Generates product attributes with associated values, supporting predefined sets (Color, Size, Material, etc.) and randomly generated custom attributes for testing ecommerce product variation functionality.';
+	}
+
+	/**
 	 * Generate a single attribute
 	 *
 	 * @since 1.0.0
@@ -83,29 +109,29 @@ class Attribute extends Generator {
 	 * @return array|WP_Error Single attribute data, or WP_Error on failure.
 	 */
 	protected function generate_single_item() {
-		// Check if EasyCommerce Attribute model exists.
-		if ( ! class_exists( 'EasyCommerce\Models\Attribute' ) ) {
+		if ( ! class_exists( AttributeModel::class ) ) {
 			return new WP_Error(
 				'missing_model',
 				__( 'EasyCommerce Attribute model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' )
 			);
 		}
 
-		// 70% chance: use a predefined attribute set; 30% chance: generate custom.
+		if ( ! class_exists( AttributeValueModel::class ) ) {
+			return new WP_Error( 'missing_model', __( 'EasyCommerce Attribute_Value model not found.', 'easycommerce-fakerpress' ) );
+		}
+
 		if ( $this->get_faker()->boolean( 70 ) ) {
 			$data = $this->generate_predefined_attribute();
 		} else {
 			$data = $this->generate_custom_attribute();
 		}
 
-		// Append numeric suffix for uniqueness.
 		$suffix      = $this->get_faker()->numerify( '###' );
 		$unique_name = $data['name'] . ' ' . $suffix;
 		$type        = $data['type'];
 		$labels      = $data['values'];
 
-		// Create the attribute via EasyCommerce model.
-		$attr_model   = new \EasyCommerce\Models\Attribute();
+		$attr_model   = new AttributeModel();
 		$attribute_id = $attr_model->add( $unique_name, $type );
 
 		if ( ! $attribute_id ) {
@@ -115,8 +141,7 @@ class Attribute extends Generator {
 			);
 		}
 
-		// Add each value to the attribute.
-		$val_model = new \EasyCommerce\Models\Attribute_Value();
+		$val_model = new AttributeValueModel();
 		$values    = array();
 
 		foreach ( $labels as $label ) {
@@ -179,16 +204,18 @@ class Attribute extends Generator {
 		$name = ucfirst( $this->get_faker()->word() );
 		$type = $this->get_faker()->randomElement( array( 'Text', 'Color', 'Image' ) );
 
-		$value_count  = $this->get_faker()->numberBetween( 3, 8 );
-		$values       = array();
-		$values_found = 0;
+		$value_count   = $this->get_faker()->numberBetween( 3, 8 );
+		$values        = array();
+		$attempts      = 0;
+		$values_so_far = 0;
 
-		while ( $values_found < $value_count ) {
-			$candidate = ucfirst( $this->get_faker()->word() );
-			if ( ! in_array( $candidate, $values, true ) ) {
-				$values[]     = $candidate;
-				$values_found = count( $values );
+		while ( $values_so_far < $value_count && $attempts < 50 ) {
+			$word = ucfirst( $this->get_faker()->word() );
+			if ( ! in_array( $word, $values, true ) ) {
+				$values[]      = $word;
+				$values_so_far = count( $values );
 			}
+			++$attempts;
 		}
 
 		return array(
