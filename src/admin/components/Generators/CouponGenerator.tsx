@@ -46,9 +46,9 @@ export default function CouponGenerator() {
       type: "array",
       items: {
         type: "string",
-        enum: ["percentage", "fixed_amount", "free_shipping", "buy_x_get_y"],
+        enum: ["percentage", "fixed", "free_shipping", "products"],
       },
-      default: ["percentage", "fixed_amount"],
+      default: ["percentage", "fixed"],
     },
     discount_range: {
       description: __("Discount value range", "easycommerce-fakerpress"),

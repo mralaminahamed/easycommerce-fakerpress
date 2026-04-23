@@ -50,7 +50,7 @@ class Coupon extends Generator {
 	 * @return string Description
 	 */
 	public function get_description(): string {
-		return __( 'Generates realistic discount coupons with various discount types (percentage, fixed, buy-x-get-y), comprehensive rules, usage restrictions, validity periods, and relationship management for testing ecommerce promotional functionality.', 'easycommerce-fakerpress' );
+		return __( 'Generates realistic discount coupons with various discount types (percentage, fixed, free_shipping, products), comprehensive rules, usage restrictions, validity periods, and relationship management for testing ecommerce promotional functionality.', 'easycommerce-fakerpress' );
 	}
 
 	/**

@@ -326,9 +326,9 @@ class MCP_Server {
 					array(
 						'discount_types'    => array(
 							'type'        => 'array',
-							'description' => __( 'Discount types to include. Allowed: percentage, fixed_amount, free_shipping, buy_x_get_y. Default: ["percentage","fixed_amount"].', 'easycommerce-fakerpress' ),
+							'description' => __( 'Discount types to include. Allowed: percentage, fixed, free_shipping, products. Default: ["percentage","fixed"].', 'easycommerce-fakerpress' ),
 							'items'       => array( 'type' => 'string' ),
-							'default'     => array( 'percentage', 'fixed_amount' ),
+							'default'     => array( 'percentage', 'fixed' ),
 						),
 						'min_percentage'    => array(
 							'type'        => 'integer',
