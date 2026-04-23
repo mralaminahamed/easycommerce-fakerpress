@@ -129,7 +129,14 @@ class Product extends Generator {
 			? (bool) $this->generation_params['meta_options']['include_meta']
 			: true;
 
-		$product_type  = $this->get_faker()->randomElement( array( 'physical', 'digital' ) );
+		$requested_type = isset( $this->generation_params['product_type'] ) ? $this->generation_params['product_type'] : 'mixed';
+		if ( 'digital' === $requested_type ) {
+			$product_type = 'digital';
+		} elseif ( 'mixed' === $requested_type || empty( $requested_type ) ) {
+			$product_type = $this->get_faker()->randomElement( array( 'physical', 'digital' ) );
+		} else {
+			$product_type = 'physical';
+		}
 		$product_title = $this->generate_product_title( $product_type );
 		$categories    = $this->get_or_create_product_categories();
 		$brands        = $this->get_or_create_product_brands();
@@ -706,8 +713,18 @@ class Product extends Generator {
 	 * @return array Array of product variations with pricing and stock information.
 	 */
 	private function generate_product_variations( array $attributes, string $product_type = 'physical' ): array {
-		$variations  = array();
-		$base_price  = 'physical' === $product_type ? $this->get_faker()->randomFloat( 2, 20, 800 ) : $this->get_faker()->randomFloat( 2, 5, 200 );
+		$variations = array();
+		$price_min  = isset( $this->generation_params['price_range']['min'] ) ? (float) $this->generation_params['price_range']['min'] : null;
+		$price_max  = isset( $this->generation_params['price_range']['max'] ) ? (float) $this->generation_params['price_range']['max'] : null;
+
+		if ( null !== $price_min && null !== $price_max ) {
+			$base_price = $this->get_faker()->randomFloat( 2, $price_min, $price_max );
+		} elseif ( 'physical' === $product_type ) {
+			$base_price = $this->get_faker()->randomFloat( 2, 20, 800 );
+		} else {
+			$base_price = $this->get_faker()->randomFloat( 2, 5, 200 );
+		}
+
 		$price_range = $base_price * 0.3; // 30% price variation for more realistic pricing
 
 		// Generate combinations of attributes.

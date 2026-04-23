@@ -67,15 +67,34 @@ class Generate_Products extends Ability {
 			'variation_count'    => $input['variation_count'] ?? 5,
 		);
 
-		// Nest inventory options.
-		$payload['inventory'] = array(
+		// Nest inventory options including optional stock_range.
+		$inventory = array(
 			'manage_stock' => $input['manage_stock'] ?? true,
 		);
+		if ( isset( $input['stock_min'] ) || isset( $input['stock_max'] ) ) {
+			$inventory['stock_range'] = array(
+				'min' => $input['stock_min'] ?? 0,
+				'max' => $input['stock_max'] ?? 100,
+			);
+		}
+		$payload['inventory'] = $inventory;
 
-		// Nest content options.
-		$payload['content_options'] = array(
+		// Nest categories options.
+		if ( isset( $input['categories_create_new'] ) || isset( $input['categories_max_per_product'] ) ) {
+			$payload['categories'] = array(
+				'create_new'      => $input['categories_create_new'] ?? true,
+				'max_per_product' => $input['categories_max_per_product'] ?? 3,
+			);
+		}
+
+		// Nest content options including optional include_images.
+		$content_options = array(
 			'description_length' => $input['description_length'] ?? 'medium',
 		);
+		if ( isset( $input['include_images'] ) ) {
+			$content_options['include_images'] = (bool) $input['include_images'];
+		}
+		$payload['content_options'] = $content_options;
 
 		return $payload;
 	}
