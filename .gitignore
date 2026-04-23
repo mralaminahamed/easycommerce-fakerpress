@@ -42,8 +42,10 @@ Thumbs.db
 
 # Testing
 /coverage/
+/tests/coverage/
 /test-results/
 /tmp/
+.phpunit.result.cache
 
 # Temporary files
 *.tmp
@@ -62,3 +64,6 @@ Thumbs.db
 
 # Claude AI files
 /.claude/
+
+# Superpowers planning docs
+/docs/superpowers/
