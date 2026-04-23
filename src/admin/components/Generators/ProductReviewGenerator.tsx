@@ -37,7 +37,16 @@ export default function ProductReviewGenerator() {
     }
   };
 
-  const parameterConfig = {};
+  const parameterConfig = {
+    product_id: {
+      description: __(
+        "Target a specific product ID. Leave empty to distribute across all products.",
+        "easycommerce-fakerpress",
+      ),
+      type: "integer",
+      minimum: 1,
+    },
+  };
 
   return (
     <GeneratorBase

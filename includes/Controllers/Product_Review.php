@@ -77,13 +77,26 @@ class Product_Review extends Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
-			'count' => array(
+			'count'      => array(
 				'description' => __( 'Number of product reviews to generate.', 'easycommerce-fakerpress' ),
 				'type'        => 'integer',
 				'minimum'     => 1,
 				'maximum'     => 1000,
 				'default'     => 10,
 				'required'    => false,
+			),
+			'product_id' => array(
+				'description'       => __( 'Target a specific product ID. Leave empty to distribute across all products.', 'easycommerce-fakerpress' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'required'          => false,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => function ( $value ) {
+					if ( $value && ! get_post( $value ) ) {
+						return new \WP_Error( 'invalid_product', __( 'Product not found.', 'easycommerce-fakerpress' ) );
+					}
+					return true;
+				},
 			),
 		);
 	}
