@@ -685,6 +685,37 @@ class MCP_Server {
 				'permission_callback' => array( $this, 'permission_callback' ),
 			),
 
+			'easycommerce-fakerpress/generate-logs'        => array(
+				'label'               => __( 'Generate Logs', 'easycommerce-fakerpress' ),
+				'description'         => __( 'Generate activity log entries for orders, products, customers, coupons, refunds, carts, transactions, and system events. Returns log IDs, object types, actions, and severity levels.', 'easycommerce-fakerpress' ),
+				'category'            => 'easycommerce-fakerpress',
+				'input_schema'        => $this->build_input_schema(
+					array(
+						'log_types' => array(
+							'type'        => 'array',
+							'description' => __( 'Log severity types to generate. Default: all types.', 'easycommerce-fakerpress' ),
+							'items'       => array(
+								'type' => 'string',
+								'enum' => array( 'info', 'warning', 'error', 'success' ),
+							),
+							'default'     => array( 'info', 'warning', 'error', 'success' ),
+						),
+						'objects'   => array(
+							'type'        => 'array',
+							'description' => __( 'Object types to log. Default: all objects.', 'easycommerce-fakerpress' ),
+							'items'       => array(
+								'type' => 'string',
+								'enum' => array( 'order', 'product', 'customer', 'coupon', 'refund', 'cart', 'transaction', 'system' ),
+							),
+							'default'     => array( 'order', 'product', 'customer', 'coupon', 'refund', 'cart', 'transaction', 'system' ),
+						),
+					)
+				),
+				'output_schema'       => $this->build_output_schema( 'logs', __( 'Array of generated log objects with id, object, action, type, note, and is_public.', 'easycommerce-fakerpress' ) ),
+				'execute_callback'    => array( Abilities\Generate_Logs::class, 'execute' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+			),
+
 		);
 	}
 
