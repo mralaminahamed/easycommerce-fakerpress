@@ -27,6 +27,7 @@ use EasyCommerceFakerPress\Controllers\Location;
 use EasyCommerceFakerPress\Controllers\Product_Review;
 use EasyCommerceFakerPress\Controllers\Attribute;
 use EasyCommerceFakerPress\Controllers\Refund;
+use EasyCommerceFakerPress\Controllers\Log;
 use EasyCommerceFakerPress\MCP\MCP_Server;
 
 /**
@@ -364,6 +365,9 @@ class EasyCommerce_FakerPress {
 
 			// Refund generator (Version 2.1.0).
 			new Refund(),
+
+			// Log generator (Version 2.1.0).
+			new Log(),
 		);
 
 		foreach ( $controllers as $controller ) {

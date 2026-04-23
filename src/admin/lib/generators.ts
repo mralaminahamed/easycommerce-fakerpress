@@ -13,6 +13,7 @@ import {
   MapPin,
   Layers,
   ReceiptText,
+  ScrollText,
 } from "lucide-react";
 
 import { __ } from "@wordpress/i18n";
@@ -31,6 +32,7 @@ import ShippingPlanGenerator from "@/admin/components/Generators/ShippingPlanGen
 import TaxClassGenerator from "@/admin/components/Generators/TaxClassGenerator";
 import TransactionGenerator from "@/admin/components/Generators/TransactionGenerator";
 import RefundGenerator from "@/admin/components/Generators/RefundGenerator";
+import LogGenerator from "@/admin/components/Generators/LogGenerator";
 
 export type { Generator };
 
@@ -213,6 +215,22 @@ export const generators: Generator[] = [
       "easycommerce-fakerpress",
     ),
     route: "refunds",
+  },
+  {
+    name: __("Logs", "easycommerce-fakerpress"),
+    component: LogGenerator,
+    category: __("Advanced", "easycommerce-fakerpress"),
+    order: 8,
+    icon: ScrollText,
+    description: __(
+      "Generate activity log entries for orders, products, customers, and system events. Useful for testing log views and audit trails.",
+      "easycommerce-fakerpress",
+    ),
+    useCase: __(
+      "Developers testing audit logs, admin panel log views",
+      "easycommerce-fakerpress",
+    ),
+    route: "logs",
   },
   {
     name: __("Locations", "easycommerce-fakerpress"),
