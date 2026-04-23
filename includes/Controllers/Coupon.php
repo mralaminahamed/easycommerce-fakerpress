@@ -78,9 +78,9 @@ class Coupon extends Controller {
 				'type'              => 'array',
 				'items'             => array(
 					'type' => 'string',
-					'enum' => array( 'percentage', 'fixed_amount', 'free_shipping', 'buy_x_get_y' ),
+					'enum' => array( 'percentage', 'fixed', 'free_shipping', 'products' ),
 				),
-				'default'           => array( 'percentage', 'fixed_amount' ),
+				'default'           => array( 'percentage', 'fixed' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),
 			),
 			'discount_range'  => array(

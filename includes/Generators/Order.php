@@ -419,7 +419,7 @@ class Order extends Generator {
 		// Get a larger pool of available variations to choose from.
 		$db              = new Database( 'product_variations' );
 		$variations_data = $db->get_rows(
-			array( 'status' => 'in_stock' ),
+			array( 'status' => 'active' ),
 			100, // Get more variations for better randomization.
 			0,
 			'RAND()'

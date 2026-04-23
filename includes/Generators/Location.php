@@ -616,7 +616,6 @@ class Location extends Generator {
 			}
 
 			$json_path = $easycommerce_dir . '/locations.json';
-			$json_data = wp_json_encode( $location_data, JSON_PRETTY_PRINT );
 
 			// Use WP_Filesystem instead of direct file operations.
 			global $wp_filesystem;
@@ -625,6 +624,32 @@ class Location extends Generator {
 				require_once ABSPATH . '/wp-admin/includes/file.php';
 				WP_Filesystem();
 			}
+
+			// Merge with existing data — never overwrite the whole file.
+			$existing = array();
+			if ( $wp_filesystem->exists( $json_path ) ) {
+				$raw      = $wp_filesystem->get_contents( $json_path );
+				$decoded  = $raw ? json_decode( $raw, true ) : null;
+				$existing = is_array( $decoded ) ? $decoded : array();
+			}
+
+			// Index existing countries by code to avoid duplicates.
+			$indexed = array();
+			foreach ( $existing as $country ) {
+				$code = $country['code'] ?? '';
+				if ( $code ) {
+					$indexed[ $code ] = $country;
+				}
+			}
+			foreach ( $location_data as $country ) {
+				$code = $country['code'] ?? '';
+				if ( $code ) {
+					$indexed[ $code ] = $country;
+				}
+			}
+
+			$merged    = array_values( $indexed );
+			$json_data = wp_json_encode( $merged, JSON_PRETTY_PRINT );
 
 			return $wp_filesystem->put_contents( $json_path, $json_data, FS_CHMOD_FILE );
 		} catch ( Exception $e ) {
