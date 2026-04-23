@@ -144,7 +144,7 @@ class Coupon extends Generator {
 	 * @return array Coupon data with all fields and rules.
 	 */
 	private function generate_coupon_data(): array {
-		$type        = $this->get_faker()->randomElement( array( 'percentage', 'fixed', 'fixed_product', 'buy_x_get_y' ) );
+		$type        = $this->get_faker()->randomElement( array( 'percentage', 'fixed', 'free_shipping', 'products' ) );
 		$coupon_name = $this->generate_coupon_name( $type );
 		$coupon_code = $this->generate_unique_code();
 
@@ -231,7 +231,7 @@ class Coupon extends Generator {
 				'$75 Off Tech Deals',
 				'$150 Off Luxury Items',
 			),
-			'fixed_product' => array(
+			'products'      => array(
 				'$5 Off Each Item',
 				'$10 Off Selected Products',
 				'$15 Off Tech Accessories',
@@ -241,15 +241,15 @@ class Coupon extends Generator {
 				'Buy One, Save $10',
 				'Per-Item Discount Deal',
 			),
-			'buy_x_get_y'   => array(
-				'Buy 1 Get 1 Half Price',
-				'Buy 2 Get 1 Free',
-				'Buy 3 Get 50% Off',
-				'Buy One, Get One 25% Off',
-				'BOGO Special Offer',
-				'Buy 2, Save $20',
-				'Multi-Buy Discount',
-				'Bundle and Save Deal',
+			'free_shipping' => array(
+				'Free Shipping on All Orders',
+				'Free Delivery This Week',
+				'No Shipping Costs Today',
+				'Ship for Free — Limited Time',
+				'Free Shipping Unlock',
+				'Zero Delivery Fee',
+				'Free Shipping Weekend',
+				'Complimentary Delivery',
 			),
 		);
 
@@ -259,8 +259,8 @@ class Coupon extends Generator {
 			array(
 				'percentage',
 				'fixed',
-				'fixed_product',
-				'buy_x_get_y',
+				'free_shipping',
+				'products',
 			),
 			true
 		) ? $type : $this->get_faker()->randomElement( array( 'seasonal', 'event', 'product', 'customer' ) );
@@ -289,8 +289,8 @@ class Coupon extends Generator {
 		$details = array(
 			'percentage'    => "Take {$this->generate_discount_offer( 'percentage' )}% off your entire order. Perfect for any shopping spree!",
 			'fixed'         => "Save {$this->generate_discount_offer( 'fixed' )} on your next purchase. Ideal for all your favorite items!",
-			'fixed_product' => "Get {$this->generate_discount_offer( 'fixed_product' )} off each eligible product. Stock up and save!",
-			'buy_x_get_y'   => 'Buy one item and get another at a discount or free! Great for building your collection.',
+			'products'      => "Get {$this->generate_discount_offer( 'products' )} off each eligible product. Stock up and save!",
+			'free_shipping' => 'Free shipping on your order — no minimum required!',
 		);
 
 		return $this->get_faker()->randomElement( $prefixes ) . ( $details[ $type ] ?? $this->get_faker()->sentence( 10, true ) );
@@ -386,7 +386,7 @@ class Coupon extends Generator {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $type Discount type (percentage/fixed/fixed_product/buy_x_get_y).
+	 * @param string $type Discount type (percentage/fixed/free_shipping/products).
 	 *
 	 * @return float Discount offer.
 	 */
@@ -421,7 +421,7 @@ class Coupon extends Generator {
 			);
 		}
 
-		if ( 'fixed_product' === $type ) {
+		if ( 'products' === $type ) {
 			$offers  = array( 2, 5, 10, 15, 20, 25 );
 			$weights = array( 20, 20, 15, 10, 10, 5 );
 
@@ -436,19 +436,8 @@ class Coupon extends Generator {
 			);
 		}
 
-		// buy_x_get_y.
-		$offers  = array( 25, 50, 100 ); // Percentage off for the "get y" item.
-		$weights = array( 20, 15, 5 );
-
-		return $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $amt, $weight ) => array_fill( 0, $weight, $amt ),
-					$offers,
-					$weights
-				)
-			)
-		);
+		// free_shipping — no monetary offer needed.
+		return 0.0;
 	}
 
 	/**
@@ -591,15 +580,8 @@ class Coupon extends Generator {
 			);
 		}
 
-		// Minimum quantity requirement (20% chance for fixed_product/buy_x_get_y).
-		if ( in_array(
-			$type,
-			array(
-				'fixed_product',
-				'buy_x_get_y',
-			),
-			true
-		) && $this->get_faker()->boolean( 20 ) ) {
+		// Minimum quantity requirement (20% chance for products type).
+		if ( 'products' === $type && $this->get_faker()->boolean( 20 ) ) {
 			$min_quantities = array( 2, 3, 4, 5, 10 );
 			$weights        = array( 20, 15, 10, 5, 2 );
 			$rules[]        = array(
@@ -613,18 +595,6 @@ class Coupon extends Generator {
 						)
 					)
 				),
-			);
-		}
-
-		// Buy X Get Y specific rules (only for buy_x_get_y).
-		if ( 'buy_x_get_y' === $type ) {
-			$rules[] = array(
-				'type'  => 'buy_quantity',
-				'value' => $this->get_faker()->randomElement( array( 1, 2, 3 ) ),
-			);
-			$rules[] = array(
-				'type'  => 'get_quantity',
-				'value' => $this->get_faker()->randomElement( array( 1, 2 ) ),
 			);
 		}
 

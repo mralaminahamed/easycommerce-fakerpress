@@ -577,35 +577,38 @@ class Cart_Session extends Generator {
 			$cart_data['shipping_method'] = $this->get_faker()->numberBetween( 1, 5 );
 		}
 
+		// Resolve customer identity before insert so columns are persisted.
+		$customer_email = '';
+		$customer_name  = '';
+
+		if ( $data['user_id'] > 0 ) {
+			$customer = new CustomerModel( $data['user_id'] );
+			if ( $customer->get_id() ) {
+				$customer_email = $customer->get_email();
+				$customer_name  = $customer->get_name();
+			}
+		} elseif ( ! empty( $data['addresses']['billing'] ) ) {
+			$billing        = $data['addresses']['billing'];
+			$customer_email = $billing['email'] ?? '';
+			$customer_name  = trim( ( $billing['first_name'] ?? '' ) . ' ' . ( $billing['last_name'] ?? '' ) );
+		}
+
 		$db_data = array(
-			'user_id'    => $data['user_id'],
-			'hash'       => $hash,
-			'data'       => maybe_serialize( $cart_data ),
-			'status'     => $data['status'],
-			'reminders'  => $data['reminders'],
-			'created_at' => $data['created_at'],
-			'updated_at' => $data['updated_at'],
+			'user_id'        => $data['user_id'],
+			'hash'           => $hash,
+			'data'           => maybe_serialize( $cart_data ),
+			'status'         => $data['status'],
+			'total'          => $data['total_amount'],
+			'customer_name'  => trim( $customer_name ),
+			'customer_email' => trim( $customer_email ),
+			'reminders'      => $data['reminders'],
+			'created_at'     => $data['created_at'],
+			'updated_at'     => $data['updated_at'],
 		);
 
 		$cart_id = $cart_db->insert_row( $db_data );
 
 		if ( $cart_id ) {
-			// Get customer details.
-			$customer_email = '';
-			$customer_name  = '';
-
-			if ( $data['user_id'] > 0 ) {
-				$customer = new CustomerModel( $data['user_id'] );
-				if ( $customer->get_id() ) {
-					$customer_email = $customer->get_email();
-					$customer_name  = $customer->get_name();
-				}
-			} elseif ( ! empty( $data['addresses']['billing'] ) ) {
-				$billing        = $data['addresses']['billing'];
-				$customer_email = $billing['email'] ?? '';
-				$customer_name  = ( $billing['first_name'] ?? '' ) . ' ' . ( $billing['last_name'] ?? '' );
-			}
-
 			return array(
 				'id'             => $cart_id,
 				'hash'           => $hash,
