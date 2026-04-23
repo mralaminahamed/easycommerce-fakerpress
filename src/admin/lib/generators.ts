@@ -12,6 +12,7 @@ import {
   ShoppingBag,
   MapPin,
   Layers,
+  ReceiptText,
 } from "lucide-react";
 
 import { __ } from "@wordpress/i18n";
@@ -29,6 +30,7 @@ import ProductVariationGenerator from "@/admin/components/Generators/ProductVari
 import ShippingPlanGenerator from "@/admin/components/Generators/ShippingPlanGenerator";
 import TaxClassGenerator from "@/admin/components/Generators/TaxClassGenerator";
 import TransactionGenerator from "@/admin/components/Generators/TransactionGenerator";
+import RefundGenerator from "@/admin/components/Generators/RefundGenerator";
 
 export type { Generator };
 
@@ -195,6 +197,22 @@ export const generators: Generator[] = [
       "easycommerce-fakerpress",
     ),
     route: "attributes",
+  },
+  {
+    name: __("Refunds", "easycommerce-fakerpress"),
+    component: RefundGenerator,
+    category: __("Advanced", "easycommerce-fakerpress"),
+    order: 7,
+    icon: ReceiptText,
+    description: __(
+      "Generate refund records against existing orders. Requires completed or processing orders. Returns refund IDs, amounts, statuses, and transaction IDs.",
+      "easycommerce-fakerpress",
+    ),
+    useCase: __(
+      "Store owners testing refund workflows, payment gateway developers",
+      "easycommerce-fakerpress",
+    ),
+    route: "refunds",
   },
   {
     name: __("Locations", "easycommerce-fakerpress"),
