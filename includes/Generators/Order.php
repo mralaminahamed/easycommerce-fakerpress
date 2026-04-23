@@ -565,20 +565,30 @@ class Order extends Generator {
 	 * @return string Order status.
 	 */
 	private function generate_order_status(): string {
+		$allowed = isset( $this->generation_params['order_status'] ) && is_array( $this->generation_params['order_status'] )
+			? $this->generation_params['order_status']
+			: array();
+
+		if ( ! empty( $allowed ) ) {
+			return $this->get_faker()->randomElement( $allowed );
+		}
+
 		$sample_data = $this->load_sample_data();
 		$statuses    = $sample_data['order_statuses'] ? $sample_data['order_statuses'] : array(
-			'pending'    => 25,  // 25% chance
-			'processing' => 35,  // 35% chance
-			'completed'  => 30,  // 30% chance
-			'cancelled'  => 5,   // 5% chance
-			'on_hold'    => 3,   // 3% chance
-			'refunded'   => 2,   // 2% chance
+			'pending'    => 25,
+			'processing' => 35,
+			'completed'  => 30,
+			'cancelled'  => 5,
+			'on_hold'    => 3,
+			'refunded'   => 2,
 		);
 
 		return $this->get_faker()->randomElement(
 			array_merge(
 				...array_map(
-					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
+					static function ( $status, $weight ) {
+						return array_fill( 0, $weight, $status );
+					},
 					array_keys( $statuses ),
 					$statuses
 				)
@@ -594,19 +604,29 @@ class Order extends Generator {
 	 * @return string Payment method.
 	 */
 	private function generate_payment_method(): string {
+		$allowed = isset( $this->generation_params['payment_methods'] ) && is_array( $this->generation_params['payment_methods'] )
+			? $this->generation_params['payment_methods']
+			: array();
+
+		if ( ! empty( $allowed ) ) {
+			return $this->get_faker()->randomElement( $allowed );
+		}
+
 		$sample_data = $this->load_sample_data();
 		$methods     = $sample_data['payment_methods'] ? $sample_data['payment_methods'] : array(
-			'stripe'           => 40,  // 40% chance
-			'paypal'           => 25,  // 25% chance
-			'bank_transfer'    => 15,  // 15% chance
-			'cash_on_delivery' => 10,  // 10% chance
-			'credit_card'      => 10,  // 10% chance
+			'stripe'           => 40,
+			'paypal'           => 25,
+			'bank_transfer'    => 15,
+			'cash_on_delivery' => 10,
+			'credit_card'      => 10,
 		);
 
 		return $this->get_faker()->randomElement(
 			array_merge(
 				...array_map(
-					fn( $method, $weight ) => array_fill( 0, $weight, $method ),
+					static function ( $method, $weight ) {
+						return array_fill( 0, $weight, $method );
+					},
 					array_keys( $methods ),
 					$methods
 				)

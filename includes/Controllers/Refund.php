@@ -128,6 +128,10 @@ class Refund extends Controller {
 						'payment_gateway' => array(
 							'type' => 'string',
 						),
+						'currency'        => array( 'type' => 'string' ),
+						'reason'          => array( 'type' => 'string' ),
+						'type'            => array( 'type' => 'string' ),
+						'transaction_id'  => array( 'type' => 'string' ),
 					),
 				),
 			),

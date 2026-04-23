@@ -75,6 +75,14 @@ class Generate_Orders extends Ability {
 			$payload['payment_methods'] = (array) $input['payment_methods'];
 		}
 
+		if ( isset( $input['customer_distribution'] ) ) {
+			$payload['customer_distribution'] = $input['customer_distribution'];
+		}
+
+		if ( isset( $input['geographical_distribution'] ) ) {
+			$payload['geographical_distribution'] = $input['geographical_distribution'];
+		}
+
 		return $payload;
 	}
 }
