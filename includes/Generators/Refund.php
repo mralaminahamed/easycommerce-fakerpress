@@ -180,7 +180,7 @@ class Refund extends Generator {
 	private function get_eligible_order() {
 		global $wpdb;
 
-		$table    = $wpdb->prefix . 'easycommerce_orders';
+		$table    = $wpdb->prefix . 'ec_orders';
 		$statuses = array( 'completed', 'processing' );
 
 		$placeholders = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
