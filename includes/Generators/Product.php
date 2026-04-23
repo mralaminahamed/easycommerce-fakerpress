@@ -122,6 +122,13 @@ class Product extends Generator {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
+		$create_missing = isset( $this->generation_params['relationships']['create_missing'] )
+			? (bool) $this->generation_params['relationships']['create_missing']
+			: true;
+		$include_meta   = isset( $this->generation_params['meta_options']['include_meta'] )
+			? (bool) $this->generation_params['meta_options']['include_meta']
+			: true;
+
 		$product_type  = $this->get_faker()->randomElement( array( 'physical', 'digital' ) );
 		$product_title = $this->generate_product_title( $product_type );
 		$categories    = $this->get_or_create_product_categories();
@@ -197,7 +204,7 @@ class Product extends Generator {
 				'variations'  => $formatted_variations,
 
 				// Additional meta data.
-				'meta'        => array(
+				'meta'        => $include_meta ? array(
 					'gallery'         => $this->generate_gallery_images(),
 					'template'        => $this->get_faker()->randomElement(
 						array(
@@ -214,7 +221,7 @@ class Product extends Generator {
 					'release_date'    => $this->get_faker()->dateTimeThisYear()->format( 'Y-m-d' ),
 					'warranty'        => 'physical' === $product_type ? $this->get_faker()->randomElement( array( '1 year', '2 years', 'Limited Lifetime' ) ) : '',
 					'shipping_class'  => 'physical' === $product_type ? $this->get_faker()->randomElement( array( 'standard', 'expedited', 'fragile' ) ) : '',
-				),
+				) : array(),
 			)
 		);
 
@@ -937,6 +944,10 @@ class Product extends Generator {
 	 * @return array Category IDs.
 	 */
 	private function get_or_create_product_categories(): array {
+		$create_missing = isset( $this->generation_params['relationships']['create_missing'] )
+			? (bool) $this->generation_params['relationships']['create_missing']
+			: true;
+
 		$sample_data    = $this->load_sample_data();
 		$category_names = $sample_data['categories'] ? $sample_data['categories'] : array(
 			'Electronics & Gadgets',
@@ -957,6 +968,9 @@ class Product extends Generator {
 		foreach ( $category_names as $category_name ) {
 			$term = get_term_by( 'name', $category_name, 'product_cat' );
 			if ( ! $term ) {
+				if ( ! $create_missing ) {
+					continue;
+				}
 				$term_result = wp_insert_term(
 					$category_name,
 					'product_cat',
@@ -974,7 +988,11 @@ class Product extends Generator {
 			}
 		}
 
-		return $this->get_faker()->randomElements( $category_ids, $this->get_faker()->numberBetween( 1, 4 ) );
+		if ( empty( $category_ids ) ) {
+			return array();
+		}
+
+		return $this->get_faker()->randomElements( $category_ids, $this->get_faker()->numberBetween( 1, min( 4, count( $category_ids ) ) ) );
 	}
 
 	/**
@@ -985,6 +1003,10 @@ class Product extends Generator {
 	 * @return array Brand IDs.
 	 */
 	private function get_or_create_product_brands(): array {
+		$create_missing = isset( $this->generation_params['relationships']['create_missing'] )
+			? (bool) $this->generation_params['relationships']['create_missing']
+			: true;
+
 		$sample_data = $this->load_sample_data();
 		$brand_names = $sample_data['brands'] ? $sample_data['brands'] : array(
 			'TechTrend Innovations',
@@ -1003,6 +1025,9 @@ class Product extends Generator {
 		foreach ( $brand_names as $brand_name ) {
 			$term = get_term_by( 'name', $brand_name, 'product_brand' );
 			if ( ! $term ) {
+				if ( ! $create_missing ) {
+					continue;
+				}
 				$term_result = wp_insert_term(
 					$brand_name,
 					'product_brand',
@@ -1020,7 +1045,11 @@ class Product extends Generator {
 			}
 		}
 
-		return $this->get_faker()->randomElements( $brand_ids, $this->get_faker()->numberBetween( 1, 2 ) );
+		if ( empty( $brand_ids ) ) {
+			return array();
+		}
+
+		return $this->get_faker()->randomElements( $brand_ids, $this->get_faker()->numberBetween( 1, min( 2, count( $brand_ids ) ) ) );
 	}
 
 	/**
