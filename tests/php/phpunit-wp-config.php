@@ -1,71 +1,54 @@
 <?php
-
-$wordpress_dir = dirname( __DIR__, 2 ) . '/wordpress/';
-if ( ! is_dir( $wordpress_dir ) ) {
-	$wordpress_dir = dirname( __DIR__, 5 ) . '/';
-}
-
-/* Path to the WordPress codebase you'd like to test. Add a forward slash in the end. */
-define( 'ABSPATH', $wordpress_dir );
-
-/*
- * Path to the theme to test with.
+/**
+ * WordPress test configuration for EasyCommerce FakerPress.
  *
- * The 'default' theme is symlinked from test/phpunit/data/themedir1/default into
- * the themes directory of the WordPress installation defined above.
+ * All values are driven by environment variables set in phpunit.xml.dist.
+ * Override any variable in your shell or CI environment to customise the run.
+ *
+ * WARNING: the WordPress test suite DROPS AND RECREATES all tables that share
+ * WP_TABLE_PREFIX. Never point this at a production database.
  */
+
+/* Path to the WordPress installation used for testing. */
+define( 'ABSPATH', rtrim( getenv( 'WP_PATH' ) ?: '/home/alamin/Sites/easycommerce-development', '/\\' ) . DIRECTORY_SEPARATOR );
+
+/* Active theme — kept as 'default' for headless CLI tests. */
 define( 'WP_DEFAULT_THEME', 'default' );
 
-// Test with multisite enabled.
-// Alternatively, use the tests/phpunit/multisite.xml configuration file.
-// define( 'WP_TESTS_MULTISITE', true );
-
-// Force known bugs to be run.
-// Tests with an associated Trac ticket that is still open are normally skipped.
-// define( 'WP_TESTS_FORCE_KNOWN_BUGS', true );
-
-// Test with WordPress debug mode (default).
+/* Debug settings — enable all error output during tests. */
 define( 'WP_DEBUG', true );
 define( 'WP_DEBUG_LOG', true );
 define( 'WP_DEBUG_DISPLAY', false );
 
-// ** MySQL features ** //
-
-// This configuration file will be used by the copy of WordPress being tested.
-// wordpress/wp-config.php will be ignored.
-
-// WARNING WARNING WARNING!
-// These tests will DROP ALL TABLES in the database with the prefix named below.
-// DO NOT use a production database or one that is shared with something else.
-
+/* Database credentials — sourced from phpunit.xml.dist env vars. */
 define( 'DB_NAME', getenv( 'WP_DB_NAME' ) ?: 'wp_phpunit_tests' );
 define( 'DB_USER', getenv( 'WP_DB_USER' ) ?: 'root' );
-define( 'DB_PASSWORD', getenv( 'WP_DB_PASS' ) ?: '' );
+define( 'DB_PASSWORD', getenv( 'WP_DB_PASS' ) ?: 'password' );
 define( 'DB_HOST', getenv( 'WP_DB_HOST' ) ?: 'localhost' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
 
-/**#@+
- * Authentication Unique Keys and Salts.
- *
- * Change these to different unique phrases!
- * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
+/* Authentication keys and salts — deterministic values safe for testing only. */
+define( 'AUTH_KEY',         'ecfp-test-auth-key-not-for-production-use' );
+define( 'SECURE_AUTH_KEY',  'ecfp-test-secure-auth-key-not-for-production-use' );
+define( 'LOGGED_IN_KEY',    'ecfp-test-logged-in-key-not-for-production-use' );
+define( 'NONCE_KEY',        'ecfp-test-nonce-key-not-for-production-use' );
+define( 'AUTH_SALT',        'ecfp-test-auth-salt-not-for-production-use' );
+define( 'SECURE_AUTH_SALT', 'ecfp-test-secure-auth-salt-not-for-production-use' );
+define( 'LOGGED_IN_SALT',   'ecfp-test-logged-in-salt-not-for-production-use' );
+define( 'NONCE_SALT',       'ecfp-test-nonce-salt-not-for-production-use' );
+
+/*
+ * Table prefix for the test installation.
+ * Must differ from both the production prefix and EasyCommerce's own prefix
+ * to avoid any risk of data loss during test setup/teardown.
  */
-define( 'AUTH_KEY', 'put your unique phrase here' );
-define( 'SECURE_AUTH_KEY', 'put your unique phrase here' );
-define( 'LOGGED_IN_KEY', 'put your unique phrase here' );
-define( 'NONCE_KEY', 'put your unique phrase here' );
-define( 'AUTH_SALT', 'put your unique phrase here' );
-define( 'SECURE_AUTH_SALT', 'put your unique phrase here' );
-define( 'LOGGED_IN_SALT', 'put your unique phrase here' );
-define( 'NONCE_SALT', 'put your unique phrase here' );
+$table_prefix = getenv( 'WP_TABLE_PREFIX' ) ?: 'easycommerce_fakerpress_test_'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-$table_prefix = 'easycommerce_fakerpress_test_';   // Only numbers, letters, and underscores please!
-
+/* Test site identity. */
 define( 'WP_TESTS_DOMAIN', 'example.org' );
 define( 'WP_TESTS_EMAIL', 'admin@example.org' );
 define( 'WP_TESTS_TITLE', 'EasyCommerce FakerPress Test Blog' );
 
 define( 'WP_PHP_BINARY', 'php' );
-
 define( 'WPLANG', '' );

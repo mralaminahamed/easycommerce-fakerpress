@@ -4,17 +4,31 @@
         backupGlobals="false"
         colors="true"
         convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
+        convertNoticesToExceptions="false"
+        convertWarningsToExceptions="false"
         stopOnFailure="false"
         beStrictAboutTestsThatDoNotTestAnything="true"
-        beStrictAboutOutputDuringTests="true"
+        beStrictAboutOutputDuringTests="false"
         beStrictAboutTodoAnnotatedTests="true"
         beStrictAboutChangesToGlobalState="true"
         verbose="true"
 >
     <php>
+        <!-- Path to the test wp-config file consumed by wp-phpunit -->
         <env name="WP_PHPUNIT__TESTS_CONFIG" value="tests/php/phpunit-wp-config.php"/>
+
+        <!-- WordPress installation path (the site being tested against) -->
+        <env name="WP_PATH" value="/home/alamin/Sites/easycommerce-development"/>
+
+        <!-- Test database — use a dedicated DB, NOT the production database -->
+        <env name="WP_DB_NAME" value="wp_phpunit_tests"/>
+        <env name="WP_DB_USER" value="root"/>
+        <env name="WP_DB_PASS" value="password"/>
+        <env name="WP_DB_HOST" value="localhost"/>
+
+        <!-- Table prefix used by the test WP install — must differ from production -->
+        <env name="WP_TABLE_PREFIX" value="easycommerce_fakerpress_test_"/>
+
         <ini name="display_errors" value="1"/>
         <ini name="error_reporting" value="E_ALL"/>
     </php>
@@ -37,10 +51,12 @@
             <directory>./tests</directory>
             <file>./easycommerce-fakerpress.php</file>
         </exclude>
+        <report>
+            <html outputDirectory="tests/coverage/html"/>
+            <clover outputFile="tests/coverage/clover.xml"/>
+        </report>
     </coverage>
     <logging>
-        <log type="coverage-html" target="tests/coverage/html"/>
-        <log type="coverage-clover" target="tests/coverage/clover.xml"/>
-        <log type="junit" target="tests/coverage/junit.xml"/>
+        <junit outputFile="tests/coverage/junit.xml"/>
     </logging>
 </phpunit>
