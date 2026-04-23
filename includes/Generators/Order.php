@@ -92,6 +92,13 @@ class Order extends Generator {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
+		$create_missing = isset( $this->generation_params['relationships']['create_missing'] )
+			? (bool) $this->generation_params['relationships']['create_missing']
+			: true;
+		$include_meta   = isset( $this->generation_params['meta_options']['include_meta'] )
+			? (bool) $this->generation_params['meta_options']['include_meta']
+			: true;
+
 		$customer   = $this->get_customer_for_order();
 		$variations = $this->get_random_product_variations();
 
@@ -110,7 +117,7 @@ class Order extends Generator {
 		// Convert variations to order items format required by EasyCommerce.
 		$order_items = $this->convert_variations_to_items( $variations, $billing_address );
 		$subtotal    = $this->calculate_subtotal( $order_items );
-		$order_meta  = $this->generate_order_meta( $customer, $subtotal, $billing_address );
+		$order_meta  = $include_meta ? $this->generate_order_meta( $customer, $subtotal, $billing_address ) : array();
 		$total       = $this->calculate_total( $subtotal, $order_meta );
 
 		/**
@@ -159,9 +166,10 @@ class Order extends Generator {
 			array(
 				// Order amounts stored in meta.
 				'subtotal'        => $subtotal,
-				'tax_amount'      => $order_meta['tax_details']['total'],
-				'shipping_amount' => $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'],
-				'discount_amount' => $order_meta['coupon_details']['discount'],
+				'tax_amount'      => isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0,
+				'shipping_amount' => ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
+					+ ( isset( $order_meta['shipping_details']['insurance'] ) ? $order_meta['shipping_details']['insurance'] : 0 ),
+				'discount_amount' => isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0,
 				'currency'        => 'USD', // Default currency, can be made configurable.
 
 				// Order notes.
@@ -174,11 +182,11 @@ class Order extends Generator {
 				) : array(),
 
 				// Applied coupons.
-				'coupons'         => $order_meta['coupon_details']['applied'] ? array_map(
+				'coupons'         => ! empty( $order_meta['coupon_details']['applied'] ) ? array_map(
 					function ( $coupon ) {
 						return array(
-							'code'            => $coupon['code'] ?? '',
-							'discount_amount' => $coupon['discount_applied'] ?? 0,
+							'code'            => isset( $coupon['code'] ) ? $coupon['code'] : '',
+							'discount_amount' => isset( $coupon['discount_applied'] ) ? $coupon['discount_applied'] : 0,
 						);
 					},
 					$order_meta['coupon_details']['coupons']
@@ -191,15 +199,15 @@ class Order extends Generator {
 		$created = $order->create(
 			array(
 				// Required fields for Order model.
-				'customer_id'     => $customer['id'],
-				'total'           => $total,
-				'status'          => $this->generate_order_status(),
-				'fulfill_status'  => $this->generate_fulfillment_status(),
-				'payment_method'  => $this->generate_payment_method(),
-				'items'           => $order_items,
+				'customer_id'    => $customer['id'],
+				'total'          => $total,
+				'status'         => $this->generate_order_status(),
+				'fulfill_status' => $this->generate_fulfillment_status(),
+				'payment_method' => $this->generate_payment_method(),
+				'items'          => $order_items,
 
 				// All additional data goes in meta.
-				'meta'            => $complete_meta,
+				'meta'           => $complete_meta,
 			)
 		);
 
@@ -217,20 +225,21 @@ class Order extends Generator {
 
 		$result = array(
 			'id'               => $order->get_id(),
-			'order_number'     => $order->get_order_number() ?? 'ORD-' . $order->get_id(),
+			'order_number'     => $order->get_order_number() ? $order->get_order_number() : 'ORD-' . $order->get_id(),
 			'customer_id'      => $customer['id'],
 			'status'           => $order->get_status(),
 			'total'            => $total,
 			'subtotal'         => $subtotal,
-			'tax_amount'       => $order_meta['tax_details']['total'],
-			'shipping_amount'  => $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'],
-			'discount_amount'  => $order_meta['coupon_details']['discount'],
+			'tax_amount'       => isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0,
+			'shipping_amount'  => ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
+				+ ( isset( $order_meta['shipping_details']['insurance'] ) ? $order_meta['shipping_details']['insurance'] : 0 ),
+			'discount_amount'  => isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0,
 			'currency'         => 'USD',
-			'payment_method'   => $order_meta['payment_details']['method'],
+			'payment_method'   => isset( $order_meta['payment_details']['method'] ) ? $order_meta['payment_details']['method'] : '',
 			'order_date'       => current_time( 'Y-m-d H:i:s' ),
 			'items'            => $this->format_order_items_for_result( $order_items ),
-			'billing_address'  => $order_meta['addresses']['billing'],
-			'shipping_address' => $order_meta['addresses']['shipping'],
+			'billing_address'  => isset( $order_meta['addresses']['billing'] ) ? $order_meta['addresses']['billing'] : array(),
+			'shipping_address' => isset( $order_meta['addresses']['shipping'] ) ? $order_meta['addresses']['shipping'] : array(),
 			'notes'            => ! empty( $order_meta['order_notes'] ) ? array(
 				array(
 					'note'       => $order_meta['order_notes'],
@@ -238,11 +247,11 @@ class Order extends Generator {
 					'created_at' => current_time( 'Y-m-d H:i:s' ),
 				),
 			) : array(),
-			'coupons'          => $order_meta['coupon_details']['applied'] ? array_map(
+			'coupons'          => ! empty( $order_meta['coupon_details']['applied'] ) ? array_map(
 				function ( $coupon ) {
 					return array(
-						'code'            => $coupon['code'] ?? '',
-						'discount_amount' => $coupon['discount_applied'] ?? 0,
+						'code'            => isset( $coupon['code'] ) ? $coupon['code'] : '',
+						'discount_amount' => isset( $coupon['discount_applied'] ) ? $coupon['discount_applied'] : 0,
 					);
 				},
 				$order_meta['coupon_details']['coupons']
@@ -289,14 +298,20 @@ class Order extends Generator {
 	 * @return WP_Error|array Customer data or false if none found.
 	 */
 	private function get_customer_for_order() {
-		$customer_type        = $this->generation_params['customer_type'] ?? 'mixed';
-		$specific_customer_id = $this->generation_params['specific_customer_id'] ?? null;
+		$customer_type        = isset( $this->generation_params['customer_type'] ) ? $this->generation_params['customer_type'] : 'mixed';
+		$specific_customer_id = isset( $this->generation_params['specific_customer_id'] ) ? $this->generation_params['specific_customer_id'] : null;
+		$create_missing       = isset( $this->generation_params['relationships']['create_missing'] )
+			? (bool) $this->generation_params['relationships']['create_missing']
+			: true;
 
 		switch ( $customer_type ) {
 			case 'existing':
 				return $this->get_random_customer();
 
 			case 'new':
+				if ( ! $create_missing ) {
+					return $this->get_random_customer();
+				}
 				return $this->create_new_customer();
 
 			case 'specific':
@@ -309,6 +324,9 @@ class Order extends Generator {
 
 			case 'mixed':
 			default:
+				if ( ! $create_missing ) {
+					return $this->get_random_customer();
+				}
 				// 70% existing customers, 30% new customers for realistic distribution.
 				return $this->get_faker()->boolean( 70 ) ? $this->get_random_customer() : $this->create_new_customer();
 		}
@@ -865,9 +883,10 @@ class Order extends Generator {
 	 * @return float Total order amount.
 	 */
 	private function calculate_total( float $subtotal, array $order_meta ): float {
-		$shipping = $order_meta['shipping_details']['cost'] + $order_meta['shipping_details']['insurance'];
-		$tax      = $order_meta['tax_details']['total'];
-		$discount = $order_meta['coupon_details']['discount'];
+		$shipping = ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
+			+ ( isset( $order_meta['shipping_details']['insurance'] ) ? $order_meta['shipping_details']['insurance'] : 0 );
+		$tax      = isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0;
+		$discount = isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0;
 
 		return max( 0, $subtotal + $shipping + $tax - $discount );
 	}
