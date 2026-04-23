@@ -23,12 +23,22 @@ class Generate_Tax_Classes extends Ability {
 
 	const REST_BASE = 'tax_classes';
 
-	/** {@inheritdoc} */
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param array<string, mixed> $input Validated input from the MCP client.
+	 * @return array<string, mixed>|\WP_Error
+	 */
 	public static function execute( array $input = array() ) {
 		return static::dispatch( static::build_payload( $input ) );
 	}
 
-	/** {@inheritdoc} */
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param array<string, mixed> $input Raw MCP input.
+	 * @return array<string, mixed>
+	 */
 	protected static function build_payload( array $input ): array {
 		$payload = array(
 			'count'  => $input['count'] ?? 5,

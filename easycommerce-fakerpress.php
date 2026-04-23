@@ -30,6 +30,7 @@ define( 'EASYCOMMERCE_FAKERPRESS_VERSION', '2.0.4' );
 define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE', __FILE__ );
 define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Load Composer autoloader.
 if ( ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {

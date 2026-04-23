@@ -25,6 +25,9 @@ class Generate_Products extends Ability {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @param array<string, mixed> $input Validated input from the MCP client.
+	 * @return array<string, mixed>|\WP_Error
 	 */
 	public static function execute( array $input = array() ) {
 		return static::dispatch( static::build_payload( $input ) );
@@ -32,6 +35,9 @@ class Generate_Products extends Ability {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @param array<string, mixed> $input Raw MCP input.
+	 * @return array<string, mixed>
 	 */
 	protected static function build_payload( array $input ): array {
 		$payload = array(
