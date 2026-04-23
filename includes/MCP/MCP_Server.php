@@ -654,6 +654,37 @@ class MCP_Server {
 				'permission_callback' => array( $this, 'permission_callback' ),
 			),
 
+			'easycommerce-fakerpress/generate-refunds'     => array(
+				'label'               => __( 'Generate Refunds', 'easycommerce-fakerpress' ),
+				'description'         => __( 'Generate refund records against existing EasyCommerce orders. Requires completed or processing orders to exist. Returns refund IDs, amounts, statuses, and gateway transaction IDs.', 'easycommerce-fakerpress' ),
+				'category'            => 'easycommerce-fakerpress',
+				'input_schema'        => $this->build_input_schema(
+					array(
+						'order_statuses'   => array(
+							'type'        => 'array',
+							'description' => __( 'Order statuses eligible for refunds. Default: [completed, processing].', 'easycommerce-fakerpress' ),
+							'items'       => array(
+								'type' => 'string',
+								'enum' => array( 'completed', 'processing', 'pending', 'cancelled' ),
+							),
+							'default'     => array( 'completed', 'processing' ),
+						),
+						'payment_gateways' => array(
+							'type'        => 'array',
+							'description' => __( 'Payment gateways for refund transaction IDs. Default: [stripe, paypal, square].', 'easycommerce-fakerpress' ),
+							'items'       => array(
+								'type' => 'string',
+								'enum' => array( 'stripe', 'paypal', 'square', 'bank_transfer', 'authorize_net' ),
+							),
+							'default'     => array( 'stripe', 'paypal', 'square' ),
+						),
+					)
+				),
+				'output_schema'       => $this->build_output_schema( 'refunds', __( 'Array of generated refund objects with id, order_id, amount, status, and payment_gateway.', 'easycommerce-fakerpress' ) ),
+				'execute_callback'    => array( Abilities\Generate_Refunds::class, 'execute' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+			),
+
 		);
 	}
 
