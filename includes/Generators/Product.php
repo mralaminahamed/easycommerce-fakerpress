@@ -1053,37 +1053,47 @@ class Product extends Generator {
 	}
 
 	/**
-	 * Format variations for EasyCommerce model compatibility
+	 * Format variations into the structure expected by ProductModel::create().
+	 *
+	 * Caches attribute and attribute-value slug lookups so each unique slug
+	 * hits the database at most once, regardless of how many variations share it.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $variations Generated variations.
-	 * @param array $attributes Product attributes.
-	 *
+	 * @param array $variations Raw variation data.
+	 * @param array $attributes Raw attribute data.
 	 * @return array Formatted variations.
 	 */
 	private function format_variations_for_model( array $variations, array $attributes ): array {
-		$formatted_variations = array();
+		$formatted_variations  = array();
+		$attribute_model       = new AttributeModel();
+		$attribute_value_model = new AttributeValueModel();
+		$attribute_cache       = array();
+		$value_cache           = array();
 
 		foreach ( $variations as $variation ) {
 			$formatted_attributes = array();
 
-			// Format attributes to match EasyCommerce model expectations.
 			foreach ( $variation['attributes'] as $attr_slug => $attr_value ) {
-				$attribute_model       = new AttributeModel();
-				$attribute_value_model = new AttributeValueModel();
-
-				// Get or create attribute.
-				$attribute = $attribute_model->get_by_slug( $attr_slug );
-				if ( ! $attribute ) {
-					continue; // Skip if attribute doesn't exist.
+				if ( ! isset( $attribute_cache[ $attr_slug ] ) ) {
+					$attribute_cache[ $attr_slug ] = $attribute_model->get_by_slug( $attr_slug );
 				}
 
-				// Get or create attribute value.
-				$value_slug      = sanitize_title( $attr_value );
-				$attribute_value = $attribute_value_model->get_by_slug( $value_slug );
+				$attribute = $attribute_cache[ $attr_slug ];
+				if ( ! $attribute ) {
+					continue;
+				}
+
+				$value_slug = sanitize_title( $attr_value );
+				$cache_key  = $attr_slug . '::' . $value_slug;
+
+				if ( ! isset( $value_cache[ $cache_key ] ) ) {
+					$value_cache[ $cache_key ] = $attribute_value_model->get_by_slug( $value_slug );
+				}
+
+				$attribute_value = $value_cache[ $cache_key ];
 				if ( ! $attribute_value ) {
-					continue; // Skip if value doesn't exist.
+					continue;
 				}
 
 				$formatted_attributes[ $attr_slug ] = array(

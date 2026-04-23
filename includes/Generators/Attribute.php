@@ -67,6 +67,25 @@ class Attribute extends Generator {
 	);
 
 	/**
+	 * Hex colour values for the predefined Color attribute set.
+	 *
+	 * @since 2.1.0
+	 * @var array<string, string>
+	 */
+	private const COLOR_HEX = array(
+		'Red'    => '#FF0000',
+		'Blue'   => '#0000FF',
+		'Green'  => '#008000',
+		'Black'  => '#000000',
+		'White'  => '#FFFFFF',
+		'Yellow' => '#FFFF00',
+		'Purple' => '#800080',
+		'Orange' => '#FFA500',
+		'Pink'   => '#FFC0CB',
+		'Gray'   => '#808080',
+	);
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @since 1.0.0
@@ -145,7 +164,10 @@ class Attribute extends Generator {
 		$values    = array();
 
 		foreach ( $labels as $label ) {
-			$value_id = $val_model->add( $attribute_id, $label );
+			$hex_value = ( 'Color' === $type && isset( self::COLOR_HEX[ $label ] ) )
+				? self::COLOR_HEX[ $label ]
+				: null;
+			$value_id  = $val_model->add( $attribute_id, $label, $hex_value );
 
 			if ( $value_id ) {
 				$values[] = array(

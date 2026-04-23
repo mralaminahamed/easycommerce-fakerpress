@@ -74,24 +74,22 @@ class Coupon extends Generator {
 		}
 
 		// Use EasyCommerce Coupon model with a complete data structure.
-		$coupon  = new CouponModel();
-		$created = $coupon->create(
-			array(
-				// Required fields.
-				'name'        => $coupon_data['name'],
-				'code'        => $coupon_data['code'],
-				'type'        => $coupon_data['type'],
-				'offer'       => $coupon_data['offer'],
-
-				// Optional fields.
-				'active'      => $coupon_data['active'],
-				'description' => $coupon_data['description'],
-				'meta'        => $coupon_data['meta'],
-
-				// Coupon rules.
-				'rules'       => $coupon_data['rules'],
-			)
+		$coupon      = new CouponModel();
+		$create_args = array(
+			'name'        => $coupon_data['name'],
+			'code'        => $coupon_data['code'],
+			'type'        => $coupon_data['type'],
+			'active'      => $coupon_data['active'],
+			'description' => $coupon_data['description'],
+			'meta'        => $coupon_data['meta'],
+			'rules'       => $coupon_data['rules'],
 		);
+
+		if ( null !== $coupon_data['offer'] ) {
+			$create_args['offer'] = $coupon_data['offer'];
+		}
+
+		$created = $coupon->create( $create_args );
 
 		if ( ! $created ) {
 			return new WP_Error( 'coupon_creation_failed', __( 'Failed to create coupon using EasyCommerce model.', 'easycommerce-fakerpress' ) );
@@ -108,7 +106,7 @@ class Coupon extends Generator {
 			'name'        => $coupon_data['name'],
 			'code'        => $coupon_data['code'],
 			'type'        => $coupon_data['type'],
-			'offer'       => $coupon_data['offer'],
+			'offer'       => $coupon_data['offer'] ?? null,
 			'status'      => $coupon_data['active'] ? 'active' : 'inactive',
 			'usage_limit' => $this->get_rule_value( $coupon_data['rules'], 'usage_limit' ),
 			'usage_count' => 0, // New coupons start with 0 usage.
@@ -148,11 +146,13 @@ class Coupon extends Generator {
 		$coupon_name = $this->generate_coupon_name( $type );
 		$coupon_code = $this->generate_unique_code();
 
+		$offer = ( 'free_shipping' !== $type ) ? $this->generate_discount_offer( $type ) : null;
+
 		return array(
 			'name'        => $coupon_name,
 			'code'        => $coupon_code,
 			'type'        => $type,
-			'offer'       => $this->generate_discount_offer( $type ),
+			'offer'       => $offer,
 			'active'      => $this->get_faker()->boolean( 90 ), // 90% active coupons
 			'description' => $this->generate_coupon_description( $type ),
 			'meta'        => $this->generate_coupon_meta(),
