@@ -54,8 +54,9 @@ class Product_Review extends Generator {
 	 */
 	protected function generate_single_item() {
 		// Get existing products and customers for realistic relationships.
-		$products  = $this->get_existing_products();
-		$customers = $this->get_existing_customers();
+		$specific_id = isset( $this->generation_params['product_id'] ) ? (int) $this->generation_params['product_id'] : 0;
+		$products    = $specific_id ? array( $specific_id ) : $this->get_existing_products();
+		$customers   = $this->get_existing_customers();
 
 		if ( empty( $products ) ) {
 			return new WP_Error(
@@ -77,9 +78,9 @@ class Product_Review extends Generator {
 
 		// Generate review data.
 		$review_data = array(
-			'product_id'     => $product->ID,
+			'product_id'     => (int) $product,
 			'customer_id'    => $customer->ID,
-			'customer_name'  => $customer->display_name ?: $customer->user_login,
+			'customer_name'  => $customer->display_name ? $customer->display_name : $customer->user_login,
 			'customer_email' => $customer->user_email,
 			'rating'         => $this->generate_rating(),
 			'content'        => $this->generate_review_content(),
@@ -202,7 +203,7 @@ class Product_Review extends Generator {
 			}
 		}
 
-		return 5; // Fallback
+		return 5; // Fallback.
 	}
 
 	/**
@@ -279,7 +280,7 @@ class Product_Review extends Generator {
 		$args = array(
 			'post_type'      => 'product',
 			'post_status'    => 'publish',
-			'posts_per_page' => 100, // Limit to avoid performance issues
+			'posts_per_page' => 100, // Limit to avoid performance issues.
 			'fields'         => 'ids',
 		);
 
@@ -299,10 +300,72 @@ class Product_Review extends Generator {
 	private function get_existing_customers(): array {
 		$args = array(
 			'role'   => 'customer',
-			'number' => 100, // Limit to avoid performance issues
+			'number' => 100, // Limit to avoid performance issues.
 		);
 
 		$users = get_users( $args );
 		return $users;
+	}
+
+	/**
+	 * Generate reviews then recalculate average_rating for every affected product.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param int $count Number of reviews to generate.
+	 * @return array|WP_Error
+	 */
+	public function generate( int $count ) {
+		$results = parent::generate( $count );
+
+		if ( is_wp_error( $results ) ) {
+			return $results;
+		}
+
+		$product_ids = array_unique(
+			array_filter( array_column( $results, 'product_id' ) )
+		);
+
+		foreach ( $product_ids as $product_id ) {
+			$this->recalculate_product_rating( (int) $product_id );
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Recalculate and persist average_rating + rating_count post meta.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param int $product_id Post ID of the product.
+	 */
+	private function recalculate_product_rating( int $product_id ): void {
+		$comments = get_comments(
+			array(
+				'post_id' => $product_id,
+				'status'  => 'approve',
+				'type'    => 'review',
+			)
+		);
+
+		$ratings = array();
+		foreach ( (array) $comments as $comment ) {
+			if ( ! ( $comment instanceof \WP_Comment ) ) {
+				continue;
+			}
+
+			$rating = (int) get_comment_meta( (int) $comment->comment_ID, 'rating', true );
+			if ( $rating > 0 ) {
+				$ratings[] = $rating;
+			}
+		}
+
+		$average = count( $ratings ) > 0
+			? round( array_sum( $ratings ) / count( $ratings ), 2 )
+			: 0;
+
+		update_post_meta( $product_id, 'average_rating', $average );
+		update_post_meta( $product_id, 'rating_count', count( $ratings ) );
 	}
 }
