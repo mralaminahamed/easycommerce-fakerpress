@@ -51,6 +51,12 @@
       -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
       Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   }
+
+  /* Remove WP admin default focus styles from links */
+  a:focus {
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 @utility animate-collapsible-down {
