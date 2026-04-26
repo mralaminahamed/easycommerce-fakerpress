@@ -1,6 +1,5 @@
 import type { StoredRun } from "@/admin/types";
-
-const MAX_RUNS = 10;
+import { getSettings } from "@/admin/lib/settings";
 
 export function getRuns(type: string): StoredRun[] {
   try {
@@ -15,8 +14,9 @@ export function addRun(type: string, run: StoredRun): void {
   try {
     const runs = getRuns(type);
     runs.unshift(run);
-    if (runs.length > MAX_RUNS) {
-      runs.length = MAX_RUNS;
+    const max = getSettings().maxRunsPerGenerator;
+    if (runs.length > max) {
+      runs.length = max;
     }
     localStorage.setItem(`ec_fp_runs_${type}`, JSON.stringify(runs));
   } catch {

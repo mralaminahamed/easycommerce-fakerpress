@@ -18,8 +18,8 @@ export default function GeneratorPage() {
   const [params, setParams] = useState<Record<string, any>>({});
   const [count, setCount] = useState(() => getSettings().defaultCount);
   const [locale, setLocale] = useState(() => getSettings().defaultLocale);
-  const [seed, setSeed] = useState("");
-  const [includeMeta, setIncludeMeta] = useState(true);
+  const [seed, setSeed] = useState(() => getSettings().defaultSeed);
+  const [includeMeta, setIncludeMeta] = useState(() => getSettings().defaultIncludeMeta);
 
   if (!generator) {
     navigate("/");
