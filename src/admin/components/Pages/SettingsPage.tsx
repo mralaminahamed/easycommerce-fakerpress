@@ -24,7 +24,7 @@ import {
 } from "@/admin/components/ui/select";
 import { getSettings, saveSettings } from "@/admin/lib/settings";
 
-const PLUGIN_VERSION = "2.0.4";
+const PLUGIN_VERSION = "2.1.0";
 const GITHUB_URL = "https://github.com/mralaminahamed/easycommerce-fakerpress";
 const SAMPLE_DATA_REPO_URL =
   "https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data";

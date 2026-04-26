@@ -3,10 +3,10 @@
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/)
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-8892BF.svg)](https://php.net/)
-[![Version](https://img.shields.io/badge/Version-2.0.3-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-2.1.0-green.svg)]()
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.1.18-blue.svg)](https://tailwindcss.com/)
 
-🚀 **Generate realistic test data for your EasyCommerce store in seconds!** Create products, customers, orders, coupons, and more with our modern React interface powered by Tailwind CSS v4. Features smart defaults, real-time validation, WordPress admin integration, and a "Get Started" quick access link. Perfect for development, testing, and creating stunning demos.
+🚀 **Generate realistic test data for your EasyCommerce store in seconds!** 14 specialized generators, a modern SaaS admin UI with run history and stats, configurable settings, sample data sync from GitHub, and a full Playwright e2e test suite. Perfect for development, testing, and creating stunning demos.
 
 ## ❓ What is EasyCommerce FakerPress?
 
@@ -42,27 +42,26 @@ npm run build
 
 ## ✨ Key Features
 
-- 🛍️ **10 Smart Generators** - Create realistic products, customers, orders, coupons, and more
-- 🎯 **One-Click Generation** - Smart defaults with easy customization options
-- 🎨 **Beautiful Interface** - Modern React UI with Tailwind CSS v4 and WordPress admin integration
-- ⚡ **Lightning Fast** - Generate thousands of items in seconds
-- 🔗 **Quick Access** - "Get Started" link directly from the plugins page
-- 🔧 **Developer Friendly** - Extensive customization options, TypeScript support, and comprehensive API
+- 🛍️ **14 Specialized Generators** — Products, customers, orders, coupons, variations, shipping plans, tax classes, transactions, cart sessions, locations, product reviews, attributes, refunds, and logs
+- 🎨 **Modern SaaS Admin UI** — Stats bar homepage, two-panel generator page with sticky action panel, sidebar with run history, global sticky nav
+- 📊 **Run History & Stats** — Per-generator run log persisted to localStorage; all-time stats on homepage
+- ⚙️ **Settings Page** — Default count, locale, seed, metadata toggle; configurable max history; sample data sync; About section
+- 🔄 **Sample Data Sync** — Download locale-specific reference data (75+ locales) from the companion GitHub repository in one click
+- 🔌 **Our Plugins Page** — Browse the author's other WordPress.org plugins with live data
+- 🧪 **Playwright E2E Suite** — 131 automated tests covering all generators, field types, and UI interactions
+- 🔧 **Developer Friendly** — Extensive hooks, TypeScript strict, REST API, PHPStan level 8
 
-## 🚀 What's New in v2.0.3
+## 🚀 What's New in v2.1.0
 
-- **Product Review Generator**: New generator for creating realistic product reviews with ratings
-- **Review Rating System**: Weighted rating distribution favoring higher ratings (realistic patterns)
-- **WordPress Comments Integration**: Leverages WordPress comment system for review storage
-- **Verified Purchase Tracking**: Reviews can be marked as verified purchases
-
-## 🚀 What's New in v2.0.2
-
-- **Tailwind CSS v4**: Upgraded to the latest version with improved performance and modern CSS features
-- **Enhanced UI**: Fixed visual inconsistencies in success messages and navigation elements
-- **Quick Access**: Added "Get Started" link directly from the WordPress plugins page
-- **Build Optimization**: Updated PostCSS configuration for better development workflow
-- **Code Quality**: Enhanced linting and modern development practices
+- **Complete admin UI redesign** — Modern SaaS style (clean white, blue/indigo accents, Linear/Notion aesthetic); homepage stats bar + generator grid; two-panel generator page with sticky action panel; sidebar with category nav and per-generator run history
+- **New generator architecture** — Replaced 757-line GeneratorBase monolith and 14 per-generator files with focused `ParamsPanel`, `ActionPanel`, and `GeneratorSidebar` components; `parameterConfig` centralised in `generators.ts`
+- **3 new generators** — Attribute, Refund, Log (total now 14)
+- **Settings page** — Default count, locale, seed, include-metadata toggle; configurable max run history; sample data sync from GitHub; About card; Reset Settings
+- **Sample data sync** — Download / force-re-sync locale-specific reference data (75+ locales) from the companion [easycommerce-fakerpress-sample-data](https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data) repository
+- **Our Plugins page** — Live WordPress.org plugin cards for the author's other plugins
+- **Global sticky nav** — Generators / Settings / Our Plugins with correct active-state matching
+- **Playwright e2e suite** — 131 automated tests covering home page, all generator layouts, ActionPanel interactions, all 6 field types, and all 14 generators
+- **Bug fixes** — Category matching in all locales; single ActionPanel DOM instance; accessible focus styles; RangeField error colour; nested route active-state
 
 ## 📸 Screenshots
 
@@ -115,6 +114,12 @@ composer install && yarn install
 yarn start               # Watch mode with hot reload
 yarn build               # Production build with Tailwind v4
 
+# E2E tests (Playwright)
+yarn test:e2e:setup      # Configure WP test user via WP-CLI
+yarn test:e2e            # Run all 131 Playwright tests
+yarn test:e2e:ui         # Playwright interactive UI mode
+yarn test:e2e:report     # Open HTML test report
+
 # Code quality
 composer lint            # PHP CodeSniffer (WordPress standards)
 composer analyse         # PHP Static Analysis (PHPStan level 8)
@@ -150,6 +155,6 @@ GPL v2 or later - see [LICENSE](LICENSE) file.
 
 ---
 
-**EasyCommerce FakerPress v2.0.3** | January 15, 2026
+**EasyCommerce FakerPress v2.1.0** | April 26, 2026
 
 _Modern test data generation for EasyCommerce stores_
