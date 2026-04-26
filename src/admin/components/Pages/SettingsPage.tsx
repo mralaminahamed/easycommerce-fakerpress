@@ -65,7 +65,7 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Generation defaults */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
             {__("Generation Defaults", "easycommerce-fakerpress")}
           </h2>
 
@@ -140,7 +140,7 @@ export default function SettingsPage() {
 
         {/* Danger zone */}
         <div className="bg-white rounded-xl border border-red-200 p-5">
-          <h2 className="text-sm font-semibold text-red-700 mb-1">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-red-500 mb-1">
             {__("Danger Zone", "easycommerce-fakerpress")}
           </h2>
           <p className="text-xs text-gray-500 mb-4">

@@ -1,5 +1,6 @@
 import { Input } from "@/admin/components/ui/input";
 import { Label } from "@/admin/components/ui/label";
+import { toLabel } from "@/admin/lib/utils";
 import type { ParameterConfig } from "@/admin/types";
 
 interface NumberFieldProps {
@@ -8,12 +9,6 @@ interface NumberFieldProps {
   value: number | "";
   disabled: boolean;
   onChange: (val: number) => void;
-}
-
-function toLabel(paramName: string, config: ParameterConfig): string {
-  if (config.title) return config.title;
-  const base = paramName.includes(".") ? paramName.split(".")[1] : paramName;
-  return base.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 export function NumberField({

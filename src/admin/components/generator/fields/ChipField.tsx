@@ -1,5 +1,6 @@
 import { Label } from "@/admin/components/ui/label";
 import { Chip } from "@/admin/components/ui/chip";
+import { toLabel } from "@/admin/lib/utils";
 import type { ParameterConfig } from "@/admin/types";
 
 interface ChipFieldProps {
@@ -8,13 +9,6 @@ interface ChipFieldProps {
   value: string[];
   disabled: boolean;
   onChange: (val: string[]) => void;
-}
-
-function toLabel(paramName: string, config: ParameterConfig): string {
-  if (config.title) return config.title;
-  if (config.description) return config.description;
-  const base = paramName.includes(".") ? paramName.split(".")[1] : paramName;
-  return base.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 export function ChipField({

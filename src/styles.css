@@ -106,7 +106,6 @@ body:has(#easycommerce-fakerpress-root) #wpcontent {
 
   /* Remove WP admin default focus styles from links */
   a:focus {
-    outline: none;
     box-shadow: none;
   }
 }

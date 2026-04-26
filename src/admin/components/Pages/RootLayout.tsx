@@ -18,7 +18,10 @@ export default function RootLayout() {
       <header className="sticky top-0 z-20 h-12 bg-white border-b border-gray-200 flex items-center px-6 gap-6">
         <span className="text-sm font-bold text-gray-900 mr-2">FakerPress</span>
         {NAV_LINKS.map(({ to, label, icon: Icon }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+          const active =
+            to === "/"
+              ? pathname === "/" || pathname.startsWith("/generator/")
+              : pathname.startsWith(to);
           return (
             <Link
               key={to}
