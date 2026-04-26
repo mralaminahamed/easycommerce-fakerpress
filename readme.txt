@@ -109,28 +109,17 @@ Employ WordPress deletion tools for items, bulk cleanup plugins, or targeted dat
 
 == Screenshots ==
 
-1. Modern Admin Interface: React-based tabbed navigation with WordPress admin color integration.
-   *(Screenshot: Admin dashboard overview)*
-2. Product Generator: Controls for attributes, variations, categories, and inventory.
-   *(Screenshot: Product generation form)*
-3. Customer Generator: Profile creation with demographics and loyalty tracking.
-   *(Screenshot: Customer profile form)*
-4. Order Generator: Workflow simulation including payments and shipping.
-   *(Screenshot: Order creation interface)*
-5. Coupon Generator: Rule configuration for discounts and restrictions.
-   *(Screenshot: Coupon setup panel)*
-6. Product Variation Generator: Attribute-based variation and stock management.
-   *(Screenshot: Variations editor)*
-7. Shipping Plan Generator: Regional methods and cost calculations.
-   *(Screenshot: Shipping configuration)*
-8. Tax Generator: Jurisdiction-based rates and rules.
-   *(Screenshot: Tax management form)*
-9. Transaction Generator: Gateway history and status distributions.
-   *(Screenshot: Transactions overview)*
-10. Cart Session Generator: Abandonment and recovery simulations.
-    *(Screenshot: Cart session tools)*
-11. Location Generator: Geographic hierarchy with coordinates.
-    *(Screenshot: Location data form)*
+1. Homepage: StatsBar with live generation counts and GeneratorGrid grouped by category (Core, Advanced, Enhanced) with Popular badges.
+2. Products Generator: Full two-panel layout — sidebar with category nav, params panel with product type selector, price range, categories and inventory settings, sticky action panel with count, locale, seed and Generate button.
+3. Customers Generator: ChipField pill-selects for customer types and age groups, address preference toggles, purchase history options.
+4. Orders Generator: Order status selector, customer distribution controls, items per order range, and payment method configuration.
+5. Coupons Generator: Discount type chip-selects (Percentage, Fixed, Free Shipping, Products), discount range inputs, usage limit toggle.
+6. Settings Page: Generation Defaults card (count, locale, seed, include-metadata), Run History limit, Sample Data sync with status indicator.
+7. Our Plugins Page: Live WordPress.org plugin cards fetched from the API with ratings, active install counts, and direct links.
+8. Product Variations Generator: Variable product type selection, price variance range, stock management settings.
+9. Product Reviews Generator: Link reviews to specific products, realistic rating distribution with verified purchase support.
+10. Shipping Plans Generator: Shipping type chip-selects, cost and coverage range, calculation method and delivery timeframe controls.
+11. Attributes Generator: Attribute type chips (Text, Color, Image) for generating product attributes used in variations and filtering.
 
 == Changelog ==
 
