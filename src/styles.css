@@ -79,3 +79,19 @@
     height: 0;
   }
 }
+
+@utility animate-progress-shimmer {
+  animation: progress-shimmer 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent 0%, #2563eb 50%, transparent 100%);
+  background-size: 200% 100%;
+}
+
+@keyframes progress-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+
+  to {
+    background-position: 200% 0;
+  }
+}
