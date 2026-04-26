@@ -74,9 +74,9 @@ export default function GeneratorPage() {
           <GeneratorSidebar current={generator} all={generators} />
         </div>
 
-        {/* Params + Action two-panel */}
-        <div className="flex-1 flex gap-6 min-w-0">
-          {/* Left: params */}
+        {/* Params + Action: stacked on mobile, side-by-side on md+ */}
+        <div className="flex-1 flex flex-col md:flex-row gap-6 min-w-0">
+          {/* Params */}
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
               {generator.name}
@@ -90,8 +90,8 @@ export default function GeneratorPage() {
             />
           </div>
 
-          {/* Right: action — desktop */}
-          <div className="w-72 shrink-0 hidden md:block">
+          {/* Action — single instance, repositioned by flex-direction */}
+          <div className="md:w-72 shrink-0">
             <ActionPanel
               generator={generator}
               count={count}
@@ -106,22 +106,6 @@ export default function GeneratorPage() {
             />
           </div>
         </div>
-      </div>
-
-      {/* Action panel — mobile (below params) */}
-      <div className="md:hidden p-6 pt-0">
-        <ActionPanel
-          generator={generator}
-          count={count}
-          locale={locale}
-          seed={seed}
-          includeMeta={includeMeta}
-          onCountChange={setCount}
-          onLocaleChange={setLocale}
-          onSeedChange={setSeed}
-          onIncludeMetaChange={setIncludeMeta}
-          extraParams={params}
-        />
       </div>
     </div>
   );
