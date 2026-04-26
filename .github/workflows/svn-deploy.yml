@@ -193,8 +193,7 @@ jobs:
       - name: Install Node dependencies & build assets
         run: |
           corepack enable yarn
-          yarn set version stable
-          yarn install --frozen-lockfile
+          yarn install --immutable
           yarn build
 
       - name: Guard — composer.lock must not change during build
