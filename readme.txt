@@ -8,7 +8,7 @@ Stable tag: 2.1.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic EasyCommerce test data: 14 specialized generators, modern SaaS admin UI, run history, settings, sample data sync, and Playwright-tested reliability.
+Generate realistic EasyCommerce test data with 14 generators, modern SaaS UI, run history, settings, and sample data sync from GitHub.
 
 == Description ==
 
