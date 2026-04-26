@@ -1,15 +1,27 @@
 export interface AppSettings {
   defaultCount: number;
   defaultLocale: string;
+  defaultSeed: string;
+  defaultIncludeMeta: boolean;
+  maxRunsPerGenerator: number;
+  sampleDataUrl: string;
 }
 
 const SETTINGS_KEY = "ec_fp_settings";
 
+const SAMPLE_DATA_URL =
+  "https://raw.githubusercontent.com/mralaminahamed/easycommerce-fakerpress/trunk/sample-data.json";
+
+export { SAMPLE_DATA_URL };
+
 function getDefaults(): AppSettings {
   return {
     defaultCount: 10,
-    defaultLocale:
-      window.easycommerceFakerpressApi?.locale?.faker ?? "en_US",
+    defaultLocale: window.easycommerceFakerpressApi?.locale?.faker ?? "en_US",
+    defaultSeed: "",
+    defaultIncludeMeta: true,
+    maxRunsPerGenerator: 10,
+    sampleDataUrl: SAMPLE_DATA_URL,
   };
 }
 

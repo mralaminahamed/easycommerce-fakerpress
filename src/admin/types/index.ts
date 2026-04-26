@@ -64,3 +64,19 @@ export interface StoredRun {
 export interface GeneratorPageParams extends Record<string, string | undefined> {
   type: string;
 }
+
+export interface SampleDataset {
+  id: string;
+  generator: string;
+  label: string;
+  description?: string;
+  count: number;
+  params?: Record<string, any>;
+}
+
+export interface SampleDataManifest {
+  version: string;
+  name: string;
+  description?: string;
+  datasets: SampleDataset[];
+}

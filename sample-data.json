@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "name": "EasyCommerce Starter Pack",
+  "description": "A curated set of sample data to populate your EasyCommerce store for testing and development.",
+  "datasets": [
+    {
+      "id": "products-20",
+      "generator": "products",
+      "label": "20 Sample Products",
+      "description": "Mixed product types with prices, categories, and stock levels.",
+      "count": 20,
+      "params": {}
+    },
+    {
+      "id": "customers-10",
+      "generator": "customers",
+      "label": "10 Sample Customers",
+      "description": "Realistic customer profiles with addresses and contact info.",
+      "count": 10,
+      "params": {}
+    },
+    {
+      "id": "orders-15",
+      "generator": "orders",
+      "label": "15 Sample Orders",
+      "description": "Orders with various statuses and payment methods.",
+      "count": 15,
+      "params": {}
+    },
+    {
+      "id": "coupons-5",
+      "generator": "coupons",
+      "label": "5 Sample Coupons",
+      "description": "Discount coupons of various types — fixed, percentage.",
+      "count": 5,
+      "params": {}
+    },
+    {
+      "id": "product-reviews-30",
+      "generator": "product-reviews",
+      "label": "30 Product Reviews",
+      "description": "Realistic product reviews with ratings and comments.",
+      "count": 30,
+      "params": {}
+    },
+    {
+      "id": "tax-classes-3",
+      "generator": "tax-classes",
+      "label": "3 Tax Classes",
+      "description": "Standard, reduced rate, and zero rate tax classes.",
+      "count": 3,
+      "params": {}
+    },
+    {
+      "id": "locations-5",
+      "generator": "locations",
+      "label": "5 Shipping Locations",
+      "description": "Sample shipping zones and regions.",
+      "count": 5,
+      "params": {}
+    }
+  ]
+}
