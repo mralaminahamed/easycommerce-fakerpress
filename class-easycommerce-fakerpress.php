@@ -379,9 +379,22 @@ class EasyCommerce_FakerPress {
 			'easycommerce-fakerpress/v1',
 			'/download-sample',
 			array(
-				'methods'             => 'POST',
-				'callback'            => array( $this, 'rest_download_sample_data' ),
-				'permission_callback' => array( $this, 'rest_permission_check' ),
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'rest_sample_data_status' ),
+					'permission_callback' => array( $this, 'rest_permission_check' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'rest_download_sample_data' ),
+					'permission_callback' => array( $this, 'rest_permission_check' ),
+					'args'                => array(
+						'force' => array(
+							'type'    => 'boolean',
+							'default' => false,
+						),
+					),
+				),
 			)
 		);
 	}
@@ -735,7 +748,35 @@ class EasyCommerce_FakerPress {
 	 *
 	 * @return WP_REST_Response|WP_Error Response object or error.
 	 */
-	public function rest_download_sample_data() {
+	public function rest_sample_data_status(): WP_REST_Response {
+		$exists = $this->sample_data_exists();
+		$dir    = $this->get_sample_data_directory();
+
+		return new WP_REST_Response(
+			array(
+				'exists'      => $exists,
+				'last_synced' => $exists && is_dir( $dir ) ? gmdate( 'c', filemtime( $dir ) ) : null,
+				'repo_url'    => 'https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data',
+			),
+			200
+		);
+	}
+
+	public function rest_download_sample_data( WP_REST_Request $request ) {
+		$force = (bool) $request->get_param( 'force' );
+
+		if ( $force ) {
+			$dir = $this->get_sample_data_directory();
+			global $wp_filesystem;
+			if ( ! $wp_filesystem ) {
+				require_once ABSPATH . '/wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
+			foreach ( array( 'products', 'customers', 'orders' ) as $subdir ) {
+				$wp_filesystem->delete( $dir . '/' . $subdir, true );
+			}
+		}
+
 		$result = $this->ensure_sample_data();
 		if ( ! $result ) {
 			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
@@ -744,7 +785,7 @@ class EasyCommerce_FakerPress {
 		return new WP_REST_Response(
 			array(
 				'success' => true,
-				'message' => 'Sample data downloaded successfully',
+				'message' => 'Sample data synced successfully.',
 			),
 			200
 		);

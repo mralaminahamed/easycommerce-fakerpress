@@ -1,4 +1,4 @@
-import { useState, useCallback } from "@wordpress/element";
+import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
 import {
   Save,
@@ -7,9 +7,9 @@ import {
   GitBranch,
   ExternalLink,
   CheckCircle,
-  XCircle,
-  Play,
+  AlertCircle,
   Info,
+  Database,
 } from "lucide-react";
 import { Button } from "@/admin/components/ui/button";
 import { Input } from "@/admin/components/ui/input";
@@ -23,44 +23,92 @@ import {
   SelectValue,
 } from "@/admin/components/ui/select";
 import { getSettings, saveSettings } from "@/admin/lib/settings";
-import type { SampleDataManifest, SampleDataset } from "@/admin/types";
 
 const PLUGIN_VERSION = "2.0.4";
 const GITHUB_URL = "https://github.com/mralaminahamed/easycommerce-fakerpress";
+const SAMPLE_DATA_REPO_URL =
+  "https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data";
 const SUPPORT_URL =
   "https://github.com/mralaminahamed/easycommerce-fakerpress/issues";
 const DOCS_URL =
   "https://github.com/mralaminahamed/easycommerce-fakerpress#readme";
 
-type RunState = "idle" | "running" | "done" | "error";
-
-interface DatasetRunState {
-  state: RunState;
-  message?: string;
+interface SyncStatus {
+  exists: boolean;
+  last_synced: string | null;
+  repo_url: string;
 }
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState(getSettings);
   const [saved, setSaved] = useState(false);
 
-  // Sample data state
+  // Sample data sync state
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
-  const [syncError, setSyncError] = useState<string | null>(null);
-  const [manifest, setManifest] = useState<SampleDataManifest | null>(null);
-  const [runStates, setRunStates] = useState<Record<string, DatasetRunState>>(
-    {},
-  );
+  const [syncResult, setSyncResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
 
-  const allLocales =
-    window.easycommerceFakerpressApi?.locale?.allLocales ?? {};
   const nonce = window.easycommerceFakerpressApi?.restNonce ?? "";
   const restUrl = window.easycommerceFakerpressApi?.restUrl ?? "";
+  const allLocales =
+    window.easycommerceFakerpressApi?.locale?.allLocales ?? {};
+
+  // Fetch sync status on mount
+  useEffect(() => {
+    fetch(`${restUrl}download-sample`, {
+      headers: { "X-WP-Nonce": nonce },
+    })
+      .then((r) => r.json())
+      .then((data: SyncStatus) => setSyncStatus(data))
+      .catch(() => setSyncStatus(null))
+      .finally(() => setStatusLoading(false));
+  }, [restUrl, nonce]);
 
   const handleSave = () => {
     saveSettings(settings);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
+
+  const handleSync = useCallback(
+    async (force = false) => {
+      setSyncing(true);
+      setSyncResult(null);
+      try {
+        const res = await fetch(`${restUrl}download-sample`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-WP-Nonce": nonce,
+          },
+          body: JSON.stringify({ force }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json?.message ?? `HTTP ${res.status}`);
+        setSyncResult({ ok: true, message: json.message });
+        // Refresh status
+        const statusRes = await fetch(`${restUrl}download-sample`, {
+          headers: { "X-WP-Nonce": nonce },
+        });
+        if (statusRes.ok) setSyncStatus(await statusRes.json());
+      } catch (err) {
+        setSyncResult({
+          ok: false,
+          message:
+            err instanceof Error
+              ? err.message
+              : __("Sync failed.", "easycommerce-fakerpress"),
+        });
+      } finally {
+        setSyncing(false);
+      }
+    },
+    [restUrl, nonce],
+  );
 
   const handleClearData = () => {
     if (
@@ -98,77 +146,20 @@ export default function SettingsPage() {
     window.location.reload();
   };
 
-  const handleSync = useCallback(async () => {
-    setSyncing(true);
-    setSyncError(null);
-    setManifest(null);
-    setRunStates({});
+  const formatDate = (iso: string | null) => {
+    if (!iso) return null;
     try {
-      const res = await fetch(settings.sampleDataUrl);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = (await res.json()) as SampleDataManifest;
-      if (!Array.isArray(data.datasets)) throw new Error("Invalid manifest");
-      setManifest(data);
-    } catch (err) {
-      setSyncError(
-        err instanceof Error ? err.message : __("Fetch failed", "easycommerce-fakerpress"),
-      );
-    } finally {
-      setSyncing(false);
+      return new Date(iso).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return iso;
     }
-  }, [settings.sampleDataUrl]);
-
-  const handleRunDataset = useCallback(
-    async (dataset: SampleDataset) => {
-      setRunStates((s) => ({ ...s, [dataset.id]: { state: "running" } }));
-      try {
-        const body: Record<string, any> = {
-          count: dataset.count,
-          locale: settings.defaultLocale,
-          include_meta: settings.defaultIncludeMeta,
-          ...(dataset.params ?? {}),
-        };
-        if (settings.defaultSeed) body.seed = parseInt(settings.defaultSeed, 10);
-
-        const res = await fetch(
-          `${restUrl}${dataset.generator}/generate`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-WP-Nonce": nonce,
-            },
-            body: JSON.stringify(body),
-          },
-        );
-        const json = await res.json();
-        if (!res.ok) throw new Error(json?.message ?? `HTTP ${res.status}`);
-        setRunStates((s) => ({
-          ...s,
-          [dataset.id]: { state: "done", message: json.message },
-        }));
-      } catch (err) {
-        setRunStates((s) => ({
-          ...s,
-          [dataset.id]: {
-            state: "error",
-            message:
-              err instanceof Error
-                ? err.message
-                : __("Generation failed.", "easycommerce-fakerpress"),
-          },
-        }));
-      }
-    },
-    [restUrl, nonce, settings],
-  );
-
-  const handleRunAll = useCallback(async () => {
-    if (!manifest) return;
-    for (const dataset of manifest.datasets) {
-      await handleRunDataset(dataset);
-    }
-  }, [manifest, handleRunDataset]);
+  };
 
   return (
     <div className="p-6 max-w-2xl">
@@ -265,7 +256,10 @@ export default function SettingsPage() {
               <Input
                 type="number"
                 value={settings.defaultSeed}
-                placeholder={__("random (leave blank)", "easycommerce-fakerpress")}
+                placeholder={__(
+                  "random (leave blank)",
+                  "easycommerce-fakerpress",
+                )}
                 className="w-48"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSettings((s) => ({ ...s, defaultSeed: e.target.value }))
@@ -288,7 +282,10 @@ export default function SettingsPage() {
                   htmlFor="settings-include-meta"
                   className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
-                  {__("Include Metadata by Default", "easycommerce-fakerpress")}
+                  {__(
+                    "Include Metadata by Default",
+                    "easycommerce-fakerpress",
+                  )}
                 </Label>
                 <p className="text-xs text-gray-400 mt-0.5">
                   {__(
@@ -354,144 +351,123 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Sample data */}
+        {/* Sample data sync */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
-            {__("Sample Data", "easycommerce-fakerpress")}
-          </h2>
-          <p className="text-xs text-gray-500 mb-4">
-            {__(
-              "Fetch a sample data manifest from GitHub and run presets directly.",
-              "easycommerce-fakerpress",
-            )}
-          </p>
-
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-gray-700">
-                {__("Manifest URL", "easycommerce-fakerpress")}
-              </Label>
-              <div className="flex gap-2">
-                <Input
-                  value={settings.sampleDataUrl}
-                  className="flex-1 font-mono text-xs"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSettings((s) => ({ ...s, sampleDataUrl: e.target.value }))
-                  }
-                />
-                <Button
-                  variant="outline"
-                  onClick={handleSync}
-                  disabled={syncing || !settings.sampleDataUrl}
-                  className="gap-2 shrink-0"
-                >
-                  <RefreshCw
-                    className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`}
-                  />
-                  {syncing
-                    ? __("Syncing…", "easycommerce-fakerpress")
-                    : __("Sync Now", "easycommerce-fakerpress")}
-                </Button>
-              </div>
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+              <Database className="w-4 h-4 text-indigo-500" />
             </div>
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900">
+                {__("Sample Data", "easycommerce-fakerpress")}
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {__(
+                  "Locale-specific reference data (product names, customer tags, addresses, etc.) used by generators to produce realistic output.",
+                  "easycommerce-fakerpress",
+                )}
+              </p>
+            </div>
+          </div>
 
-            {syncError && (
-              <div className="flex items-center gap-2 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">
-                <XCircle className="w-4 h-4 shrink-0" />
-                {syncError}
-              </div>
+          {/* Status */}
+          <div className="rounded-lg bg-gray-50 border border-gray-100 p-3 mb-4 flex items-center gap-3">
+            {statusLoading ? (
+              <RefreshCw className="w-4 h-4 text-gray-400 animate-spin shrink-0" />
+            ) : syncStatus?.exists ? (
+              <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
             )}
-
-            {manifest && (
-              <div className="space-y-3 pt-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      {manifest.name}
+            <div className="min-w-0">
+              {statusLoading ? (
+                <p className="text-sm text-gray-500">
+                  {__("Checking status…", "easycommerce-fakerpress")}
+                </p>
+              ) : syncStatus?.exists ? (
+                <>
+                  <p className="text-sm font-medium text-gray-900">
+                    {__("Sample data is synced", "easycommerce-fakerpress")}
+                  </p>
+                  {syncStatus.last_synced && (
+                    <p className="text-xs text-gray-400">
+                      {sprintf(
+                        /* translators: %s: date string */
+                        __("Last updated: %s", "easycommerce-fakerpress"),
+                        formatDate(syncStatus.last_synced),
+                      )}
                     </p>
-                    {manifest.description && (
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {manifest.description}
-                      </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-900">
+                    {__("Sample data not found", "easycommerce-fakerpress")}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {__(
+                      "Sync to download locale-specific reference data.",
+                      "easycommerce-fakerpress",
                     )}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRunAll}
-                    disabled={Object.values(runStates).some(
-                      (r) => r.state === "running",
-                    )}
-                    className="gap-1.5 shrink-0"
-                  >
-                    <Play className="w-3.5 h-3.5" />
-                    {__("Run All", "easycommerce-fakerpress")}
-                  </Button>
-                </div>
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
 
-                <div className="divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden">
-                  {manifest.datasets.map((ds) => {
-                    const rs = runStates[ds.id] ?? { state: "idle" };
-                    return (
-                      <div
-                        key={ds.id}
-                        className="flex items-center gap-3 px-4 py-3 bg-white"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {ds.label}
-                          </p>
-                          {ds.description && (
-                            <p className="text-xs text-gray-400 truncate">
-                              {ds.description}
-                            </p>
-                          )}
-                          {rs.state === "done" && (
-                            <p className="text-xs text-green-600 mt-0.5">
-                              {rs.message}
-                            </p>
-                          )}
-                          {rs.state === "error" && (
-                            <p className="text-xs text-red-600 mt-0.5">
-                              {rs.message}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-xs text-gray-400">
-                            {sprintf(
-                              /* translators: %d: item count */
-                              __("%d items", "easycommerce-fakerpress"),
-                              ds.count,
-                            )}
-                          </span>
-                          {rs.state === "done" ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                          ) : rs.state === "error" ? (
-                            <XCircle className="w-4 h-4 text-red-500" />
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleRunDataset(ds)}
-                              disabled={rs.state === "running"}
-                              className="gap-1.5 h-7 px-2 text-xs"
-                            >
-                              <Play
-                                className={`w-3 h-3 ${rs.state === "running" ? "animate-pulse" : ""}`}
-                              />
-                              {rs.state === "running"
-                                ? __("Running…", "easycommerce-fakerpress")
-                                : __("Run", "easycommerce-fakerpress")}
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          {/* Sync result */}
+          {syncResult && (
+            <div
+              className={`flex items-center gap-2 rounded-md p-3 mb-4 text-sm ${
+                syncResult.ok
+                  ? "bg-green-50 border border-green-200 text-green-700"
+                  : "bg-red-50 border border-red-200 text-red-700"
+              }`}
+            >
+              {syncResult.ok ? (
+                <CheckCircle className="w-4 h-4 shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 shrink-0" />
+              )}
+              {syncResult.message}
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Button
+              onClick={() => handleSync(false)}
+              disabled={syncing}
+              className="gap-2"
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`}
+              />
+              {syncing
+                ? __("Syncing…", "easycommerce-fakerpress")
+                : __("Sync Now", "easycommerce-fakerpress")}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleSync(true)}
+              disabled={syncing}
+              className="gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              {__("Force Re-sync", "easycommerce-fakerpress")}
+            </Button>
+          </div>
+
+          <div className="pt-3 border-t border-gray-100">
+            <a
+              href={SAMPLE_DATA_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              <GitBranch className="w-3.5 h-3.5" />
+              {__("View sample data repository", "easycommerce-fakerpress")}
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
         </div>
 
@@ -558,7 +534,7 @@ export default function SettingsPage() {
           <p className="text-xs text-gray-500 mb-4">
             {__("These actions cannot be undone.", "easycommerce-fakerpress")}
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-6">
             <div>
               <Button
                 variant="destructive"
