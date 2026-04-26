@@ -1,10 +1,14 @@
-name: SVN Trunk Cleanup
+name: SVN Cleanup
 
 on:
   workflow_dispatch:
     inputs:
+      target:
+        description: "SVN target — 'trunk' or a tag e.g. 'tags/2.1.0'"
+        required: true
+        default: "trunk"
       paths:
-        description: "Space-separated SVN paths to delete from trunk (e.g. src docs)"
+        description: "Space-separated paths to delete (e.g. src docs README.md)"
         required: true
         default: "src docs"
       dry_run:
@@ -20,7 +24,7 @@ defaults:
 
 jobs:
   cleanup:
-    name: "Remove paths from SVN trunk"
+    name: "Remove paths from SVN ${{ github.event.inputs.target }}"
     runs-on: ubuntu-latest
 
     steps:
@@ -29,46 +33,48 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y subversion
 
-      - name: Checkout SVN trunk (no files, metadata only)
+      - name: Checkout SVN target (immediates only)
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          PLUGIN_SLUG:  easycommerce-fakerpress
+          TARGET:       ${{ github.event.inputs.target }}
         run: |
-          SVN_TRUNK="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/trunk"
-          echo "Checking out SVN trunk (depth=immediates)…"
-          svn checkout "$SVN_TRUNK" svn-trunk \
+          PLUGIN_SLUG="easycommerce-fakerpress"
+          SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/${TARGET}"
+          echo "Checking out: ${SVN_URL}"
+          svn checkout "$SVN_URL" svn-target \
             --username "$SVN_USERNAME" \
             --password "$SVN_PASSWORD" \
             --depth immediates \
             --non-interactive --quiet
 
-      - name: Delete specified paths from SVN
+      - name: Delete specified paths
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           PATHS:        ${{ github.event.inputs.paths }}
+          TARGET:       ${{ github.event.inputs.target }}
           DRY_RUN:      ${{ github.event.inputs.dry_run }}
         run: |
           DELETED=()
           MISSING=()
 
           for path in $PATHS; do
-            TARGET="svn-trunk/${path}"
-
-            if [ -e "$TARGET" ]; then
+            ENTRY="svn-target/${path}"
+            if [ -e "$ENTRY" ]; then
               echo "Found: ${path} — scheduling for deletion"
-              svn delete "$TARGET" --force
+              svn delete "$ENTRY" --force
               DELETED+=("$path")
             else
-              echo "Not found in SVN trunk: ${path} — skipping"
+              echo "Not found in ${TARGET}: ${path} — skipping"
               MISSING+=("$path")
             fi
           done
 
           echo ""
-          echo "── Summary ─────────────────────────────"
-          echo "To delete : ${DELETED[*]:-none}"
+          echo "── Summary ─────────────────────────────────────"
+          echo "Target    : ${TARGET}"
+          echo "Deleted   : ${DELETED[*]:-none}"
           echo "Not found : ${MISSING[*]:-none}"
           echo "Dry run   : ${DRY_RUN}"
 
@@ -81,10 +87,10 @@ jobs:
             echo ""
             echo "DRY RUN — changes NOT committed to SVN."
           else
-            svn commit svn-trunk \
-              -m "chore: remove dev-only directories (${DELETED[*]}) from SVN trunk" \
+            svn commit svn-target \
+              -m "chore: remove dev-only files (${DELETED[*]}) from SVN ${TARGET}" \
               --username "$SVN_USERNAME" \
               --password "$SVN_PASSWORD" \
               --non-interactive
-            echo "Committed. Paths removed: ${DELETED[*]}"
+            echo "Committed. Removed from ${TARGET}: ${DELETED[*]}"
           fi
