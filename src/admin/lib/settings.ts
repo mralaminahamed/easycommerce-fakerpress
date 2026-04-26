@@ -4,15 +4,9 @@ export interface AppSettings {
   defaultSeed: string;
   defaultIncludeMeta: boolean;
   maxRunsPerGenerator: number;
-  sampleDataUrl: string;
 }
 
 const SETTINGS_KEY = "ec_fp_settings";
-
-const SAMPLE_DATA_URL =
-  "https://raw.githubusercontent.com/mralaminahamed/easycommerce-fakerpress/trunk/sample-data.json";
-
-export { SAMPLE_DATA_URL };
 
 function getDefaults(): AppSettings {
   return {
@@ -21,7 +15,6 @@ function getDefaults(): AppSettings {
     defaultSeed: "",
     defaultIncludeMeta: true,
     maxRunsPerGenerator: 10,
-    sampleDataUrl: SAMPLE_DATA_URL,
   };
 }
 
