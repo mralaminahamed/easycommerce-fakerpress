@@ -13,6 +13,7 @@ interface StatCardProps {
   label: string;
   value: number;
   accentColor?: "blue" | "purple" | "indigo" | "gray";
+  testId?: string;
 }
 
 export function StatCard({
@@ -20,12 +21,14 @@ export function StatCard({
   label,
   value,
   accentColor = "blue",
+  testId,
 }: StatCardProps) {
   const colors = colorMap[accentColor] ?? colorMap.blue;
   const isEmpty = value === 0;
 
   return (
     <div
+      data-testid={testId}
       className={cn(
         "rounded-xl bg-white shadow-sm p-5 border border-gray-100 border-b-4",
         colors.border,

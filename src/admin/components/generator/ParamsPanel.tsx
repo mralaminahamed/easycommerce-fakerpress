@@ -55,12 +55,14 @@ export function ParamsPanel({
 
   if (entries.length === 0) {
     return (
-      <p className="text-sm text-gray-400 italic py-4">
-        {__(
-          "No advanced parameters for this generator.",
-          "easycommerce-fakerpress",
-        )}
-      </p>
+      <div data-testid="params-panel">
+        <p className="text-sm text-gray-400 italic py-4">
+          {__(
+            "No advanced parameters for this generator.",
+            "easycommerce-fakerpress",
+          )}
+        </p>
+      </div>
     );
   }
 
@@ -168,12 +170,12 @@ export function ParamsPanel({
   };
 
   return (
-    <div className="space-y-6">
+    <div data-testid="params-panel" className="space-y-6">
       {entries.map(([paramName, config]) => {
         if (!shouldShow(paramName, config, params)) return null;
         const value = params[paramName];
         return (
-          <div key={paramName}>
+          <div key={paramName} data-param={paramName}>
             <div className="border-t border-gray-100 pt-4 mb-3">
               <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
                 {toSectionLabel(paramName)}

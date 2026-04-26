@@ -111,7 +111,7 @@ export function ActionPanel({
   const allLocales = window.easycommerceFakerpressApi?.locale?.allLocales ?? {};
 
   return (
-    <div className="space-y-5 sticky top-8">
+    <div data-testid="action-panel" className="space-y-5 sticky top-8">
       {/* Count stepper */}
       <div className="space-y-1.5">
         <Label className="text-sm font-medium text-gray-700">
@@ -122,6 +122,7 @@ export function ActionPanel({
             type="button"
             variant="outline"
             size="icon"
+            data-testid="count-decrement"
             disabled={isLoading || count <= 1}
             onClick={() => onCountChange(Math.max(1, count - 1))}
           >
@@ -133,6 +134,7 @@ export function ActionPanel({
             min={1}
             max={100}
             disabled={isLoading}
+            data-testid="count-input"
             className="w-20 text-center"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               onCountChange(
@@ -144,6 +146,7 @@ export function ActionPanel({
             type="button"
             variant="outline"
             size="icon"
+            data-testid="count-increment"
             disabled={isLoading || count >= 100}
             onClick={() => onCountChange(Math.min(100, count + 1))}
           >
@@ -206,21 +209,21 @@ export function ActionPanel({
       {isLoading ? (
         <Progress />
       ) : (
-        <Button onClick={handleGenerate} size="lg" className="w-full">
+        <Button onClick={handleGenerate} size="lg" data-testid="generate-btn" className="w-full">
           {__("Generate", "easycommerce-fakerpress")}
         </Button>
       )}
 
       {/* Result */}
       {result && (
-        <div className="rounded-md bg-green-50 border border-green-200 p-3">
+        <div data-testid="result-success" className="rounded-md bg-green-50 border border-green-200 p-3">
           <p className="text-sm font-medium text-green-800 m-0">
             {result.message}
           </p>
         </div>
       )}
       {error && (
-        <div className="rounded-md bg-red-50 border border-red-200 p-3">
+        <div data-testid="result-error" className="rounded-md bg-red-50 border border-red-200 p-3">
           <p className="text-sm font-medium text-red-800 m-0">{error}</p>
         </div>
       )}
