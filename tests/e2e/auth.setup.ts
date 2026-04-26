@@ -13,7 +13,9 @@ setup('authenticate as WP admin', async ({ page, baseURL }) => {
   await page.locator('#user_login').fill(user);
   await page.locator('#user_pass').fill(pass);
   await page.locator('#wp-submit').click();
-  await page.waitForURL('**/wp-admin/**');
+
+  // Wait for redirect to admin and page to load
+  await page.waitForURL('**/wp-admin/**', { timeout: 30000 });
 
   await page.context().storageState({ path: AUTH_FILE });
 });
