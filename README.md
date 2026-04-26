@@ -65,25 +65,60 @@ npm run build
 
 ## 📸 Screenshots
 
-### Main Interface
+### Homepage — StatsBar + GeneratorGrid
 
-![EasyCommerce FakerPress Admin Interface](.wordpress-org/screenshot-1.png)
-_The modern, tabbed interface with WordPress admin color integration_
+![Homepage](.wordpress-org/screenshot-1.png)
+_Live generation stats and all 14 generators grouped by category with Popular badges_
 
-### Product Generator
+### Products Generator
 
-![Product Generator](.wordpress-org/screenshot-2.png)
-_Advanced product generation with attributes, variations, and inventory settings_
+![Products Generator](.wordpress-org/screenshot-2.png)
+_Two-panel layout: sidebar with category nav, params panel, sticky action panel with count/locale/seed/generate_
 
-### Customer Generator
+### Customers Generator
 
-![Customer Generator](.wordpress-org/screenshot-3.png)
-_Comprehensive customer profile generation with demographics and loyalty tiers_
+![Customers Generator](.wordpress-org/screenshot-3.png)
+_ChipField pill-selects for customer types and age groups, address and purchase history toggles_
 
-### Order Generator
+### Orders Generator
 
-![Order Generator](.wordpress-org/screenshot-4.png)
-_Complete order generation with payment processing and shipping calculations_
+![Orders Generator](.wordpress-org/screenshot-4.png)
+_Order status selector, customer distribution controls, items-per-order range_
+
+### Coupons Generator
+
+![Coupons Generator](.wordpress-org/screenshot-5.png)
+_Discount type chip-selects (Percentage, Fixed, Free Shipping), discount range, usage limit controls_
+
+### Settings Page
+
+![Settings Page](.wordpress-org/screenshot-6.png)
+_Default count, locale, seed, metadata toggle; configurable run history limit; sample data sync_
+
+### Our Plugins Page
+
+![Our Plugins](.wordpress-org/screenshot-7.png)
+_Live WordPress.org plugin cards with ratings and active install counts_
+
+### Product Variations Generator
+
+![Product Variations Generator](.wordpress-org/screenshot-8.png)
+_Variable product type selection, price variance range, stock management settings_
+
+### Product Reviews Generator
+
+![Product Reviews Generator](.wordpress-org/screenshot-9.png)
+_Target specific products, realistic rating distribution, verified purchase support_
+
+### Shipping Plans Generator
+
+![Shipping Plans Generator](.wordpress-org/screenshot-10.png)
+_Shipping type chips, cost and coverage area range, calculation method and delivery timeframe_
+
+### Attributes Generator
+
+![Attributes Generator](.wordpress-org/screenshot-11.png)
+_Attribute type chip-select (Text, Color, Image) for product variations and filtering_
 
 ## 📚 Documentation
 
