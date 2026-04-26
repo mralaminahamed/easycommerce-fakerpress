@@ -67,3 +67,10 @@ Thumbs.db
 
 # Superpowers planning docs
 /docs/superpowers/
+
+# Playwright
+/tests/e2e/.auth/
+/tests/e2e/report/
+/tests/e2e/.env.test
+/playwright-report/
+/test-results/
