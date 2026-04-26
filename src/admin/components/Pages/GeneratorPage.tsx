@@ -7,6 +7,7 @@ import { generators } from "@/admin/lib/generators";
 import { ParamsPanel } from "@/admin/components/generator/ParamsPanel";
 import { ActionPanel } from "@/admin/components/generator/ActionPanel";
 import { GeneratorSidebar } from "@/admin/components/generator/GeneratorSidebar";
+import { getSettings } from "@/admin/lib/settings";
 import type { GeneratorPageParams } from "@/admin/types";
 
 export default function GeneratorPage() {
@@ -15,10 +16,8 @@ export default function GeneratorPage() {
   const generator = generators.find((g) => g.route === type);
 
   const [params, setParams] = useState<Record<string, any>>({});
-  const [count, setCount] = useState(10);
-  const [locale, setLocale] = useState(
-    window.easycommerceFakerpressApi?.locale?.faker ?? "en_US",
-  );
+  const [count, setCount] = useState(() => getSettings().defaultCount);
+  const [locale, setLocale] = useState(() => getSettings().defaultLocale);
   const [seed, setSeed] = useState("");
   const [includeMeta, setIncludeMeta] = useState(true);
 
@@ -45,7 +44,7 @@ export default function GeneratorPage() {
       {/* Top bar */}
       <div
         data-testid="generator-topbar"
-        className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10"
+        className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-12 z-10"
       >
         <div className="flex items-center gap-3">
           <Link
