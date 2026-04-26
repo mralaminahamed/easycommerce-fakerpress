@@ -9,7 +9,11 @@ interface GeneratorSidebarProps {
   all: Generator[];
 }
 
-const CATEGORY_ORDER = ["Core", "Advanced", "Enhanced"];
+const CATEGORY_ORDER = [
+  __("Core", "easycommerce-fakerpress"),
+  __("Advanced", "easycommerce-fakerpress"),
+  __("Enhanced", "easycommerce-fakerpress"),
+];
 
 function timeAgo(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
