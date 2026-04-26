@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/admin/components/ui/select";
+import { toLabel } from "@/admin/lib/utils";
 import type { ParameterConfig } from "@/admin/types";
 
 interface SelectFieldProps {
@@ -15,12 +16,6 @@ interface SelectFieldProps {
   value: string;
   disabled: boolean;
   onChange: (val: string) => void;
-}
-
-function toLabel(paramName: string, config: ParameterConfig): string {
-  if (config.title) return config.title;
-  const base = paramName.includes(".") ? paramName.split(".")[1] : paramName;
-  return base.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 export function SelectField({

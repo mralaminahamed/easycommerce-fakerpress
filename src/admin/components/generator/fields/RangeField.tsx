@@ -1,6 +1,7 @@
 import { useState } from "@wordpress/element";
 import { Input } from "@/admin/components/ui/input";
 import { Label } from "@/admin/components/ui/label";
+import { toLabel } from "@/admin/lib/utils";
 import type { ParameterConfig } from "@/admin/types";
 
 interface RangeValue {
@@ -14,12 +15,6 @@ interface RangeFieldProps {
   value: RangeValue;
   disabled: boolean;
   onChange: (val: RangeValue) => void;
-}
-
-function toLabel(paramName: string, config: ParameterConfig): string {
-  if (config.title) return config.title;
-  const base = paramName.includes(".") ? paramName.split(".")[1] : paramName;
-  return base.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 export function RangeField({
@@ -72,7 +67,7 @@ export function RangeField({
           <span className="text-xs text-gray-400 block text-center">Max</span>
         </div>
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-700">{error}</p>}
     </div>
   );
 }
