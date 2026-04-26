@@ -1,7 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type React from "react";
 
-// Window interface extension for WordPress API
 declare global {
   interface Window {
     easycommerceFakerpressApi?: {
@@ -20,27 +18,6 @@ declare global {
   }
 }
 
-// Generator types
-export interface Generator {
-  name: string;
-  component: React.ComponentType<any>;
-  category: string;
-  order: number;
-  icon: LucideIcon;
-  description: string;
-  useCase?: string;
-  route: string;
-  popular?: boolean;
-}
-
-// Generator result type
-export interface GeneratorResult {
-  message: string;
-  generated?: number;
-  [key: string]: any;
-}
-
-// Parameter configuration types
 export interface ParameterConfig {
   type: string;
   title?: string;
@@ -56,27 +33,34 @@ export interface ParameterConfig {
   };
   properties?: Record<string, ParameterConfig>;
   dependsOn?: Record<string, any>;
+  format?: string;
 }
 
-// Generator base props
-export interface GeneratorBaseProps {
-  title: string;
+export interface Generator {
+  name: string;
+  category: string;
+  order: number;
+  icon: LucideIcon;
   description: string;
-  type: string;
-  onGenerate: (params: Record<string, any>) => void;
-  isLoading: boolean;
-  result?: GeneratorResult | null;
-  error?: string | null;
+  useCase?: string;
+  route: string;
+  popular?: boolean;
   parameterConfig?: Record<string, ParameterConfig>;
-  children?: React.ReactNode;
 }
 
-// Generator page params
-export interface GeneratorPageParams extends Record<
-  string,
-  string | undefined
-> {
+export interface GeneratorResult {
+  message: string;
+  generated?: number;
+  [key: string]: any;
+}
+
+export interface StoredRun {
+  count: number;
+  timestamp: number;
+  success: boolean;
+  message: string;
+}
+
+export interface GeneratorPageParams extends Record<string, string | undefined> {
   type: string;
 }
-
-export {};
