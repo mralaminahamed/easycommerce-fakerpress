@@ -281,6 +281,7 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG:         ${{ needs.meta.outputs.plugin_slug }}
+          BUILD_DIR:    ${{ github.workspace }}
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
