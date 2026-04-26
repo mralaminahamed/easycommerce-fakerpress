@@ -1,119 +1,46 @@
-import { motion } from 'framer-motion';
-import { Globe } from 'lucide-react';
-import React, { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { __ } from "@wordpress/i18n";
+import { LayoutGrid, Puzzle, Settings } from "lucide-react";
+import { cn } from "@/admin/lib/utils";
 
-import { __ } from '@wordpress/i18n';
-
-import '@/admin/types';
+const NAV_LINKS = [
+  { to: "/",        label: "Generators", icon: LayoutGrid },
+  { to: "/settings",label: "Settings",   icon: Settings   },
+  { to: "/plugins", label: "Our Plugins",icon: Puzzle      },
+] as const;
 
 export default function RootLayout() {
-	const location = useLocation();
-	const isHomePage = location.pathname === '/';
+  const { pathname } = useLocation();
 
-	// Get locale information from localized script
-	const localeInfo = window.easycommerceFakerpressApi?.locale || {
-		faker: 'en_US',
-		label: 'English (United States)',
-		wordpress: 'en_US',
-	};
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Global nav */}
+      <header className="sticky top-0 z-20 h-12 bg-white border-b border-gray-200 flex items-center px-6 gap-6">
+        <span className="text-sm font-bold text-gray-900 mr-2">FakerPress</span>
+        {NAV_LINKS.map(({ to, label, icon: Icon }) => {
+          const active =
+            to === "/"
+              ? pathname === "/" || pathname.startsWith("/generator/")
+              : pathname.startsWith(to);
+          return (
+            <Link
+              key={to}
+              to={to}
+              className={cn(
+                "flex items-center gap-1.5 text-sm transition-colors",
+                active
+                  ? "text-blue-600 font-medium"
+                  : "text-gray-500 hover:text-gray-900",
+              )}
+            >
+              <Icon className="w-4 h-4" />
+              {__(label, "easycommerce-fakerpress")}
+            </Link>
+          );
+        })}
+      </header>
 
-	// Download sample data if not available
-	useEffect( () => {
-		fetch( `${ window.easycommerceFakerpressApi?.restUrl }download-sample`, {
-			method: 'POST',
-		} )
-			.then( ( response ) => response.json() )
-			.then( ( data: any ) => {
-				if ( ! data.success ) {
-					// Silent fail - sample data may already exist or endpoint handles it
-				}
-			} )
-			.catch( () => {
-				// Silent fail - sample data will be fetched when needed
-			} );
-	}, [] );
-
-	return (
-		<motion.div
-			className="min-h-screen bg-linear-to-br from-gray-50 via-white to-blue-50/30"
-			initial={ { opacity: 0 } }
-			animate={ { opacity: 1 } }
-			transition={ { duration: 0.6 } }
-		>
-			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-				{ /* Hero Section - Only show on home page */ }
-				{ isHomePage && (
-					<motion.div
-						className="mb-12"
-						initial={ { opacity: 0, y: -20 } }
-						animate={ { opacity: 1, y: 0 } }
-						transition={ { delay: 0.2, duration: 0.6 } }
-					>
-						<div className="flex items-start justify-between">
-							<div className="flex-1">
-								<motion.h1
-									className="text-4xl font-bold text-gray-900 tracking-tight mb-3"
-									initial={ { opacity: 0, x: -20 } }
-									animate={ { opacity: 1, x: 0 } }
-									transition={ { delay: 0.3, duration: 0.6 } }
-								>
-									{ __( 'EasyCommerce FakerPress', 'easycommerce-fakerpress' ) }
-								</motion.h1>
-								<motion.p
-									className="text-lg text-gray-600 leading-relaxed max-w-2xl"
-									initial={ { opacity: 0 } }
-									animate={ { opacity: 1 } }
-									transition={ { delay: 0.5, duration: 0.6 } }
-								>
-									{ __(
-										'Comprehensive EasyCommerce test data generator with 11 specialized generators, real-time validation, and modern interface.',
-										'easycommerce-fakerpress',
-									) }
-								</motion.p>
-								<motion.div
-									className="mt-4 h-1 w-32 bg-linear-to-r from-blue-500 to-purple-600 rounded-full"
-									initial={ { width: 0 } }
-									animate={ { width: 128 } }
-									transition={ { delay: 0.7, duration: 0.8 } }
-								/>
-							</div>
-							<motion.div
-								className="ml-6 shrink-0"
-								initial={ { opacity: 0, scale: 0.8 } }
-								animate={ { opacity: 1, scale: 1 } }
-								transition={ { delay: 0.4, duration: 0.5 } }
-							>
-								<div className="inline-flex items-center gap-3 rounded-xl bg-linear-to-r from-blue-50 to-purple-50 px-4 py-3 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-200/50 shadow-xs">
-									<motion.div
-										whileHover={ { rotate: 15 } }
-										transition={ { type: 'spring', stiffness: 300 } }
-									>
-										<Globe className="h-5 w-5" aria-hidden="true" />
-									</motion.div>
-									<div className="flex flex-col">
-										<span className="text-xs text-blue-600 font-semibold uppercase tracking-wide">
-											{ __( 'Data Locale', 'easycommerce-fakerpress' ) }
-										</span>
-										<span className="text-blue-800 font-medium">
-											{ localeInfo.label }
-										</span>
-									</div>
-								</div>
-							</motion.div>
-						</div>
-					</motion.div>
-				) }
-
-				{ /* Page Content */ }
-				<motion.div
-					initial={ { opacity: 0, y: 20 } }
-					animate={ { opacity: 1, y: 0 } }
-					transition={ { delay: isHomePage ? 0.6 : 0.2, duration: 0.6 } }
-				>
-					<Outlet />
-				</motion.div>
-			</div>
-		</motion.div>
-	);
+      <Outlet />
+    </div>
+  );
 }
