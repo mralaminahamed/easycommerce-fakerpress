@@ -37,7 +37,9 @@ SECURITY.md
 
 # Testing and CI
 tests/
+playwright.config.ts
 .github/
+/.wordpress-org/
 .travis.yml
 .circleci/
 /.phpstan-cache/
@@ -57,10 +59,9 @@ tests/
 ehthumbs.db
 Thumbs.db
 
-# Build and release directories
+# Build and release directories (build/ is intentionally kept — compiled assets needed in production)
 /release/
 /dist/
-/build/
 
 # Git files
 /.git/
