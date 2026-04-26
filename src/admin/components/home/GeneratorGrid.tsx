@@ -17,7 +17,7 @@ export function GeneratorGrid({ generators }: GeneratorGridProps) {
   );
 
   return (
-    <div className="space-y-10">
+    <div data-testid="generator-grid" className="space-y-10">
       {categories.map((category) => (
         <section key={category}>
           <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
@@ -43,6 +43,7 @@ function GeneratorCard({ generator: g }: { generator: Generator }) {
   return (
     <Link
       to={`/generator/${g.route}`}
+      data-testid={`generator-card-${g.route}`}
       className={cn(
         "group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm",
         "hover:shadow-md hover:-translate-y-1 hover:border-l-4 hover:border-l-blue-500",

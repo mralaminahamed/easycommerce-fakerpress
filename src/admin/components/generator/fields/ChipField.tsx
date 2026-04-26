@@ -47,6 +47,7 @@ export function ChipField({
             label={option
               .replace(/_/g, " ")
               .replace(/\b\w/g, (l) => l.toUpperCase())}
+            value={option}
             selected={value.includes(option)}
             disabled={disabled}
             onChange={(sel) => toggle(option, sel)}

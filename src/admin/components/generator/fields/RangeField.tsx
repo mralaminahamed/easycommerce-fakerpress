@@ -49,6 +49,7 @@ export function RangeField({
             type="number"
             value={value.min ?? ""}
             disabled={disabled}
+            data-testid="range-min"
             className="w-24"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleChange("min", e.target.value)
@@ -62,6 +63,7 @@ export function RangeField({
             type="number"
             value={value.max ?? ""}
             disabled={disabled}
+            data-testid="range-max"
             className="w-24"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleChange("max", e.target.value)

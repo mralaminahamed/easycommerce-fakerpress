@@ -31,7 +31,7 @@ export function GeneratorSidebar({ current, all }: GeneratorSidebarProps) {
   })).filter((c) => c.items.length > 0);
 
   return (
-    <aside className="w-56 shrink-0 space-y-6">
+    <aside data-testid="generator-sidebar" className="w-56 shrink-0 space-y-6">
       {/* Current generator */}
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">
