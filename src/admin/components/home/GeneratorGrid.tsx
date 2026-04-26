@@ -9,7 +9,11 @@ interface GeneratorGridProps {
   generators: Generator[];
 }
 
-const CATEGORY_ORDER = ["Core", "Advanced", "Enhanced"];
+const CATEGORY_ORDER = [
+  __("Core", "easycommerce-fakerpress"),
+  __("Advanced", "easycommerce-fakerpress"),
+  __("Enhanced", "easycommerce-fakerpress"),
+];
 
 export function GeneratorGrid({ generators }: GeneratorGridProps) {
   const categories = CATEGORY_ORDER.filter((cat) =>
