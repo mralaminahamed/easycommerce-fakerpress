@@ -1,0 +1,90 @@
+name: SVN Trunk Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: "Space-separated SVN paths to delete from trunk (e.g. src docs)"
+        required: true
+        default: "src docs"
+      dry_run:
+        description: "Dry run — preview deletions without committing"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cleanup:
+    name: "Remove paths from SVN trunk"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Subversion
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y subversion
+
+      - name: Checkout SVN trunk (no files, metadata only)
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          PLUGIN_SLUG:  easycommerce-fakerpress
+        run: |
+          SVN_TRUNK="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/trunk"
+          echo "Checking out SVN trunk (depth=immediates)…"
+          svn checkout "$SVN_TRUNK" svn-trunk \
+            --username "$SVN_USERNAME" \
+            --password "$SVN_PASSWORD" \
+            --depth immediates \
+            --non-interactive --quiet
+
+      - name: Delete specified paths from SVN
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          PATHS:        ${{ github.event.inputs.paths }}
+          DRY_RUN:      ${{ github.event.inputs.dry_run }}
+        run: |
+          DELETED=()
+          MISSING=()
+
+          for path in $PATHS; do
+            TARGET="svn-trunk/${path}"
+
+            if [ -e "$TARGET" ]; then
+              echo "Found: ${path} — scheduling for deletion"
+              svn delete "$TARGET" --force
+              DELETED+=("$path")
+            else
+              echo "Not found in SVN trunk: ${path} — skipping"
+              MISSING+=("$path")
+            fi
+          done
+
+          echo ""
+          echo "── Summary ─────────────────────────────"
+          echo "To delete : ${DELETED[*]:-none}"
+          echo "Not found : ${MISSING[*]:-none}"
+          echo "Dry run   : ${DRY_RUN}"
+
+          if [ ${#DELETED[@]} -eq 0 ]; then
+            echo "Nothing to delete — exiting cleanly."
+            exit 0
+          fi
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo ""
+            echo "DRY RUN — changes NOT committed to SVN."
+          else
+            svn commit svn-trunk \
+              -m "chore: remove dev-only directories (${DELETED[*]}) from SVN trunk" \
+              --username "$SVN_USERNAME" \
+              --password "$SVN_PASSWORD" \
+              --non-interactive
+            echo "Committed. Paths removed: ${DELETED[*]}"
+          fi
