@@ -111,6 +111,7 @@ class EasyCommerce_FakerPress {
 		register_deactivation_hook( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE, array( $this, 'flush_rewrite_rules' ) );
 
 		add_filter( 'plugin_action_links_' . plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
+		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_row_meta' ), 10, 2 );
 		add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_filter( 'admin_body_class', array( $this, 'filter_admin_body_class' ), PHP_INT_MAX );
@@ -198,7 +199,32 @@ class EasyCommerce_FakerPress {
 	 * @return array Modified plugin action links.
 	 */
 	public function add_plugin_action_links( array $links ): array {
-		$links[] = '<a href="' . admin_url( 'admin.php?page=easycommerce-fakerpress' ) . '">' . __( 'Get Started', 'easycommerce-fakerpress' ) . '</a>';
+		$action_links = array(
+			'settings' => '<a href="' . admin_url( 'admin.php?page=easycommerce-fakerpress#/settings' ) . '">' . __( 'Settings', 'easycommerce-fakerpress' ) . '</a>',
+			'generate' => '<a href="' . admin_url( 'admin.php?page=easycommerce-fakerpress' ) . '">' . __( 'Generate Data', 'easycommerce-fakerpress' ) . '</a>',
+		);
+		return array_merge( $action_links, $links );
+	}
+
+	/**
+	 * Add plugin row meta links
+	 *
+	 * Adds Documentation and GitHub links to the plugin row meta on the plugins page.
+	 *
+	 * @since 2.1.0
+	 * @hooked plugin_row_meta
+	 *
+	 * @param array  $links Plugin row meta links.
+	 * @param string $file  Plugin basename.
+	 *
+	 * @return array Modified plugin row meta links.
+	 */
+	public function add_plugin_row_meta( array $links, string $file ): array {
+		if ( plugin_basename( EASYCOMMERCE_FAKERPRESS_PLUGIN_FILE ) !== $file ) {
+			return $links;
+		}
+		$links[] = '<a href="https://github.com/mralaminahamed/easycommerce-fakerpress#readme" target="_blank" rel="noopener noreferrer">' . __( 'Documentation', 'easycommerce-fakerpress' ) . '</a>';
+		$links[] = '<a href="https://github.com/mralaminahamed/easycommerce-fakerpress" target="_blank" rel="noopener noreferrer">' . __( 'GitHub', 'easycommerce-fakerpress' ) . '</a>';
 		return $links;
 	}
 
