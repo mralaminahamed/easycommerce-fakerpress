@@ -1,124 +1,97 @@
 # ============================================================
 # .distignore — files excluded from WordPress.org SVN deploy
-# The 10up deploy action uses this to filter what goes to SVN.
-# build/ is intentionally NOT excluded (compiled assets needed).
+#
+# What SHIPS to SVN (plugin trunk):
+#   easycommerce-fakerpress.php  class-easycommerce-fakerpress.php
+#   includes/   vendor/   build/   languages/   readme.txt   LICENSE
+#
+# Everything else listed here is dev-only and must NOT ship.
+# build/ is intentionally absent from this list — compiled
+# JS/CSS assets are required for the plugin to function.
 # ============================================================
 
-# Source code (compiled output in build/ is what SVN gets)
+# ── Source code ───────────────────────────────────────────────
+# Compiled output lives in build/ which ships; raw source does not.
 /src/
 
-# Documentation (GitHub-only; readme.txt is the WP.org doc)
+# ── Documentation (GitHub-only) ───────────────────────────────
+# readme.txt is the canonical WP.org doc; .md files are for GitHub.
 *.md
 /docs/
-/drafts/
 
-# Node / JS toolchain
+# ── Node / JavaScript toolchain ───────────────────────────────
 /node_modules/
 /.yarn/
 package.json
 package-lock.json
 yarn.lock
+.yarnrc.yml
 webpack.config.js
 postcss.config.js
-tailwind.config.js
-.babelrc
-.eslintrc.js
-.eslintrc.json
-.eslintcache
 tsconfig.json
-tsconfig.*.json
+.eslintrc.js
+.eslintcache
+.stylelintrc.js
+.stylelintcache
 
-# PHP toolchain & static analysis
+# ── PHP toolchain & static analysis ───────────────────────────
 composer.json
 composer.lock
 phpcs.xml
 phpcs.plugin-review.xml
 phpstan.neon
-phpstan.neon.dist
-phpunit.xml
 phpunit.xml.dist
 /.phpstan-cache/
+.phpunit.result.cache
 
-# Code style
-.stylelintrc.js
-.stylelintrc.json
-.stylelintcache
-.editorconfig
-.prettierrc
-.prettierrc.js
-.prettierrc.json
-
-# Testing & CI
+# ── Testing ───────────────────────────────────────────────────
 /tests/
-playwright.config.ts
-.github/
-.travis.yml
-.circleci/
-/coverage/
 /test-results/
-/.phpunit.result.cache
+playwright.config.ts
 
-# WordPress.org assets (go to assets/ SVN path, not plugin trunk)
+# ── CI / GitHub Actions ───────────────────────────────────────
+/.github/
+
+# ── WordPress.org assets ──────────────────────────────────────
+# Banners, icons, and screenshots are deployed to the separate
+# SVN assets/ path by the 10up action; they must not go to trunk.
 /.wordpress-org/
 
-# Release artifacts
-/release/
-/dist/
-
-# Git
-/.git/
-.gitignore
-.gitattributes
-.gitmodules
-
-# Environment & secrets
-.env
-.env.*
-.env.local
-
-# Claude AI / AI agent files
+# ── AI / agent tooling ────────────────────────────────────────
 /.claude/
-CLAUDE.md
-AGENTS.md
+/.playwright-mcp/
+/.remember/
 
-# Misc project config
+# ── IDE & editor ──────────────────────────────────────────────
+/.idea/
+/.vscode/
+.editorconfig
+
+# ── Misc project config (not needed at runtime) ───────────────
 components.json
 opencode.json
 .actrc
 .ncurc.json
-.yarnrc.yml
 
-# IDE & OS
-/.vscode/
-/.idea/
-*.sublime-project
-*.sublime-workspace
+# ── Git ───────────────────────────────────────────────────────
+/.git/
+.gitignore
+.gitattributes
+
+# ── Environment & secrets ─────────────────────────────────────
+.env
+.env.*
+
+# ── OS noise ──────────────────────────────────────────────────
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
+._*
 
-# Temporary & caches
-*.tmp
+# ── Temporary / caches ────────────────────────────────────────
 *.log
 *.cache
 *.swp
-*.swo
 *~
-/.cache/
-/tmp/
-.parcel-cache/
-.nyc_output/
 
-# Archives (dev-generated)
-*.zip
-*.tar.gz
-*.tar
-*.tgz
-*.rar
-
-# Self
+# ── Self ──────────────────────────────────────────────────────
 .distignore
