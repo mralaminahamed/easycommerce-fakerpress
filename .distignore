@@ -1,52 +1,94 @@
-# Development and build files
-/node_modules/
+# ============================================================
+# .distignore — files excluded from WordPress.org SVN deploy
+# The 10up deploy action uses this to filter what goes to SVN.
+# build/ is intentionally NOT excluded (compiled assets needed).
+# ============================================================
+
+# Source code (compiled output in build/ is what SVN gets)
 /src/
-webpack.config.js
-composer.json
-composer.lock
-package.json
-package-lock.json
-yarn.lock
-.babelrc
-.eslintrc.js
-postcss.config.js
-tailwind.config.js
 
-# Development tools and configuration
-/.yarn/
-.actrc
-.ncurc.json
-.stylelintrc.js
-.yarnrc.yml
-.editorconfig
-.gitignore
-.distignore
-phpcs.xml
-phpcs.plugin-review.xml
-phpstan.neon
-phpunit.xml
-phpunit.xml.dist
-.eslintcache
-.stylelintcache
-
-# Documentation and project files
-README.md
-SECURITY.md
+# Documentation (GitHub-only; readme.txt is the WP.org doc)
+*.md
 /docs/
 /drafts/
 
-# Testing and CI
-tests/
+# Node / JS toolchain
+/node_modules/
+/.yarn/
+package.json
+package-lock.json
+yarn.lock
+webpack.config.js
+postcss.config.js
+tailwind.config.js
+.babelrc
+.eslintrc.js
+.eslintrc.json
+.eslintcache
+tsconfig.json
+tsconfig.*.json
+
+# PHP toolchain & static analysis
+composer.json
+composer.lock
+phpcs.xml
+phpcs.plugin-review.xml
+phpstan.neon
+phpstan.neon.dist
+phpunit.xml
+phpunit.xml.dist
+/.phpstan-cache/
+
+# Code style
+.stylelintrc.js
+.stylelintrc.json
+.stylelintcache
+.editorconfig
+.prettierrc
+.prettierrc.js
+.prettierrc.json
+
+# Testing & CI
+/tests/
 playwright.config.ts
 .github/
-/.wordpress-org/
 .travis.yml
 .circleci/
-/.phpstan-cache/
 /coverage/
 /test-results/
+/.phpunit.result.cache
 
-# IDE and editor files
+# WordPress.org assets (go to assets/ SVN path, not plugin trunk)
+/.wordpress-org/
+
+# Release artifacts
+/release/
+/dist/
+
+# Git
+/.git/
+.gitignore
+.gitattributes
+.gitmodules
+
+# Environment & secrets
+.env
+.env.*
+.env.local
+
+# Claude AI / AI agent files
+/.claude/
+CLAUDE.md
+AGENTS.md
+
+# Misc project config
+components.json
+opencode.json
+.actrc
+.ncurc.json
+.yarnrc.yml
+
+# IDE & OS
 /.vscode/
 /.idea/
 *.sublime-project
@@ -59,58 +101,24 @@ playwright.config.ts
 ehthumbs.db
 Thumbs.db
 
-# Build and release directories (build/ is intentionally kept — compiled assets needed in production)
-/release/
-/dist/
-
-# Git files
-/.git/
-.gitattributes
-.gitmodules
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Temporary files
+# Temporary & caches
 *.tmp
 *.log
 *.cache
 *.swp
 *.swo
 *~
-
-# Archives (development)
-*.zip
-*.tar.gz
-*.rar
-
-# Claude AI files
-/.claude/
-CLAUDE.md
-
-# Development configuration files
-AGENTS.md
-tsconfig.json
-components.json
-opencode.json
-
-# Cache directories
 /.cache/
 /tmp/
-
-# Additional common exclusions
-.nyc_output/
-.vscode/settings.json
-.vscode/launch.json
-*.tgz
-*.tar
-.cache/
 .parcel-cache/
-.next/
-.nuxt/
-.vuepress/dist/
-.hugo_build.lock
+.nyc_output/
+
+# Archives (dev-generated)
+*.zip
+*.tar.gz
+*.tar
+*.tgz
+*.rar
+
+# Self
+.distignore
