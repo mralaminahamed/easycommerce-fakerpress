@@ -1,4 +1,5 @@
 import { useEffect, useState } from "@wordpress/element";
+import { decodeEntities } from "@wordpress/html-entities";
 import { __ } from "@wordpress/i18n";
 import { ExternalLink, Star } from "lucide-react";
 
@@ -24,7 +25,11 @@ export default function PluginsPage() {
     )
       .then((r) => r.json())
       .then((data: { plugins?: WPPlugin[] }) => {
-        setPlugins(data.plugins ?? []);
+        setPlugins(
+          (data.plugins ?? []).filter(
+            (p) => p.slug !== "easycommerce-fakerpress",
+          ),
+        );
         setLoading(false);
       })
       .catch(() => {
@@ -119,14 +124,14 @@ function PluginCard({ plugin }: { plugin: WPPlugin }) {
         )}
         <div className="min-w-0">
           <h3 className="text-sm font-semibold text-gray-900 truncate">
-            {plugin.name}
+            {decodeEntities(plugin.name)}
           </h3>
           <p className="text-xs text-gray-400">v{plugin.version}</p>
         </div>
       </div>
 
       <p className="text-sm text-gray-600 line-clamp-3 flex-1">
-        {plugin.short_description}
+        {decodeEntities(plugin.short_description)}
       </p>
 
       <div className="flex items-center justify-between">
