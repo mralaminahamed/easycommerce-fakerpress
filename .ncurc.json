@@ -3,5 +3,5 @@
   "peer": true,
   "concurrency": 40,
   "packageManager": "yarn",
-  "reject": ["eslint", "react", "react-dom", "react-is", "tailwindcss"]
+  "reject": ["react", "react-dom", "react-is"]
 }
