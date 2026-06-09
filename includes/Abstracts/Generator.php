@@ -400,6 +400,90 @@ abstract class Generator {
 	}
 
 	/**
+	 * Build a preview dataset without persisting anything to the database.
+	 *
+	 * Returns a structure containing a columns definition array and an array of
+	 * preview rows. Each row is a map of column-key → cell, where a cell is an
+	 * array with at least the keys 'v' (display value) and 'kind' (rendering hint).
+	 *
+	 * The count is clamped to 1–25 so that preview requests are always lightweight
+	 * regardless of what the caller passes in.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $count Number of preview rows to build (clamped to 1–25).
+	 *
+	 * @return array{ columns: array<int, array{key: string, label: string}>, rows: array<int, array<string, array{v: mixed, kind: string}>> }
+	 */
+	public function preview( int $count ): array {
+		$count   = max( 1, min( 25, $count ) );
+		$columns = $this->get_preview_columns();
+		$rows    = array();
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$rows[] = $this->build_preview_row();
+		}
+
+		return array(
+			'columns' => $columns,
+			'rows'    => $rows,
+		);
+	}
+
+	/**
+	 * Return the column definitions for the preview table.
+	 *
+	 * Each column is an associative array with at least:
+	 *   - 'key'   (string) – matches a key in each preview row.
+	 *   - 'label' (string) – human-readable column header.
+	 *
+	 * Override this in concrete generators to return resource-specific columns.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int, array{key: string, label: string}>
+	 */
+	protected function get_preview_columns(): array {
+		return array(
+			array(
+				'key'   => 'id',
+				'label' => __( 'ID', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'value',
+				'label' => __( 'Value', 'easycommerce-fakerpress' ),
+			),
+		);
+	}
+
+	/**
+	 * Build a single representative preview row without persisting anything.
+	 *
+	 * Uses only FakerPHP and loaded sample data — never writes to the DB.
+	 * Override this in concrete generators to return resource-specific cells.
+	 *
+	 * Each cell must be an array with:
+	 *   - 'v'    (mixed)  – the display value.
+	 *   - 'kind' (string) – rendering hint: mono | money | num | status | badge | stars | text.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, array{v: mixed, kind: string}>
+	 */
+	protected function build_preview_row(): array {
+		return array(
+			'id'    => array(
+				'v'    => $this->faker->numberBetween( 10000, 99999 ),
+				'kind' => 'mono',
+			),
+			'value' => array(
+				'v'    => $this->faker->words( 2, true ),
+				'kind' => 'text',
+			),
+		);
+	}
+
+	/**
 	 * Load sample data for the current locale
 	 *
 	 * Loads locale-specific sample data from JSON files for use in data generation.

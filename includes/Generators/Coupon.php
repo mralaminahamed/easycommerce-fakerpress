@@ -135,6 +135,85 @@ class Coupon extends Generator {
 	}
 
 	/**
+	 * Return column definitions for the coupon preview table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int, array{key: string, label: string}>
+	 */
+	protected function get_preview_columns(): array {
+		return array(
+			array(
+				'key'   => 'code',
+				'label' => __( 'Code', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'type',
+				'label' => __( 'Type', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'value',
+				'label' => __( 'Value', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'min',
+				'label' => __( 'Min Spend', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'uses',
+				'label' => __( 'Uses', 'easycommerce-fakerpress' ),
+			),
+		);
+	}
+
+	/**
+	 * Build a single coupon preview row without any DB writes.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, array{v: mixed, kind: string}>
+	 */
+	protected function build_preview_row(): array {
+		$types     = array( 'percentage', 'fixed', 'free_shipping', 'products' );
+		$type      = $this->get_faker()->randomElement( $types );
+		$code_pats = array( 'SAVE####', 'DEAL####', 'PROMO####', '???####', 'VIP####', 'WELCOME##' );
+		$code      = strtoupper( $this->get_faker()->bothify( $this->get_faker()->randomElement( $code_pats ) ) );
+
+		if ( 'percentage' === $type ) {
+			$value_str = $this->get_faker()->randomElement( array( 10, 15, 20, 25, 30, 50 ) ) . '%';
+		} elseif ( 'free_shipping' === $type ) {
+			$value_str = __( 'Free Shipping', 'easycommerce-fakerpress' );
+		} else {
+			$value_str = '$' . number_format( (float) $this->get_faker()->randomElement( array( 5, 10, 15, 20, 25, 50 ) ), 2 );
+		}
+
+		$min_spend = $this->get_faker()->randomElement( array( 0, 20, 50, 100 ) );
+
+		return array(
+			'code'  => array(
+				'v'    => $code,
+				'kind' => 'mono',
+			),
+			'type'  => array(
+				'v'    => $type,
+				'kind' => 'badge',
+			),
+			'value' => array(
+				'v'    => $value_str,
+				'kind' => 'money',
+			),
+			'min'   => array(
+				'v'    => $min_spend > 0 ? '$' . number_format( (float) $min_spend, 2 ) : '—',
+				'kind' => 'money',
+			),
+			'uses'  => array(
+				'v'    => $this->get_faker()->numberBetween( 0, 500 ),
+				'kind' => 'num',
+			),
+		);
+	}
+
+	/**
 	 * Generate comprehensive coupon data
 	 *
 	 * @since 1.0.0

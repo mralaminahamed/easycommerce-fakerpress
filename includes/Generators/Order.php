@@ -286,6 +286,84 @@ class Order extends Generator {
 	}
 
 	/**
+	 * Return column definitions for the order preview table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int, array{key: string, label: string}>
+	 */
+	protected function get_preview_columns(): array {
+		return array(
+			array(
+				'key'   => 'id',
+				'label' => __( 'Order', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'cust',
+				'label' => __( 'Customer', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'status',
+				'label' => __( 'Status', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'items',
+				'label' => __( 'Items', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'total',
+				'label' => __( 'Total', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'geo',
+				'label' => __( 'Country', 'easycommerce-fakerpress' ),
+			),
+		);
+	}
+
+	/**
+	 * Build a single order preview row without any DB writes.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, array{v: mixed, kind: string}>
+	 */
+	protected function build_preview_row(): array {
+		$statuses  = array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' );
+		$countries = array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'JP', 'IN', 'BR', 'MX' );
+
+		$order_id = $this->get_faker()->numberBetween( 10000, 99999 );
+		$total    = $this->get_faker()->randomFloat( 2, 10, 1500 );
+
+		return array(
+			'id'     => array(
+				'v'    => '#' . $order_id,
+				'kind' => 'mono',
+			),
+			'cust'   => array(
+				'v'    => $this->get_faker()->name,
+				'kind' => 'text',
+			),
+			'status' => array(
+				'v'    => $this->get_faker()->randomElement( $statuses ),
+				'kind' => 'status',
+			),
+			'items'  => array(
+				'v'    => $this->get_faker()->numberBetween( 1, 8 ),
+				'kind' => 'num',
+			),
+			'total'  => array(
+				'v'    => '$' . number_format( $total, 2 ),
+				'kind' => 'money',
+			),
+			'geo'    => array(
+				'v'    => $this->get_faker()->randomElement( $countries ),
+				'kind' => 'mono',
+			),
+		);
+	}
+
+	/**
 	 * Get customer for order based on generation parameters
 	 *
 	 * @since 1.0.0
