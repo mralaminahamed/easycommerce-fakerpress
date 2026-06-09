@@ -62,6 +62,15 @@ export interface StoredRun {
   message: string;
 }
 
+export interface GlobalRun {
+  route: string;
+  count: number;
+  timestamp: number;
+  success: boolean;
+  locale?: string;
+  seed?: string;
+}
+
 export interface GeneratorPageParams extends Record<string, string | undefined> {
   type: string;
 }
