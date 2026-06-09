@@ -28,6 +28,7 @@ export const generators: Generator[] = [
     category: __("Core", "easycommerce-fakerpress"),
     order: 1,
     icon: Package,
+    iconName: "box",
     description: __(
       "Create realistic products with prices, categories, inventory, and variations. Perfect for testing your store catalog and product pages.",
       "easycommerce-fakerpress",
@@ -129,6 +130,7 @@ export const generators: Generator[] = [
     category: __("Core", "easycommerce-fakerpress"),
     order: 2,
     icon: Users,
+    iconName: "users",
     description: __(
       "Generate customer profiles with addresses, purchase history, and loyalty data. Essential for testing user accounts and customer management.",
       "easycommerce-fakerpress",
@@ -219,6 +221,7 @@ export const generators: Generator[] = [
     category: __("Core", "easycommerce-fakerpress"),
     order: 3,
     icon: ShoppingCart,
+    iconName: "cart",
     description: __(
       "Create complete order histories with payments, shipping, and tax calculations. Test your checkout flow and order management system.",
       "easycommerce-fakerpress",
@@ -298,6 +301,7 @@ export const generators: Generator[] = [
     category: __("Core", "easycommerce-fakerpress"),
     order: 4,
     icon: Tag,
+    iconName: "tag",
     description: __(
       "Generate discount codes with various rules and restrictions. Perfect for testing promotional campaigns and discount logic.",
       "easycommerce-fakerpress",
@@ -355,6 +359,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 1,
     icon: Settings,
+    iconName: "sliders",
     description: __(
       "Create complex product variations with size, color, and material options. Essential for testing variable product functionality.",
       "easycommerce-fakerpress",
@@ -411,6 +416,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 2,
     icon: Truck,
+    iconName: "truck",
     description: __(
       "Generate shipping methods, zones, and rate tables. Test delivery calculations and logistics workflows.",
       "easycommerce-fakerpress",
@@ -459,6 +465,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 3,
     icon: DollarSign,
+    iconName: "dollar",
     description: __(
       "Create tax rules and classes for different regions and product types. Perfect for testing international tax compliance.",
       "easycommerce-fakerpress",
@@ -524,6 +531,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 4,
     icon: CreditCard,
+    iconName: "card",
     description: __(
       "Generate payment transaction records with multiple gateways and statuses. Test financial reporting and reconciliation.",
       "easycommerce-fakerpress",
@@ -585,6 +593,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 5,
     icon: ShoppingBag,
+    iconName: "bag",
     description: __(
       "Create shopping cart abandonment scenarios and session data. Test cart recovery systems and analytics.",
       "easycommerce-fakerpress",
@@ -650,6 +659,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 6,
     icon: Layers,
+    iconName: "layers",
     description: __(
       "Generate product attributes such as Text, Color, and Image types. Attributes can be used to define product variations and filtering options.",
       "easycommerce-fakerpress",
@@ -670,6 +680,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 7,
     icon: ReceiptText,
+    iconName: "receipt",
     description: __(
       "Generate refund records against existing orders. Requires completed or processing orders. Returns refund IDs, amounts, statuses, and transaction IDs.",
       "easycommerce-fakerpress",
@@ -696,6 +707,7 @@ export const generators: Generator[] = [
     category: __("Advanced", "easycommerce-fakerpress"),
     order: 8,
     icon: ScrollText,
+    iconName: "scroll",
     description: __(
       "Generate activity log entries for orders, products, customers, and system events. Useful for testing log views and audit trails.",
       "easycommerce-fakerpress",
@@ -722,6 +734,7 @@ export const generators: Generator[] = [
     category: __("Enhanced", "easycommerce-fakerpress"),
     order: 10,
     icon: MapPin,
+    iconName: "pin",
     description: __(
       "Generate geographic data including countries, states, and cities for multi-region stores.",
       "easycommerce-fakerpress",
@@ -774,6 +787,7 @@ export const generators: Generator[] = [
     category: __("Enhanced", "easycommerce-fakerpress"),
     order: 11,
     icon: Star,
+    iconName: "star",
     description: __(
       "Create realistic product reviews with ratings and customer feedback. Reviews are automatically linked to existing products and customers.",
       "easycommerce-fakerpress",

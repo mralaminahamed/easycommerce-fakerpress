@@ -41,6 +41,7 @@ export interface Generator {
   category: string;
   order: number;
   icon: LucideIcon;
+  iconName: string;
   description: string;
   useCase?: string;
   route: string;
