@@ -1,8 +1,12 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities) important;
+@import "../assets/fonts/fonts.css";
 
 @theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
   --color-wp-admin-primary: var(--wp-admin-primary, #2271b1);
   --color-wp-admin-secondary: var(--wp-admin-secondary, #135e96);
   --color-wp-admin-highlight: var(--wp-admin-highlight, #043f54);
@@ -52,6 +56,151 @@
       Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   }
 }
+
+/* ============================================================
+   FakerPress — design tokens scoped to .fp-root
+   ============================================================ */
+
+.fp-root {
+  /* type */
+  font-family: var(--font-sans);
+
+  /* radii */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-full: 999px;
+
+  /* spacing rhythm (density-adjustable) */
+  --density: 1;
+
+  /* accent — default indigo (overridable via [data-accent]) */
+  --accent: oklch(0.55 0.205 277);
+  --accent-contrast: #ffffff;
+
+  /* ---- LIGHT THEME ---- */
+  --bg: oklch(0.985 0.003 270);
+  --bg-2: oklch(0.965 0.004 270);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.985 0.003 270);
+  --surface-inset: oklch(0.972 0.004 270);
+  --border: oklch(0.916 0.005 270);
+  --border-strong: oklch(0.86 0.006 270);
+  --text: oklch(0.245 0.012 274);
+  --text-2: oklch(0.46 0.012 274);
+  --text-3: oklch(0.62 0.011 274);
+  --text-faint: oklch(0.72 0.009 274);
+
+  --shadow-color: 274 30% 30%;
+  --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 1px 1px hsl(var(--shadow-color) / 0.04);
+  --shadow-md: 0 4px 12px -2px hsl(var(--shadow-color) / 0.10), 0 2px 4px -2px hsl(var(--shadow-color) / 0.06);
+  --shadow-lg: 0 16px 40px -8px hsl(var(--shadow-color) / 0.16), 0 6px 14px -6px hsl(var(--shadow-color) / 0.10);
+  --shadow-pop: 0 24px 60px -12px hsl(var(--shadow-color) / 0.28), 0 8px 20px -8px hsl(var(--shadow-color) / 0.16);
+
+  /* semantic */
+  --green: oklch(0.62 0.16 152);
+  --amber: oklch(0.74 0.15 75);
+  --red: oklch(0.60 0.21 22);
+  --sky: oklch(0.62 0.14 232);
+  --violet: oklch(0.58 0.20 300);
+
+  /* derived accent helpers */
+  --accent-hover: color-mix(in oklch, var(--accent), black 12%);
+  --accent-soft: color-mix(in oklch, var(--accent) 12%, var(--surface));
+  --accent-soft-2: color-mix(in oklch, var(--accent) 20%, var(--surface));
+  --accent-line: color-mix(in oklch, var(--accent) 32%, var(--border));
+  --ring: color-mix(in oklch, var(--accent) 36%, transparent);
+
+  /* base app styles */
+  background: var(--bg-2);
+  color: var(--text);
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fp-root *, .fp-root *::before, .fp-root *::after { box-sizing: border-box; }
+
+.fp-root[data-theme="dark"] {
+  --bg: oklch(0.165 0.011 270);
+  --bg-2: oklch(0.145 0.011 270);
+  --surface: oklch(0.205 0.013 270);
+  --surface-2: oklch(0.232 0.014 270);
+  --surface-inset: oklch(0.185 0.012 270);
+  --border: oklch(0.292 0.014 270);
+  --border-strong: oklch(0.36 0.016 270);
+  --text: oklch(0.965 0.004 270);
+  --text-2: oklch(0.74 0.012 270);
+  --text-3: oklch(0.60 0.013 270);
+  --text-faint: oklch(0.50 0.013 270);
+
+  --shadow-color: 270 50% 2%;
+  --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.30);
+  --shadow-md: 0 4px 14px -2px hsl(var(--shadow-color) / 0.45), 0 2px 4px -2px hsl(var(--shadow-color) / 0.35);
+  --shadow-lg: 0 18px 44px -8px hsl(var(--shadow-color) / 0.55), 0 6px 14px -6px hsl(var(--shadow-color) / 0.4);
+  --shadow-pop: 0 28px 70px -12px hsl(var(--shadow-color) / 0.7), 0 10px 24px -8px hsl(var(--shadow-color) / 0.5);
+
+  --green: oklch(0.72 0.17 152);
+  --amber: oklch(0.80 0.15 80);
+  --red: oklch(0.68 0.19 22);
+  --sky: oklch(0.70 0.14 232);
+  --violet: oklch(0.70 0.18 300);
+
+  --accent-soft: color-mix(in oklch, var(--accent) 22%, var(--surface));
+  --accent-soft-2: color-mix(in oklch, var(--accent) 34%, var(--surface));
+  --accent-hover: color-mix(in oklch, var(--accent), white 10%);
+}
+
+/* ---- accent palettes ---- */
+.fp-root[data-accent="indigo"]  { --accent: oklch(0.55 0.205 277); --accent-contrast: #fff; }
+.fp-root[data-accent="blue"]    { --accent: oklch(0.55 0.205 256); --accent-contrast: #fff; }
+.fp-root[data-accent="violet"]  { --accent: oklch(0.56 0.225 300); --accent-contrast: #fff; }
+.fp-root[data-accent="emerald"] { --accent: oklch(0.60 0.145 162); --accent-contrast: #fff; }
+.fp-root[data-accent="amber"]   { --accent: oklch(0.72 0.155 66);  --accent-contrast: oklch(0.28 0.04 70); }
+.fp-root[data-theme="dark"][data-accent="amber"] { --accent: oklch(0.78 0.155 72); }
+
+/* ---- scrollbars ---- */
+.fp-root * { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.fp-root *::-webkit-scrollbar { width: 10px; height: 10px; }
+.fp-root *::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+.fp-root *::-webkit-scrollbar-thumb:hover { background: var(--text-faint); background-clip: content-box; }
+
+/* ---- typography helpers ---- */
+.fp-root .mono { font-family: var(--font-mono); font-feature-settings: "tnum"; }
+.fp-root .tnum { font-variant-numeric: tabular-nums; }
+
+/* ---- focus ring ---- */
+.fp-root .fp-focusable:focus-visible,
+.fp-root input:focus-visible,
+.fp-root button:focus-visible,
+.fp-root select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* ---- selection ---- */
+.fp-root ::selection { background: color-mix(in oklch, var(--accent) 28%, transparent); }
+
+/* ---- keyframes (global — fine for @keyframes) ---- */
+@keyframes fp-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fp-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fp-pop { 0% { opacity: 0; transform: scale(.96) translateY(6px); } 100% { opacity: 1; transform: none; } }
+@keyframes fp-spin { to { transform: rotate(360deg); } }
+@keyframes fp-shimmer { 100% { background-position: 200% 0; } }
+@keyframes fp-bar { from { width: 0; } }
+/* entrance/row animations are transform-only so content stays visible even
+   if the animation is throttled/paused (e.g. backgrounded iframe). */
+@keyframes fp-rise { from { transform: translateY(10px); } to { transform: none; } }
+@keyframes fp-row-in { from { transform: translateY(5px); } to { transform: none; } }
+
+.fp-root .fp-enter { animation: fp-rise .42s cubic-bezier(.2,.7,.2,1); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; }
+}
+
+/* ============================================================ */
 
 @utility animate-collapsible-down {
   animation: collapsible-down 0.2s ease-out;
