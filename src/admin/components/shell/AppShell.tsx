@@ -5,6 +5,7 @@ import { useLocation, Outlet } from "react-router-dom";
 import { Sidebar } from "@/admin/components/shell/Sidebar";
 import { Topbar } from "@/admin/components/shell/Topbar";
 import { generators } from "@/admin/lib/generators";
+import { useStats } from "@/admin/providers/StatsProvider";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -85,8 +86,7 @@ export function AppShell() {
   const crumb = deriveCrumb(pathname);
   const isGenerator = pathname.startsWith("/generator/");
 
-  // counts wired via StatsProvider in a later task
-  const counts: Record<string, number> = {};
+  const { counts } = useStats();
 
   return (
     <div className="fp-app">
