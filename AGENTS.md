@@ -78,8 +78,8 @@
 - **WordPress Comments Integration**: Leverages WordPress comment system for review storage
 - **Verified Purchase Tracking**: Reviews can be marked as verified purchases for enhanced credibility
 - **Order Generator Data Structure Fix**: Corrected Order generator to match EasyCommerce Order model expectations
-- **Order Notes Integration**: Added proper order notes creation using Order_Notes model
-- **Comprehensive Model Review**: Validated all 11 EasyCommerce models for proper generator integration
+- **Order Notes**: Notes stored via order meta (`Order::create()` meta array); EC has no `Order_Notes` model
+- **EC Model Coverage**: Fakerpress covers 11 generator-relevant EC models; `Abandoned_Cart`, `Order_Item`, `Order_Item_Meta`, `Order_Meta`, `Product_Meta`, and variation sub-models are handled internally by EC's own model layer — no separate generator needed
 - **Controller Pattern Alignment**: Updated Product_Review controller to match existing controller patterns
 - **Complete Model Validation**: Validated all generators against EasyCommerce models for data consistency
 - **API Schema Consistency**: Added proper resource-specific properties and parameter validation
@@ -108,7 +108,7 @@
 - **Model Integration**: Always use appropriate EasyCommerce model classes for data creation
 - **Data Structure Alignment**: Ensure generator `create()` calls match EasyCommerce model expectations exactly
 - **Meta Data Handling**: Use meta arrays for additional data not handled by base model properties
-- **Related Model Usage**: Implement proper relationships using dedicated models (e.g., Order_Notes for order comments)
+- **Related Model Usage**: Use EC model methods where they exist; fall back to direct meta storage when EC has no dedicated model (e.g., order notes — EC has no `Order_Notes` model, so notes are stored via `Order::add_meta()` / the meta array passed to `Order::create()`)
 - **Parameter Dependencies**: Use `dependsOn` in React parameter configs for conditional fields
 - **API Endpoint Naming**: REST bases should be plural (e.g., `orders`, `products`, `customers`)
 - **Result Formatting**: Return consistent result arrays with `id`, `message`, and relevant metadata
