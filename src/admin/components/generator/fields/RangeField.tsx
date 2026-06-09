@@ -1,73 +1,97 @@
-import { useState } from "@wordpress/element";
-import { Input } from "@/admin/components/ui/input";
-import { Label } from "@/admin/components/ui/label";
-import { toLabel } from "@/admin/lib/utils";
-import type { ParameterConfig } from "@/admin/types";
+import React, { useRef } from "@wordpress/element";
+import { NumberField } from "./NumberField";
 
 interface RangeValue {
-  min: number;
-  max: number;
+  lo: number;
+  hi: number;
 }
 
 interface RangeFieldProps {
-  paramName: string;
-  config: ParameterConfig;
   value: RangeValue;
-  disabled: boolean;
-  onChange: (val: RangeValue) => void;
+  min: number;
+  max: number;
+  prefix?: string;
+  suffix?: string;
+  onChange: (v: RangeValue) => void;
 }
 
 export function RangeField({
-  paramName,
-  config,
   value,
-  disabled,
+  min,
+  max,
+  prefix,
+  suffix,
   onChange,
 }: RangeFieldProps) {
-  const [error, setError] = useState<string | null>(null);
+  const { lo, hi } = value;
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (key: "min" | "max", raw: string) => {
-    const n = parseFloat(raw);
-    const next: RangeValue = { ...value, [key]: isNaN(n) ? 0 : n };
-    setError(next.min > next.max ? "Min must be ≤ Max" : null);
-    onChange(next);
-  };
+  const pct = (v: number) => ((v - min) / (max - min)) * 100;
+
+  const drag =
+    (which: "lo" | "hi") =>
+    (e: React.PointerEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+
+      const move = (ev: PointerEvent) => {
+        const track = trackRef.current;
+        if (!track) return;
+        const r = track.getBoundingClientRect();
+        let v = Math.round(min + ((ev.clientX - r.left) / r.width) * (max - min));
+        v = Math.max(min, Math.min(max, v));
+        if (which === "lo") {
+          onChange({ lo: Math.min(v, hi), hi });
+        } else {
+          onChange({ lo, hi: Math.max(v, lo) });
+        }
+      };
+
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+      };
+
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+    };
 
   return (
-    <div className="space-y-1.5">
-      <Label className="text-sm font-medium text-gray-700">
-        {toLabel(paramName, config)}
-      </Label>
-      <div className="flex items-end gap-2">
-        <div className="space-y-1">
-          <Input
-            type="number"
-            value={value.min ?? ""}
-            disabled={disabled}
-            data-testid="range-min"
-            className="w-24"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange("min", e.target.value)
-            }
-          />
-          <span className="text-xs text-gray-400 block text-center">Min</span>
-        </div>
-        <span className="text-gray-400 pb-5 select-none">–</span>
-        <div className="space-y-1">
-          <Input
-            type="number"
-            value={value.max ?? ""}
-            disabled={disabled}
-            data-testid="range-max"
-            className="w-24"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange("max", e.target.value)
-            }
-          />
-          <span className="text-xs text-gray-400 block text-center">Max</span>
-        </div>
+    <div className="fp-range">
+      <div className="fp-range-inputs">
+        <NumberField
+          value={lo}
+          prefix={prefix}
+          suffix={suffix}
+          onChange={(v) => onChange({ lo: Math.min(+(v) || min, hi), hi })}
+        />
+        <span className="fp-range-dash">–</span>
+        <NumberField
+          value={hi}
+          prefix={prefix}
+          suffix={suffix}
+          onChange={(v) => onChange({ lo, hi: Math.max(+(v) || min, lo) })}
+        />
       </div>
-      {error && <p className="text-xs text-red-700">{error}</p>}
+      <div className="fp-track" ref={trackRef}>
+        <div
+          className="fp-track-fill"
+          style={{ left: pct(lo) + "%", right: 100 - pct(hi) + "%" }}
+        />
+        <button
+          type="button"
+          className="fp-thumb fp-focusable"
+          style={{ left: pct(lo) + "%" }}
+          onPointerDown={drag("lo")}
+          aria-label="min"
+        />
+        <button
+          type="button"
+          className="fp-thumb fp-focusable"
+          style={{ left: pct(hi) + "%" }}
+          onPointerDown={drag("hi")}
+          aria-label="max"
+        />
+      </div>
     </div>
   );
 }
