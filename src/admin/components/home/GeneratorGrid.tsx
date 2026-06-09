@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
-import { Badge } from "@/admin/components/ui/badge";
-import { cn } from "@/admin/lib/utils";
-import { getStats } from "@/admin/lib/storage";
-import type { Generator } from "@/admin/types";
+import { Icon } from "@/admin/lib/icons";
+import { SectionLabel } from "@/admin/components/ui/section-label";
+import { generators } from "@/admin/lib/generators";
 
 interface GeneratorGridProps {
-  generators: Generator[];
+  counts: Record<string, number>;
 }
 
 const CATEGORY_ORDER = [
@@ -15,64 +15,61 @@ const CATEGORY_ORDER = [
   __("Enhanced", "easycommerce-fakerpress"),
 ];
 
-export function GeneratorGrid({ generators }: GeneratorGridProps) {
+export function GeneratorGrid({ counts }: GeneratorGridProps) {
+  const navigate = useNavigate();
+
   const categories = CATEGORY_ORDER.filter((cat) =>
     generators.some((g) => g.category === cat),
   );
 
   return (
-    <div data-testid="generator-grid" className="space-y-10">
-      {categories.map((category) => (
-        <section key={category}>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
-            {category} {__("Generators", "easycommerce-fakerpress")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {generators
-              .filter((g) => g.category === category)
-              .sort((a, b) => a.order - b.order)
-              .map((g) => (
-                <GeneratorCard key={g.route} generator={g} />
+    <>
+      {categories.map((category) => {
+        const group = generators
+          .filter((g) => g.category === category)
+          .sort((a, b) => a.order - b.order);
+
+        return (
+          <div key={category}>
+            <div className="fp-group-head">
+              <SectionLabel>
+                {category} {__("generators", "easycommerce-fakerpress")}
+              </SectionLabel>
+              <div className="fp-group-line" />
+            </div>
+            <div className="fp-gen-grid">
+              {group.map((g) => (
+                <button
+                  key={g.route}
+                  className="fp-gen-card"
+                  onClick={() => navigate(`/generator/${g.route}`)}
+                >
+                  <div className="fp-gen-card-top">
+                    <span className="fp-gen-ic">
+                      <Icon name={g.iconName} size={19} />
+                    </span>
+                    {g.popular && (
+                      <span className="fp-tag">
+                        {__("Popular", "easycommerce-fakerpress")}
+                      </span>
+                    )}
+                  </div>
+                  <div className="fp-gen-name">{g.name}</div>
+                  <div className="fp-gen-desc">{g.description}</div>
+                  <div className="fp-gen-foot">
+                    <span className="fp-gen-gen">
+                      {counts[g.route]
+                        ? `${counts[g.route]} ${__("generated", "easycommerce-fakerpress")}`
+                        : __("Not run yet", "easycommerce-fakerpress")}
+                    </span>
+                    <Icon name="chevright" size={16} className="fp-gen-arrow" />
+                  </div>
+                </button>
               ))}
+            </div>
           </div>
-        </section>
-      ))}
-    </div>
-  );
-}
-
-function GeneratorCard({ generator: g }: { generator: Generator }) {
-  const count = getStats(g.route);
-
-  return (
-    <Link
-      to={`/generator/${g.route}`}
-      data-testid={`generator-card-${g.route}`}
-      className={cn(
-        "group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm",
-        "hover:shadow-md hover:-translate-y-1 hover:border-l-4 hover:border-l-blue-500",
-        "transition-all duration-200",
-      )}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="rounded-full bg-blue-50 p-2">
-          <g.icon className="w-5 h-5 text-blue-600 group-hover:scale-105 transition-transform" />
-        </div>
-        {g.popular && (
-          <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
-            {__("Popular", "easycommerce-fakerpress")}
-          </Badge>
-        )}
-      </div>
-      <h3 className="text-base font-semibold text-gray-900 mb-1 group-hover:text-blue-700 transition-colors">
-        {g.name}
-      </h3>
-      <p className="text-sm text-gray-500 line-clamp-2">{g.description}</p>
-      {count > 0 && (
-        <p className="text-xs text-gray-400 mt-3">
-          {count.toLocaleString()} {__("generated", "easycommerce-fakerpress")}
-        </p>
-      )}
-    </Link>
+        );
+      })}
+    </>
   );
 }
