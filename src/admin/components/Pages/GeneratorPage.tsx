@@ -1,112 +1,288 @@
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "@wordpress/element";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Globe } from "lucide-react";
-import { __ } from "@wordpress/i18n";
+import { useState, useEffect } from "@wordpress/element";
+import { __, sprintf } from "@wordpress/i18n";
+import apiFetch from "@wordpress/api-fetch";
+
 import { generators } from "@/admin/lib/generators";
-import { ParamsPanel } from "@/admin/components/generator/ParamsPanel";
-import { ActionPanel } from "@/admin/components/generator/ActionPanel";
-import { GeneratorSidebar } from "@/admin/components/generator/GeneratorSidebar";
+import { fieldsFromSchema } from "@/admin/lib/fieldsFromSchema";
+import { setPath } from "@/admin/lib/paths";
 import { getSettings } from "@/admin/lib/settings";
-import type { GeneratorPageParams } from "@/admin/types";
+import { useStats } from "@/admin/providers/StatsProvider";
+import { ConfigColumn } from "@/admin/components/generator/ConfigColumn";
+import { RunBar } from "@/admin/components/generator/RunBar";
+import { Button } from "@/admin/components/ui/button";
+import { Icon } from "@/admin/lib/icons";
+
+import type { GeneratorPageParams, GeneratorResult } from "@/admin/types";
+
+// ---------------------------------------------------------------------------
+// Build default params from a generator's parameterConfig schema
+// ---------------------------------------------------------------------------
+
+function buildDefaultParams(
+  parameterConfig: Record<string, any>,
+): Record<string, any> {
+  const sections = fieldsFromSchema(parameterConfig);
+  let acc: Record<string, any> = {};
+
+  for (const section of sections) {
+    for (const f of section.fields) {
+      if (f.default === undefined) {
+        // For range fields use { lo: min, hi: max }
+        if (f.type === "range") {
+          acc = setPath(acc, f.key, { lo: f.min ?? 0, hi: f.max ?? 100 });
+        } else if (f.type === "chips") {
+          acc = setPath(acc, f.key, []);
+        }
+        // Skip other fields with no default
+        continue;
+      }
+
+      if (f.type === "range") {
+        // default for range is { lo, hi } derived from min/max when no explicit default
+        acc = setPath(acc, f.key, f.default ?? { lo: f.min ?? 0, hi: f.max ?? 100 });
+      } else if (f.type === "chips") {
+        acc = setPath(acc, f.key, f.default ?? []);
+      } else {
+        acc = setPath(acc, f.key, f.default);
+      }
+    }
+  }
+
+  return acc;
+}
+
+// ---------------------------------------------------------------------------
+// GeneratorPage
+// ---------------------------------------------------------------------------
 
 export default function GeneratorPage() {
   const { type } = useParams<GeneratorPageParams>();
   const navigate = useNavigate();
+  const { recordRun } = useStats();
+
   const generator = generators.find((g) => g.route === type);
 
-  const [params, setParams] = useState<Record<string, any>>({});
-  const [count, setCount] = useState(() => getSettings().defaultCount);
-  const [locale, setLocale] = useState(() => getSettings().defaultLocale);
-  const [seed, setSeed] = useState(() => getSettings().defaultSeed);
-  const [includeMeta, setIncludeMeta] = useState(() => getSettings().defaultIncludeMeta);
+  // Run/meta state — re-initialise when generator route changes
+  const settings = getSettings();
+  const [count, setCount] = useState<number>(settings.defaultCount);
+  const [seed, setSeed] = useState<string>(settings.defaultSeed);
+  const [meta, setMeta] = useState<boolean>(settings.defaultIncludeMeta);
+  const locale =
+    getSettings().defaultLocale ??
+    window.easycommerceFakerpressApi?.locale?.faker ??
+    "en_US";
 
+  // Generator-specific params — re-initialise on route change
+  const [params, setParams] = useState<Record<string, any>>(() =>
+    buildDefaultParams(generator?.parameterConfig ?? {}),
+  );
+
+  // Shuffle state (incremented to reseed the preview)
+  const [shuffleN, setShuffleN] = useState<number>(0);
+
+  // Generating animation state
+  const [generating, setGenerating] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+
+  // Reset everything when generator route changes
+  useEffect(() => {
+    if (!generator) return;
+    const s = getSettings();
+    setCount(s.defaultCount);
+    setSeed(s.defaultSeed);
+    setMeta(s.defaultIncludeMeta);
+    setParams(buildDefaultParams(generator.parameterConfig ?? {}));
+    setShuffleN(0);
+    setGenerating(false);
+    setProgress(0);
+  }, [generator?.route]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Redirect if generator not found
   if (!generator) {
     navigate("/");
     return null;
   }
 
-  const handleParamChange = (paramName: string, value: any) => {
-    setParams((prev) => {
-      if (paramName.includes(".")) {
-        const [obj, prop] = paramName.split(".");
-        return {
-          ...prev,
-          [obj]: { ...(prev[obj] as Record<string, any> | undefined ?? {}), [prop]: value },
-        };
-      }
-      return { ...prev, [paramName]: value };
-    });
+  // setField — immutable path update
+  const setField = (key: string, value: any) => {
+    setParams((prev) => setPath(prev, key, value));
   };
 
+  // doGenerate — animate progress, POST to generate endpoint, record run
+  const doGenerate = () => {
+    if (generating) return;
+
+    setGenerating(true);
+    setProgress(0);
+
+    const t0 = Date.now();
+    const dur = 1000 + Math.min(count, 200) * 4;
+
+    let raf: number;
+
+    const tick = () => {
+      const p = Math.min(1, (Date.now() - t0) / dur);
+      setProgress(p);
+      if (p < 1) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+
+    // setTimeout guarantees completion even if rAF is throttled in a background tab
+    const timer = setTimeout(async () => {
+      cancelAnimationFrame(raf);
+      setProgress(1);
+
+      const body: Record<string, any> = {
+        count,
+        locale,
+        include_meta: meta,
+        ...params,
+      };
+
+      if (seed.trim()) {
+        body.seed = parseInt(seed, 10);
+      }
+
+      try {
+        const data = (await apiFetch({
+          path: `/easycommerce-fakerpress/v1/${generator.route}/generate`,
+          method: "POST",
+          data: body,
+        })) as GeneratorResult;
+
+        // TODO: toast on success (added in overlays task)
+        recordRun(generator.route, count, true, data.message ?? "", {
+          locale,
+          seed,
+        });
+      } catch (err) {
+        const errMsg =
+          err instanceof Error
+            ? err.message
+            : __("An error occurred.", "easycommerce-fakerpress");
+
+        // TODO: toast on error (added in overlays task)
+        recordRun(generator.route, count, false, errMsg, { locale, seed });
+      } finally {
+        setGenerating(false);
+      }
+    }, dur);
+
+    // Cleanup if component unmounts mid-flight (React StrictMode / navigation)
+    return () => {
+      clearTimeout(timer);
+      cancelAnimationFrame(raf);
+    };
+  };
+
+  // TODO: wire to BatchProvider (overlays task)
+  const onAddBatch = () => {};
+
+  const generatorLabel = generator.name.toLowerCase();
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
-      <div
-        data-testid="generator-topbar"
-        className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-12 z-10"
-      >
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {__("Back", "easycommerce-fakerpress")}
-          </Link>
-          <span className="text-gray-300 select-none">/</span>
-          <span className="text-sm font-medium text-gray-900">
-            {generator.name}
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5 text-sm text-gray-500">
-          <Globe className="w-4 h-4" />
-          <span>
-            {window.easycommerceFakerpressApi?.locale?.label ?? locale}
-          </span>
+    <div className="fp-gen-main fp-enter">
+      <div className="fp-gen-body">
+        <div className="fp-gen-wrap">
+          {/* ---- Left: config column ---- */}
+          <ConfigColumn
+            generator={generator}
+            params={params}
+            setField={setField}
+          />
+
+          {/* ---- Right: preview column ---- */}
+          <div className="fp-preview-col">
+            {/* Preview header */}
+            <div className="fp-preview-head">
+              <span className="fp-preview-title">
+                <span className="fp-live-dot" />
+                {__("Live preview", "easycommerce-fakerpress")}
+              </span>
+              <div className="fp-preview-actions">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon="refresh"
+                  type="button"
+                  onClick={() => setShuffleN((n) => n + 1)}
+                >
+                  {__("Shuffle", "easycommerce-fakerpress")}
+                </Button>
+              </div>
+            </div>
+
+            <p className="fp-preview-note">
+              {__(
+                "Sample of what this run will create — updates as you change the settings.",
+                "easycommerce-fakerpress",
+              )}
+            </p>
+
+            {/* Preview area */}
+            <div
+              style={{
+                position: "relative",
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+              }}
+            >
+              {/* TODO: PreviewTable (preview task) */}
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-faint)",
+                }}
+              >
+                {__("Live preview loads here", "easycommerce-fakerpress")}
+              </div>
+
+              {/* Generating overlay */}
+              {generating && (
+                <div className="fp-gen-progress">
+                  <div className="fp-spinner" />
+                  <div style={{ fontWeight: 550, fontSize: 14 }}>
+                    {sprintf(
+                      /* translators: %1$s: count, %2$s: generator name */
+                      __("Generating %1$s %2$s…", "easycommerce-fakerpress"),
+                      count.toLocaleString(),
+                      generatorLabel,
+                    )}
+                  </div>
+                  <div className="fp-progress-track">
+                    <div
+                      className="fp-progress-fill"
+                      style={{ width: `${progress * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Body */}
-      <div className="flex gap-6 p-6">
-        {/* Sidebar — desktop only */}
-        <div className="hidden lg:block">
-          <GeneratorSidebar current={generator} all={generators} />
-        </div>
-
-        {/* Params + Action: stacked on mobile, side-by-side on md+ */}
-        <div className="flex-1 flex flex-col md:flex-row gap-6 min-w-0">
-          {/* Params */}
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              {generator.name}
-            </h1>
-            <p className="text-sm text-gray-500 mb-6">{generator.description}</p>
-            <ParamsPanel
-              parameterConfig={generator.parameterConfig ?? {}}
-              params={params}
-              disabled={false}
-              onChange={handleParamChange}
-            />
-          </div>
-
-          {/* Action — single instance, repositioned by flex-direction */}
-          <div className="md:w-72 shrink-0">
-            <ActionPanel
-              generator={generator}
-              count={count}
-              locale={locale}
-              seed={seed}
-              includeMeta={includeMeta}
-              onCountChange={setCount}
-              onLocaleChange={setLocale}
-              onSeedChange={setSeed}
-              onIncludeMetaChange={setIncludeMeta}
-              extraParams={params}
-            />
-          </div>
-        </div>
-      </div>
+      {/* ---- Sticky run bar ---- */}
+      <RunBar
+        count={count}
+        seed={seed}
+        meta={meta}
+        onCount={setCount}
+        onSeed={setSeed}
+        onMeta={setMeta}
+        onGenerate={doGenerate}
+        onAddBatch={onAddBatch}
+        generating={generating}
+      />
     </div>
   );
 }
