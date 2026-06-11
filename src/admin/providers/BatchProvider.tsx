@@ -1,6 +1,6 @@
 import React from "react";
 import { createContext, useContext, useState, useCallback } from "@wordpress/element";
-import { __, sprintf } from "@wordpress/i18n";
+import { __, _n, sprintf } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 
 import { useStats } from "@/admin/providers/StatsProvider";
@@ -102,7 +102,12 @@ export function BatchProvider({ children }: { children: React.ReactNode }) {
           ),
           sprintf(
             /* translators: %s: number of generators run */
-            __("%s generators run", "easycommerce-fakerpress"),
+            _n(
+              "%s generator run",
+              "%s generators run",
+              ok,
+              "easycommerce-fakerpress",
+            ),
             ok.toLocaleString(),
           ),
         );

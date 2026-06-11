@@ -82,10 +82,14 @@ export function AppShell() {
   const [batchOpen, setBatchOpen] = useState(false);
 
   // ---- global keyboard handler ----
+  // Registered in the capture phase so ⌘K/Ctrl+K is intercepted before it
+  // reaches WordPress core's command palette (also bound to ⌘K since WP 6.3).
+  // stopImmediatePropagation() prevents core's palette from opening too.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        e.stopImmediatePropagation();
         setCmdOpen((o) => !o);
       }
       if (e.key === "Escape") {
@@ -95,8 +99,8 @@ export function AppShell() {
         setBatchOpen(false);
       }
     };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener("keydown", handler, { capture: true });
+    return () => window.removeEventListener("keydown", handler, { capture: true });
   }, []);
 
   // ---- scroll-to-top of content on route change ----
