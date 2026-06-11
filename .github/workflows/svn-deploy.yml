@@ -155,6 +155,11 @@ jobs:
           restore-keys: composer-test-${{ runner.os }}-
       - name: Composer install
         run: composer install --no-interaction --prefer-dist
+      - name: Install WordPress for testing
+        run: |
+          wget -q -O /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
+          mkdir -p /tmp/wordpress
+          tar xzf /tmp/wordpress.tar.gz -C /tmp/wordpress --strip-components=1
       - name: Run PHPUnit
         env:
           WP_TESTS_DB_NAME:     wordpress_test
@@ -162,6 +167,7 @@ jobs:
           WP_TESTS_DB_PASSWORD: root
           WP_TESTS_DB_HOST:     127.0.0.1
           WP_PHPUNIT__DIR:      vendor/wp-phpunit/wp-phpunit
+          WP_PATH:              /tmp/wordpress
         run: composer test
 
   # -------------------------------------------------------------------------

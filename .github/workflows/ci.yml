@@ -106,6 +106,19 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout code
@@ -116,6 +129,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: none
+          extensions: mysqli, json
           tools: composer:v2
 
       - name: Cache Composer dependencies
@@ -131,7 +145,20 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Install WordPress for testing
+        run: |
+          wget -q -O /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
+          mkdir -p /tmp/wordpress
+          tar xzf /tmp/wordpress.tar.gz -C /tmp/wordpress --strip-components=1
+
       - name: Run PHPUnit
+        env:
+          WP_TESTS_DB_NAME:     wordpress_test
+          WP_TESTS_DB_USER:     root
+          WP_TESTS_DB_PASSWORD: root
+          WP_TESTS_DB_HOST:     127.0.0.1
+          WP_PHPUNIT__DIR:      vendor/wp-phpunit/wp-phpunit
+          WP_PATH:              /tmp/wordpress
         run: composer test
 
   # ---------------------------------------------------------------------------
