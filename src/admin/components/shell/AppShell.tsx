@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "@wordpress/element";
+import { useState, useEffect, useRef } from "@wordpress/element";
 import { useLocation, Outlet } from "react-router-dom";
 
 import { Sidebar } from "@/admin/components/shell/Sidebar";
@@ -99,6 +99,12 @@ export function AppShell() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  // ---- scroll-to-top of content on route change ----
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [pathname]);
+
   // ---- derived state ----
   const crumb = deriveCrumb(pathname);
   const isGenerator = pathname.startsWith("/generator/");
@@ -129,7 +135,7 @@ export function AppShell() {
               <Outlet />
             </div>
           ) : (
-            <div className="fp-scroll">
+            <div className="fp-scroll" ref={scrollRef}>
               <Outlet />
             </div>
           )}
