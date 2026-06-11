@@ -4,7 +4,6 @@ namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
 use EasyCommerceFakerPress\Generators\Product_Variation;
-use EasyCommerce\Models\Product_Variation;
 
 /**
  * Test class for Product Variation Generator

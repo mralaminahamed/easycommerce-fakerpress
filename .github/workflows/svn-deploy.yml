@@ -160,6 +160,11 @@ jobs:
           wget -q -O /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
           mkdir -p /tmp/wordpress
           tar xzf /tmp/wordpress.tar.gz -C /tmp/wordpress --strip-components=1
+      - name: Download EasyCommerce plugin
+        run: |
+          wget -q -O /tmp/easycommerce.zip https://downloads.wordpress.org/plugin/easycommerce.latest-stable.zip
+          unzip -q /tmp/easycommerce.zip -d /tmp/easycommerce
+          mv /tmp/easycommerce/easycommerce ../easycommerce
       - name: Run PHPUnit
         env:
           WP_DB_NAME:           wordpress_test

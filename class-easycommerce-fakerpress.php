@@ -809,7 +809,7 @@ class EasyCommerce_FakerPress {
 		return new WP_REST_Response(
 			array(
 				'exists'      => $exists,
-				'last_synced' => $exists && is_dir( $dir ) ? gmdate( 'c', filemtime( $dir ) ) : null,
+				'last_synced' => $exists && is_dir( $dir ) ? gmdate( 'c', (int) filemtime( $dir ) ) : null,
 				'repo_url'    => 'https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data',
 			),
 			200
@@ -870,7 +870,7 @@ class EasyCommerce_FakerPress {
 	 * REST API handler for downloading sample data.
 	 *
 	 * @since 2.0.4
-	 * @return \WP_REST_Response|\WP_Error
+	 * @return string
 	 */
 	public function rest_mcp_endpoint_url(): string {
 		return rest_url( 'easycommerce-fakerpress-mcp/mcp' );

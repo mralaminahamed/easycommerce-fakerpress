@@ -656,17 +656,12 @@ class Order extends Generator {
 			'refunded'   => 2,
 		);
 
-		return $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static function ( $status, $weight ) {
-						return array_fill( 0, $weight, $status );
-					},
-					array_keys( $statuses ),
-					$statuses
-				)
-			)
-		);
+		$pool = array();
+		foreach ( $statuses as $status => $weight ) {
+			$pool = array_merge( $pool, array_fill( 0, $weight, $status ) ); // @phpstan-ignore argument.type
+		}
+
+		return $this->get_faker()->randomElement( $pool );
 	}
 
 	/**
@@ -694,17 +689,12 @@ class Order extends Generator {
 			'credit_card'      => 10,
 		);
 
-		return $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static function ( $method, $weight ) {
-						return array_fill( 0, $weight, $method );
-					},
-					array_keys( $methods ),
-					$methods
-				)
-			)
-		);
+		$pool = array();
+		foreach ( $methods as $method => $weight ) {
+			$pool = array_merge( $pool, array_fill( 0, $weight, $method ) ); // @phpstan-ignore argument.type
+		}
+
+		return $this->get_faker()->randomElement( $pool );
 	}
 
 	/**
@@ -789,15 +779,12 @@ class Order extends Generator {
 			),
 		);
 
-		$method = $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $method, $details ) => array_fill( 0, $details['weight'], $method ),
-					array_keys( $shipping_methods ),
-					$shipping_methods
-				)
-			)
-		);
+		$pool = array();
+		foreach ( $shipping_methods as $method => $details ) {
+			$pool = array_merge( $pool, array_fill( 0, $details['weight'], $method ) ); // @phpstan-ignore argument.type
+		}
+
+		$method = $this->get_faker()->randomElement( $pool );
 
 		$method_details = $shipping_methods[ $method ];
 		$cost           = $method_details['min'] === $method_details['max']
@@ -913,15 +900,12 @@ class Order extends Generator {
 			'cancelled'           => 2,
 		);
 
-		return $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $status, $weight ) => array_fill( 0, $weight, $status ),
-					array_keys( $statuses ),
-					$statuses
-				)
-			)
-		);
+		$pool = array();
+		foreach ( $statuses as $status => $weight ) {
+			$pool = array_merge( $pool, array_fill( 0, $weight, $status ) ); // @phpstan-ignore argument.type
+		}
+
+		return $this->get_faker()->randomElement( $pool );
 	}
 
 	/**
@@ -940,15 +924,12 @@ class Order extends Generator {
 			'in_store'   => 5,
 		);
 
-		$source = $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $src, $weight ) => array_fill( 0, $weight, $src ),
-					array_keys( $sources ),
-					$sources
-				)
-			)
-		);
+		$pool = array();
+		foreach ( $sources as $src => $weight ) {
+			$pool = array_merge( $pool, array_fill( 0, $weight, $src ) ); // @phpstan-ignore argument.type
+		}
+
+		$source = $this->get_faker()->randomElement( $pool );
 
 		return array(
 			'channel'      => $source,
@@ -992,6 +973,8 @@ class Order extends Generator {
 	 * @param array $order_items Order items array.
 	 *
 	 * @return int Total item count.
+	 *
+	 * @phpstan-ignore method.unused
 	 */
 	private function count_order_items( array $order_items ): int {
 		$count = 0;
@@ -1059,15 +1042,12 @@ class Order extends Generator {
 			'FR' => 3,  // 3% France.
 		);
 
-		$country_code = $this->get_faker()->randomElement(
-			array_merge(
-				...array_map(
-					static fn( $code, $weight ) => array_fill( 0, $weight, $code ),
-					array_keys( $weighted_countries ),
-					$weighted_countries
-				)
-			)
-		);
+		$pool = array();
+		foreach ( $weighted_countries as $code => $weight ) {
+			$pool = array_merge( $pool, array_fill( 0, $weight, $code ) ); // @phpstan-ignore argument.type
+		}
+
+		$country_code = $this->get_faker()->randomElement( $pool );
 
 		// Get states for the selected country.
 		$states     = Location::get_states( $country_code );

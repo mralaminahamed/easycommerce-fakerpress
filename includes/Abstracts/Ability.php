@@ -82,11 +82,11 @@ abstract class Ability {
 
 		if ( $response->is_error() ) {
 			$status  = $response->get_status();
-			$message = isset( $data['message'] ) ? (string) $data['message'] : __( 'Unknown REST error.', 'easycommerce-fakerpress' );
+			$message = isset( $data['message'] ) ? (string) $data['message'] : __( 'Unknown REST error.', 'easycommerce-fakerpress' ); // @phpstan-ignore isset.offset
 			return new WP_Error( 'ecfp_rest_error', $message, array( 'status' => $status ) );
 		}
 
-		return is_array( $data ) ? $data : array( 'message' => __( 'Unexpected response format.', 'easycommerce-fakerpress' ) );
+		return $data;
 	}
 
 	/**

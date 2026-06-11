@@ -520,6 +520,21 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Validate generation parameters
+	 *
+	 * Allows child controllers to perform resource-specific validation
+	 * before generation. Returns true by default.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param array $params Parameters to validate.
+	 * @return true|\WP_Error True if valid, WP_Error if invalid.
+	 */
+	protected function validate_parameters( array $params ) {
+		return true;
+	}
+
+	/**
 	 * Get resource-specific generation parameters
 	 *
 	 * Returns additional parameter definitions specific to the resource type.

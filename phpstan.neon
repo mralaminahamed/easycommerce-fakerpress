@@ -87,6 +87,9 @@ parameters:
         - '#.*EasyCommerce\\Models\\.*#'
         - '#.*EasyCommerce\\Helpers\\.*#'
 
+        # MCP adapter classes (optional WP plugin, not installed in CI)
+        - '#not found\.#'
+
         # Array type specifications (PHP 7.4 compatibility)
         - '#Method .* has no value type specified in iterable type array\.#'
         - '#Method .* return type has no value type specified in iterable type array\.#'

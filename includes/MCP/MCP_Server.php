@@ -111,7 +111,11 @@ class MCP_Server {
 		$abilities = $this->get_ability_definitions();
 
 		foreach ( $abilities as $id => $args ) {
-			wp_register_ability( $id, $args );
+			$name = strtolower( $id );
+			if ( ! $name ) {
+				continue;
+			}
+			wp_register_ability( $name, $args );
 		}
 	}
 
