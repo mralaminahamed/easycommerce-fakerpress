@@ -116,9 +116,22 @@
   /* base app styles */
   background: var(--bg-2);
   color: var(--text);
-  height: 100vh;
+  /* Fill the viewport minus the fixed WP admin bar so the sticky run bar
+     never sits behind it / off-screen. WP pushes content down 32px (≥783px)
+     or 46px (≤782px) via html.wp-toolbar padding-top. */
+  height: 100vh; /* fallback */
+  height: calc(100vh - 32px);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Admin bar grows to 46px on small screens. */
+@media screen and (max-width: 782px) {
+  .fp-root { height: calc(100vh - 46px); }
+}
+
+/* When the admin bar is hidden (e.g. fullscreen block editor contexts), use
+   the full height. */
+body:not(.admin-bar) .fp-root { height: 100vh; }
 
 .fp-root *, .fp-root *::before, .fp-root *::after { box-sizing: border-box; }
 
