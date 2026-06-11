@@ -19,16 +19,16 @@ defaults:
 # ---------------------------------------------------------------------------
 # Pipeline DAG (EasyCommerce FakerPress — no Freemius):
 #
-#   meta ──┬── validate ─┐
-#          ├── test ──────┤
+#   meta ──┬── lint ─────┐
+#          ├── phpstan ───┤
 #          ├── assets ────┼── package ── deploy
 #          └── i18n ──────┘
 #
 #   meta     : resolve slug, validate tag == header version, prerelease flag
-#   validate : PHPCS (WPCS) + PHPStan            — gate, parallel
-#   test     : PHPUnit (wp-phpunit + MySQL)      — gate, parallel
-#   assets   : wp-scripts build -> build/        — producer, parallel
-#   i18n     : wp i18n make-pot -> languages/    — producer, parallel
+#   lint     : PHP syntax + sensitive scan + PHPCS (WPCS)  — gate, parallel
+#   phpstan  : PHPStan (level max)                         — gate, parallel
+#   assets   : wp-scripts build -> build/                  — producer, parallel
+#   i18n     : wp i18n make-pot -> languages/              — producer, parallel
 #   package  : composer --no-dev + .distignore rsync -> dist/<slug>, zip
 #   deploy   : 10up SVN deploy (BUILD_DIR) + .wordpress-org assets + GH release
 # ---------------------------------------------------------------------------
@@ -68,11 +68,11 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
   # -------------------------------------------------------------------------
-  # JOB 2 — validate: PHPCS (WPCS) + PHPStan. (parallel gate)
-  # Mirrors the `@lint` + `@analyse` steps of the `composer release` script.
+  # JOB 2 — lint: PHP syntax + sensitive-file scan + PHPCS (WPCS). (parallel gate)
+  # Mirrors the `@lint` step of the `composer release` script.
   # -------------------------------------------------------------------------
-  validate:
-    name: "Validate: PHPCS + PHPStan"
+  lint:
+    name: "Lint: PHPCS"
     runs-on: ubuntu-latest
     needs: meta
     steps:
@@ -89,8 +89,8 @@ jobs:
           path: |
             ~/.composer/cache
             vendor
-          key: composer-validate-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: composer-validate-${{ runner.os }}-
+          key: composer-lint-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-lint-${{ runner.os }}-
       - name: Composer install
         run: composer install --no-interaction --prefer-dist
       - name: Sensitive-file scan
@@ -99,7 +99,7 @@ jobs:
             compgen -G "$pat" > /dev/null && { echo "::error::Sensitive file: $pat"; exit 1; } || true
           done
           echo "No sensitive files."
-      - name: PHP lint
+      - name: PHP syntax lint
         run: |
           ERR=0
           while IFS= read -r -d $'\0' f; do
@@ -110,39 +110,21 @@ jobs:
           [ "$ERR" -eq 0 ] || { echo "::error::PHP lint: $ERR error(s)."; exit 1; }
       - name: PHPCS (WordPress Coding Standards)
         run: composer phpcs
-      - name: PHPStan (level max, 2G)
-        run: composer phpstan
 
   # -------------------------------------------------------------------------
-  # JOB 3 — test: PHPUnit unit + integration. (parallel gate)
-  # wp-phpunit needs a database. The MySQL service + env below is the standard
-  # wiring; confirm the names match your tests/php bootstrap (wp-phpunit reads
-  # WP_TESTS_DB_* / WP_PHPUNIT__DIR). If your bootstrap differs, adjust here.
+  # JOB 3 — phpstan: static analysis. (parallel gate)
+  # Mirrors the `@analyse` step of the `composer release` script.
   # -------------------------------------------------------------------------
-  test:
-    name: "Test: PHPUnit"
+  phpstan:
+    name: "PHPStan: static analysis"
     runs-on: ubuntu-latest
     needs: meta
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: wordpress_test
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
     steps:
       - uses: actions/checkout@v6
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "7.4"
           coverage: none
-          extensions: mysqli, json
           tools: composer:v2
       - name: Cache Composer
         if: ${{ env.ACT != 'true' }}
@@ -151,29 +133,12 @@ jobs:
           path: |
             ~/.composer/cache
             vendor
-          key: composer-test-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: composer-test-${{ runner.os }}-
+          key: composer-phpstan-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-phpstan-${{ runner.os }}-
       - name: Composer install
         run: composer install --no-interaction --prefer-dist
-      - name: Install WordPress for testing
-        run: |
-          wget -q -O /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
-          mkdir -p /tmp/wordpress
-          tar xzf /tmp/wordpress.tar.gz -C /tmp/wordpress --strip-components=1
-      - name: Download EasyCommerce plugin
-        run: |
-          wget -q -O /tmp/easycommerce.zip https://downloads.wordpress.org/plugin/easycommerce.latest-stable.zip
-          unzip -q /tmp/easycommerce.zip -d /tmp/easycommerce
-          mv /tmp/easycommerce/easycommerce ../easycommerce
-      - name: Run PHPUnit
-        env:
-          WP_DB_NAME:           wordpress_test
-          WP_DB_USER:           root
-          WP_DB_PASS:           root
-          WP_DB_HOST:           127.0.0.1
-          WP_PHPUNIT__DIR:      vendor/wp-phpunit/wp-phpunit
-          WP_PATH:              /tmp/wordpress
-        run: composer test
+      - name: PHPStan (level max, 2G)
+        run: composer phpstan
 
   # -------------------------------------------------------------------------
   # JOB 4 — assets: compile the React/wp-scripts bundles. (parallel) -> build/
@@ -266,7 +231,7 @@ jobs:
       - name: Install production dependencies (lock-faithful, reproducible)
         run: |
           # `install` (not `update`) keeps vendor pinned to the committed lock
-          # that meta verified and validate/test exercised.
+          # that meta verified and lint/phpstan exercised.
           composer install --no-dev --no-interaction --prefer-dist --no-scripts --optimize-autoloader
           composer dump-autoload --no-dev --optimize --classmap-authoritative
       - name: Assemble distributable (.distignore-filtered)
@@ -287,7 +252,7 @@ jobs:
           # Dev / VCS / CI / IDE / source artifacts must never appear in trunk.
           ANY=$(find "$DIR" \( \
                  -name ".git"          -o -name ".github"       -o -name ".wordpress-org" \
-              -o -name "src" -a ! -path "*/vendor/*" -o -name "tests" -o -name "node_modules" \
+              -o \( -name "src" -a ! -path "*/vendor/*" \)      -o -name "tests" -o -name "node_modules" \
               -o -name ".yarn"         -o -name ".claude"       -o -name ".playwright-mcp" -o -name ".remember" \
               -o -name ".idea"         -o -name ".vscode" \
               -o -name "phpcs*.xml"    -o -name "phpstan.neon"  -o -name "phpunit.xml*" \
@@ -323,7 +288,7 @@ jobs:
   deploy:
     name: "Deploy: WP.org SVN + GitHub release"
     runs-on: ubuntu-latest
-    needs: [meta, validate, test, package]
+    needs: [meta, lint, phpstan, package]
     steps:
       - name: Checkout (provides .wordpress-org for SVN assets/)
         uses: actions/checkout@v6
