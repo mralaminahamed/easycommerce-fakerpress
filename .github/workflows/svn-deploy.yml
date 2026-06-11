@@ -12,267 +12,316 @@ concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
-# ---------------------------------------------------------------------------
-# Shared defaults applied to every job
-# ---------------------------------------------------------------------------
 defaults:
   run:
     shell: bash
 
+# ---------------------------------------------------------------------------
+# Pipeline DAG (EasyCommerce FakerPress — no Freemius):
+#
+#   meta ──┬── validate ─┐
+#          ├── test ──────┤
+#          ├── assets ────┼── package ── deploy
+#          └── i18n ──────┘
+#
+#   meta     : resolve slug, validate tag == header version, prerelease flag
+#   validate : PHPCS (WPCS) + PHPStan            — gate, parallel
+#   test     : PHPUnit (wp-phpunit + MySQL)      — gate, parallel
+#   assets   : wp-scripts build -> build/        — producer, parallel
+#   i18n     : wp i18n make-pot -> languages/    — producer, parallel
+#   package  : composer --no-dev + .distignore rsync -> dist/<slug>, zip
+#   deploy   : 10up SVN deploy (BUILD_DIR) + .wordpress-org assets + GH release
+# ---------------------------------------------------------------------------
 jobs:
 
   # -------------------------------------------------------------------------
-  # JOB 1 — meta
-  # Derives plugin identifiers and validates tag/version alignment.
-  # Outputs are consumed by every downstream job so nothing is re-computed.
+  # JOB 1 — meta: resolve plugin identifiers and validate tag/version.
   # -------------------------------------------------------------------------
   meta:
-    name: "Meta: Resolve plugin info & validate version"
+    name: "Meta: validate version"
     runs-on: ubuntu-latest
     outputs:
-      plugin_slug:    ${{ steps.plugin_name.outputs.plugin_slug }}
-      plugin_file:    ${{ steps.plugin_name.outputs.plugin_file }}
-      plugin_name:    ${{ steps.plugin_name.outputs.plugin_name }}
-      version:        ${{ steps.version_check.outputs.version }}
-
+      plugin_slug: ${{ steps.info.outputs.plugin_slug }}
+      version:     ${{ steps.info.outputs.version }}
+      prerelease:  ${{ steps.info.outputs.prerelease }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Derive plugin identifiers from repository name
-        id: plugin_name
+      - uses: actions/checkout@v6
+      - name: Resolve slug + validate tag matches plugin header
+        id: info
         run: |
-          # github.event.repository.name is empty under `act` (local CI simulation).
-          # Resolution order:
-          #   1. GitHub Actions context  (real CI)
-          #   2. Git remote URL slug     (act + git remote configured)
-          #   3. Working directory name  (act fallback)
-          PLUGIN_SLUG="${{ github.event.repository.name }}"
-
-          if [ -z "$PLUGIN_SLUG" ]; then
-            REMOTE_URL=$(git remote get-url origin 2>/dev/null || true)
-            if [ -n "$REMOTE_URL" ]; then
-              PLUGIN_SLUG=$(basename "$REMOTE_URL" .git)
-            fi
-          fi
-
-          if [ -z "$PLUGIN_SLUG" ]; then
-            PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
-          fi
-
-          if [ -z "$PLUGIN_SLUG" ]; then
-            echo "::error::Could not determine plugin slug from any source." >&2
-            exit 1
-          fi
-
-          PLUGIN_FILE="${PLUGIN_SLUG}.php"
-          # Convert kebab-case slug → Title Case display name
-          PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g; s/\b\w/\U&/g')
-
-          echo "Resolved slug : $PLUGIN_SLUG"
-          echo "Resolved file : $PLUGIN_FILE"
-          echo "Resolved name : $PLUGIN_NAME"
-
-          echo "plugin_slug=$PLUGIN_SLUG" >> "$GITHUB_OUTPUT"
-          echo "plugin_file=$PLUGIN_FILE"  >> "$GITHUB_OUTPUT"
-          echo "plugin_name=$PLUGIN_NAME"  >> "$GITHUB_OUTPUT"
-
-      - name: Validate tag / plugin-header version alignment
-        id: version_check
-        run: |
-          TAG_REF="${GITHUB_REF#refs/tags/}"
-          # Strip an optional leading "v" (e.g. v1.2.3 → 1.2.3)
-          TAG_STRIPPED="${TAG_REF#v}"
-
-          PLUGIN_FILE="${{ steps.plugin_name.outputs.plugin_file }}"
-
-          if [ ! -f "$PLUGIN_FILE" ]; then
-            echo "::error::Plugin main file '$PLUGIN_FILE' not found in workspace. Ensure the repository name matches the plugin slug." >&2
-            exit 1
-          fi
-
-          PLUGIN_VERSION=$(
-            grep -E "^[[:space:]]*\*[[:space:]]*Version:" "$PLUGIN_FILE" \
-              | head -n1 \
-              | sed -E 's/.*Version:[[:space:]]*([^[:space:]]+).*/\1/'
-          )
-
-          echo "Tag          : $TAG_REF"
-          echo "Stripped tag : $TAG_STRIPPED"
-          echo "Plugin header: $PLUGIN_VERSION"
-
-          if [ -z "$PLUGIN_VERSION" ]; then
-            echo "::error::Could not extract Version from $PLUGIN_FILE" >&2
-            exit 1
-          fi
-
-          if [ "$PLUGIN_VERSION" != "$TAG_STRIPPED" ]; then
-            echo "::error::Version mismatch — tag ($TAG_STRIPPED) != plugin header ($PLUGIN_VERSION)" >&2
-            exit 1
-          fi
-
-          echo "version=$PLUGIN_VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Verify composer.lock is committed
-        run: |
-          if [ ! -f composer.lock ]; then
-            echo "::error::composer.lock is missing. Commit it before tagging a release." >&2
-            exit 1
-          fi
+          SLUG="${{ github.event.repository.name }}"
+          [ -n "$SLUG" ] || SLUG=$(basename "$(git remote get-url origin 2>/dev/null || echo "$GITHUB_WORKSPACE")" .git)
+          FILE="${SLUG}.php"
+          [ -f "$FILE" ] || { echo "::error::Plugin main file '$FILE' not found."; exit 1; }
+          TAG="${GITHUB_REF#refs/tags/}"; TAG="${TAG#v}"
+          VER=$(grep -E "^[[:space:]]*\*[[:space:]]*Version:" "$FILE" | head -n1 | sed -E 's/.*Version:[[:space:]]*([^[:space:]]+).*/\1/')
+          echo "tag=$TAG  header=$VER"
+          [ -n "$VER" ] || { echo "::error::Could not read Version from $FILE."; exit 1; }
+          [ "$VER" = "$TAG" ] || { echo "::error::Version mismatch — tag ($TAG) != plugin header ($VER)."; exit 1; }
+          [ -f composer.lock ] || { echo "::error::composer.lock is missing. Commit it before tagging."; exit 1; }
+          PRE=false
+          echo "$TAG" | grep -qE "(alpha|beta|rc)" && PRE=true
+          {
+            echo "plugin_slug=$SLUG"
+            echo "version=$VER"
+            echo "prerelease=$PRE"
+          } >> "$GITHUB_OUTPUT"
 
   # -------------------------------------------------------------------------
-  # JOB 2 — build
-  # Installs dependencies, compiles frontend assets, and uploads the built
-  # plugin tree as a workflow artifact consumed by the deploy job.
+  # JOB 2 — validate: PHPCS (WPCS) + PHPStan. (parallel gate)
+  # Mirrors the `@lint` + `@analyse` steps of the `composer release` script.
   # -------------------------------------------------------------------------
-  build:
-    name: "Build: Install deps & compile assets"
+  validate:
+    name: "Validate: PHPCS + PHPStan"
     runs-on: ubuntu-latest
     needs: meta
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup PHP 7.4
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: "7.4"
           coverage: none
           tools: composer:v2
-
-      - name: Bootstrap Node.js runtime (act compatibility)
-        # actions/setup-node@v6 is itself a Node.js action and requires `node` to
-        # already exist in $PATH to bootstrap. The catthehacker/ubuntu:act-latest
-        # image does not ship Node.js, so this step installs it via nvm when the
-        # ACT environment variable is set (injected automatically by act).
-        # On real GitHub-hosted runners this step is skipped entirely.
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          export NVM_DIR="$HOME/.nvm"
-          if [ ! -s "$NVM_DIR/nvm.sh" ]; then
-            curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-          fi
-          . "$NVM_DIR/nvm.sh"
-          nvm install 24
-          nvm use 24
-          nvm alias default 24
-          # Persist nvm node path for subsequent steps in this job
-          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> "$GITHUB_PATH"
-
-      - name: Setup Node.js 24 (LTS)
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-
-      - name: Cache Composer dependencies
+      - name: Cache Composer
+        if: ${{ env.ACT != 'true' }}
         uses: actions/cache@v5
         with:
           path: |
             ~/.composer/cache
             vendor
-          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            composer-${{ runner.os }}-php74-
+          key: composer-validate-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-validate-${{ runner.os }}-
+      - name: Composer install
+        run: composer install --no-interaction --prefer-dist
+      - name: Sensitive-file scan
+        run: |
+          for pat in ".env" ".env.local" "*.key" "*.pem" "wp-config.php" "config.php"; do
+            compgen -G "$pat" > /dev/null && { echo "::error::Sensitive file: $pat"; exit 1; } || true
+          done
+          echo "No sensitive files."
+      - name: PHP lint
+        run: |
+          ERR=0
+          while IFS= read -r -d $'\0' f; do
+            php -l "$f" > /dev/null 2>&1 || { php -l "$f"; ERR=$((ERR+1)); }
+          done < <(find . -type f -name "*.php" \
+                     -not -path "./vendor/*" -not -path "./node_modules/*" \
+                     -not -path "./build/*"  -not -path "./release/*" -not -path "./dist/*" -print0)
+          [ "$ERR" -eq 0 ] || { echo "::error::PHP lint: $ERR error(s)."; exit 1; }
+      - name: PHPCS (WordPress Coding Standards)
+        run: composer phpcs
+      - name: PHPStan (level max, 2G)
+        run: composer phpstan
 
-      - name: Cache Yarn node_modules
+  # -------------------------------------------------------------------------
+  # JOB 3 — test: PHPUnit unit + integration. (parallel gate)
+  # wp-phpunit needs a database. The MySQL service + env below is the standard
+  # wiring; confirm the names match your tests/php bootstrap (wp-phpunit reads
+  # WP_TESTS_DB_* / WP_PHPUNIT__DIR). If your bootstrap differs, adjust here.
+  # -------------------------------------------------------------------------
+  test:
+    name: "Test: PHPUnit"
+    runs-on: ubuntu-latest
+    needs: meta
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: none
+          extensions: mysqli, json
+          tools: composer:v2
+      - name: Cache Composer
+        if: ${{ env.ACT != 'true' }}
         uses: actions/cache@v5
         with:
-          path: node_modules
-          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-${{ runner.os }}-
-
-      - name: Install PHP dependencies (including dev — needed for build tooling)
+          path: |
+            ~/.composer/cache
+            vendor
+          key: composer-test-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-test-${{ runner.os }}-
+      - name: Composer install
         run: composer install --no-interaction --prefer-dist
+      - name: Run PHPUnit
+        env:
+          WP_TESTS_DB_NAME:     wordpress_test
+          WP_TESTS_DB_USER:     root
+          WP_TESTS_DB_PASSWORD: root
+          WP_TESTS_DB_HOST:     127.0.0.1
+          WP_PHPUNIT__DIR:      vendor/wp-phpunit/wp-phpunit
+        run: composer test
 
-      - name: Install Node dependencies & build assets
-        run: |
-          corepack enable yarn
-          yarn install --immutable
-          yarn build
-
-      - name: Guard — composer.lock must not change during build
-        run: |
-          if ! git diff --quiet --exit-code composer.lock; then
-            echo "::error::composer.lock was modified during the build. Commit the updated lock file before releasing." >&2
-            git --no-pager diff composer.lock | head -n 100
-            exit 1
-          fi
-
-      - name: Optimise Composer autoloader for production (strip dev deps)
-        run: composer install --no-dev --no-interaction --prefer-dist -o
-
-      - name: Upload built plugin as workflow artifact
+  # -------------------------------------------------------------------------
+  # JOB 4 — assets: compile the React/wp-scripts bundles. (parallel) -> build/
+  # -------------------------------------------------------------------------
+  assets:
+    name: "Assets: build bundles"
+    runs-on: ubuntu-latest
+    needs: meta
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Cache Yarn + node_modules
         if: ${{ env.ACT != 'true' }}
+        uses: actions/cache@v5
+        with:
+          path: |
+            .yarn/cache
+            node_modules
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: yarn-${{ runner.os }}-
+      - name: Yarn install
+        run: corepack enable && yarn install --immutable
+      - name: Build assets (wp-scripts)
+        run: yarn build
+      - name: Upload build/
         uses: actions/upload-artifact@v7
         with:
-          name: plugin-build-${{ needs.meta.outputs.version }}
-          path: |
-            .
-            !.git
-            !node_modules
-            !tests
-            !.github
+          name: build-${{ needs.meta.outputs.version }}
+          path: build
           retention-days: 1
 
   # -------------------------------------------------------------------------
-  # JOB 3 — deploy
-  # Cleans SVN trunk, deploys the built plugin to WordPress.org, and creates
-  # the corresponding GitHub release with the generated ZIP attached.
+  # JOB 5 — i18n: generate the translation template. (parallel) -> languages/
   # -------------------------------------------------------------------------
-  deploy:
-    name: "Deploy: Publish to WP.org & create GitHub release"
+  i18n:
+    name: "i18n: translations"
     runs-on: ubuntu-latest
-    needs: [meta, build]
-
+    needs: meta
     steps:
-      - name: Download built plugin artifact
-        if: ${{ env.ACT != 'true' }}
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: none
+          tools: composer:v2, wp-cli
+      - name: Generate POT
+        run: |
+          mkdir -p languages
+          composer makepot
+      - name: Upload languages/
+        uses: actions/upload-artifact@v7
+        with:
+          name: languages-${{ needs.meta.outputs.version }}
+          path: languages
+          retention-days: 1
+
+  # -------------------------------------------------------------------------
+  # JOB 6 — package: assemble the shippable distributable and zip it.
+  # Barrier: needs the two producer jobs (assets, i18n).
+  #
+  # .distignore IS honoured here: the dist/<slug> tree is built with
+  # `rsync --exclude-from=.distignore`, so it contains only what should ship
+  # (php files, includes/, vendor/ prod, build/, languages/, readme.txt,
+  # LICENSE). The deploy job then ships this tree verbatim via BUILD_DIR.
+  # The guard below is defense-in-depth confirming the rsync filter held.
+  # -------------------------------------------------------------------------
+  package:
+    name: "Package: assemble + zip"
+    runs-on: ubuntu-latest
+    needs: [meta, assets, i18n]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: none
+          tools: composer:v2
+      - name: Download build/
         uses: actions/download-artifact@v8
         with:
-          name: plugin-build-${{ needs.meta.outputs.version }}
-          path: .
-
-      - name: Install Subversion
+          name: build-${{ needs.meta.outputs.version }}
+          path: build
+      - name: Download languages/
+        uses: actions/download-artifact@v8
+        with:
+          name: languages-${{ needs.meta.outputs.version }}
+          path: languages
+      - name: Install production dependencies (lock-faithful, reproducible)
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y subversion
-
-      - name: Remove stale sample-data directory from SVN trunk (if present)
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          PLUGIN_SLUG:  ${{ needs.meta.outputs.plugin_slug }}
+          # `install` (not `update`) keeps vendor pinned to the committed lock
+          # that meta verified and validate/test exercised.
+          composer install --no-dev --no-interaction --prefer-dist --no-scripts --optimize-autoloader
+          composer dump-autoload --no-dev --optimize --classmap-authoritative
+      - name: Assemble distributable (.distignore-filtered)
         run: |
-          SVN_TRUNK="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/trunk"
+          SLUG="${{ needs.meta.outputs.plugin_slug }}"
+          rm -rf dist release
+          mkdir -p "dist/$SLUG"
+          rsync -a \
+            --exclude-from='.distignore' \
+            --exclude='/dist' \
+            --exclude='/release' \
+            ./ "dist/$SLUG/"
+          [ -f "dist/$SLUG/$SLUG.php" ] || { echo "::error::Main file missing from distributable."; ls -R "dist/$SLUG" | head; exit 1; }
+      - name: Verify distributable is clean (defense-in-depth)
+        run: |
+          DIR="dist/${{ needs.meta.outputs.plugin_slug }}"
 
-          svn checkout "$SVN_TRUNK" svn-trunk \
-            --username  "$SVN_USERNAME" \
-            --password  "$SVN_PASSWORD" \
-            --non-interactive --quiet
+          # Dev / VCS / CI / IDE / source artifacts must never appear in trunk.
+          ANY=$(find "$DIR" \( \
+                 -name ".git"          -o -name ".github"       -o -name ".wordpress-org" \
+              -o -name "src"           -o -name "tests"         -o -name "node_modules" \
+              -o -name ".yarn"         -o -name ".claude"       -o -name ".playwright-mcp" -o -name ".remember" \
+              -o -name ".idea"         -o -name ".vscode" \
+              -o -name "phpcs*.xml"    -o -name "phpstan.neon"  -o -name "phpunit.xml*" \
+              -o -name "composer.json" -o -name "composer.lock" -o -name "package.json" \
+              -o -name "*.zip"         -o -name "*.map"         -o -name ".DS_Store" -o -name "Thumbs.db" \
+            \) -print)
 
-          if [ -d "svn-trunk/sample-data" ]; then
-            echo "Removing stale sample-data directory from SVN trunk…"
-            svn delete svn-trunk/sample-data \
-              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
-              --non-interactive --quiet
-            svn commit svn-trunk \
-              -m "chore: remove incorrectly deployed sample-data directory" \
-              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
-              --non-interactive --quiet
-            echo "sample-data removed and committed."
-          else
-            echo "No sample-data directory found — nothing to clean up."
+          if [ -n "$ANY" ]; then
+            echo "::error::Distributable contains files that must not ship to WordPress.org:"
+            echo "$ANY"
+            exit 1
           fi
+          echo "Distributable is clean."
+      - name: Create release zip
+        run: |
+          SLUG="${{ needs.meta.outputs.plugin_slug }}"
+          ( cd dist && zip -rq "${SLUG}-${{ needs.meta.outputs.version }}.zip" "$SLUG" )
+      - name: Upload dist/
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-dist-${{ needs.meta.outputs.version }}
+          path: dist
+          retention-days: 1
 
-          rm -rf svn-trunk
-
-      - name: Deploy plugin to WordPress.org via SVN
+  # -------------------------------------------------------------------------
+  # JOB 7 — deploy: publish to WordPress.org SVN + create GitHub release.
+  #
+  # The repo is checked out so the 10up action can find .wordpress-org at the
+  # root and push banners/icons/screenshots to SVN assets/. Trunk content comes
+  # from the pre-built, guard-verified dist/<slug> tree via BUILD_DIR (the
+  # action ships BUILD_DIR verbatim — it does not re-apply .distignore).
+  # -------------------------------------------------------------------------
+  deploy:
+    name: "Deploy: WP.org SVN + GitHub release"
+    runs-on: ubuntu-latest
+    needs: [meta, validate, test, package]
+    steps:
+      - name: Checkout (provides .wordpress-org for SVN assets/)
+        uses: actions/checkout@v6
+      - name: Download dist/
+        uses: actions/download-artifact@v8
+        with:
+          name: plugin-dist-${{ needs.meta.outputs.version }}
+          path: dist
+      - name: Deploy to WordPress.org via SVN
         id: deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
@@ -281,17 +330,27 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG:         ${{ needs.meta.outputs.plugin_slug }}
-          BUILD_DIR:    ${{ github.workspace }}
-
+          BUILD_DIR:    ./dist/${{ needs.meta.outputs.plugin_slug }}
+          ASSETS_DIR:   .wordpress-org
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: "Release ${{ needs.meta.outputs.version }}"
+          tag_name:   ${{ github.ref_name }}
+          name:       "Release ${{ needs.meta.outputs.version }}"
+          prerelease: ${{ needs.meta.outputs.prerelease == 'true' }}
+          files: dist/${{ needs.meta.outputs.plugin_slug }}-${{ needs.meta.outputs.version }}.zip
           body: |
-            ## ${{ needs.meta.outputs.plugin_name }} — v${{ needs.meta.outputs.version }}
-
-            Refer to [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full details.
-          files: ${{ steps.deploy.outputs.zip-path }}
+            ## ${{ needs.meta.outputs.plugin_slug }} — v${{ needs.meta.outputs.version }}
+            See the `== Changelog ==` section of [readme.txt](https://github.com/${{ github.repository }}/blob/trunk/readme.txt) for full details.
+            - Deployed to https://wordpress.org/plugins/${{ needs.meta.outputs.plugin_slug }}/
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Release ${{ needs.meta.outputs.version }}"
+            echo "- WordPress.org: https://wordpress.org/plugins/${{ needs.meta.outputs.plugin_slug }}/"
+            echo "- GitHub release: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
+          } >> "$GITHUB_STEP_SUMMARY"
