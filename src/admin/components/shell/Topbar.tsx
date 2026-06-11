@@ -32,7 +32,7 @@ export function Topbar({
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="fp-topbar">
+    <header className="fp-topbar" data-testid="topbar">
       {/* Breadcrumbs */}
       <div className="fp-crumbs">
         <button
@@ -49,7 +49,7 @@ export function Topbar({
       {/* Right controls */}
       <div className="fp-top-right">
         {batchCount > 0 && (
-          <button className="fp-btn fp-btn-soft fp-btn-sm" onClick={onOpenBatch}>
+          <button className="fp-btn fp-btn-soft fp-btn-sm" onClick={onOpenBatch} data-testid="batch-chip">
             <Icon name="layers" size={15} />
             Batch
             <span className="fp-badge tone-accent" style={{ height: 18, marginLeft: 2 }}>
@@ -67,11 +67,12 @@ export function Topbar({
           className="fp-icon-btn fp-focusable"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           title="Toggle theme"
+          data-testid="theme-toggle"
         >
           <Icon name={theme === "dark" ? "sun" : "moon"} size={17} />
         </button>
 
-        <button className="fp-icon-btn fp-focusable" onClick={onOpenTweaks} title="Tweaks">
+        <button className="fp-icon-btn fp-focusable" onClick={onOpenTweaks} title="Tweaks" data-testid="tweaks-button">
           <Icon name="sliders" size={17} />
         </button>
       </div>

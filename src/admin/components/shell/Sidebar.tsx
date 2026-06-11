@@ -36,9 +36,10 @@ interface NavItemProps {
   count?: number;
   active: boolean;
   collapsed: boolean;
+  testId?: string;
 }
 
-function NavItem({ to, label, ic, count, active, collapsed }: NavItemProps) {
+function NavItem({ to, label, ic, count, active, collapsed, testId }: NavItemProps) {
   const navigate = useNavigate();
 
   return (
@@ -46,6 +47,7 @@ function NavItem({ to, label, ic, count, active, collapsed }: NavItemProps) {
       className={"fp-nav-item" + (active ? " active" : "")}
       onClick={() => navigate(to)}
       title={collapsed ? label : undefined}
+      data-testid={testId}
     >
       <Icon name={ic} size={17} className="fp-nav-ic" stroke={1.7} />
       <span className="fp-nav-text">{label}</span>
@@ -64,7 +66,7 @@ export function Sidebar({ collapsed, setCollapsed, counts, openCmd }: SidebarPro
   const { pathname } = useLocation();
 
   return (
-    <nav className={"fp-nav" + (collapsed ? " collapsed" : "")}>
+    <nav className={"fp-nav" + (collapsed ? " collapsed" : "")} data-testid="sidebar">
       {/* Brand */}
       <div className="fp-brand">
         <div className="fp-brand-mark">
@@ -91,6 +93,7 @@ export function Sidebar({ collapsed, setCollapsed, counts, openCmd }: SidebarPro
         className="fp-cmd-btn fp-focusable"
         onClick={openCmd}
         title={collapsed ? "Search (⌘K)" : undefined}
+        data-testid="cmd-button"
       >
         <Icon name="search" size={15} />
         <span className="fp-nav-text">Jump to…</span>
@@ -109,6 +112,7 @@ export function Sidebar({ collapsed, setCollapsed, counts, openCmd }: SidebarPro
           ic="dashboard"
           active={pathname === "/"}
           collapsed={collapsed}
+          testId="nav-overview"
         />
 
         {/* Groups */}
@@ -137,6 +141,7 @@ export function Sidebar({ collapsed, setCollapsed, counts, openCmd }: SidebarPro
                   count={counts[g.route]}
                   active={pathname === `/generator/${g.route}`}
                   collapsed={collapsed}
+                  testId={`nav-${g.route}`}
                 />
               ))}
             </div>

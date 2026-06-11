@@ -21,6 +21,7 @@ export function Chips({ options, value, onChange }: ChipsProps) {
           type="button"
           onClick={() => toggle(o)}
           className={`fp-chip fp-focusable${value.includes(o) ? " on" : ""}`}
+          data-chip-value={o}
         >
           {value.includes(o) && <Icon name="check" size={13} stroke={2.4} />}
           <span>{o}</span>

@@ -23,7 +23,7 @@ export function GeneratorGrid({ counts }: GeneratorGridProps) {
   );
 
   return (
-    <>
+    <div data-testid="generator-grid">
       {categories.map((category) => {
         const group = generators
           .filter((g) => g.category === category)
@@ -43,6 +43,7 @@ export function GeneratorGrid({ counts }: GeneratorGridProps) {
                   key={g.route}
                   className="fp-gen-card"
                   onClick={() => navigate(`/generator/${g.route}`)}
+                  data-testid={`gen-card-${g.route}`}
                 >
                   <div className="fp-gen-card-top">
                     <span className="fp-gen-ic">
@@ -70,6 +71,6 @@ export function GeneratorGrid({ counts }: GeneratorGridProps) {
           </div>
         );
       })}
-    </>
+    </div>
   );
 }

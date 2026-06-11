@@ -41,6 +41,7 @@ export default function HomePage() {
           delta={counts.products ?? 0}
           spark={[4, 6, 5, 8, 7, 9, 10]}
           accentVar="var(--accent)"
+          testId="stat-products"
         />
         <StatCard
           iconName="users"
@@ -50,6 +51,7 @@ export default function HomePage() {
           delta={counts.customers ?? 0}
           spark={[2, 3, 3, 5, 6, 6, 8]}
           accentVar="var(--violet)"
+          testId="stat-customers"
         />
         <StatCard
           iconName="cart"
@@ -59,6 +61,7 @@ export default function HomePage() {
           delta={counts.orders ?? 0}
           spark={[1, 2, 4, 3, 6, 7, 9]}
           accentVar="var(--sky)"
+          testId="stat-orders"
         />
         <StatCard
           iconName="database"
@@ -68,6 +71,7 @@ export default function HomePage() {
           delta={totalGenerated}
           spark={[3, 5, 8, 7, 11, 14, 18]}
           accentVar="var(--green)"
+          testId="stat-total"
         />
       </div>
 

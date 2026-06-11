@@ -107,7 +107,7 @@ export function AppShell() {
   const { batch } = useBatch();
 
   return (
-    <div className="fp-app">
+    <div className="fp-app" data-testid="app-shell">
       <div className="fp-shell">
         <Sidebar
           collapsed={navCollapsed}

@@ -46,11 +46,11 @@ export function RunBar({
         );
 
   return (
-    <div className="fp-genbar">
+    <div className="fp-genbar" data-testid="generator-runbar">
       {/* Count group */}
       <div className="fp-genbar-ctl">
         <span className="lbl">{__("Count", "easycommerce-fakerpress")}</span>
-        <Stepper value={count} onChange={onCount} min={1} max={100000} />
+        <Stepper value={count} onChange={onCount} min={1} max={100000} testId="count" />
       </div>
 
       <div className="fp-genbar-sep" />
@@ -81,6 +81,7 @@ export function RunBar({
         icon="layers"
         onClick={onAddBatch}
         type="button"
+        data-testid="add-to-batch"
       >
         {__("Add to batch", "easycommerce-fakerpress")}
       </Button>
@@ -93,6 +94,7 @@ export function RunBar({
         onClick={onGenerate}
         disabled={generating}
         type="button"
+        data-testid="generate-btn"
       >
         {generateLabel}
       </Button>

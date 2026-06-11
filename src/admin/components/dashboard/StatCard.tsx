@@ -11,9 +11,10 @@ interface StatCardProps {
   delta: number;
   spark: number[];
   accentVar?: string;
+  testId?: string;
 }
 
-export function StatCard({ iconName, label, value, empty, delta, spark, accentVar }: StatCardProps) {
+export function StatCard({ iconName, label, value, empty, delta, spark, accentVar, testId }: StatCardProps) {
   const chipStyle = accentVar
     ? {
         background: `color-mix(in oklch, ${accentVar} 14%, var(--surface))`,
@@ -22,7 +23,7 @@ export function StatCard({ iconName, label, value, empty, delta, spark, accentVa
     : undefined;
 
   return (
-    <div className="fp-card fp-stat">
+    <div className="fp-card fp-stat" data-testid={testId}>
       <div className="fp-stat-top">
         <span className="fp-stat-ic" style={chipStyle}>
           <Icon name={iconName} size={17} />

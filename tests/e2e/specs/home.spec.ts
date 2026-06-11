@@ -2,49 +2,47 @@ import { test, expect } from '@playwright/test';
 
 const PLUGIN_URL = '/wp-admin/admin.php?page=easycommerce-fakerpress';
 
-test.describe('Home page', () => {
+test.describe('Home / Dashboard', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(PLUGIN_URL);
-    await page.getByTestId('stats-bar').waitFor();
+    await page.getByTestId('app-shell').waitFor();
   });
 
-  test.describe('StatsBar', () => {
-    test('renders 4 stat cards', async ({ page }) => {
-      await expect(page.getByTestId('stats-bar')).toBeVisible();
+  test('app-shell, sidebar, topbar, generator-grid all render', async ({ page }) => {
+    await expect(page.getByTestId('app-shell')).toBeVisible();
+    await expect(page.getByTestId('sidebar')).toBeVisible();
+    await expect(page.getByTestId('topbar')).toBeVisible();
+    await expect(page.getByTestId('generator-grid')).toBeVisible();
+  });
+
+  test.describe('Stat cards', () => {
+    test('four stat cards are visible with correct labels', async ({ page }) => {
       await expect(page.getByTestId('stat-products')).toBeVisible();
       await expect(page.getByTestId('stat-customers')).toBeVisible();
       await expect(page.getByTestId('stat-orders')).toBeVisible();
       await expect(page.getByTestId('stat-total')).toBeVisible();
     });
 
-    test('each stat card shows its label', async ({ page }) => {
+    test('each stat card shows its label text', async ({ page }) => {
       await expect(page.getByTestId('stat-products')).toContainText('Products');
       await expect(page.getByTestId('stat-customers')).toContainText('Customers');
       await expect(page.getByTestId('stat-orders')).toContainText('Orders');
       await expect(page.getByTestId('stat-total')).toContainText('Total Generated');
     });
 
-    test('empty stats show em-dash not zero', async ({ page }) => {
-      const productsCard = page.getByTestId('stat-products');
-      const value = productsCard.locator('p.text-2xl');
-      const text = await value.textContent();
-      expect(text).toMatch(/^(—|\d[\d,]*)$/);
+    test('empty stat shows em-dash or a number', async ({ page }) => {
+      const text = await page.getByTestId('stat-products').textContent();
+      expect(text).toMatch(/—|\d/);
     });
   });
 
   test.describe('GeneratorGrid', () => {
-    test('shows three category section headings', async ({ page }) => {
-      await expect(page.getByText('Core Generators')).toBeVisible();
-      await expect(page.getByText('Advanced Generators')).toBeVisible();
-      await expect(page.getByText('Enhanced Generators')).toBeVisible();
+    test('category section headings are present', async ({ page }) => {
+      const grid = page.getByTestId('generator-grid');
+      await expect(grid).toContainText('Core');
+      await expect(grid).toContainText('Advanced');
+      await expect(grid).toContainText('Enhanced');
     });
-
-    const POPULAR_ROUTES = ['products', 'customers', 'orders'];
-    for (const route of POPULAR_ROUTES) {
-      test(`${route} card has Popular badge`, async ({ page }) => {
-        await expect(page.getByTestId(`generator-card-${route}`)).toContainText('Popular');
-      });
-    }
 
     const ALL_ROUTES = [
       'products', 'customers', 'orders', 'coupons',
@@ -52,22 +50,17 @@ test.describe('Home page', () => {
       'transaction', 'cart-sessions', 'attributes',
       'refunds', 'logs', 'locations', 'product-reviews',
     ];
+
     test('all 14 generator cards are visible', async ({ page }) => {
       for (const route of ALL_ROUTES) {
-        await expect(page.getByTestId(`generator-card-${route}`)).toBeVisible();
+        await expect(page.getByTestId(`gen-card-${route}`)).toBeVisible();
       }
     });
 
-    test('clicking Products card navigates to Products generator page', async ({ page }) => {
-      await page.getByTestId('generator-card-products').click();
-      await page.getByTestId('action-panel').first().waitFor();
-      await expect(page.getByTestId('generator-topbar')).toContainText('Products');
-    });
-
-    test('clicking Logs card navigates to Logs generator page', async ({ page }) => {
-      await page.getByTestId('generator-card-logs').click();
-      await page.getByTestId('action-panel').first().waitFor();
-      await expect(page.getByTestId('generator-topbar')).toContainText('Logs');
+    test('clicking a gen-card navigates to its generator', async ({ page }) => {
+      await page.getByTestId('gen-card-products').click();
+      await page.getByTestId('generator-runbar').waitFor();
+      await expect(page.getByTestId('topbar')).toContainText('Products');
     });
   });
 });

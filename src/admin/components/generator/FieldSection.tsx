@@ -22,14 +22,14 @@ export function Field({ f, value, onChange, hideLabel }: FieldProps): JSX.Elemen
   if (f.type === "toggle") {
     // Toggle owns its own label rendering — ignore hideLabel.
     return (
-      <div className="fp-field">
+      <div className="fp-field" data-param={f.key}>
         <Toggle checked={!!value} onChange={onChange} label={f.label} />
       </div>
     );
   }
 
   return (
-    <div className="fp-field">
+    <div className="fp-field" data-param={f.key}>
       {!hideLabel && (
         <label className="fp-field-label">{f.label}</label>
       )}
