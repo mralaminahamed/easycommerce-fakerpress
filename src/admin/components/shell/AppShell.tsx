@@ -7,6 +7,7 @@ import { Topbar } from "@/admin/components/shell/Topbar";
 import { Toasts } from "@/admin/components/overlays/Toasts";
 import { CommandPalette } from "@/admin/components/overlays/CommandPalette";
 import { LocalePicker } from "@/admin/components/overlays/LocalePicker";
+import { TweaksPanel } from "@/admin/components/overlays/TweaksPanel";
 import { generators } from "@/admin/lib/generators";
 import { useStats } from "@/admin/providers/StatsProvider";
 
@@ -132,6 +133,7 @@ export function AppShell() {
         </div>
       </div>
       {cmdOpen && <CommandPalette onClose={() => setCmdOpen(false)} />}
+      {tweaksOpen && <TweaksPanel onClose={() => setTweaksOpen(false)} />}
       {localeOpen && (
         <LocalePicker
           onClose={() => setLocaleOpen(false)}
