@@ -4,6 +4,7 @@ import { useLocation, Outlet } from "react-router-dom";
 
 import { Sidebar } from "@/admin/components/shell/Sidebar";
 import { Topbar } from "@/admin/components/shell/Topbar";
+import { Toasts } from "@/admin/components/overlays/Toasts";
 import { generators } from "@/admin/lib/generators";
 import { useStats } from "@/admin/providers/StatsProvider";
 
@@ -117,6 +118,7 @@ export function AppShell() {
           )}
         </div>
       </div>
+      <Toasts />
     </div>
   );
 }

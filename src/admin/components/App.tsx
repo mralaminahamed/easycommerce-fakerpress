@@ -3,6 +3,7 @@ import { createHashRouter, RouterProvider } from 'react-router-dom';
 
 import { ThemeProvider } from '@/admin/theme/ThemeProvider';
 import { StatsProvider } from '@/admin/providers/StatsProvider';
+import { ToastProvider } from '@/admin/providers/ToastProvider';
 import GeneratorPage from '@/admin/components/Pages/GeneratorPage';
 import HomePage from '@/admin/components/Pages/HomePage';
 import PluginsPage from '@/admin/components/Pages/PluginsPage';
@@ -25,9 +26,11 @@ const router = createHashRouter([
 export default function App() {
   return (
     <ThemeProvider>
-      <StatsProvider>
-        <RouterProvider router={router} />
-      </StatsProvider>
+      <ToastProvider>
+        <StatsProvider>
+          <RouterProvider router={router} />
+        </StatsProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

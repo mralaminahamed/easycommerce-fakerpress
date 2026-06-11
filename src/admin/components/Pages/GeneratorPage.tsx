@@ -9,6 +9,7 @@ import { fieldsFromSchema } from "@/admin/lib/fieldsFromSchema";
 import { setPath } from "@/admin/lib/paths";
 import { getSettings } from "@/admin/lib/settings";
 import { useStats } from "@/admin/providers/StatsProvider";
+import { useToast } from "@/admin/providers/ToastProvider";
 import { ConfigColumn } from "@/admin/components/generator/ConfigColumn";
 import { PreviewTable } from "@/admin/components/generator/PreviewTable";
 import { RunBar } from "@/admin/components/generator/RunBar";
@@ -62,6 +63,7 @@ export default function GeneratorPage() {
   const { type } = useParams<GeneratorPageParams>();
   const navigate = useNavigate();
   const { recordRun } = useStats();
+  const { toast } = useToast();
 
   const generator = generators.find((g) => g.route === type);
 
@@ -156,19 +158,27 @@ export default function GeneratorPage() {
           data: body,
         })) as GeneratorResult;
 
-        // TODO: toast on success (added in overlays task)
         recordRun(generator.route, count, true, data.message ?? "", {
           locale,
           seed,
         });
+        toast(
+          sprintf(
+            /* translators: %1$s: count, %2$s: generator name */
+            __("Generated %1$s %2$s", "easycommerce-fakerpress"),
+            count.toLocaleString(),
+            generatorLabel,
+          ),
+          __("Added to your EasyCommerce store", "easycommerce-fakerpress"),
+        );
       } catch (err) {
         const errMsg =
           err instanceof Error
             ? err.message
             : __("An error occurred.", "easycommerce-fakerpress");
 
-        // TODO: toast on error (added in overlays task)
         recordRun(generator.route, count, false, errMsg, { locale, seed });
+        toast(__("Generation failed", "easycommerce-fakerpress"), errMsg);
       } finally {
         setGenerating(false);
       }
