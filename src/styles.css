@@ -65,6 +65,10 @@
   /* type */
   font-family: var(--font-sans);
 
+  /* Height of the fixed WP admin bar (32px desktop, 46px ≤782px, 0 if hidden).
+     Used to offset the app height and any fixed overlay panels. */
+  --fp-admin-bar: 32px;
+
   /* radii */
   --r-xs: 6px;
   --r-sm: 8px;
@@ -120,7 +124,7 @@
      never sits behind it / off-screen. WP pushes content down 32px (≥783px)
      or 46px (≤782px) via html.wp-toolbar padding-top. */
   height: 100vh; /* fallback */
-  height: calc(100vh - 32px);
+  height: calc(100vh - var(--fp-admin-bar));
   -webkit-font-smoothing: antialiased;
   /* Clip to the fixed height and lay children out as a flex column so the
      height chain reaches .fp-scroll — otherwise the whole document scrolls
@@ -132,12 +136,12 @@
 
 /* Admin bar grows to 46px on small screens. */
 @media screen and (max-width: 782px) {
-  .fp-root { height: calc(100vh - 46px); }
+  .fp-root { --fp-admin-bar: 46px; }
 }
 
-/* When the admin bar is hidden (e.g. fullscreen block editor contexts), use
-   the full height. */
-body:not(.admin-bar) .fp-root { height: 100vh; }
+/* When the admin bar is hidden (e.g. fullscreen block editor contexts), the
+   content area starts at the very top. */
+body:not(.admin-bar) .fp-root { --fp-admin-bar: 0px; }
 
 .fp-root *, .fp-root *::before, .fp-root *::after { box-sizing: border-box; }
 
