@@ -4,7 +4,7 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,10 @@ Run history is stored in browser localStorage. It does not affect your database.
 11. Locations Generator: Region chip selects, max countries, state and city generation toggles, cities-per-state range, and coordinate generation.
 
 == Changelog ==
+
+= 2.2.1 - June 11, 2026 =
+* Updated all 11 WordPress.org screenshots to show the v2.2.0 redesigned UI
+* Added reusable Playwright screenshot capture script for future use
 
 = 2.2.0 - June 11, 2026 =
 * Complete admin UI redesign — Linear/Vercel-style SaaS interface built on a new design-token system (self-hosted Geist fonts, light/dark themes, 5 accent palettes, comfortable/compact density), all scoped to the plugin so WordPress chrome is never restyled
