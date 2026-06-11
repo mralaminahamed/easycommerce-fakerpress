@@ -122,6 +122,12 @@
   height: 100vh; /* fallback */
   height: calc(100vh - 32px);
   -webkit-font-smoothing: antialiased;
+  /* Clip to the fixed height and lay children out as a flex column so the
+     height chain reaches .fp-scroll — otherwise the whole document scrolls
+     and the sticky topbar rides up with the page. */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Admin bar grows to 46px on small screens. */
