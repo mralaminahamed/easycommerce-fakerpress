@@ -269,6 +269,8 @@
 .fp-root .cell-num { font-variant-numeric:tabular-nums; }
 .fp-root .cell-stars { color:var(--amber); letter-spacing:1px; }
 .fp-root .fp-table-foot { padding:10px 16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-size:12px; color:var(--text-faint); background:var(--surface-2); }
+.fp-root .fp-preview-state { display:flex; align-items:center; justify-content:center; gap:8px; min-height:160px; padding:40px 24px; font-size:13px; color:var(--text-3); text-align:center; }
+.fp-root .fp-preview-error { color:var(--red); }
 
 /* sticky generate bar */
 .fp-root .fp-genbar { position:sticky; bottom:0; z-index:20; display:flex; align-items:center; gap:18px; padding:14px 30px; border-top:1px solid var(--border); background:color-mix(in oklch,var(--surface) 86%,transparent); backdrop-filter:blur(10px); }

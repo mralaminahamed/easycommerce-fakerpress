@@ -10,6 +10,7 @@ import { setPath } from "@/admin/lib/paths";
 import { getSettings } from "@/admin/lib/settings";
 import { useStats } from "@/admin/providers/StatsProvider";
 import { ConfigColumn } from "@/admin/components/generator/ConfigColumn";
+import { PreviewTable } from "@/admin/components/generator/PreviewTable";
 import { RunBar } from "@/admin/components/generator/RunBar";
 import { Button } from "@/admin/components/ui/button";
 import { Icon } from "@/admin/lib/icons";
@@ -233,18 +234,15 @@ export default function GeneratorPage() {
                 display: "flex",
               }}
             >
-              {/* TODO: PreviewTable (preview task) */}
-              <div
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--text-faint)",
-                }}
-              >
-                {__("Live preview loads here", "easycommerce-fakerpress")}
-              </div>
+              <PreviewTable
+                route={generator.route}
+                params={params}
+                count={count}
+                seed={seed}
+                meta={meta}
+                locale={locale}
+                shuffleN={shuffleN}
+              />
 
               {/* Generating overlay */}
               {generating && (
