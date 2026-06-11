@@ -8,8 +8,10 @@ import { Toasts } from "@/admin/components/overlays/Toasts";
 import { CommandPalette } from "@/admin/components/overlays/CommandPalette";
 import { LocalePicker } from "@/admin/components/overlays/LocalePicker";
 import { TweaksPanel } from "@/admin/components/overlays/TweaksPanel";
+import { BatchTray } from "@/admin/components/overlays/BatchTray";
 import { generators } from "@/admin/lib/generators";
 import { useStats } from "@/admin/providers/StatsProvider";
+import { useBatch } from "@/admin/providers/BatchProvider";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -102,6 +104,7 @@ export function AppShell() {
   const isGenerator = pathname.startsWith("/generator/");
 
   const { counts } = useStats();
+  const { batch } = useBatch();
 
   return (
     <div className="fp-app">
@@ -118,7 +121,7 @@ export function AppShell() {
             locale={locale}
             onOpenLocale={() => setLocaleOpen(true)}
             onOpenTweaks={() => setTweaksOpen(true)}
-            batchCount={0}
+            batchCount={batch.length}
             onOpenBatch={() => setBatchOpen(true)}
           />
           {isGenerator ? (
@@ -134,6 +137,7 @@ export function AppShell() {
       </div>
       {cmdOpen && <CommandPalette onClose={() => setCmdOpen(false)} />}
       {tweaksOpen && <TweaksPanel onClose={() => setTweaksOpen(false)} />}
+      {batchOpen && <BatchTray onClose={() => setBatchOpen(false)} />}
       {localeOpen && (
         <LocalePicker
           onClose={() => setLocaleOpen(false)}

@@ -10,6 +10,7 @@ import { setPath } from "@/admin/lib/paths";
 import { getSettings } from "@/admin/lib/settings";
 import { useStats } from "@/admin/providers/StatsProvider";
 import { useToast } from "@/admin/providers/ToastProvider";
+import { useBatch } from "@/admin/providers/BatchProvider";
 import { ConfigColumn } from "@/admin/components/generator/ConfigColumn";
 import { PreviewTable } from "@/admin/components/generator/PreviewTable";
 import { RunBar } from "@/admin/components/generator/RunBar";
@@ -64,6 +65,7 @@ export default function GeneratorPage() {
   const navigate = useNavigate();
   const { recordRun } = useStats();
   const { toast } = useToast();
+  const { add: addToBatch } = useBatch();
 
   const generator = generators.find((g) => g.route === type);
 
@@ -191,8 +193,17 @@ export default function GeneratorPage() {
     };
   };
 
-  // TODO: wire to BatchProvider (overlays task)
-  const onAddBatch = () => {};
+  const onAddBatch = () => {
+    addToBatch(generator.route, count);
+    toast(
+      sprintf(
+        /* translators: %1$s: count, %2$s: generator name */
+        __("Added %1$s %2$s to batch", "easycommerce-fakerpress"),
+        count.toLocaleString(),
+        generatorLabel,
+      ),
+    );
+  };
 
   const generatorLabel = generator.name.toLowerCase();
 

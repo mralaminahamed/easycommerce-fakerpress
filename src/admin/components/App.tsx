@@ -4,6 +4,7 @@ import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@/admin/theme/ThemeProvider';
 import { StatsProvider } from '@/admin/providers/StatsProvider';
 import { ToastProvider } from '@/admin/providers/ToastProvider';
+import { BatchProvider } from '@/admin/providers/BatchProvider';
 import GeneratorPage from '@/admin/components/Pages/GeneratorPage';
 import HomePage from '@/admin/components/Pages/HomePage';
 import PluginsPage from '@/admin/components/Pages/PluginsPage';
@@ -28,7 +29,9 @@ export default function App() {
     <ThemeProvider>
       <ToastProvider>
         <StatsProvider>
-          <RouterProvider router={router} />
+          <BatchProvider>
+            <RouterProvider router={router} />
+          </BatchProvider>
         </StatsProvider>
       </ToastProvider>
     </ThemeProvider>
