@@ -214,3 +214,4 @@ Report issues and request features via GitHub Issues. Pull requests welcome — 
 **Support**
 
 WordPress.org support forums and GitHub Issues. Documentation is included in the plugin README and GitHub repository.
+
