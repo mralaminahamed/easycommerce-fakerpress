@@ -5,6 +5,8 @@ import { useLocation, Outlet } from "react-router-dom";
 import { Sidebar } from "@/admin/components/shell/Sidebar";
 import { Topbar } from "@/admin/components/shell/Topbar";
 import { Toasts } from "@/admin/components/overlays/Toasts";
+import { CommandPalette } from "@/admin/components/overlays/CommandPalette";
+import { LocalePicker } from "@/admin/components/overlays/LocalePicker";
 import { generators } from "@/admin/lib/generators";
 import { useStats } from "@/admin/providers/StatsProvider";
 
@@ -52,10 +54,21 @@ export function AppShell() {
     });
   };
 
-  // ---- locale ----
-  const [locale, setLocale] = useState<string>(
-    () => window.easycommerceFakerpressApi?.locale?.label ?? "English (United States)"
-  );
+  // ---- locale (persisted) ----
+  const [locale, setLocaleRaw] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem("fp_locale");
+      if (saved) return saved;
+    } catch {}
+    return window.easycommerceFakerpressApi?.locale?.label ?? "English (United States)";
+  });
+
+  const setLocale = (l: string) => {
+    setLocaleRaw(l);
+    try {
+      localStorage.setItem("fp_locale", l);
+    } catch {}
+  };
 
   // ---- overlay open flags ----
   // Actual overlay components are added in a LATER task (Phase 7).
@@ -118,6 +131,14 @@ export function AppShell() {
           )}
         </div>
       </div>
+      {cmdOpen && <CommandPalette onClose={() => setCmdOpen(false)} />}
+      {localeOpen && (
+        <LocalePicker
+          onClose={() => setLocaleOpen(false)}
+          locale={locale}
+          setLocale={setLocale}
+        />
+      )}
       <Toasts />
     </div>
   );
