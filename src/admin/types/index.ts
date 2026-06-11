@@ -41,6 +41,7 @@ export interface Generator {
   category: string;
   order: number;
   icon: LucideIcon;
+  iconName: string;
   description: string;
   useCase?: string;
   route: string;
@@ -59,6 +60,15 @@ export interface StoredRun {
   timestamp: number;
   success: boolean;
   message: string;
+}
+
+export interface GlobalRun {
+  route: string;
+  count: number;
+  timestamp: number;
+  success: boolean;
+  locale?: string;
+  seed?: string;
 }
 
 export interface GeneratorPageParams extends Record<string, string | undefined> {

@@ -143,6 +143,54 @@ abstract class Controller extends WP_REST_Controller {
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $rest_base . '/preview',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'preview_items' ),
+					'permission_callback' => array( $this, 'generate_items_permissions_check' ),
+					'args'                => $params,
+				),
+				'schema' => array( $this, 'get_public_item_schema' ),
+			)
+		);
+	}
+
+	/**
+	 * Preview items endpoint callback
+	 *
+	 * Returns a read-only preview of what would be generated — without persisting
+	 * anything to the database. The response contains 'columns' (table header
+	 * definitions) and 'rows' (an array of representative data cells).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_REST_Request $request Full data about the REST API request.
+	 *
+	 * @return WP_REST_Response|WP_Error REST response with preview data or error.
+	 */
+	public function preview_items( WP_REST_Request $request ) {
+		$generator         = $this->get_generator_instance();
+		$params            = $request->get_params();
+		$supported_locales = array_keys( easycommerce_fakerpress()->get_locale_labels() );
+
+		// Mirror generate_items locale handling exactly.
+		$locale = $params['locale'] ?? 'en_US';
+		if ( ! in_array( $locale, $supported_locales, true ) ) {
+			$generator->log( "Unsupported locale '{$locale}' used; falling back to 'en_US'.", 'warning' );
+			$locale = 'en_US';
+		}
+
+		$generator->set_locale( $locale );
+		$generator->set_faker();
+		$generator->set_generation_params( $params );
+
+		$count = isset( $params['count'] ) ? (int) $params['count'] : 10;
+
+		return rest_ensure_response( $generator->preview( $count ) );
 	}
 
 	/**

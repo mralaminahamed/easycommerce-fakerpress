@@ -95,6 +95,10 @@ parameters:
         - '#Method .* has parameter .* with no value type specified in iterable type array\.#'
         - '#has parameter \$request with generic class WP_REST_Request but does not specify its types: T#'
 
+        # WordPress REST API namespace (WP_REST_Controller::$namespace typed as string but
+        # register_rest_route expects non-falsy-string — structural to WP_REST_Controller pattern)
+        - '#Parameter \#1 \$route_namespace of function register_rest_route expects non-falsy-string, string given\.#'
+
         # WordPress specific issues
         - '#Call to function is_numeric\(\) with int will always evaluate to true\.#'
         - '#Variable .* in empty\(\) always exists and is not falsy\.#'

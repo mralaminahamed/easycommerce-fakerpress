@@ -1,47 +1,38 @@
-import { Input } from "@/admin/components/ui/input";
-import { Label } from "@/admin/components/ui/label";
-import { toLabel } from "@/admin/lib/utils";
-import type { ParameterConfig } from "@/admin/types";
+import React from "react";
 
 interface NumberFieldProps {
-  paramName: string;
-  config: ParameterConfig;
-  value: number | "";
-  disabled: boolean;
-  onChange: (val: number) => void;
+  value: number | string;
+  onChange: (v: string) => void;
+  prefix?: string;
+  suffix?: string;
+  ph?: string;
+  width?: number;
 }
 
 export function NumberField({
-  paramName,
-  config,
   value,
-  disabled,
   onChange,
+  prefix,
+  suffix,
+  ph,
+  width,
 }: NumberFieldProps) {
-  const step = config.type === "number" ? "0.01" : "1";
-  const parse = config.type === "number"
-    ? parseFloat
-    : (v: string) => parseInt(v, 10);
-
   return (
-    <div className="space-y-1.5">
-      <Label className="text-sm font-medium text-gray-700">
-        {toLabel(paramName, config)}
-      </Label>
-      <Input
-        type="number"
-        step={step}
+    <div
+      className="fp-input-wrap"
+      style={width ? { maxWidth: width } : undefined}
+    >
+      {prefix && <span className="fp-affix">{prefix}</span>}
+      <input
+        className={`fp-input fp-focusable tnum${prefix ? " has-prefix" : ""}${suffix ? " has-suffix" : ""}`}
         value={value}
-        min={config.minimum}
-        max={config.maximum}
-        placeholder={config.description}
-        disabled={disabled}
-        className="w-32"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          const n = parse(e.target.value);
-          if (!isNaN(n)) onChange(n);
-        }}
+        placeholder={ph}
+        inputMode="numeric"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          onChange(e.target.value.replace(/[^\d.-]/g, ""))
+        }
       />
+      {suffix && <span className="fp-affix suf">{suffix}</span>}
     </div>
   );
 }

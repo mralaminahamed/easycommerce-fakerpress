@@ -289,6 +289,120 @@ class Product extends Generator {
 	}
 
 	/**
+	 * Return column definitions for the product preview table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int, array{key: string, label: string}>
+	 */
+	protected function get_preview_columns(): array {
+		return array(
+			array(
+				'key'   => 'id',
+				'label' => __( 'ID', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'name',
+				'label' => __( 'Name', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'type',
+				'label' => __( 'Type', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'price',
+				'label' => __( 'Price', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'stock',
+				'label' => __( 'Stock', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'cat',
+				'label' => __( 'Category', 'easycommerce-fakerpress' ),
+			),
+		);
+	}
+
+	/**
+	 * Build a single product preview row without any DB writes.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, array{v: mixed, kind: string}>
+	 */
+	protected function build_preview_row(): array {
+		$types         = array( 'Simple', 'Variable', 'Grouped' );
+		$type          = $this->get_faker()->randomElement( $types );
+		$is_phys       = 'Variable' !== $type;
+		$adjectives    = array(
+			'Premium',
+			'Deluxe',
+			'Professional',
+			'Classic',
+			'Modern',
+			'Ultra',
+			'Advanced',
+			'Eco-Friendly',
+			'Smart',
+			'Portable',
+		);
+		$product_names = array(
+			'Wireless Headphones',
+			'Smart Watch',
+			'Bluetooth Speaker',
+			'Gaming Mouse',
+			'Laptop Stand',
+			'Coffee Maker',
+			'Insulated Water Bottle',
+			'Travel Backpack',
+			'LED Desk Lamp',
+		);
+		$categories    = array(
+			'Electronics',
+			'Fashion',
+			'Books',
+			'Home & Kitchen',
+			'Sports',
+			'Health',
+			'Toys',
+			'Automotive',
+			'Beauty',
+		);
+
+		$name  = $this->get_faker()->randomElement( $adjectives ) . ' ' . $this->get_faker()->randomElement( $product_names );
+		$price = $this->get_faker()->randomFloat( 2, 9, 799 );
+		$stock = $is_phys ? $this->get_faker()->numberBetween( 0, 150 ) : null;
+
+		return array(
+			'id'    => array(
+				'v'    => $this->get_faker()->numberBetween( 10000, 99999 ),
+				'kind' => 'mono',
+			),
+			'name'  => array(
+				'v'    => $name,
+				'kind' => 'text',
+			),
+			'type'  => array(
+				'v'    => $type,
+				'kind' => 'badge',
+			),
+			'price' => array(
+				'v'    => '$' . number_format( $price, 2 ),
+				'kind' => 'money',
+			),
+			'stock' => array(
+				'v'    => null !== $stock ? $stock : '∞',
+				'kind' => 'num',
+			),
+			'cat'   => array(
+				'v'    => $this->get_faker()->randomElement( $categories ),
+				'kind' => 'text',
+			),
+		);
+	}
+
+	/**
 	 * Generate realistic product title based on product type
 	 *
 	 * @since 1.0.0

@@ -245,6 +245,86 @@ class Customer extends Generator {
 	}
 
 	/**
+	 * Return column definitions for the customer preview table.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int, array{key: string, label: string}>
+	 */
+	protected function get_preview_columns(): array {
+		return array(
+			array(
+				'key'   => 'name',
+				'label' => __( 'Name', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'email',
+				'label' => __( 'Email', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'type',
+				'label' => __( 'Type', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'age',
+				'label' => __( 'Age', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'loc',
+				'label' => __( 'Location', 'easycommerce-fakerpress' ),
+			),
+			array(
+				'key'   => 'orders',
+				'label' => __( 'Orders', 'easycommerce-fakerpress' ),
+			),
+		);
+	}
+
+	/**
+	 * Build a single customer preview row without any DB writes.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, array{v: mixed, kind: string}>
+	 */
+	protected function build_preview_row(): array {
+		$tiers     = array( 'bronze', 'silver', 'gold', 'platinum' );
+		$countries = array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'JP', 'IN' );
+
+		$first = $this->get_faker()->firstName;
+		$last  = $this->get_faker()->lastName;
+		$city  = $this->get_faker()->city;
+		$cc    = $this->get_faker()->randomElement( $countries );
+
+		return array(
+			'name'   => array(
+				'v'    => $first . ' ' . $last,
+				'kind' => 'text',
+			),
+			'email'  => array(
+				'v'    => strtolower( $first . '.' . $last ) . '@example.com',
+				'kind' => 'mono',
+			),
+			'type'   => array(
+				'v'    => $this->get_faker()->randomElement( $tiers ),
+				'kind' => 'badge',
+			),
+			'age'    => array(
+				'v'    => $this->get_faker()->numberBetween( 18, 75 ),
+				'kind' => 'num',
+			),
+			'loc'    => array(
+				'v'    => $city . ', ' . $cc,
+				'kind' => 'text',
+			),
+			'orders' => array(
+				'v'    => $this->get_faker()->numberBetween( 0, 50 ),
+				'kind' => 'num',
+			),
+		);
+	}
+
+	/**
 	 * Generate unique username
 	 *
 	 * @since 1.0.0

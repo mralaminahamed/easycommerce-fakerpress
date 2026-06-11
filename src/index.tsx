@@ -5,6 +5,7 @@ import { createRoot } from '@wordpress/element';
 
 import App from '@/admin/components/App';
 import './styles.css';
+import '@/admin/components.css';
 
 domReady( () => {
 	const container = document.getElementById( 'easycommerce-fakerpress-root' )!;

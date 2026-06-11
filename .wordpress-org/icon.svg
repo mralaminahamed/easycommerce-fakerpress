@@ -1,0 +1,11 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="FakerPress">
+  <defs>
+    <linearGradient id="fpIcon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"></stop>
+      <stop offset="1" stop-color="#7c3aed"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="60" fill="url(#fpIcon)"></rect>
+  <polygon points="123,58 143,116 200,136 143,156 123,214 103,156 46,136 103,116" fill="#ffffff" transform="translate(4 -6)"></polygon>
+  <polygon points="192,62 198.6,81 218,88 198.6,95 192,114 185.4,95 166,88 185.4,81" fill="#ffffff" opacity="0.92"></polygon>
+</svg>

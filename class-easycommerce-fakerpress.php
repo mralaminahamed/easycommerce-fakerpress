@@ -165,9 +165,37 @@ class EasyCommerce_FakerPress {
 			'manage_options',
 			'easycommerce-fakerpress',
 			array( $this, 'render_admin_page' ),
-			'dashicons-randomize',
+			$this->get_menu_icon(),
 			30
 		);
+	}
+
+	/**
+	 * Build the admin menu icon as a base64 data URI.
+	 *
+	 * The monochrome SVG uses `currentColor` so WordPress recolors it to match
+	 * the admin menu hover/active states. Falls back to a Dashicon if the file
+	 * cannot be read.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @return string Data URI of the menu icon, or a Dashicon class on failure.
+	 */
+	private function get_menu_icon(): string {
+		$path = EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH . 'assets/brand/wp-admin-menu-icon.svg';
+
+		if ( ! is_readable( $path ) ) {
+			return 'dashicons-randomize';
+		}
+
+		$svg = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		if ( false === $svg ) {
+			return 'dashicons-randomize';
+		}
+
+		// Inline SVG as a data URI so WP can recolor it; not obfuscation.
+		return 'data:image/svg+xml;base64,' . base64_encode( $svg ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	}
 
 	/**
@@ -788,6 +816,14 @@ class EasyCommerce_FakerPress {
 		);
 	}
 
+	/**
+	 * REST callback: download / re-sync locale sample data.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param WP_REST_Request $request The REST request; `force` re-downloads.
+	 * @return WP_REST_Response|WP_Error Sync result payload.
+	 */
 	public function rest_download_sample_data( WP_REST_Request $request ) {
 		$force = (bool) $request->get_param( 'force' );
 

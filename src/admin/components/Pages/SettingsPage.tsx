@@ -1,30 +1,18 @@
+import React from "react";
 import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
-import {
-  Save,
-  Trash2,
-  RefreshCw,
-  GitBranch,
-  ExternalLink,
-  CheckCircle,
-  AlertCircle,
-  Info,
-  Database,
-} from "lucide-react";
-import { Button } from "@/admin/components/ui/button";
-import { Input } from "@/admin/components/ui/input";
-import { Label } from "@/admin/components/ui/label";
-import { Switch } from "@/admin/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/admin/components/ui/select";
-import { getSettings, saveSettings } from "@/admin/lib/settings";
 
-const PLUGIN_VERSION = "2.1.0";
+import { Button } from "@/admin/components/ui/button";
+import { Toggle } from "@/admin/components/generator/fields/Toggle";
+import { NumberField } from "@/admin/components/generator/fields/NumberField";
+import { TextField } from "@/admin/components/generator/fields/TextField";
+import { FieldSelect } from "@/admin/components/generator/fields/FieldSelect";
+import { Icon } from "@/admin/lib/icons";
+import { getSettings, saveSettings } from "@/admin/lib/settings";
+import { useStats } from "@/admin/providers/StatsProvider";
+import { useToast } from "@/admin/providers/ToastProvider";
+
+const PLUGIN_VERSION = "2.2.0";
 const GITHUB_URL = "https://github.com/mralaminahamed/easycommerce-fakerpress";
 const SAMPLE_DATA_REPO_URL =
   "https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data";
@@ -39,9 +27,61 @@ interface SyncStatus {
   repo_url: string;
 }
 
+// ---------------------------------------------------------------------------
+// Settings card shell
+// ---------------------------------------------------------------------------
+
+function SetCard({
+  icon,
+  title,
+  desc,
+  danger,
+  children,
+}: {
+  icon: string;
+  title: string;
+  desc: string;
+  danger?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={`fp-card fp-set-card${danger ? " fp-danger-card" : ""}`}>
+      <div className="fp-set-card-head">
+        <span
+          className="fp-set-card-ic"
+          style={
+            danger
+              ? {
+                  background:
+                    "color-mix(in oklch,var(--red) 12%,var(--surface))",
+                  color: "var(--red)",
+                }
+              : undefined
+          }
+        >
+          <Icon name={icon} size={18} />
+        </span>
+        <div>
+          <div className={`fp-set-card-title${danger ? " fp-danger-label" : ""}`}>
+            {title}
+          </div>
+          <div className="fp-set-card-desc">{desc}</div>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// SettingsPage
+// ---------------------------------------------------------------------------
+
 export default function SettingsPage() {
   const [settings, setSettings] = useState(getSettings);
   const [saved, setSaved] = useState(false);
+  const { clearStats } = useStats();
+  const { toast } = useToast();
 
   // Sample data sync state
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
@@ -54,8 +94,18 @@ export default function SettingsPage() {
 
   const nonce = window.easycommerceFakerpressApi?.restNonce ?? "";
   const restUrl = window.easycommerceFakerpressApi?.restUrl ?? "";
-  const allLocales =
-    window.easycommerceFakerpressApi?.locale?.allLocales ?? {};
+  const allLocales = window.easycommerceFakerpressApi?.locale?.allLocales ?? {};
+
+  // Map between faker code (stored) and human label (displayed).
+  const codeToLabel = (code: string) => allLocales[code] ?? code;
+  const labelToCode = (label: string) =>
+    Object.keys(allLocales).find((c) => allLocales[c] === label) ?? label;
+  const localeLabels = Object.values(allLocales).filter(Boolean) as string[];
+
+  const set = <K extends keyof typeof settings>(
+    key: K,
+    value: (typeof settings)[K],
+  ) => setSettings((s) => ({ ...s, [key]: value }));
 
   // Fetch sync status on mount
   useEffect(() => {
@@ -90,7 +140,6 @@ export default function SettingsPage() {
         const json = await res.json();
         if (!res.ok) throw new Error(json?.message ?? `HTTP ${res.status}`);
         setSyncResult({ ok: true, message: json.message });
-        // Refresh status
         const statusRes = await fetch(`${restUrl}download-sample`, {
           headers: { "X-WP-Nonce": nonce },
         });
@@ -111,39 +160,19 @@ export default function SettingsPage() {
   );
 
   const handleClearData = () => {
-    if (
-      !confirm(
-        __(
-          "Clear all locally stored run history and stats? This cannot be undone.",
-          "easycommerce-fakerpress",
-        ),
-      )
-    )
-      return;
-
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("ec_fp_") && key !== "ec_fp_settings") {
-        keysToRemove.push(key);
-      }
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k));
-    window.location.reload();
+    clearStats();
+    toast(__("Run history cleared", "easycommerce-fakerpress"));
   };
 
   const handleClearSettings = () => {
-    if (
-      !confirm(
-        __(
-          "Reset all settings to defaults? This cannot be undone.",
-          "easycommerce-fakerpress",
-        ),
-      )
-    )
-      return;
-    localStorage.removeItem("ec_fp_settings");
-    window.location.reload();
+    const defaults = (() => {
+      try {
+        localStorage.removeItem("ec_fp_settings");
+      } catch {}
+      return getSettings();
+    })();
+    setSettings(defaults);
+    toast(__("Settings reset to defaults", "easycommerce-fakerpress"));
   };
 
   const formatDate = (iso: string | null) => {
@@ -162,405 +191,324 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-2xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {__("Settings", "easycommerce-fakerpress")}
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          {__(
-            "Configure default behaviour for data generation.",
-            "easycommerce-fakerpress",
-          )}
-        </p>
+    <div className="fp-page fp-enter">
+      <div className="fp-page-head">
+        <div>
+          <h1 className="fp-h1">{__("Settings", "easycommerce-fakerpress")}</h1>
+          <p className="fp-sub">
+            {__(
+              "Configure default behaviour for data generation.",
+              "easycommerce-fakerpress",
+            )}
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="fp-settings-col">
         {/* Generation defaults */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
-            {__("Generation Defaults", "easycommerce-fakerpress")}
-          </h2>
-
-          <div className="space-y-5">
-            {/* Default count */}
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-gray-700">
-                {__("Default Count", "easycommerce-fakerpress")}
-              </Label>
-              <p className="text-xs text-gray-400">
+        <SetCard
+          icon="sliders"
+          title={__("Generation defaults", "easycommerce-fakerpress")}
+          desc={__(
+            "Pre-fill values on every generator page.",
+            "easycommerce-fakerpress",
+          )}
+        >
+          <div>
+            <div className="fp-set-field">
+              <label className="fp-set-label">
+                {__("Default count", "easycommerce-fakerpress")}
+              </label>
+              <p className="fp-set-hint">
                 {__(
                   "Number of items pre-filled on every generator page.",
                   "easycommerce-fakerpress",
                 )}
               </p>
-              <Input
-                type="number"
-                min={1}
-                max={100}
+              <NumberField
                 value={settings.defaultCount}
-                className="w-32"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSettings((s) => ({
-                    ...s,
-                    defaultCount: Math.min(
-                      100,
-                      Math.max(1, parseInt(e.target.value, 10) || 1),
-                    ),
-                  }))
+                width={130}
+                onChange={(v) =>
+                  set("defaultCount", Math.max(1, parseInt(v, 10) || 1))
                 }
               />
             </div>
 
-            {/* Default locale */}
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-gray-700">
-                {__("Default Locale", "easycommerce-fakerpress")}
-              </Label>
-              <p className="text-xs text-gray-400">
+            <div className="fp-set-field">
+              <label className="fp-set-label">
+                {__("Default locale", "easycommerce-fakerpress")}
+              </label>
+              <p className="fp-set-hint">
                 {__(
                   "Faker locale used when generating data.",
                   "easycommerce-fakerpress",
                 )}
               </p>
-              <Select
-                value={settings.defaultLocale}
-                onValueChange={(v) =>
-                  setSettings((s) => ({ ...s, defaultLocale: v }))
-                }
-              >
-                <SelectTrigger className="w-64">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(allLocales).map(([code, label]) => (
-                    <SelectItem key={code} value={code}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FieldSelect
+                value={codeToLabel(settings.defaultLocale)}
+                options={localeLabels}
+                width={320}
+                onChange={(label) => set("defaultLocale", labelToCode(label))}
+              />
             </div>
 
-            {/* Default seed */}
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-gray-700">
-                {__("Default Seed", "easycommerce-fakerpress")}
-              </Label>
-              <p className="text-xs text-gray-400">
+            <div className="fp-set-field">
+              <label className="fp-set-label">
+                {__("Default seed", "easycommerce-fakerpress")}
+              </label>
+              <p className="fp-set-hint">
                 {__(
-                  "Fixed seed for reproducible runs. Leave blank for random output each time.",
+                  "Fixed seed for reproducible runs. Leave blank for random output.",
                   "easycommerce-fakerpress",
                 )}
               </p>
-              <Input
-                type="number"
-                value={settings.defaultSeed}
-                placeholder={__(
-                  "random (leave blank)",
-                  "easycommerce-fakerpress",
-                )}
-                className="w-48"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSettings((s) => ({ ...s, defaultSeed: e.target.value }))
-                }
-              />
-            </div>
-
-            {/* Include metadata */}
-            <div className="flex items-start gap-3">
-              <Switch
-                id="settings-include-meta"
-                checked={settings.defaultIncludeMeta}
-                onCheckedChange={(v) =>
-                  setSettings((s) => ({ ...s, defaultIncludeMeta: v }))
-                }
-                className="mt-0.5"
-              />
-              <div>
-                <Label
-                  htmlFor="settings-include-meta"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  {__(
-                    "Include Metadata by Default",
-                    "easycommerce-fakerpress",
-                  )}
-                </Label>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {__(
-                    "Pre-check the Include Metadata toggle on every generator.",
-                    "easycommerce-fakerpress",
-                  )}
-                </p>
+              <div style={{ maxWidth: 220 }}>
+                <TextField
+                  value={settings.defaultSeed}
+                  ph={__("random (leave blank)", "easycommerce-fakerpress")}
+                  onChange={(v) => set("defaultSeed", v)}
+                />
               </div>
             </div>
-          </div>
 
-          <div className="mt-5 pt-4 border-t border-gray-100">
-            <Button onClick={handleSave} className="gap-2">
-              <Save className="w-4 h-4" />
+            <div className="fp-set-field full">
+              <Toggle
+                checked={settings.defaultIncludeMeta}
+                onChange={(v) => set("defaultIncludeMeta", v)}
+                label={__(
+                  "Include metadata by default",
+                  "easycommerce-fakerpress",
+                )}
+                hint={__(
+                  "Pre-check the Include Metadata toggle on every generator.",
+                  "easycommerce-fakerpress",
+                )}
+              />
+            </div>
+
+            <Button variant="primary" icon="check" onClick={handleSave}>
               {saved
                 ? __("Saved!", "easycommerce-fakerpress")
-                : __("Save Settings", "easycommerce-fakerpress")}
+                : __("Save settings", "easycommerce-fakerpress")}
             </Button>
           </div>
-        </div>
+        </SetCard>
 
         {/* Run history */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
-            {__("Run History", "easycommerce-fakerpress")}
-          </h2>
-
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-gray-700">
-              {__("Max Runs Per Generator", "easycommerce-fakerpress")}
-            </Label>
-            <p className="text-xs text-gray-400">
-              {__(
-                "How many recent runs to store in the sidebar history per generator type.",
-                "easycommerce-fakerpress",
-              )}
-            </p>
-            <Input
-              type="number"
-              min={5}
-              max={50}
-              value={settings.maxRunsPerGenerator}
-              className="w-32"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSettings((s) => ({
-                  ...s,
-                  maxRunsPerGenerator: Math.min(
-                    50,
-                    Math.max(5, parseInt(e.target.value, 10) || 10),
-                  ),
-                }))
-              }
-            />
-          </div>
-
-          <div className="mt-5 pt-4 border-t border-gray-100">
-            <Button onClick={handleSave} className="gap-2">
-              <Save className="w-4 h-4" />
-              {saved
-                ? __("Saved!", "easycommerce-fakerpress")
-                : __("Save Settings", "easycommerce-fakerpress")}
-            </Button>
-          </div>
-        </div>
-
-        {/* Sample data sync */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
-              <Database className="w-4 h-4 text-indigo-500" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900">
-                {__("Sample Data", "easycommerce-fakerpress")}
-              </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
+        <SetCard
+          icon="history"
+          title={__("Run history", "easycommerce-fakerpress")}
+          desc={__(
+            "Control how much history is retained.",
+            "easycommerce-fakerpress",
+          )}
+        >
+          <div>
+            <div className="fp-set-field">
+              <label className="fp-set-label">
+                {__("Max runs per generator", "easycommerce-fakerpress")}
+              </label>
+              <p className="fp-set-hint">
                 {__(
-                  "Locale-specific reference data (product names, customer tags, addresses, etc.) used by generators to produce realistic output.",
+                  "How many recent runs to store in history per generator type.",
                   "easycommerce-fakerpress",
                 )}
               </p>
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="rounded-lg bg-gray-50 border border-gray-100 p-3 mb-4 flex items-center gap-3">
-            {statusLoading ? (
-              <RefreshCw className="w-4 h-4 text-gray-400 animate-spin shrink-0" />
-            ) : syncStatus?.exists ? (
-              <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-            ) : (
-              <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-            )}
-            <div className="min-w-0">
-              {statusLoading ? (
-                <p className="text-sm text-gray-500">
-                  {__("Checking status…", "easycommerce-fakerpress")}
-                </p>
-              ) : syncStatus?.exists ? (
-                <>
-                  <p className="text-sm font-medium text-gray-900">
-                    {__("Sample data is synced", "easycommerce-fakerpress")}
-                  </p>
-                  {syncStatus.last_synced && (
-                    <p className="text-xs text-gray-400">
-                      {sprintf(
-                        /* translators: %s: date string */
-                        __("Last updated: %s", "easycommerce-fakerpress"),
-                        formatDate(syncStatus.last_synced),
-                      )}
-                    </p>
-                  )}
-                </>
-              ) : (
-                <>
-                  <p className="text-sm font-medium text-gray-900">
-                    {__("Sample data not found", "easycommerce-fakerpress")}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {__(
-                      "Sync to download locale-specific reference data.",
-                      "easycommerce-fakerpress",
-                    )}
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Sync result */}
-          {syncResult && (
-            <div
-              className={`flex items-center gap-2 rounded-md p-3 mb-4 text-sm ${
-                syncResult.ok
-                  ? "bg-green-50 border border-green-200 text-green-700"
-                  : "bg-red-50 border border-red-200 text-red-700"
-              }`}
-            >
-              {syncResult.ok ? (
-                <CheckCircle className="w-4 h-4 shrink-0" />
-              ) : (
-                <AlertCircle className="w-4 h-4 shrink-0" />
-              )}
-              {syncResult.message}
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Button
-              onClick={() => handleSync(false)}
-              disabled={syncing}
-              className="gap-2"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`}
+              <NumberField
+                value={settings.maxRunsPerGenerator}
+                width={130}
+                onChange={(v) =>
+                  set(
+                    "maxRunsPerGenerator",
+                    Math.min(50, Math.max(5, parseInt(v, 10) || 10)),
+                  )
+                }
               />
-              {syncing
-                ? __("Syncing…", "easycommerce-fakerpress")
-                : __("Sync Now", "easycommerce-fakerpress")}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleSync(true)}
-              disabled={syncing}
-              className="gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              {__("Force Re-sync", "easycommerce-fakerpress")}
+            </div>
+            <Button variant="primary" icon="check" onClick={handleSave}>
+              {saved
+                ? __("Saved!", "easycommerce-fakerpress")
+                : __("Save settings", "easycommerce-fakerpress")}
             </Button>
           </div>
+        </SetCard>
 
-          <div className="pt-3 border-t border-gray-100">
-            <a
-              href={SAMPLE_DATA_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
-            >
-              <GitBranch className="w-3.5 h-3.5" />
-              {__("View sample data repository", "easycommerce-fakerpress")}
-              <ExternalLink className="w-3 h-3" />
-            </a>
+        {/* Sample data */}
+        <SetCard
+          icon="database"
+          title={__("Sample data", "easycommerce-fakerpress")}
+          desc={__(
+            "Locale-specific reference data used by generators to produce realistic output.",
+            "easycommerce-fakerpress",
+          )}
+        >
+          <div>
+            <div className="fp-set-sync">
+              <span className="fp-set-sync-ic">
+                <Icon
+                  name={
+                    statusLoading
+                      ? "refresh"
+                      : syncStatus?.exists
+                        ? "check2"
+                        : "alert"
+                  }
+                  size={19}
+                />
+              </span>
+              <div>
+                {statusLoading ? (
+                  <div style={{ fontSize: 13.5, fontWeight: 550 }}>
+                    {__("Checking status…", "easycommerce-fakerpress")}
+                  </div>
+                ) : syncStatus?.exists ? (
+                  <>
+                    <div style={{ fontSize: 13.5, fontWeight: 550 }}>
+                      {__("Sample data is synced", "easycommerce-fakerpress")}
+                    </div>
+                    {syncStatus.last_synced && (
+                      <div style={{ fontSize: 12, color: "var(--text-3)" }}>
+                        {sprintf(
+                          /* translators: %s: date string */
+                          __("Last updated: %s", "easycommerce-fakerpress"),
+                          formatDate(syncStatus.last_synced),
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div style={{ fontSize: 13.5, fontWeight: 550 }}>
+                      {__("Sample data not found", "easycommerce-fakerpress")}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-3)" }}>
+                      {__(
+                        "Sync to download locale-specific reference data.",
+                        "easycommerce-fakerpress",
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {syncResult && (
+              <p
+                className="fp-set-hint"
+                style={{
+                  marginBottom: 12,
+                  color: syncResult.ok ? "var(--green)" : "var(--red)",
+                }}
+              >
+                {syncResult.message}
+              </p>
+            )}
+
+            <div style={{ display: "flex", gap: 8 }}>
+              <Button
+                variant="primary"
+                icon="refresh"
+                onClick={() => handleSync(false)}
+                disabled={syncing}
+              >
+                {syncing
+                  ? __("Syncing…", "easycommerce-fakerpress")
+                  : __("Sync now", "easycommerce-fakerpress")}
+              </Button>
+              <Button
+                variant="outline"
+                icon="refresh"
+                onClick={() => handleSync(true)}
+                disabled={syncing}
+              >
+                {__("Force re-sync", "easycommerce-fakerpress")}
+              </Button>
+            </div>
+
+            <div style={{ marginTop: 14 }}>
+              <a
+                href={SAMPLE_DATA_REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="ghost" size="sm" icon="external" type="button">
+                  {__(
+                    "View sample data repository",
+                    "easycommerce-fakerpress",
+                  )}
+                </Button>
+              </a>
+            </div>
           </div>
-        </div>
+        </SetCard>
 
         {/* About */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-4">
-            {__("About", "easycommerce-fakerpress")}
-          </h2>
-
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-              <Info className="w-5 h-5 text-blue-500" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-900">
-                {__("EasyCommerce FakerPress", "easycommerce-fakerpress")}
-              </p>
-              <p className="text-xs text-gray-400">
-                {sprintf(
-                  /* translators: %s: version number */
-                  __("Version %s", "easycommerce-fakerpress"),
-                  PLUGIN_VERSION,
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 border border-gray-200 rounded-md px-3 py-1.5 hover:border-gray-300 transition-colors"
-            >
-              <GitBranch className="w-3.5 h-3.5" />
-              {__("GitHub", "easycommerce-fakerpress")}
+        <SetCard
+          icon="info"
+          title={__("About", "easycommerce-fakerpress")}
+          desc={sprintf(
+            /* translators: %s: version number */
+            __("EasyCommerce FakerPress · Version %s", "easycommerce-fakerpress"),
+            PLUGIN_VERSION,
+          )}
+        >
+          <div style={{ display: "flex", gap: 8 }}>
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" icon="github" type="button">
+                {__("GitHub", "easycommerce-fakerpress")}
+              </Button>
             </a>
-            <a
-              href={DOCS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 border border-gray-200 rounded-md px-3 py-1.5 hover:border-gray-300 transition-colors"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              {__("Documentation", "easycommerce-fakerpress")}
+            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" icon="book" type="button">
+                {__("Documentation", "easycommerce-fakerpress")}
+              </Button>
             </a>
-            <a
-              href={SUPPORT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 border border-gray-200 rounded-md px-3 py-1.5 hover:border-gray-300 transition-colors"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              {__("Support", "easycommerce-fakerpress")}
+            <a href={SUPPORT_URL} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" icon="external" type="button">
+                {__("Support", "easycommerce-fakerpress")}
+              </Button>
             </a>
           </div>
-        </div>
+        </SetCard>
 
         {/* Danger zone */}
-        <div className="bg-white rounded-xl border border-red-200 p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-red-500 mb-1">
-            {__("Danger Zone", "easycommerce-fakerpress")}
-          </h2>
-          <p className="text-xs text-gray-500 mb-4">
-            {__("These actions cannot be undone.", "easycommerce-fakerpress")}
-          </p>
-          <div className="flex flex-wrap gap-6">
-            <div>
-              <Button
-                variant="destructive"
-                onClick={handleClearData}
-                className="gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                {__("Clear Run History & Stats", "easycommerce-fakerpress")}
-              </Button>
-              <p className="text-xs text-gray-400 mt-1.5">
+        <SetCard
+          icon="trash"
+          title={__("Danger zone", "easycommerce-fakerpress")}
+          desc={__("These actions cannot be undone.", "easycommerce-fakerpress")}
+          danger
+        >
+          <div>
+            <div className="fp-danger-act">
+              <div>
+                <Button variant="danger" icon="trash" onClick={handleClearData}>
+                  {__(
+                    "Clear run history & stats",
+                    "easycommerce-fakerpress",
+                  )}
+                </Button>
+              </div>
+              <p className="fp-set-hint" style={{ marginTop: 7 }}>
                 {__(
                   "Removes locally stored generation stats and run history. Does not delete data in your database.",
                   "easycommerce-fakerpress",
                 )}
               </p>
             </div>
-            <div>
-              <Button
-                variant="outline"
-                onClick={handleClearSettings}
-                className="gap-2 border-red-200 text-red-600 hover:bg-red-50"
-              >
-                <Trash2 className="w-4 h-4" />
-                {__("Reset Settings to Defaults", "easycommerce-fakerpress")}
-              </Button>
-              <p className="text-xs text-gray-400 mt-1.5">
+            <div className="fp-danger-act">
+              <div>
+                <Button
+                  variant="danger"
+                  icon="refresh"
+                  onClick={handleClearSettings}
+                >
+                  {__(
+                    "Reset settings to defaults",
+                    "easycommerce-fakerpress",
+                  )}
+                </Button>
+              </div>
+              <p className="fp-set-hint" style={{ marginTop: 7 }}>
                 {__(
                   "Resets all settings to their default values.",
                   "easycommerce-fakerpress",
@@ -568,7 +516,7 @@ export default function SettingsPage() {
               </p>
             </div>
           </div>
-        </div>
+        </SetCard>
       </div>
     </div>
   );

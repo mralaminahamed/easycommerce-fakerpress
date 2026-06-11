@@ -5,80 +5,65 @@ const PLUGIN_URL = '/wp-admin/admin.php?page=easycommerce-fakerpress';
 test.describe('Generator page layout', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`${PLUGIN_URL}#/generator/products`);
-    await page.getByTestId('action-panel').waitFor();
+    await page.getByTestId('generator-runbar').waitFor();
   });
 
-  test.describe('Top bar', () => {
-    test('is visible', async ({ page }) => {
-      await expect(page.getByTestId('generator-topbar')).toBeVisible();
+  test.describe('Topbar', () => {
+    test('topbar is visible', async ({ page }) => {
+      await expect(page.getByTestId('topbar')).toBeVisible();
     });
 
-    test('shows generator name', async ({ page }) => {
-      await expect(page.getByTestId('generator-topbar')).toContainText('Products');
+    test('topbar shows generator name', async ({ page }) => {
+      await expect(page.getByTestId('topbar')).toContainText('Products');
     });
 
-    test('back link navigates to home page', async ({ page }) => {
-      await page.getByTestId('generator-topbar').getByRole('link', { name: 'Back' }).click();
+    test('breadcrumb FakerPress button navigates back to dashboard', async ({ page }) => {
+      await page.getByTestId('topbar').getByRole('button', { name: 'FakerPress' }).click();
       await page.getByTestId('generator-grid').waitFor();
       await expect(page.getByTestId('generator-grid')).toBeVisible();
-    });
-
-    test('shows locale in top bar', async ({ page }) => {
-      const text = await page.getByTestId('generator-topbar').textContent();
-      expect(text).toMatch(/en_US|English/i);
     });
   });
 
   test.describe('Sidebar', () => {
-    test('generator sidebar is visible', async ({ page }) => {
-      await expect(page.getByTestId('generator-sidebar')).toBeVisible();
+    test('sidebar is visible', async ({ page }) => {
+      await expect(page.getByTestId('sidebar')).toBeVisible();
     });
 
-    test('current generator highlighted with blue border', async ({ page }) => {
-      const current = page.getByTestId('generator-sidebar').locator('.border-l-2.border-blue-600');
-      await expect(current).toBeVisible();
-      await expect(current).toContainText('Products');
+    test('sidebar nav item for products is marked active', async ({ page }) => {
+      const item = page.getByTestId('nav-products');
+      await expect(item).toBeVisible();
+      await expect(item).toHaveClass(/active/);
     });
 
-    test('sidebar lists other generators', async ({ page }) => {
-      const sidebar = page.getByTestId('generator-sidebar');
-      await expect(sidebar).toContainText('Orders');
-      await expect(sidebar).toContainText('Logs');
+    test('sidebar lists other generator nav items', async ({ page }) => {
+      await expect(page.getByTestId('nav-orders')).toBeVisible();
+      await expect(page.getByTestId('nav-logs')).toBeVisible();
     });
 
-    test('sidebar has category group labels', async ({ page }) => {
-      const sidebar = page.getByTestId('generator-sidebar');
-      await expect(sidebar).toContainText('Core');
-      await expect(sidebar).toContainText('Advanced');
-    });
-
-    test('clicking sidebar link navigates to that generator', async ({ page }) => {
-      await page.getByTestId('generator-sidebar').getByRole('link', { name: 'Orders' }).click();
-      await page.getByTestId('action-panel').waitFor();
-      await expect(page.getByTestId('generator-topbar')).toContainText('Orders');
+    test('clicking sidebar nav item navigates to that generator', async ({ page }) => {
+      await page.getByTestId('nav-orders').click();
+      await page.getByTestId('generator-runbar').waitFor();
+      await expect(page.getByTestId('topbar')).toContainText('Orders');
     });
   });
 
-  test.describe('Panels', () => {
-    test('params panel is visible', async ({ page }) => {
-      await expect(page.getByTestId('params-panel')).toBeVisible();
+  test.describe('2-col generator layout', () => {
+    test('config column shows generator name', async ({ page }) => {
+      await expect(page.locator('.fp-config-col')).toContainText('Products');
     });
 
-    test('action panel is visible', async ({ page }) => {
-      await expect(page.getByTestId('action-panel')).toBeVisible();
+    test('preview table renders', async ({ page }) => {
+      await expect(page.getByTestId('preview-table')).toBeVisible();
     });
 
-    test('products params panel shows section headers', async ({ page }) => {
-      const params = page.getByTestId('params-panel');
-      await expect(params).toContainText('Product Type');
-      await expect(params).toContainText('Price Range');
-      await expect(params).toContainText('Inventory');
+    test('generator runbar is visible', async ({ page }) => {
+      await expect(page.getByTestId('generator-runbar')).toBeVisible();
     });
 
-    test('product-reviews generator renders panels', async ({ page }) => {
+    test('product-reviews generator renders correctly', async ({ page }) => {
       await page.goto(`${PLUGIN_URL}#/generator/product-reviews`);
-      await page.getByTestId('action-panel').waitFor();
-      await expect(page.getByTestId('params-panel')).toBeVisible();
+      await page.getByTestId('generator-runbar').waitFor();
+      await expect(page.getByTestId('preview-table')).toBeVisible();
     });
   });
 });

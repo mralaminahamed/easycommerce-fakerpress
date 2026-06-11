@@ -1,55 +1,120 @@
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/admin/lib/utils';
+import { Icon } from "@/admin/lib/icons";
+import { cn } from "@/admin/lib/utils";
 
-const buttonVariants = cva(
-	'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-	{
-		variants: {
-			variant: {
-				default: 'bg-blue-600 text-white hover:bg-blue-700',
-				destructive: 'bg-red-600 text-white hover:bg-red-700',
-				outline:
-          'border border-wp-gray-dark bg-white hover:bg-wp-gray hover:text-wp-text',
-				secondary: 'bg-wp-admin-accent text-white hover:bg-wp-admin-highlight',
-				ghost: 'hover:bg-wp-gray hover:text-wp-text',
-				link: 'text-blue-600 underline-offset-4 hover:underline',
-			},
-			size: {
-				default: 'h-10 px-4 py-2',
-				sm: 'h-9 rounded-md px-3',
-				lg: 'h-11 rounded-md px-8',
-				icon: 'h-10 w-10',
-			},
-		},
-		defaultVariants: {
-			variant: 'default',
-			size: 'default',
-		},
-	},
-);
+// ── variant / size maps ─────────────────────────────────────────────────────
+// FP canonical variants
+type FpVariant = "primary" | "outline" | "ghost" | "soft" | "danger";
+// FP canonical sizes
+type FpSize = "sm" | "md" | "lg";
 
-export interface ButtonProps
-  extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+// Legacy CVA variant names (kept for back-compat with existing callers)
+type LegacyVariant = "default" | "destructive" | "secondary" | "link";
+// Legacy CVA size names
+type LegacySize = "default" | "icon";
+
+type ButtonVariant = FpVariant | LegacyVariant;
+type ButtonSize = FpSize | LegacySize;
+
+function toFpVariant(v: ButtonVariant | null | undefined): FpVariant {
+	switch (v) {
+		case "default":
+		case "secondary":
+			return "primary";
+		case "destructive":
+			return "danger";
+		case "link":
+			return "ghost";
+		case "primary":
+		case "outline":
+		case "ghost":
+		case "soft":
+		case "danger":
+			return v;
+		default:
+			return "outline";
+	}
 }
 
+function toFpSize(s: ButtonSize | null | undefined): FpSize {
+	switch (s) {
+		case "default":
+		case "icon":
+		case "md":
+			return "md";
+		case "sm":
+			return "sm";
+		case "lg":
+			return "lg";
+		default:
+			return "md";
+	}
+}
+
+// ── back-compat buttonVariants export ──────────────────────────────────────
+// Legacy callers (and VariantProps importers) that used buttonVariants() remain
+// compilable. Returns empty string — callers that rendered via cn() will just
+// pick up an empty class token, which is harmless.
+export function buttonVariants(opts?: { variant?: ButtonVariant; size?: ButtonSize; className?: string }): string {
+	return opts?.className ?? "";
+}
+
+// ── prop types ──────────────────────────────────────────────────────────────
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+	variant?: ButtonVariant;
+	size?: ButtonSize;
+	/** FP icon name to render before children */
+	icon?: string;
+	/** FP icon name to render after children */
+	iconRight?: string;
+	/** Radix asChild back-compat (no-op — renders a plain button) */
+	asChild?: boolean;
+}
+
+// ── component ───────────────────────────────────────────────────────────────
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	( { className, variant, size, asChild = false, ...props }, ref ) => {
-		const Comp = asChild ? Slot : 'button';
+	(
+		{
+			className,
+			variant,
+			size,
+			icon,
+			iconRight,
+			asChild: _asChild,
+			children,
+			...rest
+		},
+		ref,
+	) => {
+		const fpVariant = toFpVariant(variant);
+		const fpSize = toFpSize(size);
+		const isIconOnly = size === "icon";
+
 		return (
-			<Comp
-				className={ cn( buttonVariants( { variant, size, className } ) ) }
-				ref={ ref }
-				{ ...props }
-			/>
+			<button
+				ref={ref}
+				className={cn(
+					"fp-btn",
+					`fp-btn-${fpVariant}`,
+					`fp-btn-${fpSize}`,
+					"fp-focusable",
+					isIconOnly && "fp-btn-icon",
+					className,
+				)}
+				{...rest}
+			>
+				{icon && typeof icon === "string" && (
+					<Icon name={icon} size={fpSize === "sm" ? 15 : 16} />
+				)}
+				{children && <span>{children}</span>}
+				{iconRight && typeof iconRight === "string" && (
+					<Icon name={iconRight} size={fpSize === "sm" ? 15 : 16} />
+				)}
+			</button>
 		);
 	},
 );
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
-export { Button, buttonVariants };
+export { Button };
