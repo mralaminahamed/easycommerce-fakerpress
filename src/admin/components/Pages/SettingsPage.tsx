@@ -12,7 +12,7 @@ import { getSettings, saveSettings } from "@/admin/lib/settings";
 import { useStats } from "@/admin/providers/StatsProvider";
 import { useToast } from "@/admin/providers/ToastProvider";
 
-const PLUGIN_VERSION = "2.1.0";
+const PLUGIN_VERSION = "2.2.0";
 const GITHUB_URL = "https://github.com/mralaminahamed/easycommerce-fakerpress";
 const SAMPLE_DATA_REPO_URL =
   "https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data";

@@ -4,7 +4,7 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,19 +110,30 @@ Run history is stored in browser localStorage. It does not affect your database.
 
 == Screenshots ==
 
-1. Dashboard: Stats bar with live generation counts and generator grid grouped by category (Core, Advanced, Enhanced) with Popular badges.
-2. Products Generator: Two-panel layout with sidebar category nav and run history, params panel with product type, price range, categories, and inventory settings, and sticky action panel.
-3. Customers Generator: Customer type and age group chip selects, address preference toggles, purchase history and loyalty tier options.
-4. Orders Generator: Order status selector, customer distribution controls, items-per-order range, payment methods, and geographic distribution chips.
-5. Coupons Generator: Discount type chips (Percentage, Fixed, Free Shipping, Products), discount range inputs, usage limits, validity period, and restriction toggles.
-6. Product Variations Generator: Product type chips, price variance range, stock management settings, and variation attribute options.
-7. Transactions Generator: Transaction types, payment gateways, amount range, and status distribution (success, pending, failed) controls.
-8. Settings Page: Generation defaults (count, locale, seed, metadata), run history limit, sample data sync with status, About card, and Danger Zone.
-9. Our Plugins Page: Live WordPress.org plugin cards with ratings, active install counts, and direct links.
+1. Dashboard: Stat cards with sparklines, a recent-activity feed, and a generator grid grouped by category — all driven by real run history.
+2. Generator page: Two-column layout with schema-driven config controls on the left and a live preview table on the right, plus a sticky run bar.
+3. Live preview: Real faker sample rows that refresh as you change settings, with a Shuffle button to re-roll the seed (no data is persisted).
+4. Command palette: Press Cmd/Ctrl+K to quick-jump to any generator or page.
+5. Batch queue: Queue multiple generators and run them sequentially from the batch tray with live progress.
+6. Tweaks panel: Switch theme (light/dark), accent palette, and density — applied live and persisted.
+7. Dark mode: The full admin in dark theme, scoped to the plugin so WordPress chrome stays untouched.
+8. Settings page: Generation defaults, run-history limit, sample-data sync status, About card, and Danger Zone on the new card system.
+9. Our Plugins page: Live WordPress.org plugin cards with ratings, active-install counts, and direct links.
 10. Product Reviews Generator: Target a specific product by ID, configure count, locale, seed, and metadata options.
 11. Locations Generator: Region chip selects, max countries, state and city generation toggles, cities-per-state range, and coordinate generation.
 
 == Changelog ==
+
+= 2.2.0 - June 11, 2026 =
+* Complete admin UI redesign — Linear/Vercel-style SaaS interface built on a new design-token system (self-hosted Geist fonts, light/dark themes, 5 accent palettes, comfortable/compact density), all scoped to the plugin so WordPress chrome is never restyled
+* New dashboard — Stat cards with sparklines, recent-activity feed, and a generator grid grouped by category, all driven by real run history
+* Redesigned generator page — Two-column config + live preview layout with a sticky run bar (count stepper, seed, metadata, add-to-batch, generate)
+* Live preview — Read-only REST preview route returns real faker rows (no persistence); the preview table refreshes as you change settings and re-rolls on Shuffle
+* Command palette (Cmd/Ctrl+K) — Quick-jump to any generator or page
+* Batch queue — Queue multiple generators and run them sequentially from the batch tray, with progress and toasts
+* Tweaks panel — Live theme, accent, and density controls persisted to the browser
+* Redesigned Settings and Our Plugins pages on the new card system
+* Refreshed brand assets — New logo, recolorable WP admin menu icon, and updated WordPress.org icon and banners
 
 = 2.1.0 - April 26, 2026 =
 * Complete admin UI redesign — Modern SaaS style with clean white, blue and indigo accents
