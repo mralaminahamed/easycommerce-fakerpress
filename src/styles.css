@@ -288,3 +288,8 @@ body:has(#easycommerce-fakerpress-root) #wpcontent {
 body:has(#easycommerce-fakerpress-root) #wpfooter {
   display: none;
 }
+
+/* Reset WP core's reserved footer space so the app fills the content area. */
+body:has(#easycommerce-fakerpress-root) #wpbody-content {
+  padding-bottom: 0;
+}
