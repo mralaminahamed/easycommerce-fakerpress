@@ -4,7 +4,6 @@ namespace EasyCommerceFakerPress\Tests\Generators;
 
 use EasyCommerceFakerPress\Tests\EasyCommerceFakerPressUnitTestCase;
 use EasyCommerceFakerPress\Generators\Transaction;
-use EasyCommerce\Models\Transaction;
 
 /**
  * Test class for Transaction Generator

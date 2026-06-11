@@ -153,10 +153,10 @@ jobs:
 
       - name: Run PHPUnit
         env:
-          WP_TESTS_DB_NAME:     wordpress_test
-          WP_TESTS_DB_USER:     root
-          WP_TESTS_DB_PASSWORD: root
-          WP_TESTS_DB_HOST:     127.0.0.1
+          WP_DB_NAME:           wordpress_test
+          WP_DB_USER:           root
+          WP_DB_PASS:           root
+          WP_DB_HOST:           127.0.0.1
           WP_PHPUNIT__DIR:      vendor/wp-phpunit/wp-phpunit
           WP_PATH:              /tmp/wordpress
         run: composer test

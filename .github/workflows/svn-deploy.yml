@@ -162,10 +162,10 @@ jobs:
           tar xzf /tmp/wordpress.tar.gz -C /tmp/wordpress --strip-components=1
       - name: Run PHPUnit
         env:
-          WP_TESTS_DB_NAME:     wordpress_test
-          WP_TESTS_DB_USER:     root
-          WP_TESTS_DB_PASSWORD: root
-          WP_TESTS_DB_HOST:     127.0.0.1
+          WP_DB_NAME:           wordpress_test
+          WP_DB_USER:           root
+          WP_DB_PASS:           root
+          WP_DB_HOST:           127.0.0.1
           WP_PHPUNIT__DIR:      vendor/wp-phpunit/wp-phpunit
           WP_PATH:              /tmp/wordpress
         run: composer test
@@ -282,7 +282,7 @@ jobs:
           # Dev / VCS / CI / IDE / source artifacts must never appear in trunk.
           ANY=$(find "$DIR" \( \
                  -name ".git"          -o -name ".github"       -o -name ".wordpress-org" \
-              -o -name "src"           -o -name "tests"         -o -name "node_modules" \
+              -o -name "src" -a ! -path "*/vendor/*" -o -name "tests" -o -name "node_modules" \
               -o -name ".yarn"         -o -name ".claude"       -o -name ".playwright-mcp" -o -name ".remember" \
               -o -name ".idea"         -o -name ".vscode" \
               -o -name "phpcs*.xml"    -o -name "phpstan.neon"  -o -name "phpunit.xml*" \
