@@ -271,3 +271,10 @@ body:has(#easycommerce-fakerpress-root) #wpcontent {
     box-shadow: none;
   }
 }
+
+/* The plugin app is a full-height takeover of the content area, so the
+   WordPress admin footer ("Thank you for creating with WordPress…") would
+   overlap the sticky run bar. Hide it on our screen only. */
+body:has(#easycommerce-fakerpress-root) #wpfooter {
+  display: none;
+}
