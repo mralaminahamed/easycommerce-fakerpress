@@ -1,0 +1,105 @@
+name: Build Plugin Assets
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: "Plugin version (used for artifact naming)"
+    outputs:
+      artifact-name:
+        description: "Name of the uploaded build artifact"
+        value: plugin-build-${{ inputs.version }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: "Build: Install deps & compile assets"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          coverage: none
+          tools: composer:v2
+
+      - name: Bootstrap Node.js runtime (act compatibility)
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+            curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+          fi
+          . "$NVM_DIR/nvm.sh"
+          nvm install 24
+          nvm use 24
+          nvm alias default 24
+          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> "$GITHUB_PATH"
+
+      - name: Setup Node.js 24 (LTS)
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.composer/cache
+            vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-php74-
+
+      - name: Cache Yarn node_modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-
+
+      - name: Install PHP dependencies (including dev — needed for build tooling)
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Node dependencies & build assets
+        run: |
+          corepack enable yarn
+          yarn install --immutable
+          yarn build
+
+      - name: Guard — composer.lock must not change during build
+        run: |
+          if ! git diff --quiet --exit-code composer.lock; then
+            echo "::error::composer.lock was modified during the build. Commit the updated lock file before releasing." >&2
+            git --no-pager diff composer.lock | head -n 100
+            exit 1
+          fi
+
+      - name: Optimise Composer autoloader for production (strip dev deps)
+        run: composer install --no-dev --no-interaction --prefer-dist -o
+
+      - name: Copy production files to staging directory (respecting .distignore)
+        run: |
+          mkdir -p staging
+          # rsync excludes trailing / from patterns — .distignore uses / suffix for dirs
+          rsync -ah --exclude-from=<(sed 's:/$::' .distignore) . staging/ --delete
+
+      - name: Upload built plugin as workflow artifact
+        if: ${{ env.ACT != 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-build-${{ inputs.version }}
+          path: staging/
+          retention-days: 1

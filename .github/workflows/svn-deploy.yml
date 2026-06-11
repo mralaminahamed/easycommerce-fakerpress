@@ -6,15 +6,12 @@ on:
       - "*"
 
 permissions:
-  contents: write # Required to create a GitHub release
+  contents: write
 
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
-# ---------------------------------------------------------------------------
-# Shared defaults applied to every job
-# ---------------------------------------------------------------------------
 defaults:
   run:
     shell: bash
@@ -24,7 +21,6 @@ jobs:
   # -------------------------------------------------------------------------
   # JOB 1 — meta
   # Derives plugin identifiers and validates tag/version alignment.
-  # Outputs are consumed by every downstream job so nothing is re-computed.
   # -------------------------------------------------------------------------
   meta:
     name: "Meta: Resolve plugin info & validate version"
@@ -44,11 +40,6 @@ jobs:
       - name: Derive plugin identifiers from repository name
         id: plugin_name
         run: |
-          # github.event.repository.name is empty under `act` (local CI simulation).
-          # Resolution order:
-          #   1. GitHub Actions context  (real CI)
-          #   2. Git remote URL slug     (act + git remote configured)
-          #   3. Working directory name  (act fallback)
           PLUGIN_SLUG="${{ github.event.repository.name }}"
 
           if [ -z "$PLUGIN_SLUG" ]; then
@@ -68,7 +59,6 @@ jobs:
           fi
 
           PLUGIN_FILE="${PLUGIN_SLUG}.php"
-          # Convert kebab-case slug → Title Case display name
           PLUGIN_NAME=$(echo "$PLUGIN_SLUG" | sed 's/-/ /g; s/\b\w/\U&/g')
 
           echo "Resolved slug : $PLUGIN_SLUG"
@@ -83,13 +73,12 @@ jobs:
         id: version_check
         run: |
           TAG_REF="${GITHUB_REF#refs/tags/}"
-          # Strip an optional leading "v" (e.g. v1.2.3 → 1.2.3)
           TAG_STRIPPED="${TAG_REF#v}"
 
           PLUGIN_FILE="${{ steps.plugin_name.outputs.plugin_file }}"
 
           if [ ! -f "$PLUGIN_FILE" ]; then
-            echo "::error::Plugin main file '$PLUGIN_FILE' not found in workspace. Ensure the repository name matches the plugin slug." >&2
+            echo "::error::Plugin main file '$PLUGIN_FILE' not found in workspace." >&2
             exit 1
           fi
 
@@ -123,107 +112,20 @@ jobs:
           fi
 
   # -------------------------------------------------------------------------
-  # JOB 2 — build
+  # JOB 2 — build (reusable)
   # Installs dependencies, compiles frontend assets, and uploads the built
-  # plugin tree as a workflow artifact consumed by the deploy job.
+  # plugin tree (filtered by .distignore) as a workflow artifact.
   # -------------------------------------------------------------------------
   build:
     name: "Build: Install deps & compile assets"
-    runs-on: ubuntu-latest
     needs: meta
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup PHP 7.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "7.4"
-          coverage: none
-          tools: composer:v2
-
-      - name: Bootstrap Node.js runtime (act compatibility)
-        # actions/setup-node@v6 is itself a Node.js action and requires `node` to
-        # already exist in $PATH to bootstrap. The catthehacker/ubuntu:act-latest
-        # image does not ship Node.js, so this step installs it via nvm when the
-        # ACT environment variable is set (injected automatically by act).
-        # On real GitHub-hosted runners this step is skipped entirely.
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          export NVM_DIR="$HOME/.nvm"
-          if [ ! -s "$NVM_DIR/nvm.sh" ]; then
-            curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-          fi
-          . "$NVM_DIR/nvm.sh"
-          nvm install 24
-          nvm use 24
-          nvm alias default 24
-          # Persist nvm node path for subsequent steps in this job
-          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> "$GITHUB_PATH"
-
-      - name: Setup Node.js 24 (LTS)
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.composer/cache
-            vendor
-          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            composer-${{ runner.os }}-php74-
-
-      - name: Cache Yarn node_modules
-        uses: actions/cache@v5
-        with:
-          path: node_modules
-          key: yarn-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-${{ runner.os }}-
-
-      - name: Install PHP dependencies (including dev — needed for build tooling)
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Install Node dependencies & build assets
-        run: |
-          corepack enable yarn
-          yarn install --immutable
-          yarn build
-
-      - name: Guard — composer.lock must not change during build
-        run: |
-          if ! git diff --quiet --exit-code composer.lock; then
-            echo "::error::composer.lock was modified during the build. Commit the updated lock file before releasing." >&2
-            git --no-pager diff composer.lock | head -n 100
-            exit 1
-          fi
-
-      - name: Optimise Composer autoloader for production (strip dev deps)
-        run: composer install --no-dev --no-interaction --prefer-dist -o
-
-      - name: Upload built plugin as workflow artifact
-        if: ${{ env.ACT != 'true' }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: plugin-build-${{ needs.meta.outputs.version }}
-          path: |
-            .
-            !.git
-            !node_modules
-            !tests
-            !.github
-          retention-days: 1
+    uses: ./.github/workflows/build.yml
+    with:
+      version: ${{ needs.meta.outputs.version }}
 
   # -------------------------------------------------------------------------
   # JOB 3 — deploy
-  # Cleans SVN trunk, deploys the built plugin to WordPress.org, and creates
-  # the corresponding GitHub release with the generated ZIP attached.
+  # Deploys the built plugin to WordPress.org SVN and creates a GitHub release.
   # -------------------------------------------------------------------------
   deploy:
     name: "Deploy: Publish to WP.org & create GitHub release"
