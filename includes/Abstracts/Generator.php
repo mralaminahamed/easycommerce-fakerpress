@@ -13,6 +13,8 @@
 
 namespace EasyCommerceFakerPress\Abstracts;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use Bluemmb\Faker\PicsumPhotosProvider;
 use Exception;
 use Faker\Factory;

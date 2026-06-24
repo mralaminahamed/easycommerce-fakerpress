@@ -50,7 +50,7 @@ use EasyCommerceFakerPress\MCP\MCP_Server;
  * - Multi-locale support for international data generation
  *
  * @since 1.0.0
- * @version 2.0.3
+ * @version 2.2.0
  */
 class EasyCommerce_FakerPress {
 
@@ -628,6 +628,16 @@ class EasyCommerce_FakerPress {
 			return false;
 		}
 
+		// Guard against zip-slip: reject any entry that escapes the target dir.
+		for ( $i = 0; $i < $zip->numFiles; $i++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- ZipArchive built-in property.
+			$entry_name = $zip->getNameIndex( $i );
+			if ( false === $entry_name || 0 === strpos( $entry_name, '/' ) || false !== strpos( $entry_name, '..' ) ) {
+				error_log( 'EasyCommerce FakerPress: Unsafe path in zip archive: ' . $entry_name ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				$zip->close();
+				return false;
+			}
+		}
+
 		if ( ! $zip->extractTo( $extract_to ) ) {
 			error_log( 'EasyCommerce FakerPress: Failed to extract zip file' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			$zip->close();
@@ -732,6 +742,12 @@ class EasyCommerce_FakerPress {
 	 * @return bool True if EasyCommerce is active, false otherwise.
 	 */
 	public function is_easycommerce_active(): bool {
+		// is_plugin_active() lives in wp-admin/includes/plugin.php, which is not
+		// loaded on front-end / REST requests — require it before use.
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		return is_plugin_active( 'easycommerce/easycommerce.php' );
 	}
 

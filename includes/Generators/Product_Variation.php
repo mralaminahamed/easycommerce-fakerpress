@@ -259,7 +259,7 @@ class Product_Variation extends Generator {
 			'sku'            => $this->generate_variation_sku( $product->get_slug(), $variation_attributes ),
 			'stock_quantity' => $this->get_faker()->numberBetween( 0, 100 ),
 			'stock_limit'    => $this->get_faker()->numberBetween( 5, 20 ),
-			'status'         => $this->get_faker()->randomElement( array( 'active', 'inactive', 'draft' ) ),
+			'status'         => $this->get_faker()->randomElement( array( 'in_stock', 'out_of_stock', 'backorder', 'discontinued' ) ),
 			'attributes'     => $variation_attributes,
 		);
 	}

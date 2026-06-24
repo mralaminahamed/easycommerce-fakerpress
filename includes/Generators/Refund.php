@@ -8,6 +8,8 @@
 
 namespace EasyCommerceFakerPress\Generators;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerce\Models\Order as OrderModel;
 use EasyCommerce\Models\Refund as RefundModel;
 use EasyCommerceFakerPress\Abstracts\Generator;
@@ -120,11 +122,12 @@ class Refund extends Generator {
 			$amount = round( $total * $this->get_faker()->randomFloat( 2, 0.1, 0.9 ), 2 );
 		}
 
-		$gateway         = $this->get_faker()->randomElement(
+		$gateway = $this->get_faker()->randomElement(
 			$this->generation_params['payment_gateways'] ?? self::GATEWAYS
 		);
+		// refunds.status ENUM is pending|approved|processed|rejected — weight toward processed.
 		$status          = $this->get_faker()->randomElement(
-			array( 'completed', 'completed', 'pending', 'failed' )
+			array( 'processed', 'processed', 'approved', 'pending', 'rejected' )
 		);
 		$transaction_id  = $this->generate_transaction_id( $gateway );
 		$reason          = $this->get_faker()->randomElement( self::REASONS );

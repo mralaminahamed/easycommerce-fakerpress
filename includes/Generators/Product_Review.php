@@ -11,6 +11,8 @@
 
 namespace EasyCommerceFakerPress\Generators;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use WP_Error;
 

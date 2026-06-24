@@ -8,6 +8,8 @@
 
 namespace EasyCommerceFakerPress\Generators;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use EasyCommerce\Models\Order as OrderModel;
 use EasyCommerce\Models\Customer as CustomerModel;
@@ -220,7 +222,7 @@ class Order extends Generator {
 
 		$result = array(
 			'id'               => $order->get_id(),
-			'order_number'     => $order->get_order_number() ? $order->get_order_number() : 'ORD-' . $order->get_id(),
+			'order_number'     => 'ORD-' . $order->get_id(),
 			'customer_id'      => $customer['id'],
 			'status'           => $order->get_status(),
 			'total'            => $total,
@@ -492,7 +494,9 @@ class Order extends Generator {
 		// Get a larger pool of available variations to choose from.
 		$db              = new Database( 'product_variations' );
 		$variations_data = $db->get_rows(
-			array( 'status' => 'active' ),
+			// Purchasable variations. The product_variations.status ENUM is
+			// in_stock|out_of_stock|backorder|discontinued — there is no 'active'.
+			array( array( 'status' => array( 'IN', array( 'in_stock', 'backorder' ) ) ) ),
 			100, // Get more variations for better randomization.
 			0,
 			'RAND()'
@@ -897,7 +901,6 @@ class Order extends Generator {
 			'shipped'             => 20,
 			'delivered'           => 10,
 			'returned'            => 3,
-			'cancelled'           => 2,
 		);
 
 		$pool = array();

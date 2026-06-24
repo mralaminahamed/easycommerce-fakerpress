@@ -8,6 +8,8 @@
 
 namespace EasyCommerceFakerPress\Generators;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerce\Models\Log as LogModel;
 use EasyCommerceFakerPress\Abstracts\Generator;
 use WP_Error;

@@ -8,6 +8,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Controller;
 use EasyCommerceFakerPress\Generators\Tax_Class as TaxClassGenerator;
 
