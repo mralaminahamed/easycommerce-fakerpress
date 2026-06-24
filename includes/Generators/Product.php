@@ -12,6 +12,8 @@
 
 namespace EasyCommerceFakerPress\Generators;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerce\Models\Product as ProductModel;
 use EasyCommerce\Models\Attribute as AttributeModel;
 use EasyCommerce\Models\Attribute_Value as AttributeValueModel;
@@ -916,7 +918,8 @@ class Product extends Generator {
 		}
 
 		if ( $stock_quantity > 0 ) {
-			return $this->get_faker()->randomElement( array( 'in_stock', 'low_stock', 'backorder' ) );
+			// product_variations.status ENUM has no 'low_stock'.
+			return $this->get_faker()->randomElement( array( 'in_stock', 'backorder' ) );
 		}
 
 		return 'out_of_stock';

@@ -11,6 +11,8 @@
 
 namespace EasyCommerceFakerPress\Controllers;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 use EasyCommerceFakerPress\Abstracts\Controller;
 use EasyCommerceFakerPress\Generators\Product as ProductGenerator;
 

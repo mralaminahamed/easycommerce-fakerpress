@@ -2,9 +2,8 @@
 /**
  * Transaction Generator Class for EasyCommerce FakerPress Plugin
  *
- * @since 1.0.0
- * @subpackage Generators
- * @package EasyCommerceFakerPress
+ * @since   1.0.0
+ * @package EasyCommerceFakerPress\Generators
  */
 
 namespace EasyCommerceFakerPress\Generators;
@@ -185,7 +184,8 @@ class Transaction extends Generator {
 	 * @return array Transaction data
 	 */
 	private function generate_transaction_data( $order ): array {
-		$transaction_types = array( 'payment', 'refund', 'adjustment', 'fee', 'commission' );
+		// transactions.type ENUM is payment|refund|adjustment only.
+		$transaction_types = array( 'payment', 'refund', 'adjustment' );
 		$transaction_type  = $this->get_faker()->randomElement( $transaction_types );
 
 		$payment_gateways = array(
@@ -267,11 +267,12 @@ class Transaction extends Generator {
 	 */
 	private function generate_transaction_status( string $type ): string {
 		$status_weights = array(
+			// transactions.status ENUM is pending|completed|failed|refunded.
 			'payment'    => array(
 				'completed' => 70,
 				'pending'   => 15,
 				'failed'    => 10,
-				'cancelled' => 5,
+				'refunded'  => 5,
 			),
 			'refund'     => array(
 				'completed' => 80,
@@ -281,14 +282,6 @@ class Transaction extends Generator {
 			'adjustment' => array(
 				'completed' => 90,
 				'pending'   => 10,
-			),
-			'fee'        => array(
-				'completed' => 95,
-				'pending'   => 5,
-			),
-			'commission' => array(
-				'completed' => 85,
-				'pending'   => 15,
 			),
 		);
 

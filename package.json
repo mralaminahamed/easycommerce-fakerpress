@@ -5,7 +5,7 @@
     "node": ">=18.0.0",
     "yarn": ">=1.22.0"
   },
-  "description": "Comprehensive EasyCommerce test data generator with 11 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
+  "description": "Comprehensive EasyCommerce test data generator with 14 specialized generators, real-time validation, advanced parameter configuration, WordPress admin color integration, and modern React Router v7 interface.",
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",

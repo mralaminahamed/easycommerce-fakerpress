@@ -2,7 +2,7 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: EasyCommerce FakerPress 2.0.4\n"
+"Project-Id-Version: EasyCommerce FakerPress 2.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easycommerce-fakerpress\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
