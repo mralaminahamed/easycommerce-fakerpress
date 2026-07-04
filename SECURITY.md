@@ -18,7 +18,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 
 Instead, please report security vulnerabilities by emailing:
 
-- **Email**: me@alaminahamed.com
+- **Email**: mrabir.ahamed@gmail.com
 - **Subject**: [SECURITY] EasyCommerce FakerPress - Brief Description
 
 ### What to Include
