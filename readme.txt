@@ -2,7 +2,7 @@
 Contributors: mralaminahamed
 Tags: test data, dummy data, sample data, demo content, faker
 Requires at least: 6.6
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: easycommerce
 Stable tag: 2.2.0
