@@ -377,12 +377,12 @@ class Transaction extends Generator {
 
 		for ( $i = 0; $i < $transaction_count; $i++ ) {
 			// First transaction is usually a payment.
+			// transactions.type ENUM is payment|refund|adjustment only.
 			$transaction_type = ( 0 === $i ) ? 'payment' : $this->get_faker()->randomElement(
 				array(
 					'payment',
 					'refund',
 					'adjustment',
-					'fee',
 				)
 			);
 

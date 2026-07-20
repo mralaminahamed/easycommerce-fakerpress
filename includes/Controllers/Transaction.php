@@ -102,7 +102,7 @@ class Transaction extends Controller {
 				'type'              => 'array',
 				'items'             => array(
 					'type' => 'string',
-					'enum' => array( 'payment', 'refund', 'adjustment', 'fee', 'commission' ),
+					'enum' => array( 'payment', 'refund', 'adjustment' ),
 				),
 				'default'           => array( 'payment', 'refund' ),
 				'sanitize_callback' => array( $this, 'sanitize_array' ),

@@ -151,6 +151,37 @@ abstract class Generator {
 	}
 
 	/**
+	 * Pick a real tax class ID at random.
+	 *
+	 * The 'tax_class' variation meta flows through Product_Variation::get_tax_class()
+	 * into order_items.tax_class_id, which is a BIGINT foreign key, and on into
+	 * Tax::get_rate_by_location(). A slug such as 'standard' coerces to 0 there and
+	 * every generated order item ends up with no tax, so only real IDs are usable.
+	 *
+	 * Returns 0 when the store has no tax classes yet, which EasyCommerce already
+	 * treats as "not taxable".
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return int A tax class ID, or 0 when none exist.
+	 */
+	protected function random_tax_class_id(): int {
+		if ( ! class_exists( '\EasyCommerce\Models\Tax' ) ) {
+			return 0;
+		}
+
+		$classes = \EasyCommerce\Models\Tax::list_classes();
+
+		if ( empty( $classes ) ) {
+			return 0;
+		}
+
+		$class = $this->get_faker()->randomElement( $classes );
+
+		return isset( $class['id'] ) ? (int) $class['id'] : 0;
+	}
+
+	/**
 	 * Set locale for FakerPHP generator
 	 *
 	 * Configures the locale for the FakerPHP generator to produce locale-specific

@@ -8,6 +8,22 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ## [Unreleased]
 
+### Added
+
+- Order statuses `failed` and `partially_refunded`, and the cart status `payment_initiated`, all of which EasyCommerce added to its column definitions after the last sync.
+- Generated orders now carry the `billing_address`, `shipping_address`, `tax`, `shipping_tax`, `shipping_fee`, `shipping_method`, and `shipping_method_label` meta that EasyCommerce reads, so orders render complete in the admin and in the date-range reports.
+
+### Fixed
+
+- The transaction generator no longer produces the type `fee`, which is not in the `transactions.type` column and was discarded or rejected on write depending on SQL mode.
+- Product variations generated from the Products generator now populate their attribute rows. The payload used key names EasyCommerce does not read, so no variation attributes were ever stored.
+- Variations created by the Product Variations generator are assigned a sequential per-product price identifier instead of all sharing the default, which previously made order items resolve to an arbitrary variation.
+- Tax classes on generated products and variations now reference real tax class records rather than slugs or invented identifiers, so generated order items are taxed instead of always totalling zero.
+- Product-restricted coupons now use the rule type EasyCommerce evaluates, so the restriction takes effect instead of being ignored.
+- Attributes created during variation generation use a type EasyCommerce recognises, so they render correctly in the attribute editor.
+- Shipping tiers with no upper bound are stored as unlimited rather than as a large sentinel amount.
+- The cart status distribution parameter now rejects unknown statuses instead of passing them through to the database.
+
 ## [2.2.0] - 2026-06-11
 
 ### Added

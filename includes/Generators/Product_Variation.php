@@ -275,6 +275,7 @@ class Product_Variation extends Generator {
 		$variation = new ProductVariationModel();
 
 		$variation->product_id = $data['product_id'];
+		$variation->set_price_id( $this->next_price_id( (int) $data['product_id'] ) );
 		$variation->set_name( $data['name'] );
 		$variation->set_sku( $data['sku'] );
 		$variation->set_type( $data['type'] );
@@ -289,6 +290,32 @@ class Product_Variation extends Generator {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get the next price_id for a product.
+	 *
+	 * EasyCommerce numbers variations per product starting at 1, and resolves order
+	 * items with Product_Variation::get_by_price( $price_id, $product_id ). Leaving
+	 * price_id at its 0 default collapses every variation of a product onto the same
+	 * key, so order items resolve to an arbitrary row.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return int Next available price_id.
+	 */
+	private function next_price_id( int $product_id ): int {
+		$model    = new ProductVariationModel();
+		$existing = $model->get_by( $product_id, 'product_id' );
+
+		$max = 0;
+		foreach ( $existing as $variation ) {
+			$max = max( $max, (int) $variation->get_price_id() );
+		}
+
+		return $max + 1;
 	}
 
 	/**
@@ -423,9 +450,12 @@ class Product_Variation extends Generator {
 			return $existing;
 		}
 
-		// Create new attribute.
+		// Create new attribute. EasyCommerce only recognises Text, Color and Image —
+		// its admin renders swatches by branching on exactly those three, so 'select'
+		// produces an attribute the UI cannot display.
 		$name         = ucfirst( str_replace( '_', ' ', $slug ) );
-		$attribute_id = $model->add( $name, 'select', $slug );
+		$type         = ( false !== strpos( $slug, 'color' ) || false !== strpos( $slug, 'colour' ) ) ? 'Color' : 'Text';
+		$attribute_id = $model->add( $name, $type, $slug );
 
 		if ( $attribute_id ) {
 			return $model->get( $attribute_id );
@@ -504,8 +534,9 @@ class Product_Variation extends Generator {
 			);
 		}
 
-		// Tax class.
-		$variation->update_meta( 'tax_class', $this->get_faker()->randomElement( array( 1, 2, 3 ) ) );
+		// Tax class. Must be a real tax_classes row: the value lands in
+		// order_items.tax_class_id and is looked up by Tax::get_rate_by_location().
+		$variation->update_meta( 'tax_class', $this->random_tax_class_id() );
 
 		// Stock management.
 		$variation->update_meta( 'is_managed_stock', $this->get_faker()->boolean( 80 ) ? 1 : 0 );

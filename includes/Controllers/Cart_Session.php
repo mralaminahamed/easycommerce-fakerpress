@@ -132,7 +132,15 @@ class Cart_Session extends Controller {
 						'minimum'     => 0,
 						'maximum'     => 100,
 					),
+					'payment_initiated' => array(
+						'description' => __( 'Percentage of carts locked at payment initiation.', 'easycommerce-fakerpress' ),
+						'type'        => 'integer',
+						'minimum'     => 0,
+						'maximum'     => 100,
+					),
 				),
+				// Keys become cart_sessions.status values, so reject unknown ones.
+				'additionalProperties' => false,
 			),
 			'cart_value_range'     => array(
 				'description' => __( 'Cart value range for generated sessions.', 'easycommerce-fakerpress' ),
