@@ -15,6 +15,7 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ### Changed
 
+- New brand mark: a shopping bag holding rows of generated data, replacing the sparkle. Applied to the WordPress.org icon and banners, the admin menu icon, the sidebar, and the logo lockup.
 - The live preview now shows up to 25 rows instead of 12, matching what the preview endpoint already returns.
 
 ### Fixed

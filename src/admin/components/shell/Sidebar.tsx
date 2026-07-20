@@ -70,7 +70,7 @@ export function Sidebar({ collapsed, setCollapsed, counts, openCmd }: SidebarPro
       {/* Brand */}
       <div className="fp-brand">
         <div className="fp-brand-mark">
-          <Icon name="sparkles" size={17} />
+          <Icon name="logomark" size={17} />
         </div>
         {!collapsed && (
           <div className="fp-brand-text">

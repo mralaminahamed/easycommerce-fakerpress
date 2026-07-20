@@ -1,4 +1,12 @@
-<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="FakerPress menu icon">
-  <polygon points="9.6,2.6 11.6,8.2 17,10 11.6,11.8 9.6,17.4 7.6,11.8 2.6,10 7.6,8.2" fill="currentColor"></polygon>
-  <polygon points="15.4,2.8 16,4.6 17.8,5.2 16,5.8 15.4,7.6 14.8,5.8 13,5.2 14.8,4.6" fill="currentColor"></polygon>
+<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EasyCommerce FakerPress menu icon">
+  <!-- Redrawn for 20px, and deliberately kept as an outline. Filling the body
+       solid turns a thin handle arc on a dark shape into a padlock; leaving the
+       interior open keeps it a bag. Two rows, not three — the third fills in at
+       this size. currentColor lets WordPress recolor it for hover and active. -->
+  <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M4,7 h12 a1,1 0 0 1 1,1.1 l-0.85,7.5 a1.6,1.6 0 0 1 -1.6,1.4 H5.45 a1.6,1.6 0 0 1 -1.6,-1.4 L3,8.1 a1,1 0 0 1 1,-1.1 z"></path>
+    <path d="M7.3,7 V5.7 a2.7,2.7 0 0 1 5.4,0 V7"></path>
+    <path d="M6.7,10.7 h6.6" stroke-width="1.4"></path>
+    <path d="M6.7,13.4 h4.4" stroke-width="1.4"></path>
+  </g>
 </svg>
