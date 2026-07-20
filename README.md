@@ -234,7 +234,7 @@ Report vulnerabilities privately — see the [security policy](SECURITY.md).
 
 ## Changelog
 
-The canonical changelog lives in [`readme.txt`](readme.txt) and is rendered on the [WordPress.org changelog page](https://wordpress.org/plugins/easycommerce-fakerpress/#developers).
+The complete version history lives in [CHANGELOG.md](CHANGELOG.md), in [Keep a Changelog](https://keepachangelog.com/en/2.0.0/) format. [`readme.txt`](readme.txt) carries only the four most recent releases, which is what WordPress.org recommends, and is rendered on the [WordPress.org changelog page](https://wordpress.org/plugins/easycommerce-fakerpress/#developers).
 
 ## Contributing
 

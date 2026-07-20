@@ -65,7 +65,15 @@ Branch names follow the same shape as the commit type — for example `fix/gener
 
 ## Documentation
 
-`README.md` is for developers and contributors; `readme.txt` is the WordPress.org listing and holds the canonical changelog. When a change affects end users, update `readme.txt`. Keep facts such as version numbers and compatibility in a single place rather than duplicating them across both files.
+Three files, three audiences, no duplication:
+
+- **`CHANGELOG.md`** holds the complete version history in [Keep a Changelog](https://keepachangelog.com/en/2.0.0/) format and is the single source of truth. Add your entry under `## [Unreleased]`, using one of the six headings — `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`. Describe the user-visible effect, not the commit; a reworded commit message is usually the wrong entry.
+- **`readme.txt`** is the WordPress.org listing. Its changelog keeps only the four most recent releases plus an absolute link to `CHANGELOG.md`, which is what WordPress.org recommends. At release time the `Unreleased` section is promoted into both files, and `== Upgrade Notice ==` is updated here.
+- **`README.md`** is for developers and links to `CHANGELOG.md` rather than restating history.
+
+Release dates come from the git tag. Keep version and compatibility facts in one place instead of retyping them.
+
+`readme.txt` is not GitHub-flavored markdown — tables, images, and ``` fences are stripped. Validate changes with the [readme validator](https://wordpress.org/plugins/developers/readme-validator/).
 
 If a change adds an outbound HTTP request, it must be disclosed in the `== External services ==` section of `readme.txt` and in the External Services table in `README.md`. WordPress.org requires this.
 
