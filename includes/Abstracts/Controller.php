@@ -245,12 +245,37 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		$total_output = count( $result );
+		$errors       = $generator->get_generation_errors();
+
+		// Items may fail individually without aborting the batch. If none survived,
+		// the request did not succeed, and answering 200 with "0 items created"
+		// hides a reason the generator already took the trouble to explain.
+		if ( 0 === $total_output && ! empty( $errors ) ) {
+			return new WP_Error(
+				'generation_failed',
+				$errors[0],
+				array(
+					'status' => 500,
+					'errors' => array_values( array_unique( $errors ) ),
+				)
+			);
+		}
+
+		$failed = count( $errors );
 
 		$message = sprintf(
 			// translators: Total output.
 			_n( '%1$s item successfully created.', '%1$s items successfully created.', $total_output, 'easycommerce-fakerpress' ),
 			$total_output
 		);
+
+		if ( $failed > 0 ) {
+			$message .= ' ' . sprintf(
+				// translators: %s: number of items that could not be created.
+				_n( '%s could not be created.', '%s could not be created.', $failed, 'easycommerce-fakerpress' ),
+				$failed
+			);
+		}
 
 		/**
 		 * Filters the success message returned by the REST API generation endpoint.
@@ -271,6 +296,13 @@ abstract class Controller extends WP_REST_Controller {
 			'message'                  => $message,
 			$this->get_resource_type() => $result,
 		);
+
+		// Only present on a partial batch, so existing clients see an unchanged
+		// response shape whenever everything succeeded.
+		if ( $failed > 0 ) {
+			$response['failed'] = $failed;
+			$response['errors'] = array_values( array_unique( $errors ) );
+		}
 
 		/**
 		 * Filters the REST API response data.

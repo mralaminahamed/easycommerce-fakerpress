@@ -52,6 +52,10 @@ export interface Generator {
 export interface GeneratorResult {
   message: string;
   generated?: number;
+  /** Present only when some items in the batch could not be created. */
+  failed?: number;
+  /** Distinct reasons the failed items gave, present alongside `failed`. */
+  errors?: string[];
   [key: string]: any;
 }
 
