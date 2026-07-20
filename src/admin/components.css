@@ -230,9 +230,14 @@
 
 /* ===== generator page ===== */
 .fp-root .fp-gen-main { flex:1; min-height:0; display:flex; flex-direction:column; }
-.fp-root .fp-gen-body { flex:1; overflow-y:auto; }
-.fp-root .fp-gen-wrap { display:grid; grid-template-columns:minmax(420px,460px) 1fr; gap:0; min-height:100%; }
-.fp-root .fp-config-col { padding:26px 30px 40px; border-right:1px solid var(--border); }
+/* The generator page does not scroll as a whole: the config and preview columns
+   each scroll on their own, so the preview stays put while the form is scrolled.
+   That requires this container to clip rather than scroll. */
+.fp-root .fp-gen-body { flex:1; min-height:0; overflow:hidden; }
+/* height (not min-height) so a long config form cannot stretch the row and drag
+   the preview card past the viewport. */
+.fp-root .fp-gen-wrap { display:grid; grid-template-columns:minmax(420px,460px) 1fr; gap:0; height:100%; min-height:0; }
+.fp-root .fp-config-col { padding:26px 30px 40px; border-right:1px solid var(--border); min-height:0; overflow-y:auto; }
 .fp-root .fp-config-head { display:flex; gap:14px; margin-bottom:8px; }
 .fp-root .fp-config-ic { width:44px; height:44px; border-radius:12px; flex-shrink:0; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent); }
 .fp-root .fp-config-title { font-size:20px; font-weight:660; letter-spacing:-.02em; }
@@ -248,7 +253,7 @@
 .fp-root .fp-field-2col { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 
 /* preview column */
-.fp-root .fp-preview-col { padding:26px 30px 40px; display:flex; flex-direction:column; min-width:0; background:var(--bg); }
+.fp-root .fp-preview-col { padding:26px 30px 40px; display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--bg); }
 .fp-root .fp-preview-head { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
 .fp-root .fp-preview-title { font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-2); display:flex; align-items:center; gap:8px; }
 .fp-root .fp-live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 4px color-mix(in oklch,var(--green) 22%,transparent); animation:fp-pulse 2s infinite; }
@@ -257,7 +262,11 @@
 .fp-root .fp-preview-note { font-size:12px; color:var(--text-3); margin-bottom:14px; }
 
 .fp-root .fp-table-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); overflow:hidden; flex:1; display:flex; flex-direction:column; min-height:0; }
-.fp-root .fp-table-scroll { overflow:auto; }
+/* Must carry both: flex:1 so the body fills the card and the footer stays put,
+   and min-height:0 so it may shrink below content height — without it a flex
+   item's auto minimum keeps the row stack at full height and overflow:auto
+   never engages, so rows are clipped by the card instead of scrolling. */
+.fp-root .fp-table-scroll { flex:1; min-height:0; overflow:auto; }
 .fp-root .fp-table { width:100%; border-collapse:collapse; font-size:13px; }
 .fp-root .fp-table thead th { position:sticky; top:0; z-index:1; background:var(--surface-2); text-transform:uppercase; font-size:10.5px; letter-spacing:.05em; color:var(--text-faint); text-align:left; padding:10px 16px; border-bottom:1px solid var(--border); font-weight:650; white-space:nowrap; }
 .fp-root .fp-table tbody td { padding:11px 16px; border-bottom:1px solid var(--border); color:var(--text-2); white-space:nowrap; }
@@ -287,7 +296,15 @@
 .fp-root .fp-progress-fill { height:100%; background:var(--accent); border-radius:999px; }
 .fp-root .fp-spinner { width:30px; height:30px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--accent); animation:fp-spin .8s linear infinite; }
 
-@media (max-width:1080px){ .fp-root .fp-gen-wrap{ grid-template-columns:1fr; } .fp-root .fp-config-col{ border-right:none; border-bottom:1px solid var(--border);} }
+/* Stacked layout: two independent scroll panes no longer make sense once the
+   columns are on top of each other, so hand scrolling back to the page and let
+   both columns size to their content. */
+@media (max-width:1080px){
+  .fp-root .fp-gen-body{ overflow-y:auto; }
+  .fp-root .fp-gen-wrap{ grid-template-columns:1fr; height:auto; min-height:100%; }
+  .fp-root .fp-config-col{ border-right:none; border-bottom:1px solid var(--border); overflow-y:visible; }
+  .fp-root .fp-preview-col{ min-height:440px; }
+}
 
 /* ===== settings ===== */
 .fp-root .fp-settings-col { max-width:680px; }
