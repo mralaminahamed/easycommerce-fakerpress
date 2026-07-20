@@ -145,6 +145,19 @@ body:not(.admin-bar) .fp-root { --fp-admin-bar: 0px; }
 
 .fp-root *, .fp-root *::before, .fp-root *::after { box-sizing: border-box; }
 
+/* WordPress core hard-codes a near-black on bare headings in
+   wp-admin/css/common.css (`h1 { color: #1d2327 }`, and the same for h3 and
+   h6). An element selector always beats an inherited value, so those headings
+   ignored the themed colour set on .fp-root and stayed dark-on-dark once the
+   dark theme was active. Handing them back to inheritance lets them follow
+   --text in whichever theme is showing. */
+.fp-root h1,
+.fp-root h2,
+.fp-root h3,
+.fp-root h4,
+.fp-root h5,
+.fp-root h6 { color: inherit; }
+
 .fp-root[data-theme="dark"] {
   --bg: oklch(0.165 0.011 270);
   --bg-2: oklch(0.145 0.011 270);
