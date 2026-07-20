@@ -340,7 +340,7 @@ class Location extends Generator {
 			$city_id  = ( $state_id * 1000 ) + $i;
 			$cities[] = array(
 				'id'        => $city_id,
-				'name'      => $this->get_faker()->city,
+				'name'      => $this->get_faker()->city(),
 				'latitude'  => $this->get_faker()->latitude(),
 				'longitude' => $this->get_faker()->longitude(),
 			);
