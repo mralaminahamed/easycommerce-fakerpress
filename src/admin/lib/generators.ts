@@ -230,6 +230,13 @@ export const generators: Generator[] = [
     route: "orders",
     popular: true,
     parameterConfig: {
+      date_range_days: {
+        description: __("Spread order dates over this many days back (0 = all today)", "easycommerce-fakerpress"),
+        type: "integer",
+        minimum: 0,
+        maximum: 1825,
+        default: 90,
+      },
       order_status: {
         description: __("Order status distribution", "easycommerce-fakerpress"),
         type: "string",
