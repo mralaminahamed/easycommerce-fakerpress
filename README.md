@@ -1,3 +1,5 @@
+<div align="center">
+
 # EasyCommerce FakerPress
 
 [![WordPress plugin version](https://img.shields.io/wordpress/plugin/v/easycommerce-fakerpress?style=flat-square)](https://wordpress.org/plugins/easycommerce-fakerpress/)
@@ -7,6 +9,8 @@
 [![License GPL v2 or later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue?style=flat-square)](LICENSE)
 
 Generate realistic test data for EasyCommerce stores — 14 generators, live preview, batch queue, and a modern admin UI.
+
+</div>
 
 > [!WARNING]
 > This plugin writes large volumes of fake data directly into your store. Use it only on development or staging sites, and back up your database before generating large datasets.
