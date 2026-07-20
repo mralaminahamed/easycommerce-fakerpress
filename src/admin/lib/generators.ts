@@ -233,7 +233,7 @@ export const generators: Generator[] = [
       order_status: {
         description: __("Order status distribution", "easycommerce-fakerpress"),
         type: "string",
-        enum: ["pending", "processing", "completed", "cancelled", "on_hold", "refunded", "mixed"],
+        enum: ["pending", "processing", "completed", "cancelled", "on_hold", "partially_refunded", "refunded", "failed", "mixed"],
         default: "mixed",
       },
       customer_type: {
@@ -554,13 +554,13 @@ export const generators: Generator[] = [
       order_status_filter: {
         description: __("Filter orders by status", "easycommerce-fakerpress"),
         type: "array",
-        items: { type: "string", enum: ["pending", "processing", "completed", "cancelled", "on_hold", "refunded"] },
+        items: { type: "string", enum: ["pending", "processing", "completed", "cancelled", "on_hold", "partially_refunded", "refunded", "failed"] },
         default: ["pending", "processing", "completed"],
       },
       transaction_types: {
         description: __("Types of transactions to generate", "easycommerce-fakerpress"),
         type: "array",
-        items: { type: "string", enum: ["payment", "refund", "adjustment", "fee", "commission"] },
+        items: { type: "string", enum: ["payment", "refund", "adjustment"] },
         default: ["payment", "refund"],
       },
       payment_gateways: {

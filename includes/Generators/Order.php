@@ -29,6 +29,18 @@ use WP_Error;
 class Order extends Generator {
 
 	/**
+	 * Combined tax rate applied to the shipping fee.
+	 *
+	 * Matches the state (0.08) plus city (0.025) rates used for product tax, so
+	 * the generated 'shipping_tax' meta stays consistent with 'tax'.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @var float
+	 */
+	private const SHIPPING_TAX_RATE = 0.105;
+
+	/**
 	 * Get the resource type name
 	 *
 	 * @since 1.0.0
@@ -162,15 +174,34 @@ class Order extends Generator {
 		$order_meta  = $order_data['order_meta'];
 		$total       = $order_data['total'];
 
+		$product_tax   = isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0;
+		$shipping_fee  = ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
+			+ ( isset( $order_meta['shipping_details']['insurance'] ) ? $order_meta['shipping_details']['insurance'] : 0 );
+		$shipping_tax  = round( $shipping_fee * self::SHIPPING_TAX_RATE, 2 );
+
 		// Prepare complete meta data including all order details.
 		$complete_meta = array_merge(
 			$order_meta,
 			array(
+				// Canonical keys read by EasyCommerce. Order::get_product_tax() reads
+				// 'tax', get_shipping_tax() reads 'shipping_tax', get_shipping_amount()
+				// reads 'shipping_fee', and the order REST payload reads the two
+				// address keys. Without these the admin screen and the date-range
+				// reports render empty addresses and zero tax.
+				'billing_address'  => isset( $order_meta['addresses']['billing'] ) ? $order_meta['addresses']['billing'] : array(),
+				'shipping_address' => isset( $order_meta['addresses']['shipping'] ) ? $order_meta['addresses']['shipping'] : array(),
+				'tax'              => $product_tax,
+				'shipping_tax'     => $shipping_tax,
+				'shipping_fee'     => $shipping_fee,
+				'shipping_method'  => isset( $order_meta['shipping_details']['method'] ) ? $order_meta['shipping_details']['method'] : '',
+				'shipping_method_label' => isset( $order_meta['shipping_details']['method'] )
+					? ucwords( str_replace( '_', ' ', $order_meta['shipping_details']['method'] ) )
+					: '',
+
 				// Order amounts stored in meta.
 				'subtotal'        => $subtotal,
-				'tax_amount'      => isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0,
-				'shipping_amount' => ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
-					+ ( isset( $order_meta['shipping_details']['insurance'] ) ? $order_meta['shipping_details']['insurance'] : 0 ),
+				'tax_amount'      => $product_tax,
+				'shipping_amount' => $shipping_fee,
 				'discount_amount' => isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0,
 				'currency'        => 'USD', // Default currency, can be made configurable.
 
@@ -331,7 +362,7 @@ class Order extends Generator {
 	 * @return array<string, array{v: mixed, kind: string}>
 	 */
 	protected function build_preview_row(): array {
-		$statuses  = array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'refunded' );
+		$statuses  = array( 'pending', 'processing', 'completed', 'cancelled', 'on_hold', 'partially_refunded', 'refunded', 'failed' );
 		$countries = array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'JP', 'IN', 'BR', 'MX' );
 
 		$order_id = $this->get_faker()->numberBetween( 10000, 99999 );
@@ -651,13 +682,16 @@ class Order extends Generator {
 		}
 
 		$sample_data = $this->load_sample_data();
+		// Weights mirror the orders.status ENUM in EasyCommerce.
 		$statuses    = $sample_data['order_statuses'] ? $sample_data['order_statuses'] : array(
-			'pending'    => 25,
-			'processing' => 35,
-			'completed'  => 30,
-			'cancelled'  => 5,
-			'on_hold'    => 3,
-			'refunded'   => 2,
+			'pending'            => 24,
+			'processing'         => 33,
+			'completed'          => 28,
+			'cancelled'          => 5,
+			'on_hold'            => 3,
+			'partially_refunded' => 2,
+			'refunded'           => 2,
+			'failed'             => 3,
 		);
 
 		$pool = array();

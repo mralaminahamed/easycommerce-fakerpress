@@ -936,7 +936,7 @@ class Product extends Generator {
 	 */
 	private function generate_variation_meta( string $product_type ): array {
 		$meta = array(
-			'tax_class'        => $this->get_faker()->randomElement( array( 'standard', 'reduced-rate', 'zero-rate' ) ),
+			'tax_class'        => $this->random_tax_class_id(),
 			'is_managed_stock' => 'physical' === $product_type,
 		);
 
@@ -1230,15 +1230,15 @@ class Product extends Generator {
 					continue;
 				}
 
+				// Key names are dictated by EasyCommerce's Product::create(), which
+				// reads attribute_id/attribute_slug/value_id/value_slug and skips the
+				// row unless both IDs are truthy. Any other shape silently produces
+				// no product_variation_attributes rows at all.
 				$formatted_attributes[ $attr_slug ] = array(
-					'id'     => $attribute->id,
-					'slug'   => $attribute->slug,
-					'values' => array(
-						array(
-							'id'   => $attribute_value->id,
-							'slug' => $attribute_value->slug,
-						),
-					),
+					'attribute_id'   => $attribute->id,
+					'attribute_slug' => $attribute->slug,
+					'value_id'       => $attribute_value->id,
+					'value_slug'     => $attribute_value->slug,
 				);
 			}
 

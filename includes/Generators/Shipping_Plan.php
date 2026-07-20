@@ -216,7 +216,7 @@ class Shipping_Plan extends Generator {
 				'name'     => 'Over $200',
 				'min'      => 200.00,
 				'min_unit' => 'usd',
-				'max'      => 999999.99,
+				'max'      => null,
 				'max_unit' => 'usd',
 				'cost'     => 0.00, // Free shipping.
 			),
@@ -258,7 +258,7 @@ class Shipping_Plan extends Generator {
 				'name'     => 'Express Over $150',
 				'min'      => 150.00,
 				'min_unit' => 'usd',
-				'max'      => 999999.99,
+				'max'      => null,
 				'max_unit' => 'usd',
 				'cost'     => $this->get_faker()->randomFloat( 2, 4.99, 9.99 ),
 			),
@@ -370,7 +370,7 @@ class Shipping_Plan extends Generator {
 				'name'     => "Free Shipping (Orders over {$minimum_order})",
 				'min'      => $minimum_order,
 				'min_unit' => 'usd',
-				'max'      => 999999.99,
+				'max'      => null,
 				'max_unit' => 'usd',
 				'cost'     => 0.00,
 			),
@@ -404,7 +404,7 @@ class Shipping_Plan extends Generator {
 				'name'     => 'Overnight Over $100',
 				'min'      => 100.00,
 				'min_unit' => 'usd',
-				'max'      => 999999.99,
+				'max'      => null,
 				'max_unit' => 'usd',
 				'cost'     => $this->get_faker()->randomFloat( 2, 12.99, 19.99 ),
 			),
@@ -804,10 +804,32 @@ class Shipping_Plan extends Generator {
 	private function create_shipping_plan( array $data ): ?ShippingPlanModel {
 		$shipping_plan = new ShippingPlanModel();
 
+		// EasyCommerce represents an unlimited upper bound as NULL, but its create()
+		// filters methods through isset(), which drops any method with a null max.
+		// Withhold those tiers here and add them afterwards via add_method().
+		$unlimited_methods = array();
+
+		if ( ! empty( $data['methods'] ) && is_array( $data['methods'] ) ) {
+			foreach ( $data['methods'] as $index => $method ) {
+				if ( array_key_exists( 'max', $method ) && null === $method['max'] ) {
+					$unlimited_methods[] = $method;
+					unset( $data['methods'][ $index ] );
+				}
+			}
+
+			$data['methods'] = array_values( $data['methods'] );
+		}
+
 		$plan_id = $shipping_plan->create( $data );
 
 		if ( $plan_id ) {
-			return new ShippingPlanModel( $plan_id );
+			$created = new ShippingPlanModel( $plan_id );
+
+			foreach ( $unlimited_methods as $method ) {
+				$created->add_method( $method );
+			}
+
+			return $created;
 		}
 
 		return null;

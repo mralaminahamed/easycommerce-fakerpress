@@ -613,12 +613,14 @@ class Coupon extends Generator {
 		}
 
 		// Product restrictions (40% chance).
+		// EasyCommerce's rule engine only understands an inclusion rule, and it is
+		// keyed 'products' — Coupon::is_valid() and Coupon::get_products() both match
+		// on that exact string, so 'include_products' produced an inert coupon.
 		if ( $this->get_faker()->boolean( 40 ) ) {
 			$product_ids = $this->get_random_product_ids();
 			if ( ! empty( $product_ids ) ) {
-				$restriction_type = $this->get_faker()->randomElement( array( 'include_products', 'exclude_products' ) );
-				$rules[]          = array(
-					'type'  => $restriction_type,
+				$rules[] = array(
+					'type'  => 'products',
 					'value' => array_map( static fn( $id ) => array( 'id' => $id ), $product_ids ),
 				);
 			}
