@@ -160,7 +160,12 @@ export default function GeneratorPage() {
           data: body,
         })) as GeneratorResult;
 
-        recordRun(generator.route, count, true, data.message ?? "", {
+        // Items can fail individually without failing the request, so report
+        // what was actually created rather than what was asked for.
+        const failed = data.failed ?? 0;
+        const created = Math.max(0, count - failed);
+
+        recordRun(generator.route, created, true, data.message ?? "", {
           locale,
           seed,
         });
@@ -168,10 +173,19 @@ export default function GeneratorPage() {
           sprintf(
             /* translators: %1$s: count, %2$s: generator name */
             __("Generated %1$s %2$s", "easycommerce-fakerpress"),
-            count.toLocaleString(),
+            created.toLocaleString(),
             generatorLabel,
           ),
-          __("Added to your EasyCommerce store", "easycommerce-fakerpress"),
+          failed > 0
+            ? sprintf(
+                /* translators: %s: number of items that could not be created */
+                __(
+                  "%s could not be created — see the run details.",
+                  "easycommerce-fakerpress",
+                ),
+                failed.toLocaleString(),
+              )
+            : __("Added to your EasyCommerce store", "easycommerce-fakerpress"),
         );
       } catch (err) {
         const errMsg =

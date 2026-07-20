@@ -100,6 +100,33 @@ abstract class Generator {
 	protected array $generation_params = array();
 
 	/**
+	 * Failure messages collected during the last generate() call.
+	 *
+	 * Individual items are allowed to fail without aborting the batch, but the
+	 * reason has to survive the loop — otherwise a batch where every item failed
+	 * is indistinguishable from a batch that was never asked to do anything, and
+	 * the caller reports success for zero rows.
+	 *
+	 * @since 2.3.0
+	 * @var array<int, string>
+	 */
+	protected array $generation_errors = array();
+
+	/**
+	 * Get the failures collected during the last generate() call.
+	 *
+	 * Reset at the start of every generate(), so it always describes the most
+	 * recent batch. Empty when every item succeeded.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return array<int, string> Failure messages, in the order they occurred.
+	 */
+	public function get_generation_errors(): array {
+		return $this->generation_errors;
+	}
+
+	/**
 	 * Constructor
 	 *
 	 * Initializes the generator with a reference to the WordPress database object.
@@ -263,7 +290,8 @@ abstract class Generator {
 			$this->log( "Seeded Faker with value: {$seed}", 'info' );
 		}
 
-		$results = array();
+		$results                 = array();
+		$this->generation_errors = array();
 
 		try {
 			for ( $i = 0; $i < $count; $i++ ) {
@@ -283,6 +311,7 @@ abstract class Generator {
 
 					if ( is_wp_error( $item_result ) ) {
 						$this->log( 'Single item generation failed: ' . $item_result->get_error_message(), 'warning' );
+						$this->generation_errors[] = $item_result->get_error_message();
 						continue;
 					}
 
@@ -320,6 +349,7 @@ abstract class Generator {
 					do_action( "easycommerce_fakerpress_after_generate_single_item_{$resource_type}", $item_result, $i );
 				} catch ( Exception $e ) {
 					$this->log( "Per-item exception: {$e->getMessage()}", 'error' );
+					$this->generation_errors[] = $e->getMessage();
 					continue;
 				}
 			}

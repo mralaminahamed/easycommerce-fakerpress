@@ -20,6 +20,8 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ### Fixed
 
+- A batch where every item failed reported success. Generation now returns the underlying reason instead of "0 items successfully created", and a partly successful batch reports how many items could not be created and why.
+
 - The transaction generator no longer produces the type `fee`, which is not in the `transactions.type` column and was discarded or rejected on write depending on SQL mode.
 - Product variations generated from the Products generator now populate their attribute rows. The payload used key names EasyCommerce does not read, so no variation attributes were ever stored.
 - Variations created by the Product Variations generator are assigned a sequential per-product price identifier instead of all sharing the default, which previously made order items resolve to an arbitrary variation.
