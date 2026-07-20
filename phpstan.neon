@@ -44,6 +44,15 @@ parameters:
         - EASYCOMMERCE_FAKERPRESS_PLUGIN_PATH
     # Ignore errors
     ignoreErrors:
+        # Locale-specific FakerPHP formatters. These are provided by the en_US
+        # Address provider at runtime and resolve through Generator::__call, but
+        # the analysed stub only models the base formatter set. Named one by one
+        # rather than matched by pattern, so a genuine typo in a faker call is
+        # still reported.
+        - '#Call to an undefined method Faker\\Generator::stateAbbr\(\)\.#'
+        - '#Call to an undefined method Faker\\Generator::state\(\)\.#'
+        - '#Call to an undefined method Faker\\Generator::secondaryAddress\(\)\.#'
+
         # WordPress functions that may not be defined during static analysis
         - '#Function wp_[a-zA-Z_]+ not found\.#'
         - '#Function is_plugin_active not found\.#'

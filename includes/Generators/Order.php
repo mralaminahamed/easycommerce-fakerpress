@@ -178,10 +178,10 @@ class Order extends Generator {
 		$order_meta  = $order_data['order_meta'];
 		$total       = $order_data['total'];
 
-		$product_tax   = isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0;
-		$shipping_fee  = ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
+		$product_tax  = isset( $order_meta['tax_details']['total'] ) ? $order_meta['tax_details']['total'] : 0;
+		$shipping_fee = ( isset( $order_meta['shipping_details']['cost'] ) ? $order_meta['shipping_details']['cost'] : 0 )
 			+ ( isset( $order_meta['shipping_details']['insurance'] ) ? $order_meta['shipping_details']['insurance'] : 0 );
-		$shipping_tax  = round( $shipping_fee * self::SHIPPING_TAX_RATE, 2 );
+		$shipping_tax = round( $shipping_fee * self::SHIPPING_TAX_RATE, 2 );
 
 		// Prepare complete meta data including all order details.
 		$complete_meta = array_merge(
@@ -192,25 +192,25 @@ class Order extends Generator {
 				// reads 'shipping_fee', and the order REST payload reads the two
 				// address keys. Without these the admin screen and the date-range
 				// reports render empty addresses and zero tax.
-				'billing_address'  => isset( $order_meta['addresses']['billing'] ) ? $order_meta['addresses']['billing'] : array(),
-				'shipping_address' => isset( $order_meta['addresses']['shipping'] ) ? $order_meta['addresses']['shipping'] : array(),
-				'tax'              => $product_tax,
-				'shipping_tax'     => $shipping_tax,
-				'shipping_fee'     => $shipping_fee,
-				'shipping_method'  => isset( $order_meta['shipping_details']['method'] ) ? $order_meta['shipping_details']['method'] : '',
+				'billing_address'       => isset( $order_meta['addresses']['billing'] ) ? $order_meta['addresses']['billing'] : array(),
+				'shipping_address'      => isset( $order_meta['addresses']['shipping'] ) ? $order_meta['addresses']['shipping'] : array(),
+				'tax'                   => $product_tax,
+				'shipping_tax'          => $shipping_tax,
+				'shipping_fee'          => $shipping_fee,
+				'shipping_method'       => isset( $order_meta['shipping_details']['method'] ) ? $order_meta['shipping_details']['method'] : '',
 				'shipping_method_label' => isset( $order_meta['shipping_details']['method'] )
 					? ucwords( str_replace( '_', ' ', $order_meta['shipping_details']['method'] ) )
 					: '',
 
 				// Order amounts stored in meta.
-				'subtotal'        => $subtotal,
-				'tax_amount'      => $product_tax,
-				'shipping_amount' => $shipping_fee,
-				'discount_amount' => isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0,
-				'currency'        => 'USD', // Default currency, can be made configurable.
+				'subtotal'              => $subtotal,
+				'tax_amount'            => $product_tax,
+				'shipping_amount'       => $shipping_fee,
+				'discount_amount'       => isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0,
+				'currency'              => 'USD', // Default currency, can be made configurable.
 
 				// Order notes.
-				'notes'           => ! empty( $order_meta['order_notes'] ) ? array(
+				'notes'                 => ! empty( $order_meta['order_notes'] ) ? array(
 					array(
 						'note'       => $order_meta['order_notes'],
 						'type'       => 'customer',
@@ -219,7 +219,7 @@ class Order extends Generator {
 				) : array(),
 
 				// Applied coupons.
-				'coupons'         => ! empty( $order_meta['coupon_details']['applied'] ) ? array_map(
+				'coupons'               => ! empty( $order_meta['coupon_details']['applied'] ) ? array_map(
 					function ( $coupon ) {
 						return array(
 							'code'            => isset( $coupon['code'] ) ? $coupon['code'] : '',
@@ -742,13 +742,16 @@ class Order extends Generator {
 		}
 
 		// Squaring a 0..1 random biases towards 0, i.e. towards today.
-		$fraction    = $this->get_faker()->randomFloat( 4, 0, 1 ) ** 2;
-		$days_back   = (int) round( $fraction * ( $days - 1 ) );
-		$hour        = (int) $this->get_faker()->numberBetween( 8, 21 );
-		$minute      = (int) $this->get_faker()->numberBetween( 0, 59 );
-		$second      = (int) $this->get_faker()->numberBetween( 0, 59 );
-		$timestamp   = strtotime( "-{$days_back} days", strtotime( $now ) );
-		$order_date  = gmdate( 'Y-m-d', $timestamp ) . sprintf( ' %02d:%02d:%02d', $hour, $minute, $second );
+		$fraction  = $this->get_faker()->randomFloat( 4, 0, 1 ) ** 2;
+		$days_back = (int) round( $fraction * ( $days - 1 ) );
+		$hour      = (int) $this->get_faker()->numberBetween( 8, 21 );
+		$minute    = (int) $this->get_faker()->numberBetween( 0, 59 );
+		$second    = (int) $this->get_faker()->numberBetween( 0, 59 );
+		// strtotime() returns int|false, so both calls are pinned to an int before
+		// being fed onwards; a false here would otherwise be coerced to 1970.
+		$base_time  = (int) strtotime( $now );
+		$timestamp  = (int) strtotime( "-{$days_back} days", $base_time );
+		$order_date = gmdate( 'Y-m-d', $timestamp ) . sprintf( ' %02d:%02d:%02d', $hour, $minute, $second );
 
 		$table = $this->wpdb->prefix . 'ec_orders';
 
@@ -791,7 +794,7 @@ class Order extends Generator {
 
 		$sample_data = $this->load_sample_data();
 		// Weights mirror the orders.status ENUM in EasyCommerce.
-		$statuses    = $sample_data['order_statuses'] ? $sample_data['order_statuses'] : array(
+		$statuses = $sample_data['order_statuses'] ? $sample_data['order_statuses'] : array(
 			'pending'            => 24,
 			'processing'         => 33,
 			'completed'          => 28,
