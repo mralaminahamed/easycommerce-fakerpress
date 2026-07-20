@@ -447,30 +447,30 @@ class Cart_Session extends Generator {
 	private function generate_cart_addresses(): array {
 		$addresses = array(
 			'billing' => array(
-				'first_name' => $this->get_faker()->firstName,
-				'last_name'  => $this->get_faker()->lastName,
-				'email'      => $this->get_faker()->email,
-				'phone'      => $this->get_faker()->phoneNumber,
-				'address_1'  => $this->get_faker()->streetAddress,
-				'address_2'  => $this->get_faker()->boolean( 30 ) ? $this->get_faker()->secondaryAddress : '',
-				'city'       => $this->get_faker()->city,
-				'state'      => $this->get_faker()->stateAbbr,
-				'postcode'   => $this->get_faker()->postcode,
-				'country'    => $this->get_faker()->countryCode,
+				'first_name' => $this->get_faker()->firstName(),
+				'last_name'  => $this->get_faker()->lastName(),
+				'email'      => $this->get_faker()->email(),
+				'phone'      => $this->get_faker()->phoneNumber(),
+				'address_1'  => $this->get_faker()->streetAddress(),
+				'address_2'  => $this->get_faker()->boolean( 30 ) ? $this->get_faker()->secondaryAddress() : '',
+				'city'       => $this->get_faker()->city(),
+				'state'      => $this->get_faker()->stateAbbr(),
+				'postcode'   => $this->get_faker()->postcode(),
+				'country'    => $this->get_faker()->countryCode(),
 			),
 		);
 
 		// 60% chance of different shipping address
 		if ( $this->get_faker()->boolean( 60 ) ) {
 			$addresses['shipping'] = array(
-				'first_name' => $this->get_faker()->firstName,
-				'last_name'  => $this->get_faker()->lastName,
-				'address_1'  => $this->get_faker()->streetAddress,
-				'address_2'  => $this->get_faker()->boolean( 30 ) ? $this->get_faker()->secondaryAddress : '',
-				'city'       => $this->get_faker()->city,
-				'state'      => $this->get_faker()->stateAbbr,
-				'postcode'   => $this->get_faker()->postcode,
-				'country'    => $this->get_faker()->countryCode,
+				'first_name' => $this->get_faker()->firstName(),
+				'last_name'  => $this->get_faker()->lastName(),
+				'address_1'  => $this->get_faker()->streetAddress(),
+				'address_2'  => $this->get_faker()->boolean( 30 ) ? $this->get_faker()->secondaryAddress() : '',
+				'city'       => $this->get_faker()->city(),
+				'state'      => $this->get_faker()->stateAbbr(),
+				'postcode'   => $this->get_faker()->postcode(),
+				'country'    => $this->get_faker()->countryCode(),
 			);
 		}
 

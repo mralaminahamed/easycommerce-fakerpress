@@ -223,7 +223,7 @@ class Product extends Generator {
 						)
 					),
 					'featured'        => $this->get_faker()->boolean( 25 ),
-					'seo_title'       => $product_title . ' | ' . $this->get_faker()->company,
+					'seo_title'       => $product_title . ' | ' . $this->get_faker()->company(),
 					'seo_description' => $this->get_faker()->sentence( 15, true ),
 					'seo_keywords'    => implode( ', ', (array) $this->get_faker()->words( 5 ) ),
 					'sku_prefix'      => strtoupper( $this->get_faker()->lexify( '???' ) ),
@@ -470,7 +470,7 @@ class Product extends Generator {
 			'Coding Tutorial Series',
 		) );
 
-		$brand_prefix = $this->get_faker()->randomElement( array( '', $this->get_faker()->company . ' ' ) );
+		$brand_prefix = $this->get_faker()->randomElement( array( '', $this->get_faker()->company() . ' ' ) );
 
 		return $brand_prefix . $this->get_faker()->randomElement( $adjectives ) . ' ' . $this->get_faker()->randomElement( $product_names );
 	}
@@ -1166,7 +1166,7 @@ class Product extends Generator {
 					$brand_name,
 					'product_brand',
 					array(
-						'description' => $this->get_faker()->company . ' - ' . $this->get_faker()->sentence( 8, true ),
+						'description' => $this->get_faker()->company() . ' - ' . $this->get_faker()->sentence( 8, true ),
 						'slug'        => sanitize_title( $brand_name ),
 					)
 				);

@@ -92,8 +92,8 @@ class Customer extends Generator {
 			return new WP_Error( 'missing_model', __( 'EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active.', 'easycommerce-fakerpress' ) );
 		}
 
-		$first_name = $this->get_faker()->firstName;
-		$last_name  = $this->get_faker()->lastName;
+		$first_name = $this->get_faker()->firstName();
+		$last_name  = $this->get_faker()->lastName();
 		$email      = $this->get_faker()->unique()->safeEmail;
 		$full_name  = $first_name . ' ' . $last_name;
 
@@ -293,9 +293,9 @@ class Customer extends Generator {
 		$tiers     = array( 'bronze', 'silver', 'gold', 'platinum' );
 		$countries = array( 'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'JP', 'IN' );
 
-		$first = $this->get_faker()->firstName;
-		$last  = $this->get_faker()->lastName;
-		$city  = $this->get_faker()->city;
+		$first = $this->get_faker()->firstName();
+		$last  = $this->get_faker()->lastName();
+		$city  = $this->get_faker()->city();
 		$cc    = $this->get_faker()->randomElement( $countries );
 
 		return array(
@@ -400,9 +400,9 @@ class Customer extends Generator {
 			'email'      => $email,
 			'phone'      => $this->generate_phone_number( $country ),
 			'company'    => $this->get_faker()->optional( 0.25 )->company,
-			'address_1'  => $this->get_faker()->streetAddress,
+			'address_1'  => $this->get_faker()->streetAddress(),
 			'address_2'  => $this->get_faker()->optional( 0.35 )->secondaryAddress,
-			'city'       => $this->get_faker()->city,
+			'city'       => $this->get_faker()->city(),
 			'state'      => $this->generate_state( $country ),
 			'country'    => $country,
 			'postcode'   => $this->generate_postcode( $country ),
@@ -436,9 +436,9 @@ class Customer extends Generator {
 			'first_name'   => $first_name,
 			'last_name'    => $last_name,
 			'company'      => $this->get_faker()->optional( 0.2 )->company,
-			'address_1'    => $this->get_faker()->streetAddress,
+			'address_1'    => $this->get_faker()->streetAddress(),
 			'address_2'    => $this->get_faker()->optional( 0.3 )->secondaryAddress,
-			'city'         => $this->get_faker()->city,
+			'city'         => $this->get_faker()->city(),
 			'state'        => $this->generate_state( $country ),
 			'country'      => $country,
 			'postcode'     => $this->generate_postcode( $country ),
@@ -476,7 +476,7 @@ class Customer extends Generator {
 					'currency'             => $this->get_faker()->randomElement(
 						$sample_data['currencies'] ? $sample_data['currencies'] : array( 'USD', 'CAD', 'GBP', 'AUD', 'EUR', 'JPY', 'INR', 'BRL', 'MXN' )
 					),
-					'timezone'             => $this->get_faker()->timezone,
+					'timezone'             => $this->get_faker()->timezone(),
 					'communication_method' => $this->get_faker()->randomElement( array( 'email', 'sms', 'both', 'none' ) ),
 					'preferred_categories' => $this->get_faker()->randomElements(
 						$sample_data['preferred_categories'] ? $sample_data['preferred_categories'] : array( 'Electronics', 'Fashion', 'Books', 'Home', 'Sports', 'Beauty' ),
@@ -607,7 +607,7 @@ class Customer extends Generator {
 
 		switch ( $country ) {
 			case 'US':
-				return $this->get_faker()->stateAbbr;
+				return $this->get_faker()->stateAbbr();
 			case 'CA':
 				$provinces = $states_provinces['CA'] ?? array( 'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT' );
 				return $this->get_faker()->randomElement( $provinces );
@@ -666,7 +666,7 @@ class Customer extends Generator {
 				);
 				return $this->get_faker()->randomElement( $states );
 			default:
-				return $this->get_faker()->state;
+				return $this->get_faker()->state();
 		}
 	}
 

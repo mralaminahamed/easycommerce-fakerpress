@@ -151,7 +151,7 @@ class Tax_Class extends Generator {
 		$tax_config = $tax_types[ $tax_type ];
 
 		return array(
-			'name'        => $tax_config['name'] . ' - ' . $this->get_faker()->city,
+			'name'        => $tax_config['name'] . ' - ' . $this->get_faker()->city(),
 			'description' => $tax_config['description'],
 			'status'      => $this->get_faker()->boolean( 90 ), // 90% chance of being active
 			'rates'       => $tax_config['rates'],

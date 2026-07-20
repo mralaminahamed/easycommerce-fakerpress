@@ -374,7 +374,7 @@ class Order extends Generator {
 				'kind' => 'mono',
 			),
 			'cust'   => array(
-				'v'    => $this->get_faker()->name,
+				'v'    => $this->get_faker()->name(),
 				'kind' => 'text',
 			),
 			'status' => array(
@@ -748,7 +748,7 @@ class Order extends Generator {
 		$details = array(
 			'method'           => $payment_method,
 			'status'           => $this->get_faker()->randomElement( array( 'completed', 'pending', 'failed', 'refunded' ) ),
-			'transaction_id'   => $this->get_faker()->uuid,
+			'transaction_id'   => $this->get_faker()->uuid(),
 			'payment_date'     => $this->get_faker()->dateTimeBetween( '-30 days', 'now' )->format( 'Y-m-d H:i:s' ),
 			'gateway_response' => $this->get_faker()->sentence(),
 		);
@@ -769,7 +769,7 @@ class Order extends Generator {
 				break;
 			case 'paypal':
 				$details['paypal_transaction_id'] = $this->get_faker()->regexify( '[A-Z0-9]{15}' );
-				$details['payer_email']           = $this->get_faker()->email;
+				$details['payer_email']           = $this->get_faker()->email();
 				break;
 			case 'bank_transfer':
 				$details['bank_reference'] = $this->get_faker()->regexify( '[A-Z0-9]{10}' );
@@ -970,8 +970,8 @@ class Order extends Generator {
 
 		return array(
 			'channel'      => $source,
-			'user_agent'   => $this->get_faker()->userAgent,
-			'ip_address'   => $this->get_faker()->ipv4,
+			'user_agent'   => $this->get_faker()->userAgent(),
+			'ip_address'   => $this->get_faker()->ipv4(),
 			'referrer'     => $this->get_faker()->optional( 0.4 )->url,
 			'utm_source'   => $this->get_faker()->optional( 0.3 )->randomElement(
 				array( 'google', 'facebook', 'email', 'direct' )
@@ -1089,13 +1089,13 @@ class Order extends Generator {
 		// Get states for the selected country.
 		$states     = Location::get_states( $country_code );
 		$state_data = $this->get_faker()->randomElement( $states );
-		$state_name = $state_data['name'] ?? $this->get_faker()->state;
-		$state_code = $state_data['state_code'] ?? $this->get_faker()->stateAbbr;
+		$state_name = $state_data['name'] ?? $this->get_faker()->state();
+		$state_code = $state_data['state_code'] ?? $this->get_faker()->stateAbbr();
 
 		// Get cities for the selected state.
 		$cities    = Location::get_cities( $country_code, $state_code );
 		$city_data = $this->get_faker()->randomElement( $cities );
-		$city_name = $city_data['name'] ?? $this->get_faker()->city;
+		$city_name = $city_data['name'] ?? $this->get_faker()->city();
 
 		// Get country details.
 		$country_data = array_filter( $countries, fn( $c ) => $c['iso2'] === $country_code );
@@ -1104,12 +1104,12 @@ class Order extends Generator {
 		$phone_code   = $country_info['phone_code'] ?? '+1';
 
 		return array(
-			'first_name'   => get_user_meta( $customer['id'], 'first_name', true ) ?? $this->get_faker()->firstName,
-			'last_name'    => get_user_meta( $customer['id'], 'last_name', true ) ?? $this->get_faker()->lastName,
+			'first_name'   => get_user_meta( $customer['id'], 'first_name', true ) ?? $this->get_faker()->firstName(),
+			'last_name'    => get_user_meta( $customer['id'], 'last_name', true ) ?? $this->get_faker()->lastName(),
 			'email'        => $customer['email'],
 			'phone'        => $phone_code . ' ' . $this->generate_phone_for_country( $country_code ),
 			'company'      => $this->get_faker()->optional( 0.3 )->company,
-			'address_1'    => $this->get_faker()->streetAddress,
+			'address_1'    => $this->get_faker()->streetAddress(),
 			'address_2'    => $this->get_faker()->optional( 0.3 )->secondaryAddress,
 			'city'         => $city_name,
 			'state'        => $state_name,
@@ -1314,17 +1314,17 @@ class Order extends Generator {
 	 */
 	private function generate_static_fallback_address( array $customer ): array {
 		return array(
-			'first_name' => get_user_meta( $customer['id'], 'first_name', true ) ?? $this->get_faker()->firstName,
-			'last_name'  => get_user_meta( $customer['id'], 'last_name', true ) ?? $this->get_faker()->lastName,
+			'first_name' => get_user_meta( $customer['id'], 'first_name', true ) ?? $this->get_faker()->firstName(),
+			'last_name'  => get_user_meta( $customer['id'], 'last_name', true ) ?? $this->get_faker()->lastName(),
 			'email'      => $customer['email'],
-			'phone'      => $this->get_faker()->phoneNumber,
+			'phone'      => $this->get_faker()->phoneNumber(),
 			'company'    => $this->get_faker()->optional( 0.3 )->company,
-			'address_1'  => $this->get_faker()->streetAddress,
+			'address_1'  => $this->get_faker()->streetAddress(),
 			'address_2'  => $this->get_faker()->optional( 0.3 )->secondaryAddress,
-			'city'       => $this->get_faker()->city,
-			'state'      => $this->get_faker()->stateAbbr,
+			'city'       => $this->get_faker()->city(),
+			'state'      => $this->get_faker()->stateAbbr(),
 			'country'    => 'US',
-			'postcode'   => $this->get_faker()->postcode,
+			'postcode'   => $this->get_faker()->postcode(),
 		);
 	}
 
@@ -1351,7 +1351,7 @@ class Order extends Generator {
 			case 'FR':
 				return $this->get_faker()->regexify( '[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}' );
 			default:
-				return $this->get_faker()->phoneNumber;
+				return $this->get_faker()->phoneNumber();
 		}
 	}
 
@@ -1378,7 +1378,7 @@ class Order extends Generator {
 			case 'FR':
 				return $this->get_faker()->regexify( '[0-9]{5}' );
 			default:
-				return $this->get_faker()->postcode;
+				return $this->get_faker()->postcode();
 		}
 	}
 }
