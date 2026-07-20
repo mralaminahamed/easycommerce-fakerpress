@@ -111,11 +111,16 @@
   --violet: oklch(0.58 0.20 300);
 
   /* derived accent helpers */
-  --accent-hover: color-mix(in oklch, var(--accent), black 12%);
-  --accent-soft: color-mix(in oklch, var(--accent) 12%, var(--surface));
-  --accent-soft-2: color-mix(in oklch, var(--accent) 20%, var(--surface));
-  --accent-line: color-mix(in oklch, var(--accent) 32%, var(--border));
-  --ring: color-mix(in oklch, var(--accent) 36%, transparent);
+  /* Mixed in oklab, not oklch. oklch carries an explicit hue channel, and white
+     and black have a hue of 0, so mixing the accent toward a neutral drags its
+     hue with it — indigo at hue 277 landed on hue 350 and every soft tint in the
+     admin came out pink. oklab is the same perceptual space expressed on
+     rectangular axes, so a mix toward a neutral keeps the accent's own hue. */
+  --accent-hover: color-mix(in oklab, var(--accent), black 12%);
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, var(--surface));
+  --accent-soft-2: color-mix(in oklab, var(--accent) 20%, var(--surface));
+  --accent-line: color-mix(in oklab, var(--accent) 32%, var(--border));
+  --ring: color-mix(in oklab, var(--accent) 36%, transparent);
 
   /* base app styles */
   background: var(--bg-2);
@@ -183,9 +188,9 @@ body:not(.admin-bar) .fp-root { --fp-admin-bar: 0px; }
   --sky: oklch(0.70 0.14 232);
   --violet: oklch(0.70 0.18 300);
 
-  --accent-soft: color-mix(in oklch, var(--accent) 22%, var(--surface));
-  --accent-soft-2: color-mix(in oklch, var(--accent) 34%, var(--surface));
-  --accent-hover: color-mix(in oklch, var(--accent), white 10%);
+  --accent-soft: color-mix(in oklab, var(--accent) 22%, var(--surface));
+  --accent-soft-2: color-mix(in oklab, var(--accent) 34%, var(--surface));
+  --accent-hover: color-mix(in oklab, var(--accent), white 10%);
 }
 
 /* ---- accent palettes ---- */
@@ -216,7 +221,7 @@ body:not(.admin-bar) .fp-root { --fp-admin-bar: 0px; }
 }
 
 /* ---- selection ---- */
-.fp-root ::selection { background: color-mix(in oklch, var(--accent) 28%, transparent); }
+.fp-root ::selection { background: color-mix(in oklab, var(--accent) 28%, transparent); }
 
 /* ---- keyframes (global — fine for @keyframes) ---- */
 @keyframes fp-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
