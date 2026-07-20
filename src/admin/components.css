@@ -230,9 +230,14 @@
 
 /* ===== generator page ===== */
 .fp-root .fp-gen-main { flex:1; min-height:0; display:flex; flex-direction:column; }
-.fp-root .fp-gen-body { flex:1; overflow-y:auto; }
-.fp-root .fp-gen-wrap { display:grid; grid-template-columns:minmax(420px,460px) 1fr; gap:0; min-height:100%; }
-.fp-root .fp-config-col { padding:26px 30px 40px; border-right:1px solid var(--border); }
+/* The generator page does not scroll as a whole: the config and preview columns
+   each scroll on their own, so the preview stays put while the form is scrolled.
+   That requires this container to clip rather than scroll. */
+.fp-root .fp-gen-body { flex:1; min-height:0; overflow:hidden; }
+/* height (not min-height) so a long config form cannot stretch the row and drag
+   the preview card past the viewport. */
+.fp-root .fp-gen-wrap { display:grid; grid-template-columns:minmax(420px,460px) 1fr; gap:0; height:100%; min-height:0; }
+.fp-root .fp-config-col { padding:26px 30px 40px; border-right:1px solid var(--border); min-height:0; overflow-y:auto; }
 .fp-root .fp-config-head { display:flex; gap:14px; margin-bottom:8px; }
 .fp-root .fp-config-ic { width:44px; height:44px; border-radius:12px; flex-shrink:0; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent); }
 .fp-root .fp-config-title { font-size:20px; font-weight:660; letter-spacing:-.02em; }
@@ -291,7 +296,15 @@
 .fp-root .fp-progress-fill { height:100%; background:var(--accent); border-radius:999px; }
 .fp-root .fp-spinner { width:30px; height:30px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--accent); animation:fp-spin .8s linear infinite; }
 
-@media (max-width:1080px){ .fp-root .fp-gen-wrap{ grid-template-columns:1fr; } .fp-root .fp-config-col{ border-right:none; border-bottom:1px solid var(--border);} }
+/* Stacked layout: two independent scroll panes no longer make sense once the
+   columns are on top of each other, so hand scrolling back to the page and let
+   both columns size to their content. */
+@media (max-width:1080px){
+  .fp-root .fp-gen-body{ overflow-y:auto; }
+  .fp-root .fp-gen-wrap{ grid-template-columns:1fr; height:auto; min-height:100%; }
+  .fp-root .fp-config-col{ border-right:none; border-bottom:1px solid var(--border); overflow-y:visible; }
+  .fp-root .fp-preview-col{ min-height:440px; }
+}
 
 /* ===== settings ===== */
 .fp-root .fp-settings-col { max-width:680px; }
