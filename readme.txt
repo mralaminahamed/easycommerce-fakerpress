@@ -133,13 +133,13 @@ In your browser's localStorage, not your database. Clearing it has no effect on 
 
 == Screenshots ==
 
-1. Dashboard: Stat cards with sparklines, a recent-activity feed, and a generator grid grouped by category — all driven by real run history.
+1. Dashboard: Stat cards with sparklines, a recent-activity feed, and every generator grouped by category. The stats and the feed fill in from your own run history.
 2. Generator page: Two-column layout with schema-driven config controls on the left and a live preview table on the right, plus a sticky run bar.
 3. Live preview: Real faker sample rows that refresh as you change settings, with a Shuffle button to re-roll the seed (no data is persisted).
 4. Command palette: Press Cmd/Ctrl+K to quick-jump to any generator or page.
 5. Batch queue: Queue multiple generators and run them sequentially from the batch tray with live progress.
 6. Tweaks panel: Switch theme (light/dark), accent palette, and density — applied live and persisted.
-7. Dark mode: The full admin in dark theme, scoped to the plugin so WordPress chrome stays untouched.
+7. Dark mode: The same admin in the dark theme. Theme, accent colour and density are scoped to the plugin, so the rest of WordPress is left alone.
 8. Settings page: Generation defaults, run-history limit, sample-data sync status, About card, and Danger Zone on the new card system.
 9. Our Plugins page: Live WordPress.org plugin cards with ratings, active-install counts, and direct links.
 10. Product Reviews Generator: Target a specific product by ID, configure count, locale, seed, and metadata options.
