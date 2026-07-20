@@ -89,7 +89,7 @@ Privacy Policy: https://wordpress.org/about/privacy/
 
 The minified JavaScript and CSS in `build/` is compiled from the TypeScript and CSS sources in `src/`, which are not included in the distributed plugin package. The complete, human-readable source is public:
 
-https://github.com/mralaminahamed/easycommerce-fakerpress
+[github.com/mralaminahamed/easycommerce-fakerpress](https://github.com/mralaminahamed/easycommerce-fakerpress)
 
 Build steps:
 
@@ -117,7 +117,7 @@ Build tooling: webpack (via @wordpress/scripts), TypeScript, and Tailwind CSS. C
 = Requirements =
 * WordPress 6.6+
 * PHP 7.4+ (8.0+ recommended)
-* EasyCommerce plugin (must be active)
+* [EasyCommerce](https://wordpress.org/plugins/easycommerce/) (must be installed and active)
 * 256MB memory minimum (512MB recommended for large datasets)
 
 == Frequently Asked Questions ==
@@ -228,11 +228,13 @@ The plugin makes two outbound requests, both administrator-initiated and both ca
 
 **Contributing**
 
-Repository: https://github.com/mralaminahamed/easycommerce-fakerpress
+Development happens on [GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress). Report bugs and request features on the [issue tracker](https://github.com/mralaminahamed/easycommerce-fakerpress/issues), and read the [contributing guide](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CONTRIBUTING.md) before opening a pull request — it covers local setup, coding standards, and the checks that run on every change.
 
-Report issues and request features via GitHub Issues. Pull requests welcome — follow WordPress Coding Standards and PSR-4, and include tests.
+Found a security issue? Please follow the [security policy](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/SECURITY.md) and report it privately rather than in a public issue.
 
 **Support**
 
-WordPress.org support forums and GitHub Issues. Documentation is included in the plugin README and GitHub repository.
+* [WordPress.org support forum](https://wordpress.org/support/plugin/easycommerce-fakerpress/) — questions and help with using the plugin
+* [GitHub issue tracker](https://github.com/mralaminahamed/easycommerce-fakerpress/issues) — bug reports and feature requests
+* [Full changelog](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CHANGELOG.md) — the complete version history
 
