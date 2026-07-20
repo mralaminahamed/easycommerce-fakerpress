@@ -15,13 +15,16 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ### Changed
 
+- **Breaking:** The minimum WordPress version is now 6.6, corrected from 5.0. The admin app depends on the `react-jsx-runtime` script handle that core registers in 6.6, and the `Requires Plugins` header needs 6.5, so the old floor was never accurate — the plugin could not run on it.
 - New brand mark: a shopping bag holding rows of generated data, replacing the sparkle. Applied to the WordPress.org icon and banners, the admin menu icon, the sidebar, and the logo lockup.
 - The live preview now shows up to 25 rows instead of 12, matching what the preview endpoint already returns.
 
 ### Fixed
 
 - A batch where every item failed reported success. Generation now returns the underlying reason instead of "0 items successfully created", and a partly successful batch reports how many items could not be created and why.
-
+- Right-to-left admin languages now get the right-to-left stylesheet, which was built on every release but never loaded.
+- The development ESLint config and the build-time font sources no longer ship in the plugin package.
+- The WordPress Playground demo no longer advertises a version that was never released, and its setup step no longer emits a PHP warning.
 - The transaction generator no longer produces the type `fee`, which is not in the `transactions.type` column and was discarded or rejected on write depending on SQL mode.
 - Product variations generated from the Products generator now populate their attribute rows. The payload used key names EasyCommerce does not read, so no variation attributes were ever stored.
 - Variations created by the Product Variations generator are assigned a sequential per-product price identifier instead of all sharing the default, which previously made order items resolve to an arbitrary variation.

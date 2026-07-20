@@ -14,6 +14,12 @@
 # Compiled output lives in build/ which ships; raw source does not.
 /src/
 
+# Build-time font sources. Only src/styles.css imports these, and webpack
+# emits its own hashed copies into build/fonts/, which is what build/app.css
+# resolves. Shipping them too duplicated ~356 KB for nothing.
+# assets/brand/ is NOT excluded — it is read at runtime for the menu icon.
+/assets/fonts/
+
 # ── Documentation (GitHub-only) ───────────────────────────────
 # readme.txt is the canonical WP.org doc; .md files are for GitHub.
 *.md
@@ -29,7 +35,7 @@ yarn.lock
 webpack.config.js
 postcss.config.js
 tsconfig.json
-.eslintrc.js
+eslint.config.mjs
 .eslintcache
 .stylelintrc.js
 .stylelintcache

@@ -3,7 +3,7 @@
   "landingPage": "/wp-admin/admin.php?page=easycommerce-fakerpress",
   "preferredVersions": {
     "php": "8.3",
-    "wp": "6.8"
+    "wp": "6.9"
   },
   "phpExtensionBundles": [
     "kitchen-sink"
@@ -41,7 +41,7 @@
       "step": "setSiteOptions",
       "options": {
         "blogname": "EasyCommerce FakerPress Demo",
-        "blogdescription": "Experience the power of realistic ecommerce data generation with v2.1.1 enhancements",
+        "blogdescription": "Experience the power of realistic ecommerce data generation",
         "admin_email": "demo@example.com",
         "start_of_week": "1",
         "use_balanceTags": "0",
@@ -93,12 +93,12 @@
     },
     {
       "step": "runPHP",
-      "code": "<?php\n// Add welcome notice and helpful tips\nupdate_option('easycommerce_fakerpress_demo_notice', [\n    'type' => 'info',\n    'message' => 'Welcome to EasyCommerce FakerPress Demo v2.1.1! This environment is pre-configured with EasyCommerce plugin and sample data structures. Visit the FakerPress admin page to start generating realistic ecommerce data, including enhanced shipping plans with quantity-based calculations and improved regional coverage.',\n    'dismissible' => true\n]);\n\n// Set up demo-friendly admin settings\nupdate_option('show_on_front', 'posts');\nupdate_option('posts_per_page', 10);\nupdate_option('default_comment_status', 'open');\nupdate_option('default_ping_status', 'open');\n\n// Create a sample menu\n$menu_id = wp_create_nav_menu('Main Menu');\nif (!is_wp_error($menu_id) && $menu_id) {\n    // Add pages to menu\n    $pages = ['shop', 'cart', 'checkout', 'my-account'];\n    $menu_order = 1;\n    \n    foreach ($pages as $page_slug) {\n        $page = get_page_by_path($page_slug);\n        if ($page) {\n            wp_update_nav_menu_item($menu_id, 0, [\n                'menu-item-title' => $page->post_title,\n                'menu-item-object' => 'page',\n                'menu-item-object-id' => $page->ID,\n                'menu-item-type' => 'post_type',\n                'menu-item-status' => 'publish',\n                'menu-item-position' => $menu_order++\n            ]);\n        }\n    }\n    \n    // Assign menu to primary location\n    $locations = get_theme_mod('nav_menu_locations', []);\n    $locations['primary'] = $menu_id;\n    set_theme_mod('nav_menu_locations', $locations);\n}\n\n// Generate sample shipping plans using FakerPress if available\ndefine('ABSPATH', true); // Ensure WP is loaded\nif (class_exists('EasyCommerceFakerPress\\Generators\\Shipping_Plan')) {\n    require_once ABSPATH . 'wp-content/plugins/easycommerce-fakerpress/includes/Abstracts/Generator.php';\n    $generator = new EasyCommerceFakerPress\\Generators\\Shipping_Plan();\n    $results = $generator->generate_multiple(3, []);\n    if (!empty($results)) {\n        update_option('easycommerce_fakerpress_sample_shipping_plans', $results);\n        echo 'Sample shipping plans generated! ';\n    }\n}\n\necho 'Demo environment fully configured! Ready for EasyCommerce FakerPress testing.';"
+      "code": "<?php\n// Add welcome notice and helpful tips\nupdate_option('easycommerce_fakerpress_demo_notice', [\n    'type' => 'info',\n    'message' => 'Welcome to EasyCommerce FakerPress Demo! This environment is pre-configured with EasyCommerce plugin and sample data structures. Visit the FakerPress admin page to start generating realistic ecommerce data, including enhanced shipping plans with quantity-based calculations and improved regional coverage.',\n    'dismissible' => true\n]);\n\n// Set up demo-friendly admin settings\nupdate_option('show_on_front', 'posts');\nupdate_option('posts_per_page', 10);\nupdate_option('default_comment_status', 'open');\nupdate_option('default_ping_status', 'open');\n\n// Create a sample menu\n$menu_id = wp_create_nav_menu('Main Menu');\nif (!is_wp_error($menu_id) && $menu_id) {\n    // Add pages to menu\n    $pages = ['shop', 'cart', 'checkout', 'my-account'];\n    $menu_order = 1;\n    \n    foreach ($pages as $page_slug) {\n        $page = get_page_by_path($page_slug);\n        if ($page) {\n            wp_update_nav_menu_item($menu_id, 0, [\n                'menu-item-title' => $page->post_title,\n                'menu-item-object' => 'page',\n                'menu-item-object-id' => $page->ID,\n                'menu-item-type' => 'post_type',\n                'menu-item-status' => 'publish',\n                'menu-item-position' => $menu_order++\n            ]);\n        }\n    }\n    \n    // Assign menu to primary location\n    $locations = get_theme_mod('nav_menu_locations', []);\n    $locations['primary'] = $menu_id;\n    set_theme_mod('nav_menu_locations', $locations);\n}\n\n// Generate sample shipping plans using FakerPress if available\nif (class_exists('EasyCommerceFakerPress\\Generators\\Shipping_Plan')) {\n    $generator = new EasyCommerceFakerPress\\Generators\\Shipping_Plan();\n    $results = $generator->generate_multiple(3, []);\n    if (!empty($results)) {\n        update_option('easycommerce_fakerpress_sample_shipping_plans', $results);\n        echo 'Sample shipping plans generated! ';\n    }\n}\n\necho 'Demo environment fully configured! Ready for EasyCommerce FakerPress testing.';"
     }
   ],
   "meta": {
-    "title": "EasyCommerce FakerPress Demo v2.1.1",
-    "description": "Experience the comprehensive EasyCommerce FakerPress plugin with 10 specialized data generators, modern React interface, and realistic ecommerce data generation, featuring enhanced shipping plan capabilities.",
+    "title": "EasyCommerce FakerPress Demo",
+    "description": "Experience the comprehensive EasyCommerce FakerPress plugin with 14 specialized data generators, modern React interface, and realistic ecommerce data generation, featuring enhanced shipping plan capabilities.",
     "author": "Al Amin Ahamed",
     "categories": [
       "ecommerce",
