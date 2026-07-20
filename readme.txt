@@ -4,8 +4,9 @@ Tags: ecommerce, faker, data-generation, testing, development
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
+Requires Plugins: easycommerce
 Stable tag: 2.2.0
-License: GPL v2 or later
+License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Generate realistic EasyCommerce test data with 14 generators, modern SaaS UI, run history, settings, and sample data sync from GitHub.
@@ -57,6 +58,46 @@ The plugin exposes a full hook system for developers:
 * `easycommerce_fakerpress_rest_response` — Filter REST API responses
 
 **Important**: Use only in development or staging environments. Back up your database before generating large datasets.
+
+== External services ==
+
+This plugin connects to two external services. Neither is contacted on activation, and no personal or store data is ever transmitted.
+
+**1. GitHub — sample data repository**
+
+The Settings page offers an optional "Sample Data Sync" action that downloads locale-specific reference data (product names, addresses, customer tags for 75+ locales) used to make generated content more realistic.
+
+Service: GitHub
+Endpoint: https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip
+When data is sent: Only when an administrator clicks "Sync Sample Data" on the plugin Settings page, or when a generator requires sample data that has not been downloaded yet.
+Data sent: An unauthenticated HTTP GET request. No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
+Terms of Service: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
+Privacy Policy: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
+
+**2. WordPress.org — plugin directory API**
+
+The "Our Plugins" admin page lists the plugin author's other WordPress.org plugins with live ratings and install counts.
+
+Service: WordPress.org Plugin Directory API
+Endpoint: https://api.wordpress.org/plugins/info/1.2/
+When data is sent: Only when an administrator opens the "Our Plugins" page in the plugin admin. The request is made by the browser.
+Data sent: A query for plugins by the author "mralaminahamed". No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
+Terms of Service: https://wordpress.org/about/
+Privacy Policy: https://wordpress.org/about/privacy/
+
+== Source code ==
+
+The minified JavaScript and CSS in `build/` is compiled from the TypeScript and CSS sources in `src/`, which are not included in the distributed plugin package. The complete, human-readable source is public:
+
+https://github.com/mralaminahamed/easycommerce-fakerpress
+
+Build steps:
+
+`composer install`
+`yarn install`
+`yarn build`
+
+Build tooling: webpack (via @wordpress/scripts), TypeScript, and Tailwind CSS. Configuration files (`webpack.config.js`, `tsconfig.json`, `postcss.config.js`) are in the repository root.
 
 == Installation ==
 
@@ -193,6 +234,9 @@ Run history is stored in browser localStorage. It does not affect your database.
 
 == Upgrade Notice ==
 
+= 2.2.0 =
+Complete admin UI redesign with a new design-token system, dashboard, live preview, command palette, batch queue, and dark mode. No database migrations required. REST API, generator parameters, and custom hooks are unchanged.
+
 = 2.1.0 =
 Major feature release. Complete admin UI redesign, 3 new generators, Settings page, sample data sync, Our Plugins page, and Playwright e2e suite. No database migrations required. REST API and custom hooks are unchanged.
 
@@ -203,7 +247,9 @@ Breaking change: parameter schemas updated for all generators. Review custom RES
 
 **Privacy**
 
-All data is stored in your WordPress database. No external transmissions occur. Generated content is fictional and does not represent real individuals or transactions.
+All generated data is stored in your own WordPress database and is never transmitted anywhere. Generated content is fictional and does not represent real individuals or transactions. The plugin does not collect analytics, does not phone home, and does not send any site, user, or store data to a third party.
+
+The plugin makes two outbound requests, both administrator-initiated and both carrying no site data — see the "External services" section above for the full disclosure.
 
 **Contributing**
 
