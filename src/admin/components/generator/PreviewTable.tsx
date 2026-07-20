@@ -21,6 +21,15 @@ interface PreviewTableProps {
   shuffleN: number;
 }
 
+/**
+ * Most rows the preview will render.
+ *
+ * Matches the server-side ceiling in Generator::preview(), which clamps to 25.
+ * Asking for more would render fewer rows than the footer claims, so raising
+ * this means raising that too.
+ */
+const MAX_PREVIEW_ROWS = 25;
+
 const KIND_CLASS: Record<string, string> = {
   mono: "cell-mono",
   money: "cell-money",
@@ -64,7 +73,7 @@ export function PreviewTable({
   locale,
   shuffleN,
 }: PreviewTableProps) {
-  const visible = Math.min(count, 12);
+  const visible = Math.min(count, MAX_PREVIEW_ROWS);
 
   const [columns, setColumns] = useState<PreviewColumn[]>([]);
   const [rows, setRows] = useState<Record<string, PreviewCell>[]>([]);
