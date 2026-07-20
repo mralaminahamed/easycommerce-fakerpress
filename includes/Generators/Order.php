@@ -126,7 +126,11 @@ class Order extends Generator {
 
 		// Get the customer billing address early for tax calculation.
 		$customer_model  = new CustomerModel( $customer['id'] );
-		$billing_address = ! empty( $customer_model->get_billing_address() ) ? $customer_model->get_billing_address() : $this->generate_fallback_address( $customer );
+		$billing_address = $this->normalize_address( $customer_model->get_billing_address() );
+
+		if ( empty( $billing_address ) ) {
+			$billing_address = $this->generate_fallback_address( $customer );
+		}
 
 		// Convert variations to order items format required by EasyCommerce.
 		$order_items = $this->convert_variations_to_items( $variations, $billing_address );
@@ -248,6 +252,8 @@ class Order extends Generator {
 			return new WP_Error( 'order_creation_failed', __( 'Failed to create order using EasyCommerce model.', 'easycommerce-fakerpress' ) );
 		}
 
+		$order_date = $this->backdate_order( (int) $order->get_id() );
+
 		// Update customer statistics.
 		$this->update_customer_stats( $customer['id'], $total );
 
@@ -264,7 +270,7 @@ class Order extends Generator {
 			'discount_amount'  => isset( $order_meta['coupon_details']['discount'] ) ? $order_meta['coupon_details']['discount'] : 0,
 			'currency'         => 'USD',
 			'payment_method'   => isset( $order_meta['payment_details']['method'] ) ? $order_meta['payment_details']['method'] : '',
-			'order_date'       => current_time( 'Y-m-d H:i:s' ),
+			'order_date'       => $order_date,
 			'items'            => $this->format_order_items_for_result( $order_items ),
 			'billing_address'  => isset( $order_meta['addresses']['billing'] ) ? $order_meta['addresses']['billing'] : array(),
 			'shipping_address' => isset( $order_meta['addresses']['shipping'] ) ? $order_meta['addresses']['shipping'] : array(),
@@ -635,7 +641,11 @@ class Order extends Generator {
 	 */
 	private function generate_order_meta( array $customer, float $subtotal, array $billing_address ): array {
 		$customer_model   = new CustomerModel( $customer['id'] );
-		$shipping_address = ! empty( $customer_model->get_shipping_address() ) ? $customer_model->get_shipping_address() : $billing_address;
+		$shipping_address = $this->normalize_address( $customer_model->get_shipping_address() );
+
+		if ( empty( $shipping_address ) ) {
+			$shipping_address = $billing_address;
+		}
 
 		return array(
 			'addresses'        => array(
@@ -663,6 +673,104 @@ class Order extends Generator {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Coerce a stored address into an array.
+	 *
+	 * Customer addresses come back through EasyCommerce's get_meta(), which
+	 * returns whatever get_user_meta() unserialises — and a customer whose
+	 * address was saved at checkout gets a stdClass, not an array. Both
+	 * convert_variations_to_items() and generate_order_meta() declare `array`
+	 * parameters, so passing that object straight through raised an uncaught
+	 * TypeError and no order could be generated at all for such a customer.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param mixed $address Address value as stored, of any shape.
+	 *
+	 * @return array<string, mixed> The address as an array, empty if unusable.
+	 */
+	private function normalize_address( $address ): array {
+		if ( is_object( $address ) ) {
+			$address = (array) $address;
+		}
+
+		if ( ! is_array( $address ) ) {
+			return array();
+		}
+
+		foreach ( $address as $key => $value ) {
+			if ( is_object( $value ) ) {
+				$address[ $key ] = (array) $value;
+			}
+		}
+
+		return $address;
+	}
+
+	/**
+	 * Spread the order back over time.
+	 *
+	 * EasyCommerce's Order::create() stamps created_at with current_time() and
+	 * takes no date argument, so every generated order lands on the day it was
+	 * generated. Every report in the admin is date-range driven, which turned a
+	 * whole generated catalogue into a single spike and made the reports
+	 * impossible to exercise. The only way to place an order in the past is to
+	 * correct the row after the insert.
+	 *
+	 * Dates are weighted towards the recent end, which is what a growing store
+	 * looks like, and the time of day is business-hours biased rather than
+	 * uniform across midnight.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param int $order_id Order ID to backdate.
+	 *
+	 * @return string The applied date in 'Y-m-d H:i:s', or the current time if
+	 *                backdating was disabled or the update failed.
+	 */
+	private function backdate_order( int $order_id ): string {
+		$now  = current_time( 'Y-m-d H:i:s' );
+		$days = isset( $this->generation_params['date_range_days'] )
+			? (int) $this->generation_params['date_range_days']
+			: 90;
+
+		// 0 keeps the model's own timestamp, for callers who want "all today".
+		if ( $days < 1 || $order_id < 1 ) {
+			return $now;
+		}
+
+		// Squaring a 0..1 random biases towards 0, i.e. towards today.
+		$fraction    = $this->get_faker()->randomFloat( 4, 0, 1 ) ** 2;
+		$days_back   = (int) round( $fraction * ( $days - 1 ) );
+		$hour        = (int) $this->get_faker()->numberBetween( 8, 21 );
+		$minute      = (int) $this->get_faker()->numberBetween( 0, 59 );
+		$second      = (int) $this->get_faker()->numberBetween( 0, 59 );
+		$timestamp   = strtotime( "-{$days_back} days", strtotime( $now ) );
+		$order_date  = gmdate( 'Y-m-d', $timestamp ) . sprintf( ' %02d:%02d:%02d', $hour, $minute, $second );
+
+		$table = $this->wpdb->prefix . 'ec_orders';
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$updated = $this->wpdb->update(
+			$table,
+			array(
+				'created_at' => $order_date,
+				'updated_at' => $order_date,
+			),
+			array( 'id' => $order_id ),
+			array( '%s', '%s' ),
+			array( '%d' )
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		if ( false === $updated ) {
+			$this->log( "Could not backdate order {$order_id}; it keeps today's date.", 'warning' );
+			return $now;
+		}
+
+		return $order_date;
 	}
 
 	/**

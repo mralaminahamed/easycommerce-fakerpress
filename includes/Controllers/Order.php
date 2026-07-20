@@ -75,6 +75,14 @@ class Order extends Controller {
 	 */
 	protected function get_resource_specific_params(): array {
 		return array(
+			'date_range_days'           => array(
+				'description'       => __( 'Spread order dates over this many days back from today. 0 dates every order today.', 'easycommerce-fakerpress' ),
+				'type'              => 'integer',
+				'minimum'           => 0,
+				'maximum'           => 1825,
+				'default'           => 90,
+				'sanitize_callback' => 'absint',
+			),
 			'order_status'              => array(
 				'description'       => __( 'Order status distribution.', 'easycommerce-fakerpress' ),
 				'type'              => 'string',
