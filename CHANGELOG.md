@@ -8,6 +8,8 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-07-20
+
 ### Added
 
 - Order statuses `failed` and `partially_refunded`, and the cart status `payment_initiated`, all of which EasyCommerce added to its column definitions after the last sync.
@@ -18,6 +20,8 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 - **Breaking:** The minimum WordPress version is now 6.6, corrected from 5.0. The admin app depends on the `react-jsx-runtime` script handle that core registers in 6.6, and the `Requires Plugins` header needs 6.5, so the old floor was never accurate — the plugin could not run on it.
 - New brand mark: a shopping bag holding rows of generated data, replacing the sparkle. Applied to the WordPress.org icon and banners, the admin menu icon, the sidebar, and the logo lockup.
 - The live preview now shows up to 25 rows instead of 12, matching what the preview endpoint already returns.
+- Compatibility declared with WordPress 7.0.
+- JavaScript dependencies updated, including a move to yarn 4.17.
 
 ### Fixed
 
@@ -33,6 +37,11 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 - Attributes created during variation generation use a type EasyCommerce recognises, so they render correctly in the attribute editor.
 - Shipping tiers with no upper bound are stored as unlimited rather than as a large sentinel amount.
 - The cart status distribution parameter now rejects unknown statuses instead of passing them through to the database.
+- Order generation no longer fails outright for customers whose address was saved at checkout. The stored address came back as an object where an array was expected, and because the resulting error was not an exception the whole batch stopped rather than skipping one item.
+- Generated orders are spread over time instead of all landing on the day they were generated, so the date-range reports in the EasyCommerce admin have something to show. A new date range setting controls the window.
+- Headings inside the plugin follow the active theme instead of staying dark, which left page titles unreadable in dark mode.
+- The generators no longer use FakerPHP's deprecated property access, which emitted a deprecation notice for every generated field.
+- The preview pane is bounded by the window rather than stretched by the settings column, and the preview table scrolls within its own card.
 
 ## [2.2.0] - 2026-06-11
 
@@ -208,7 +217,8 @@ No release tag exists for this version, so it has no comparison link.
 - React 18 interface with real-time feedback.
 - PSR-4 architecture with native EasyCommerce model integration.
 
-[Unreleased]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.0.3...v2.0.4
