@@ -13,6 +13,10 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 - Order statuses `failed` and `partially_refunded`, and the cart status `payment_initiated`, all of which EasyCommerce added to its column definitions after the last sync.
 - Generated orders now carry the `billing_address`, `shipping_address`, `tax`, `shipping_tax`, `shipping_fee`, `shipping_method`, and `shipping_method_label` meta that EasyCommerce reads, so orders render complete in the admin and in the date-range reports.
 
+### Changed
+
+- The live preview now shows up to 25 rows instead of 12, matching what the preview endpoint already returns.
+
 ### Fixed
 
 - The transaction generator no longer produces the type `fee`, which is not in the `transactions.type` column and was discarded or rejected on write depending on SQL mode.
