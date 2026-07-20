@@ -14,6 +14,7 @@
  * Version:           2.2.0
  * Requires at least: 5.0
  * Requires PHP:      7.4
+ * Requires Plugins:  easycommerce
  * Author:            Al Amin Ahamed
  * Author URI:        https://github.com/mralaminahamed/
  * Text Domain:       easycommerce-fakerpress
