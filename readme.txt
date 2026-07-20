@@ -196,22 +196,22 @@ This plugin connects to two external services. Neither is contacted on activatio
 The Settings page offers an optional "Sample Data Sync" action that downloads locale-specific reference data (product names, addresses, customer tags for 75+ locales) used to make generated content more realistic.
 
 Service: GitHub
-Endpoint: https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip
+Endpoint: [https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip](https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip)
 When data is sent: Only when an administrator clicks "Sync Sample Data" on the plugin Settings page, or when a generator requires sample data that has not been downloaded yet.
 Data sent: An unauthenticated HTTP GET request. No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
-Terms of Service: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
-Privacy Policy: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
+Terms of Service: [https://docs.github.com/en/site-policy/github-terms/github-terms-of-service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service)
+Privacy Policy: [https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
 
 **2. WordPress.org — plugin directory API**
 
 The "Our Plugins" admin page lists the plugin author's other WordPress.org plugins with live ratings and install counts.
 
 Service: WordPress.org Plugin Directory API
-Endpoint: https://api.wordpress.org/plugins/info/1.2/
+Endpoint: [https://api.wordpress.org/plugins/info/1.2/](https://api.wordpress.org/plugins/info/1.2/)
 When data is sent: Only when an administrator opens the "Our Plugins" page in the plugin admin. The request is made by the browser.
 Data sent: A query for plugins by the author "mralaminahamed". No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
-Terms of Service: https://wordpress.org/about/
-Privacy Policy: https://wordpress.org/about/privacy/
+Terms of Service: [https://wordpress.org/about/](https://wordpress.org/about/)
+Privacy Policy: [https://wordpress.org/about/privacy/](https://wordpress.org/about/privacy/)
 
 == Source code ==
 
