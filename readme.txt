@@ -1,7 +1,7 @@
 === EasyCommerce FakerPress ===
 Contributors: mralaminahamed
 Tags: ecommerce, faker, data-generation, testing, development
-Requires at least: 5.0
+Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 7.4
 Requires Plugins: easycommerce
@@ -115,7 +115,7 @@ Build tooling: webpack (via @wordpress/scripts), TypeScript, and Tailwind CSS. C
 5. Access via the EC FakerPress menu.
 
 = Requirements =
-* WordPress 5.0+
+* WordPress 6.6+
 * PHP 7.4+ (8.0+ recommended)
 * EasyCommerce plugin (must be active)
 * 256MB memory minimum (512MB recommended for large datasets)

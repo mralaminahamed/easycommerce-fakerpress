@@ -341,6 +341,10 @@ class EasyCommerce_FakerPress {
 			$version
 		);
 
+		// The build already emits build/app-rtl.css; without this WordPress never
+		// swaps to it and right-to-left admins get the left-to-right sheet.
+		wp_style_add_data( 'easycommerce-fakerpress-admin', 'rtl', 'replace' );
+
 		// Add CSS variables for admin colors.
 		$css_vars = sprintf(
 			':root { --wp-admin-primary: %s; --wp-admin-secondary: %s; --wp-admin-highlight: %s; --wp-admin-accent: %s; }',
