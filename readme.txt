@@ -5,7 +5,7 @@ Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: easycommerce
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -149,6 +149,18 @@ In your browser's localStorage, not your database. Clearing it has no effect on 
 
 The four most recent releases are listed below. For the complete version history, see the [full changelog on GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CHANGELOG.md).
 
+= 2.3.0 - July 20, 2026 =
+* Order generation no longer fails for customers whose address was saved at checkout — a stored address came back in a shape the generator rejected, and the whole batch stopped instead of skipping one item
+* Generated orders are now spread over a configurable date range instead of all landing on today, so the EasyCommerce date-range reports have data to show
+* Generated orders carry the address, tax and shipping meta EasyCommerce reads, so they render complete in the admin
+* Aligned generated statuses, attributes, tax classes, coupon rules and shipping tiers with the current EasyCommerce database schema
+* A run where every item failed now reports why, instead of claiming success with zero items created
+* Headings follow the active theme, fixing unreadable page titles in dark mode
+* Live preview shows up to 25 rows and scrolls within its own card
+* New brand mark, refreshed WordPress.org icon and banners
+* Minimum WordPress version corrected to 6.6, and compatibility declared with WordPress 7.0
+* Removed a deprecation notice raised for every generated field
+
 = 2.2.0 - June 11, 2026 =
 * Complete admin UI redesign on a new design-token system — light/dark themes, 5 accent palettes, and comfortable/compact density, all scoped so WordPress chrome is never restyled
 * New dashboard with stat cards, sparklines and a recent-activity feed driven by real run history
@@ -170,13 +182,10 @@ The four most recent releases are listed below. For the complete version history
 * Build output renamed from index to app, with the asset path updated to match
 * Dependencies updated, including PHPStan 2.1.40
 
-= 2.0.3 - January 14, 2026 =
-* New Product Review generator with weighted ratings and verified-purchase support
-* WordPress comments integration for review storage
-* Order generator data structure corrected to match the EasyCommerce Order model
-* Controller pattern and API schema consistency improvements
-
 == Upgrade Notice ==
+
+= 2.3.0 =
+Fixes order generation failing for customers with a saved address, and spreads generated orders over a date range so the EasyCommerce reports show data. Generators realigned with the current EasyCommerce schema. Minimum WordPress is now 6.6.
 
 = 2.2.0 =
 Complete admin UI redesign with a new design-token system, dashboard, live preview, command palette, batch queue, and dark mode. No database migrations required. REST API, generator parameters, and custom hooks are unchanged.
