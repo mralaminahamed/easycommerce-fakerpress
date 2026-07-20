@@ -105,28 +105,28 @@ class Cart_Session extends Controller {
 				'sanitize_callback' => 'absint',
 			),
 			'status_distribution'  => array(
-				'description' => __( 'Custom cart status distribution.', 'easycommerce-fakerpress' ),
-				'type'        => 'object',
-				'properties'  => array(
-					'pending'   => array(
+				'description'          => __( 'Custom cart status distribution.', 'easycommerce-fakerpress' ),
+				'type'                 => 'object',
+				'properties'           => array(
+					'pending'           => array(
 						'description' => __( 'Percentage of pending carts.', 'easycommerce-fakerpress' ),
 						'type'        => 'integer',
 						'minimum'     => 0,
 						'maximum'     => 100,
 					),
-					'abandoned' => array(
+					'abandoned'         => array(
 						'description' => __( 'Percentage of abandoned carts.', 'easycommerce-fakerpress' ),
 						'type'        => 'integer',
 						'minimum'     => 0,
 						'maximum'     => 100,
 					),
-					'completed' => array(
+					'completed'         => array(
 						'description' => __( 'Percentage of completed carts.', 'easycommerce-fakerpress' ),
 						'type'        => 'integer',
 						'minimum'     => 0,
 						'maximum'     => 100,
 					),
-					'cancelled' => array(
+					'cancelled'         => array(
 						'description' => __( 'Percentage of cancelled carts.', 'easycommerce-fakerpress' ),
 						'type'        => 'integer',
 						'minimum'     => 0,

@@ -278,11 +278,11 @@ class Cart_Session extends Generator {
 
 		// Default status distribution. Keys mirror the cart_sessions.status ENUM.
 		$default_statuses = array(
-			'pending'            => 55 - $abandonment_rate,
-			'abandoned'          => $abandonment_rate,
-			'completed'          => 8,
-			'cancelled'          => 2,
-			'payment_initiated'  => 5,
+			'pending'           => 55 - $abandonment_rate,
+			'abandoned'         => $abandonment_rate,
+			'completed'         => 8,
+			'cancelled'         => 2,
+			'payment_initiated' => 5,
 		);
 
 		$cart_statuses = ! empty( $status_distribution ) ? array_map( 'intval', $status_distribution ) : $default_statuses;
