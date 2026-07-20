@@ -165,6 +165,8 @@ Run history is stored in browser localStorage. It does not affect your database.
 
 == Changelog ==
 
+The four most recent releases are listed below. For the complete version history, see the [full changelog on GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CHANGELOG.md).
+
 = 2.2.0 - June 11, 2026 =
 * Complete admin UI redesign — Linear/Vercel-style SaaS interface built on a new design-token system (self-hosted Geist fonts, light/dark themes, 5 accent palettes, comfortable/compact density), all scoped to the plugin so WordPress chrome is never restyled
 * New dashboard — Stat cards with sparklines, recent-activity feed, and a generator grid grouped by category, all driven by real run history
@@ -190,47 +192,20 @@ Run history is stored in browser localStorage. It does not affect your database.
 * Playwright e2e suite — 131 automated tests covering the home page, generator page layout, ActionPanel interactions, all 6 field types, and all 14 generators
 * Bug fixes — Category matching in all locales; single ActionPanel DOM instance; scoped focus styles; RangeField error colour; nested route active state
 
-= 2.0.3 - January 15, 2026 =
+= 2.0.4 - February 26, 2026 =
+* Shared TypeScript type definitions extracted; generators and components now use a shared GeneratorResult type
+* Webpack configuration updated, with a TerserPlugin configuration for WordPress compatibility
+* Build output renamed from index to app, with the asset file path updated to match
+* Dependencies updated, including PHPStan 2.1.40
+* Fixed the import path for the shared types module
+* Removed leftover console.log calls and package-lock.json, since Yarn provides the lockfile
+
+= 2.0.3 - January 14, 2026 =
 * New Product Review generator with weighted rating distribution and verified purchase support
 * WordPress comments integration for review storage
 * Order generator data structure fix to match EasyCommerce Order model
 * Proper order notes creation using the Order_Notes model
 * Controller pattern and API schema consistency improvements
-
-= 2.0.2 - January 15, 2026 =
-* Added "Get Started" plugin action link
-* Upgraded to Tailwind CSS v4
-* Fixed visual inconsistencies in success messages and navigation
-* Build system and dependency compatibility updates
-
-= 2.0.1 - November 13, 2025 =
-* Minor bug fixes and code quality improvements
-
-= 2.0.0 - November 11, 2025 =
-* Complete parameter schema alignment for all 10 generators
-* Full TypeScript migration with proper interfaces and validation
-* Corrected array vs string mismatches and naming inconsistencies across all REST controllers
-* Breaking change: parameter schemas updated — review custom integrations before upgrading
-
-= 1.0.4 - November 10, 2025 =
-* Added 15+ filter and action hooks for complete data customization
-* REST response filtering for API extensibility
-
-= 1.0.2 - October 29, 2025 =
-* Performance improvements for memory usage and processing speed
-* Bug fixes for validation and error handling across all generators
-* Compatibility updates for latest EasyCommerce features
-
-= 1.0.0 - October 15, 2025 =
-* Real-time dependency checks via new REST controller
-* PHPStan level 8 compliance
-* Build system and documentation improvements
-
-= 0.9.0 - September 15, 2025 =
-* Initial release with 10 core generators
-* WordPress admin color integration
-* React 18 interface with real-time feedback
-* PSR-4 architecture with native EasyCommerce model integration
 
 == Upgrade Notice ==
 
