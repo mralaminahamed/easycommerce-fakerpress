@@ -18,6 +18,22 @@ async function hideWpChrome(page: import('@playwright/test').Page) {
       #wpadminbar { display: none !important; }
       html.wp-toolbar { padding-top: 0 !important; }
       #wpcontent, #wpfooter { margin-left: 0 !important; }
+      #wpfooter { display: none !important; }
+
+      /* Support widgets belong to whichever site the shots were taken on,
+         not to this plugin. */
+      .helpwp-widget { display: none !important; }
+
+      /* The plugin picks up the admin colour scheme through these variables,
+         so whoever captures the screenshots would otherwise decide what colour
+         the listing is. Pin them to the plugin's own indigo so the screenshots
+         match the icon and banner. */
+      .fp-root {
+        --wp-admin-primary: #4f46e5 !important;
+        --wp-admin-secondary: #4338ca !important;
+        --wp-admin-highlight: #6366f1 !important;
+        --wp-admin-accent: #7c3aed !important;
+      }
     `,
   });
   // Allow layout to settle after injection

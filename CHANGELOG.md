@@ -8,6 +8,10 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ## [Unreleased]
 
+### Fixed
+
+- Accent colours no longer drift towards pink. Soft accent tints were mixed in a colour space that carries an explicit hue channel, so blending the accent towards a light or dark neutral dragged its hue with it — the indigo accent rendered its highlights, badges and hover states in pink.
+
 ## [2.3.0] - 2026-07-20
 
 ### Added
