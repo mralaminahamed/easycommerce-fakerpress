@@ -1,6 +1,6 @@
 === EasyCommerce FakerPress ===
 Contributors: mralaminahamed
-Tags: ecommerce, faker, data-generation, testing, development
+Tags: test data, dummy data, sample data, demo content, faker
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -9,95 +9,65 @@ Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Generate realistic EasyCommerce test data with 14 generators, modern SaaS UI, run history, settings, and sample data sync from GitHub.
+Fill an EasyCommerce store with realistic test data. Generate dummy products, orders, customers and coupons in seconds, with a live preview.
 
 == Description ==
 
-EasyCommerce FakerPress populates your EasyCommerce store with realistic fake data for development, testing, and demos. Choose a generator, configure the parameters, and click Generate.
+EasyCommerce FakerPress generates realistic test data for EasyCommerce stores. It creates dummy products, orders, customers, coupons and ten other record types on demand, so you can build, test and demo a store that looks real without typing a single product by hand.
 
-**Core Generators**
+It is a developer tool for local, staging and demo sites. It is not meant for production stores.
 
-* Products — Products with pricing, categories, inventory, attributes, and variations
-* Customers — Customer profiles with addresses, demographics, and purchase history
-* Orders — Complete order histories with payments, shipping, and tax calculations
-* Coupons — Discount codes with rules, usage limits, and restrictions
+Point it at a generator, set how many records you want, and click Generate. A live preview shows exactly what the run will produce before anything is written to your database.
 
-**Advanced Generators**
+**What it generates**
 
-* Product Variations — Variable product attributes, price variance, and stock settings
-* Shipping Plans — Shipping methods, zones, and rate tables
-* Tax Classes — Tax rules for different regions and product types
-* Transactions — Payment records with multiple gateways and status distribution
-* Cart Sessions — Shopping cart abandonment scenarios and session data
-* Attributes — Product attribute types (Text, Color, Image) for variations and filtering
-* Refunds — Refund records against existing completed or processing orders
-* Logs — Activity log entries for orders, products, customers, and system events
+Fourteen generators, covering the records an EasyCommerce store actually holds:
 
-**Enhanced Generators**
+* Products — pricing, categories, inventory, attributes and variations
+* Customers — profiles with addresses, demographics and purchase history
+* Orders — complete order histories with payments, shipping and tax
+* Coupons — discount codes with rules, usage limits and restrictions
+* Product Variations — variable attributes, price variance and stock settings
+* Shipping Plans — methods, zones and rate tables
+* Tax Classes — tax rules by region and product type
+* Transactions — payment records across multiple gateways and statuses
+* Cart Sessions — abandoned cart scenarios and session data
+* Attributes — Text, Color and Image attribute types for variations and filtering
+* Refunds — refunds against existing completed or processing orders
+* Logs — activity entries for orders, products, customers and system events
+* Locations — countries, states and cities
+* Product Reviews — ratings linked to real products and customers
 
-* Locations — Geographic data including countries, states, and cities
-* Product Reviews — Product reviews with ratings linked to existing products and customers
+**Why the data holds together**
 
-**Key Features**
+Generated records are created through EasyCommerce's own models rather than by writing rows directly to the database. Validation, relationships and inventory changes all run exactly as they would for a real order. That means orders link to genuine customers and products, refunds attach to orders that can actually be refunded, and reviews belong to products that exist.
 
-* Run History — Per-generator run log in browser localStorage with all-time stats on the dashboard
-* Settings Page — Default count, locale, seed, metadata preference, and configurable run history limit
-* Sample Data Sync — One-click download of locale-specific reference data (75+ locales) from the companion GitHub repository
-* Our Plugins Page — Browse the author's other WordPress.org plugins with live data
-* Hook System — 15+ filters and actions for complete data customization and workflow integration
-* REST API — 14 REST controllers under the easycommerce-fakerpress/v1 namespace
-* Playwright E2E Suite — 131 automated tests covering all generators, field types, and UI interactions
+FakerPHP supplies the names, addresses and text, layered with commerce-specific logic for pricing, geography and customer lifecycle. Optional sample data sync adds locale-specific product names and addresses for 75+ locales.
 
-**Extensibility**
+**Built for repeatable testing**
 
-The plugin exposes a full hook system for developers:
+* Live preview — see real generated rows before committing anything
+* Seeds — reuse a seed to reproduce an identical dataset on demand
+* Batch queue — line up several generators and run them in sequence
+* Run history — per-generator log with all-time stats on the dashboard
+* Locales — generate region-appropriate data for 75+ locales
+* Light and dark themes, five accent palettes, keyboard-driven command palette
 
-* `easycommerce_fakerpress_*_data_before_create` — Modify generated data before creation (10+ filters)
-* `easycommerce_fakerpress_*_generation_result` — Customize returned generation results
-* `easycommerce_fakerpress_after_*_created` — Hook into the post-creation workflow
-* `easycommerce_fakerpress_rest_response` — Filter REST API responses
+**For developers**
 
-**Important**: Use only in development or staging environments. Back up your database before generating large datasets.
+* 15+ filters and actions for customising data before and after creation
+* 14 REST controllers under the `easycommerce-fakerpress/v1` namespace
+* Abstract generator classes you can extend with your own generators
+* 131 Playwright end-to-end tests
 
-== External services ==
+Key hooks:
 
-This plugin connects to two external services. Neither is contacted on activation, and no personal or store data is ever transmitted.
+* `easycommerce_fakerpress_*_data_before_create` — change generated data before it is created
+* `easycommerce_fakerpress_after_*_created` — react once an item exists
+* `easycommerce_fakerpress_*_generation_result` — reshape what a run returns
+* `easycommerce_fakerpress_rest_response` — filter REST API responses
 
-**1. GitHub — sample data repository**
-
-The Settings page offers an optional "Sample Data Sync" action that downloads locale-specific reference data (product names, addresses, customer tags for 75+ locales) used to make generated content more realistic.
-
-Service: GitHub
-Endpoint: https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip
-When data is sent: Only when an administrator clicks "Sync Sample Data" on the plugin Settings page, or when a generator requires sample data that has not been downloaded yet.
-Data sent: An unauthenticated HTTP GET request. No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
-Terms of Service: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
-Privacy Policy: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
-
-**2. WordPress.org — plugin directory API**
-
-The "Our Plugins" admin page lists the plugin author's other WordPress.org plugins with live ratings and install counts.
-
-Service: WordPress.org Plugin Directory API
-Endpoint: https://api.wordpress.org/plugins/info/1.2/
-When data is sent: Only when an administrator opens the "Our Plugins" page in the plugin admin. The request is made by the browser.
-Data sent: A query for plugins by the author "mralaminahamed". No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
-Terms of Service: https://wordpress.org/about/
-Privacy Policy: https://wordpress.org/about/privacy/
-
-== Source code ==
-
-The minified JavaScript and CSS in `build/` is compiled from the TypeScript and CSS sources in `src/`, which are not included in the distributed plugin package. The complete, human-readable source is public:
-
-https://github.com/mralaminahamed/easycommerce-fakerpress
-
-Build steps:
-
-`composer install`
-`yarn install`
-`yarn build`
-
-Build tooling: webpack (via @wordpress/scripts), TypeScript, and Tailwind CSS. Configuration files (`webpack.config.js`, `tsconfig.json`, `postcss.config.js`) are in the repository root.
+**Important:** this plugin writes large volumes of fake data into your store. Use it on development or staging sites only, and back up your database before generating large datasets.
 
 == Installation ==
 
@@ -105,49 +75,61 @@ Build tooling: webpack (via @wordpress/scripts), TypeScript, and Tailwind CSS. C
 1. Go to Plugins > Add New in your WordPress admin.
 2. Search for "EasyCommerce FakerPress".
 3. Click Install Now, then Activate.
-4. Access the plugin via the EC FakerPress menu item.
+4. Open the EC FakerPress menu item.
 
 = Manual =
 1. Download the plugin ZIP file.
 2. Upload it to /wp-content/plugins/easycommerce-fakerpress/.
-3. Run composer install in the plugin directory.
-4. Activate via the Plugins screen.
-5. Access via the EC FakerPress menu.
+3. Activate via the Plugins screen.
+4. Open the EC FakerPress menu item.
 
 = Requirements =
 * WordPress 6.6+
 * PHP 7.4+ (8.0+ recommended)
-* EasyCommerce plugin (must be active)
+* [EasyCommerce](https://wordpress.org/plugins/easycommerce/) installed and active
 * 256MB memory minimum (512MB recommended for large datasets)
 
 == Frequently Asked Questions ==
 
-= What is EasyCommerce FakerPress? =
-A WordPress plugin that generates realistic fake data for EasyCommerce stores. It is intended for development, QA testing, and demo environments — not production sites.
+= How do I generate dummy products for an EasyCommerce store? =
 
-= How does the EasyCommerce integration work? =
-The plugin uses native EasyCommerce models (Product, Customer, Order, etc.) to create data. This ensures validation, relationship integrity, and compatibility with future EasyCommerce updates. Direct database inserts are avoided.
+Open EC FakerPress in your WordPress admin, choose the Products generator, set how many products you want, and click Generate. The preview table shows sample rows before you commit. The same flow applies to every other generator.
 
-= Can I generate data with relationships? =
-Yes. Orders can be linked to existing customers and products with inventory adjustments. Refunds require existing completed or processing orders. Product reviews are linked to existing products and customers.
+= Does this work with WooCommerce? =
+
+No. This plugin generates data for [EasyCommerce](https://wordpress.org/plugins/easycommerce/) only, and WordPress will not let it activate unless EasyCommerce is installed and active. It does not create WooCommerce products, orders or customers.
+
+= Is it safe to run on a live site? =
+
+No. Use it on development, staging or demo sites only. It writes large volumes of fictional records directly into your store, and there is no one-click undo. Back up your database before any large run.
+
+= How do I delete the test data afterwards? =
+
+Use the WordPress or EasyCommerce bulk deletion tools. For large datasets, targeted database queries against a backup are faster. The plugin does not currently ship a bulk delete feature, which is the main reason to keep it off production.
+
+= Can I generate the same data twice? =
+
+Yes. Set a seed value in the run bar and the same seed always produces the same dataset. This is what makes generated data usable in automated tests and reproducible bug reports.
 
 = How realistic is the generated data? =
-Data uses FakerPHP for authentic names, addresses, and content, combined with e-commerce-specific logic such as pricing strategies, geographic distribution, and customer lifecycle patterns. Sample data sync adds locale-specific product names, addresses, and other reference data.
 
-= Is it safe for production? =
-No. Use only in development or staging environments. Always back up your database before generating data.
+Names, addresses and text come from FakerPHP, combined with commerce-specific logic for pricing strategies, geographic distribution and customer lifecycle patterns. Turning on sample data sync adds locale-specific product names and reference data for 75+ locales.
 
-= Can I customize the generated data? =
-Yes. Use the hook system to filter data before creation, modify results, or trigger custom actions after items are created. Abstract generator classes can also be extended for custom generators.
+= Can orders be linked to real customers and products? =
+
+Yes. Orders attach to existing customers and products and adjust inventory as they are created. Refunds require existing completed or processing orders, and product reviews link to products and customers that already exist.
+
+= Can I change the data before it is saved? =
+
+Yes. The plugin exposes 15+ filters and actions. Use `easycommerce_fakerpress_*_data_before_create` to alter values before creation, or extend the abstract generator classes to add a generator of your own.
 
 = What is sample data sync? =
-The Settings page includes a sync feature that downloads locale-specific reference data (product names, customer tags, addresses, and more) from the companion GitHub repository. This improves the realism of generated content across 75+ locales.
 
-= How do I remove generated data? =
-Use WordPress or EasyCommerce bulk deletion tools. For large-scale cleanup, targeted database queries (with a backup) may be more efficient. The plugin does not currently include a bulk delete feature.
+An optional download of locale-specific reference data — product names, customer tags, addresses — from the companion GitHub repository. It makes generated content read more naturally in non-English locales. It runs only when you ask for it, and sends no data about your site.
 
-= What happens to the run history? =
-Run history is stored in browser localStorage. It does not affect your database. You can clear it from the Settings page under Danger Zone.
+= Where is the run history stored? =
+
+In your browser's localStorage, not your database. Clearing it has no effect on generated records. You can clear it from the Danger Zone on the Settings page.
 
 == Screenshots ==
 
@@ -168,43 +150,30 @@ Run history is stored in browser localStorage. It does not affect your database.
 The four most recent releases are listed below. For the complete version history, see the [full changelog on GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CHANGELOG.md).
 
 = 2.2.0 - June 11, 2026 =
-* Complete admin UI redesign — Linear/Vercel-style SaaS interface built on a new design-token system (self-hosted Geist fonts, light/dark themes, 5 accent palettes, comfortable/compact density), all scoped to the plugin so WordPress chrome is never restyled
-* New dashboard — Stat cards with sparklines, recent-activity feed, and a generator grid grouped by category, all driven by real run history
-* Redesigned generator page — Two-column config + live preview layout with a sticky run bar (count stepper, seed, metadata, add-to-batch, generate)
-* Live preview — Read-only REST preview route returns real faker rows (no persistence); the preview table refreshes as you change settings and re-rolls on Shuffle
-* Command palette (Cmd/Ctrl+K) — Quick-jump to any generator or page
-* Batch queue — Queue multiple generators and run them sequentially from the batch tray, with progress and toasts
-* Tweaks panel — Live theme, accent, and density controls persisted to the browser
-* Redesigned Settings and Our Plugins pages on the new card system
-* Refreshed brand assets — New logo, recolorable WP admin menu icon, and updated WordPress.org icon and banners
+* Complete admin UI redesign on a new design-token system — light/dark themes, 5 accent palettes, and comfortable/compact density, all scoped so WordPress chrome is never restyled
+* New dashboard with stat cards, sparklines and a recent-activity feed driven by real run history
+* Live preview — real faker rows rendered before anything is written, re-rollable with Shuffle
+* Command palette (Cmd/Ctrl+K), batch queue, and a redesigned generator page with a sticky run bar
+* Refreshed brand assets and a recolorable admin menu icon
 
 = 2.1.0 - April 26, 2026 =
-* Complete admin UI redesign — Modern SaaS style with clean white, blue and indigo accents
-* New dashboard — Stats bar with 4 live stat cards and generator grid grouped by category with Popular badges
-* New generator page layout — Sticky top-bar, collapsible sidebar with category nav and per-generator run history, two-panel params and action layout
-* New component architecture — Replaced 757-line GeneratorBase monolith with focused ParamsPanel, ActionPanel, and GeneratorSidebar components; parameter config centralized in generators.ts
-* Run history — Per-generator run log in localStorage (configurable max, FIFO); recent runs in sidebar; all-time stats on dashboard
-* 3 new generators — Attributes, Refunds, Logs (total now 14)
-* Settings page — Default count, locale, seed, metadata toggle; configurable max runs per generator; sample data sync; About card; Reset Settings
-* Sample data sync — Download or force re-sync locale-specific reference data from the companion GitHub repository via REST endpoints
-* Our Plugins page — Fetches and displays the author's other WordPress.org plugins with live data
-* Global sticky nav — Generators, Settings, Our Plugins links with correct active-state matching
-* Playwright e2e suite — 131 automated tests covering the home page, generator page layout, ActionPanel interactions, all 6 field types, and all 14 generators
-* Bug fixes — Category matching in all locales; single ActionPanel DOM instance; scoped focus styles; RangeField error colour; nested route active state
+* Three new generators — Attributes, Refunds and Logs, bringing the total to 14
+* Run history with per-generator logs and all-time dashboard stats
+* Settings page — default count, locale, seed, metadata toggle, and run-history limit
+* Sample data sync for locale-specific reference data across 75+ locales
+* Playwright end-to-end suite — 131 tests across all generators and field types
+* Component architecture reworked; parameter config centralised in generators.ts
 
 = 2.0.4 - February 26, 2026 =
-* Shared TypeScript type definitions extracted; generators and components now use a shared GeneratorResult type
-* Webpack configuration updated, with a TerserPlugin configuration for WordPress compatibility
-* Build output renamed from index to app, with the asset file path updated to match
+* Shared TypeScript type definitions extracted into their own module
+* Webpack configuration updated with a TerserPlugin config for WordPress compatibility
+* Build output renamed from index to app, with the asset path updated to match
 * Dependencies updated, including PHPStan 2.1.40
-* Fixed the import path for the shared types module
-* Removed leftover console.log calls and package-lock.json, since Yarn provides the lockfile
 
 = 2.0.3 - January 14, 2026 =
-* New Product Review generator with weighted rating distribution and verified purchase support
+* New Product Review generator with weighted ratings and verified-purchase support
 * WordPress comments integration for review storage
-* Order generator data structure fix to match EasyCommerce Order model
-* Proper order notes creation using the Order_Notes model
+* Order generator data structure corrected to match the EasyCommerce Order model
 * Controller pattern and API schema consistency improvements
 
 == Upgrade Notice ==
@@ -218,21 +187,62 @@ Major feature release. Complete admin UI redesign, 3 new generators, Settings pa
 = 2.0.0 =
 Breaking change: parameter schemas updated for all generators. Review custom REST API integrations and hooks before upgrading. Test in staging first.
 
+== External services ==
+
+This plugin connects to two external services. Neither is contacted on activation, and no personal or store data is ever transmitted.
+
+**1. GitHub — sample data repository**
+
+The Settings page offers an optional "Sample Data Sync" action that downloads locale-specific reference data (product names, addresses, customer tags for 75+ locales) used to make generated content more realistic.
+
+Service: GitHub
+Endpoint: [https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip](https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip)
+When data is sent: Only when an administrator clicks "Sync Sample Data" on the plugin Settings page, or when a generator requires sample data that has not been downloaded yet.
+Data sent: An unauthenticated HTTP GET request. No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
+Terms of Service: [https://docs.github.com/en/site-policy/github-terms/github-terms-of-service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service)
+Privacy Policy: [https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
+
+**2. WordPress.org — plugin directory API**
+
+The "Our Plugins" admin page lists the plugin author's other WordPress.org plugins with live ratings and install counts.
+
+Service: WordPress.org Plugin Directory API
+Endpoint: [https://api.wordpress.org/plugins/info/1.2/](https://api.wordpress.org/plugins/info/1.2/)
+When data is sent: Only when an administrator opens the "Our Plugins" page in the plugin admin. The request is made by the browser.
+Data sent: A query for plugins by the author "mralaminahamed". No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
+Terms of Service: [https://wordpress.org/about/](https://wordpress.org/about/)
+Privacy Policy: [https://wordpress.org/about/privacy/](https://wordpress.org/about/privacy/)
+
+== Source code ==
+
+The minified JavaScript and CSS in `build/` is compiled from the TypeScript and CSS sources in `src/`, which are not included in the distributed plugin package. The complete, human-readable source is public:
+
+[github.com/mralaminahamed/easycommerce-fakerpress](https://github.com/mralaminahamed/easycommerce-fakerpress)
+
+Build steps:
+
+`composer install`
+`yarn install`
+`yarn build`
+
+Build tooling: webpack (via @wordpress/scripts), TypeScript, and Tailwind CSS. Configuration files (`webpack.config.js`, `tsconfig.json`, `postcss.config.js`) are in the repository root.
+
 == Other Notes ==
 
 **Privacy**
 
 All generated data is stored in your own WordPress database and is never transmitted anywhere. Generated content is fictional and does not represent real individuals or transactions. The plugin does not collect analytics, does not phone home, and does not send any site, user, or store data to a third party.
 
-The plugin makes two outbound requests, both administrator-initiated and both carrying no site data — see the "External services" section above for the full disclosure.
+The plugin makes two outbound requests, both administrator-initiated and both carrying no site data — see the "External services" section for the full disclosure.
 
 **Contributing**
 
-Repository: https://github.com/mralaminahamed/easycommerce-fakerpress
+Development happens on [GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress). Report bugs and request features on the [issue tracker](https://github.com/mralaminahamed/easycommerce-fakerpress/issues), and read the [contributing guide](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CONTRIBUTING.md) before opening a pull request — it covers local setup, coding standards, and the checks that run on every change.
 
-Report issues and request features via GitHub Issues. Pull requests welcome — follow WordPress Coding Standards and PSR-4, and include tests.
+Found a security issue? Please follow the [security policy](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/SECURITY.md) and report it privately rather than in a public issue.
 
 **Support**
 
-WordPress.org support forums and GitHub Issues. Documentation is included in the plugin README and GitHub repository.
-
+* [WordPress.org support forum](https://wordpress.org/support/plugin/easycommerce-fakerpress/) — questions and help with using the plugin
+* [GitHub issue tracker](https://github.com/mralaminahamed/easycommerce-fakerpress/issues) — bug reports and feature requests
+* [Full changelog](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CHANGELOG.md) — the complete version history
