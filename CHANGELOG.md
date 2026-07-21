@@ -8,6 +8,10 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 ## [Unreleased]
 
+### Added
+
+- Sample data now downloads automatically on the plugin admin page after the administrator accepts a one-time consent prompt. The prompt appears only on the plugin's own admin screens, explains what is fetched and that no site data is sent, and offers built-in defaults if declined. The decision is site-wide and can be changed from Settings.
+
 ### Fixed
 
 - Accent colours no longer drift towards pink. Soft accent tints were mixed in a colour space that carries an explicit hue channel, so blending the accent towards a light or dark neutral dragged its hue with it — the indigo accent rendered its highlights, badges and hover states in pink.

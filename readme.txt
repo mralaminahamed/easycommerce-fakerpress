@@ -206,7 +206,7 @@ The Settings page offers an optional "Sample Data Sync" action that downloads lo
 
 Service: GitHub
 Endpoint: [https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip](https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip)
-When data is sent: Only when an administrator clicks "Sync Sample Data" on the plugin Settings page, or when a generator requires sample data that has not been downloaded yet.
+When data is sent: Only after an administrator allows it — either by accepting the sample-data consent prompt shown on the plugin admin page, or by clicking "Sync now" on the plugin Settings page. No download happens until consent is given, and no data about your site is transmitted.
 Data sent: An unauthenticated HTTP GET request. No site, user, or store data is included — only the request itself (and the IP address and user agent inherent to any HTTP request).
 Terms of Service: [https://docs.github.com/en/site-policy/github-terms/github-terms-of-service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service)
 Privacy Policy: [https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
