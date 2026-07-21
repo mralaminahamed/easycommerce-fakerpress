@@ -415,3 +415,12 @@
 .fp-root[data-density="compact"] .fp-gen-card { min-height:0; padding:15px; }
 .fp-root[data-density="compact"] .fp-set-card { padding:18px 20px; }
 .fp-root[data-density="compact"] .fp-stat-num { font-size:26px; margin:9px 0 2px; }
+
+/* Sample-data consent modal ------------------------------------------------ */
+.fp-root .fp-consent { width:min(440px, calc(100vw - 40px)); background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-pop); padding:26px 26px 22px; animation:fp-fade .15s both; }
+.fp-root .fp-consent-ic { width:44px; height:44px; border-radius:var(--r-md); display:grid; place-items:center; background:color-mix(in oklab, var(--accent) 12%, var(--surface)); color:var(--accent); margin-bottom:14px; }
+.fp-root .fp-consent-title { font-size:17px; font-weight:600; color:var(--text); margin:0 0 10px; }
+.fp-root .fp-consent-text { font-size:13.5px; line-height:1.55; color:var(--text-2); margin:0 0 10px; }
+.fp-root .fp-consent-link { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--accent); text-decoration:none; margin-bottom:20px; }
+.fp-root .fp-consent-link:hover { text-decoration:underline; }
+.fp-root .fp-consent-actions { display:flex; justify-content:flex-end; gap:8px; }

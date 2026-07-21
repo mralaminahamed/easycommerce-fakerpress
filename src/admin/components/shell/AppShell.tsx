@@ -5,6 +5,7 @@ import { useLocation, Outlet } from "react-router-dom";
 import { Sidebar } from "@/admin/components/shell/Sidebar";
 import { Topbar } from "@/admin/components/shell/Topbar";
 import { Toasts } from "@/admin/components/overlays/Toasts";
+import { ConsentModal } from "@/admin/components/overlays/ConsentModal";
 import { CommandPalette } from "@/admin/components/overlays/CommandPalette";
 import { LocalePicker } from "@/admin/components/overlays/LocalePicker";
 import { TweaksPanel } from "@/admin/components/overlays/TweaksPanel";
@@ -155,6 +156,7 @@ export function AppShell() {
           setLocale={setLocale}
         />
       )}
+      <ConsentModal />
       <Toasts />
     </div>
   );
