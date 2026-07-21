@@ -163,7 +163,7 @@ export default function SettingsPage() {
   const handleSetConsent = useCallback(
     async (granted: boolean) => {
       try {
-        await fetch(`${restUrl}download-sample/consent`, {
+        const res = await fetch(`${restUrl}download-sample/consent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -171,12 +171,26 @@ export default function SettingsPage() {
           },
           body: JSON.stringify({ granted }),
         });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json?.message ?? `HTTP ${res.status}`);
+        setSyncResult({
+          ok: true,
+          message: granted
+            ? __("Automatic download allowed.", "easycommerce-fakerpress")
+            : __("Automatic download declined.", "easycommerce-fakerpress"),
+        });
         const statusRes = await fetch(`${restUrl}download-sample`, {
           headers: { "X-WP-Nonce": nonce },
         });
         if (statusRes.ok) setSyncStatus(await statusRes.json());
-      } catch {
-        /* best effort */
+      } catch (err) {
+        setSyncResult({
+          ok: false,
+          message:
+            err instanceof Error
+              ? err.message
+              : __("Update failed.", "easycommerce-fakerpress"),
+        });
       }
     },
     [restUrl, nonce],
