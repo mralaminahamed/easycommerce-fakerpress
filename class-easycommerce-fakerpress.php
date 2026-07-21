@@ -455,6 +455,23 @@ class EasyCommerce_FakerPress {
 				),
 			)
 		);
+
+		// Register sample data consent endpoint.
+		register_rest_route(
+			'easycommerce-fakerpress/v1',
+			'/download-sample/consent',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'rest_set_sample_data_consent' ),
+				'permission_callback' => array( $this, 'rest_permission_check' ),
+				'args'                => array(
+					'granted' => array(
+						'type'     => 'boolean',
+						'required' => true,
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -899,10 +916,39 @@ class EasyCommerce_FakerPress {
 			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
 		}
 
+		// A successful download implies the administrator consented.
+		$this->set_sample_data_consent( 'granted' );
+
 		return new WP_REST_Response(
 			array(
 				'success' => true,
 				'message' => 'Sample data synced successfully.',
+			),
+			200
+		);
+	}
+
+	/**
+	 * REST callback: record the sample-data consent decision.
+	 *
+	 * Records consent without downloading. The download itself runs through
+	 * rest_download_sample_data(), which also marks consent as granted on success.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param WP_REST_Request $request The REST request; `granted` selects the decision.
+	 *
+	 * @return WP_REST_Response Consent result payload.
+	 */
+	public function rest_set_sample_data_consent( WP_REST_Request $request ): WP_REST_Response {
+		$granted = (bool) $request->get_param( 'granted' );
+		$this->set_sample_data_consent( $granted ? 'granted' : 'declined' );
+
+		$consent = $this->get_sample_data_consent();
+
+		return new WP_REST_Response(
+			array(
+				'consent' => '' === $consent ? null : $consent,
 			),
 			200
 		);
