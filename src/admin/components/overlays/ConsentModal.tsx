@@ -46,7 +46,12 @@ export function ConsentModal() {
       .then((s: SampleStatus) => {
         if (cancelled) return;
         if (s.consent == null) {
-          setOpen(true);
+          // Undecided: only prompt if the data isn't already present — a
+          // pre-existing install that synced before consent existed should
+          // not be nagged.
+          if (!s.exists) {
+            setOpen(true);
+          }
         } else if (s.consent === "granted" && !s.exists) {
           // Consent already given but files are missing — re-fetch silently.
           void fetch(`${restUrl}download-sample`, {

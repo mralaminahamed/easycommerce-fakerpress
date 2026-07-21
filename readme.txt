@@ -202,7 +202,7 @@ This plugin connects to two external services. Neither is contacted on activatio
 
 **1. GitHub — sample data repository**
 
-The Settings page offers an optional "Sample Data Sync" action that downloads locale-specific reference data (product names, addresses, customer tags for 75+ locales) used to make generated content more realistic.
+When you first open the plugin admin page, a consent prompt offers to download locale-specific reference data (product names, addresses, customer tags for 75+ locales) used to make generated content more realistic. The same download is available any time from the "Sample Data Sync" action on the Settings page.
 
 Service: GitHub
 Endpoint: [https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip](https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data/archive/refs/heads/trunk.zip)
