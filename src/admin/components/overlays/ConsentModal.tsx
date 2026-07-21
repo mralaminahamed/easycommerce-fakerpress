@@ -39,7 +39,10 @@ export function ConsentModal() {
     let cancelled = false;
 
     fetch(`${restUrl}download-sample`, { headers: { "X-WP-Nonce": nonce } })
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((s: SampleStatus) => {
         if (cancelled) return;
         if (s.consent == null) {
@@ -53,7 +56,7 @@ export function ConsentModal() {
               "X-WP-Nonce": nonce,
             },
             body: JSON.stringify({ force: false }),
-          });
+          }).catch(() => {});
         }
       })
       .catch(() => {
