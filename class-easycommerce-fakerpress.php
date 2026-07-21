@@ -539,6 +539,39 @@ class EasyCommerce_FakerPress {
 	}
 
 	/**
+	 * Get the sample-data consent decision.
+	 *
+	 * Site-wide decision governing whether the plugin may download sample data
+	 * from the companion GitHub repository.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string 'granted', 'declined', or '' when undecided.
+	 */
+	public function get_sample_data_consent(): string {
+		$value = get_option( 'easycommerce_fakerpress_sample_data_consent', '' );
+
+		return in_array( $value, array( 'granted', 'declined' ), true ) ? $value : '';
+	}
+
+	/**
+	 * Record the sample-data consent decision.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $value Either 'granted' or 'declined'; other values are ignored.
+	 *
+	 * @return void
+	 */
+	public function set_sample_data_consent( string $value ): void {
+		if ( ! in_array( $value, array( 'granted', 'declined' ), true ) ) {
+			return;
+		}
+
+		update_option( 'easycommerce_fakerpress_sample_data_consent', $value, false );
+	}
+
+	/**
 	 * Download sample data from remote repository
 	 *
 	 * Downloads the sample data archive from GitHub and extracts it to the local directory.
@@ -823,14 +856,16 @@ class EasyCommerce_FakerPress {
 	 * @return WP_REST_Response|WP_Error Response object or error.
 	 */
 	public function rest_sample_data_status(): WP_REST_Response {
-		$exists = $this->sample_data_exists();
-		$dir    = $this->get_sample_data_directory();
+		$exists  = $this->sample_data_exists();
+		$dir     = $this->get_sample_data_directory();
+		$consent = $this->get_sample_data_consent();
 
 		return new WP_REST_Response(
 			array(
 				'exists'      => $exists,
 				'last_synced' => $exists && is_dir( $dir ) ? gmdate( 'c', (int) filemtime( $dir ) ) : null,
 				'repo_url'    => 'https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data',
+				'consent'     => '' === $consent ? null : $consent,
 			),
 			200
 		);
