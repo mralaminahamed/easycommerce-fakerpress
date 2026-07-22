@@ -16,6 +16,10 @@ Release dates are taken from the release tags in this repository. The [`readme.t
 
 - Accent colours no longer drift towards pink. Soft accent tints were mixed in a colour space that carries an explicit hue channel, so blending the accent towards a light or dark neutral dragged its hue with it — the indigo accent rendered its highlights, badges and hover states in pink.
 
+### Security
+
+- The sample-data importer now validates every archive entry before extraction, rejecting absolute paths and `..` traversal segments so a crafted ZIP cannot write outside the sample-data directory (zip-slip / path traversal).
+
 ## [2.3.0] - 2026-07-20
 
 ### Added

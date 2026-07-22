@@ -685,8 +685,14 @@ class EasyCommerce_FakerPress {
 		// Guard against zip-slip: reject any entry that escapes the target dir.
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- ZipArchive built-in property.
 			$entry_name = $zip->getNameIndex( $i );
-			if ( false === $entry_name || 0 === strpos( $entry_name, '/' ) || false !== strpos( $entry_name, '..' ) ) {
-				error_log( 'EasyCommerce FakerPress: Unsafe path in zip archive: ' . $entry_name ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			if (
+				false === $entry_name
+				|| '' === $entry_name
+				|| 0 === strpos( $entry_name, '/' )
+				|| 0 === strpos( $entry_name, '\\' )
+				|| 1 === preg_match( '#(?:^|[/\\\\])\.\.(?:[/\\\\]|$)#', $entry_name )
+			) {
+				error_log( 'EasyCommerce FakerPress: Unsafe path in zip archive: ' . ( false === $entry_name ? '(invalid)' : $entry_name ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				$zip->close();
 				return false;
 			}
