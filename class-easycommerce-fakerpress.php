@@ -455,6 +455,23 @@ class EasyCommerce_FakerPress {
 				),
 			)
 		);
+
+		// Register sample data consent endpoint.
+		register_rest_route(
+			'easycommerce-fakerpress/v1',
+			'/download-sample/consent',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'rest_set_sample_data_consent' ),
+				'permission_callback' => array( $this, 'rest_permission_check' ),
+				'args'                => array(
+					'granted' => array(
+						'type'     => 'boolean',
+						'required' => true,
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -536,6 +553,39 @@ class EasyCommerce_FakerPress {
 	public function get_sample_data_directory(): string {
 		$upload_dir = wp_upload_dir();
 		return $upload_dir['basedir'] . '/easycommerce-fakerpress-sample-data';
+	}
+
+	/**
+	 * Get the sample-data consent decision.
+	 *
+	 * Site-wide decision governing whether the plugin may download sample data
+	 * from the companion GitHub repository.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @return string 'granted', 'declined', or '' when undecided.
+	 */
+	public function get_sample_data_consent(): string {
+		$value = get_option( 'easycommerce_fakerpress_sample_data_consent', '' );
+
+		return in_array( $value, array( 'granted', 'declined' ), true ) ? $value : '';
+	}
+
+	/**
+	 * Record the sample-data consent decision.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $value Either 'granted' or 'declined'; other values are ignored.
+	 *
+	 * @return void
+	 */
+	public function set_sample_data_consent( string $value ): void {
+		if ( ! in_array( $value, array( 'granted', 'declined' ), true ) ) {
+			return;
+		}
+
+		update_option( 'easycommerce_fakerpress_sample_data_consent', $value, false );
 	}
 
 	/**
@@ -635,8 +685,14 @@ class EasyCommerce_FakerPress {
 		// Guard against zip-slip: reject any entry that escapes the target dir.
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- ZipArchive built-in property.
 			$entry_name = $zip->getNameIndex( $i );
-			if ( false === $entry_name || 0 === strpos( $entry_name, '/' ) || false !== strpos( $entry_name, '..' ) ) {
-				error_log( 'EasyCommerce FakerPress: Unsafe path in zip archive: ' . $entry_name ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			if (
+				false === $entry_name
+				|| '' === $entry_name
+				|| 0 === strpos( $entry_name, '/' )
+				|| 0 === strpos( $entry_name, '\\' )
+				|| 1 === preg_match( '#(?:^|[/\\\\])\.\.(?:[/\\\\]|$)#', $entry_name )
+			) {
+				error_log( 'EasyCommerce FakerPress: Unsafe path in zip archive: ' . ( false === $entry_name ? '(invalid)' : $entry_name ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				$zip->close();
 				return false;
 			}
@@ -823,14 +879,16 @@ class EasyCommerce_FakerPress {
 	 * @return WP_REST_Response|WP_Error Response object or error.
 	 */
 	public function rest_sample_data_status(): WP_REST_Response {
-		$exists = $this->sample_data_exists();
-		$dir    = $this->get_sample_data_directory();
+		$exists  = $this->sample_data_exists();
+		$dir     = $this->get_sample_data_directory();
+		$consent = $this->get_sample_data_consent();
 
 		return new WP_REST_Response(
 			array(
 				'exists'      => $exists,
 				'last_synced' => $exists && is_dir( $dir ) ? gmdate( 'c', (int) filemtime( $dir ) ) : null,
 				'repo_url'    => 'https://github.com/mralaminahamed/easycommerce-fakerpress-sample-data',
+				'consent'     => '' === $consent ? null : $consent,
 			),
 			200
 		);
@@ -864,10 +922,39 @@ class EasyCommerce_FakerPress {
 			return new WP_Error( 'download_failed', 'Failed to download sample data', array( 'status' => 500 ) );
 		}
 
+		// A successful download implies the administrator consented.
+		$this->set_sample_data_consent( 'granted' );
+
 		return new WP_REST_Response(
 			array(
 				'success' => true,
 				'message' => 'Sample data synced successfully.',
+			),
+			200
+		);
+	}
+
+	/**
+	 * REST callback: record the sample-data consent decision.
+	 *
+	 * Records consent without downloading. The download itself runs through
+	 * rest_download_sample_data(), which also marks consent as granted on success.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param WP_REST_Request $request The REST request; `granted` selects the decision.
+	 *
+	 * @return WP_REST_Response Consent result payload.
+	 */
+	public function rest_set_sample_data_consent( WP_REST_Request $request ): WP_REST_Response {
+		$granted = (bool) $request->get_param( 'granted' );
+		$this->set_sample_data_consent( $granted ? 'granted' : 'declined' );
+
+		$consent = $this->get_sample_data_consent();
+
+		return new WP_REST_Response(
+			array(
+				'consent' => '' === $consent ? null : $consent,
 			),
 			200
 		);

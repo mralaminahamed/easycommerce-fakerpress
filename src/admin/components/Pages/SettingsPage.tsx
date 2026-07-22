@@ -25,6 +25,7 @@ interface SyncStatus {
   exists: boolean;
   last_synced: string | null;
   repo_url: string;
+  consent?: "granted" | "declined" | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -154,6 +155,42 @@ export default function SettingsPage() {
         });
       } finally {
         setSyncing(false);
+      }
+    },
+    [restUrl, nonce],
+  );
+
+  const handleSetConsent = useCallback(
+    async (granted: boolean) => {
+      try {
+        const res = await fetch(`${restUrl}download-sample/consent`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-WP-Nonce": nonce,
+          },
+          body: JSON.stringify({ granted }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json?.message ?? `HTTP ${res.status}`);
+        setSyncResult({
+          ok: true,
+          message: granted
+            ? __("Automatic download allowed.", "easycommerce-fakerpress")
+            : __("Automatic download declined.", "easycommerce-fakerpress"),
+        });
+        const statusRes = await fetch(`${restUrl}download-sample`, {
+          headers: { "X-WP-Nonce": nonce },
+        });
+        if (statusRes.ok) setSyncStatus(await statusRes.json());
+      } catch (err) {
+        setSyncResult({
+          ok: false,
+          message:
+            err instanceof Error
+              ? err.message
+              : __("Update failed.", "easycommerce-fakerpress"),
+        });
       }
     },
     [restUrl, nonce],
@@ -404,6 +441,23 @@ export default function SettingsPage() {
               </p>
             )}
 
+            <p className="fp-set-hint" style={{ marginBottom: 12 }}>
+              {syncStatus?.consent === "granted"
+                ? __(
+                    "Automatic download is allowed. Revoke to stop downloading on visit.",
+                    "easycommerce-fakerpress",
+                  )
+                : syncStatus?.consent === "declined"
+                  ? __(
+                      "Automatic download is declined. Sync now to allow it.",
+                      "easycommerce-fakerpress",
+                    )
+                  : __(
+                      "You will be asked to allow automatic download on your next visit.",
+                      "easycommerce-fakerpress",
+                    )}
+            </p>
+
             <div style={{ display: "flex", gap: 8 }}>
               <Button
                 variant="primary"
@@ -423,6 +477,16 @@ export default function SettingsPage() {
               >
                 {__("Force re-sync", "easycommerce-fakerpress")}
               </Button>
+              {syncStatus?.consent === "granted" && (
+                <Button
+                  variant="outline"
+                  icon="x"
+                  onClick={() => handleSetConsent(false)}
+                  disabled={syncing}
+                >
+                  {__("Revoke", "easycommerce-fakerpress")}
+                </Button>
+              )}
             </div>
 
             <div style={{ marginTop: 14 }}>
