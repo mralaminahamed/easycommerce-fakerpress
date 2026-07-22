@@ -2,21 +2,23 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: EasyCommerce FakerPress 2.2.0\n"
+"Project-Id-Version: EasyCommerce FakerPress 2.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easycommerce-fakerpress\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-17T16:47:05+00:00\n"
+"POT-Creation-Date: 2026-07-22T01:13:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: easycommerce-fakerpress\n"
 
 #. Plugin Name of the plugin
 #: easycommerce-fakerpress.php
-#: class-easycommerce-fakerpress.php:134
+#: class-easycommerce-fakerpress.php:163
+#: includes/MCP/MCP_Server.php:87
+#: includes/MCP/MCP_Server.php:140
 msgid "EasyCommerce FakerPress"
 msgstr ""
 
@@ -40,665 +42,788 @@ msgstr ""
 msgid "https://github.com/mralaminahamed/"
 msgstr ""
 
-#: class-easycommerce-fakerpress.php:135
+#: class-easycommerce-fakerpress.php:164
 msgid "EC FakerPress"
 msgstr ""
 
-#: class-easycommerce-fakerpress.php:173
-msgid "Get Started"
+#: class-easycommerce-fakerpress.php:231
+msgid "Settings"
 msgstr ""
 
-#: class-easycommerce-fakerpress.php:574
+#: class-easycommerce-fakerpress.php:232
+msgid "Generate Data"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:254
+msgid "Documentation"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:255
+msgid "GitHub"
+msgstr ""
+
+#: class-easycommerce-fakerpress.php:776
 msgid "EasyCommerce FakerPress requires EasyCommerce plugin to be installed and active."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:170
+#. translators: 1: opening anchor tag, 2: closing anchor tag
+#: class-easycommerce-fakerpress.php:785
+#, php-format
+msgid "EasyCommerce FakerPress MCP Server: The %1$smcp-adapter%2$s plugin is not installed. Install it to enable AI-client access (Claude Desktop, VS Code Copilot, etc.)."
+msgstr ""
+
+#: includes/Abstracts/Ability.php:85
+msgid "Unknown REST error."
+msgstr ""
+
+#: includes/Abstracts/Controller.php:220
 msgid "Count parameter is required and must be greater than 0."
 msgstr ""
 
 #. translators: Total output.
-#: includes/Abstracts/Controller.php:201
+#: includes/Abstracts/Controller.php:268
 #, php-format
 msgid "%1$s item successfully created."
 msgid_plural "%1$s items successfully created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Abstracts/Controller.php:260
+#. translators: %s: number of items that could not be created.
+#: includes/Abstracts/Controller.php:275
+#, php-format
+msgid "%s could not be created."
+msgid_plural "%s could not be created."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Abstracts/Controller.php:342
 msgid "You do not have permission to generate data."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:283
+#: includes/Abstracts/Controller.php:365
 msgid "Number of items to generate."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:292
+#: includes/Abstracts/Controller.php:374
 msgid "Locale for generated data (e.g., en_US, fr_FR, de_DE)."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:299
+#: includes/Abstracts/Controller.php:381
 msgid "Random seed for reproducible data generation."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:305
+#: includes/Abstracts/Controller.php:387
 msgid "Status filter for generated items."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:311
+#: includes/Abstracts/Controller.php:393
 msgid "Date range for generated items."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:315
-#: includes/Controllers/Transaction.php:123
+#: includes/Abstracts/Controller.php:397
+#: includes/Controllers/Transaction.php:125
 msgid "Start date (YYYY-MM-DD format)."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:322
-#: includes/Controllers/Transaction.php:128
+#: includes/Abstracts/Controller.php:404
+#: includes/Controllers/Transaction.php:130
 msgid "End date (YYYY-MM-DD format)."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:331
+#: includes/Abstracts/Controller.php:413
 msgid "Control relationship creation with existing data."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:335
+#: includes/Abstracts/Controller.php:417
 msgid "Create missing related items if needed."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:340
+#: includes/Abstracts/Controller.php:422
 msgid "Link to existing items when possible."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:347
+#: includes/Abstracts/Controller.php:429
 msgid "Metadata generation options."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:351
+#: includes/Abstracts/Controller.php:433
 msgid "Include additional metadata."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:356
+#: includes/Abstracts/Controller.php:438
 msgid "Generate custom fields."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:389
+#: includes/Abstracts/Controller.php:471
 msgid "Date must be in YYYY-MM-DD format."
 msgstr ""
 
-#: includes/Abstracts/Controller.php:415
+#: includes/Abstracts/Controller.php:497
 msgid "Count must be a number between 1 and 100."
 msgstr ""
 
 #. translators: Resource type.
-#: includes/Abstracts/Controller.php:437
+#: includes/Abstracts/Controller.php:519
 #, php-format
 msgid "%s Generation Response"
 msgstr ""
 
-#: includes/Abstracts/Controller.php:441
+#: includes/Abstracts/Controller.php:523
 msgid "Number of items generated."
 msgstr ""
 
 #. translators: %s: Error message
-#: includes/Abstracts/Generator.php:315
+#: includes/Abstracts/Generator.php:378
 #, php-format
 msgid "Generation failed: %s"
 msgstr ""
 
-#: includes/Abstracts/Generator.php:384
+#: includes/Abstracts/Generator.php:447
 msgid "Count must be a positive number."
 msgstr ""
 
 #. translators: %d: Maximum batch size
-#: includes/Abstracts/Generator.php:393
+#: includes/Abstracts/Generator.php:456
 #, php-format
 msgid "Count cannot exceed %d items per batch."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:42
+#: includes/Abstracts/Generator.php:513
+#: includes/Generators/Product.php:304
+msgid "ID"
+msgstr ""
+
+#: includes/Abstracts/Generator.php:517
+#: includes/Generators/Coupon.php:158
+msgid "Value"
+msgstr ""
+
+#: includes/Controllers/Attribute.php:44
+msgid "Attribute"
+msgstr ""
+
+#: includes/Controllers/Attribute.php:79
+msgid "Types of attributes to generate"
+msgstr ""
+
+#: includes/Controllers/Attribute.php:89
+msgid "Number of values to generate per attribute"
+msgstr ""
+
+#: includes/Controllers/Attribute.php:119
+msgid "Generated attributes data."
+msgstr ""
+
+#: includes/Controllers/Cart_Session.php:44
 msgid "Cart Session"
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:77
+#: includes/Controllers/Cart_Session.php:79
 msgid "Type of customers for cart sessions."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:84
+#: includes/Controllers/Cart_Session.php:86
 msgid "Specific customer ID for cart sessions (when customer_type is \"specific\")."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:90
+#: includes/Controllers/Cart_Session.php:92
 msgid "Percentage of guest carts (0-100) when customer_type is \"mixed\"."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:98
+#: includes/Controllers/Cart_Session.php:100
 msgid "Cart abandonment rate percentage (0-100)."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:106
+#: includes/Controllers/Cart_Session.php:108
 msgid "Custom cart status distribution."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:110
+#: includes/Controllers/Cart_Session.php:112
 msgid "Percentage of pending carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:116
+#: includes/Controllers/Cart_Session.php:118
 msgid "Percentage of abandoned carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:122
+#: includes/Controllers/Cart_Session.php:124
 msgid "Percentage of completed carts."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:128
+#: includes/Controllers/Cart_Session.php:130
 msgid "Percentage of cancelled carts."
 msgstr ""
 
 #: includes/Controllers/Cart_Session.php:136
-msgid "Cart value range for generated sessions."
-msgstr ""
-
-#: includes/Controllers/Cart_Session.php:140
-msgid "Minimum cart value."
+msgid "Percentage of carts locked at payment initiation."
 msgstr ""
 
 #: includes/Controllers/Cart_Session.php:146
+msgid "Cart value range for generated sessions."
+msgstr ""
+
+#: includes/Controllers/Cart_Session.php:150
+msgid "Minimum cart value."
+msgstr ""
+
+#: includes/Controllers/Cart_Session.php:156
 msgid "Maximum cart value."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:154
+#: includes/Controllers/Cart_Session.php:164
 msgid "Number of items per cart session."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:158
+#: includes/Controllers/Cart_Session.php:168
 msgid "Minimum items per cart."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:164
+#: includes/Controllers/Cart_Session.php:174
 msgid "Maximum items per cart."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:173
+#: includes/Controllers/Cart_Session.php:183
 msgid "Abandonment tracking settings."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:177
+#: includes/Controllers/Cart_Session.php:187
 msgid "Generate abandoned cart reminders."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:182
+#: includes/Controllers/Cart_Session.php:192
 msgid "Maximum number of reminders to generate."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:189
+#: includes/Controllers/Cart_Session.php:199
 msgid "Cart recovery rate percentage (0-100)."
 msgstr ""
 
-#: includes/Controllers/Cart_Session.php:210
+#: includes/Controllers/Cart_Session.php:220
 msgid "Generated cart sessions with items and customer data."
 msgstr ""
 
-#: includes/Controllers/Coupon.php:42
+#: includes/Controllers/Coupon.php:44
 msgid "Coupon"
 msgstr ""
 
-#: includes/Controllers/Coupon.php:77
+#: includes/Controllers/Coupon.php:79
 msgid "Types of discount coupons to generate"
 msgstr ""
 
-#: includes/Controllers/Coupon.php:87
+#: includes/Controllers/Coupon.php:89
 msgid "Discount value range"
 msgstr ""
 
-#: includes/Controllers/Coupon.php:115
+#: includes/Controllers/Coupon.php:117
 msgid "Usage limitation settings"
 msgstr ""
 
-#: includes/Controllers/Coupon.php:137
+#: includes/Controllers/Coupon.php:139
 msgid "Coupon validity period configuration"
 msgstr ""
 
-#: includes/Controllers/Coupon.php:155
+#: includes/Controllers/Coupon.php:157
 msgid "Coupon usage restrictions"
 msgstr ""
 
-#: includes/Controllers/Coupon.php:189
+#: includes/Controllers/Coupon.php:191
 msgid "Generated coupons data."
 msgstr ""
 
-#: includes/Controllers/Customer.php:42
+#: includes/Controllers/Customer.php:44
+#: includes/Generators/Order.php:342
 msgid "Customer"
 msgstr ""
 
-#: includes/Controllers/Customer.php:77
+#: includes/Controllers/Customer.php:79
 msgid "Types of customers to generate."
 msgstr ""
 
-#: includes/Controllers/Customer.php:87
+#: includes/Controllers/Customer.php:89
 msgid "Demographic distribution."
 msgstr ""
 
-#: includes/Controllers/Customer.php:91
+#: includes/Controllers/Customer.php:93
 msgid "Age group distribution."
 msgstr ""
 
-#: includes/Controllers/Customer.php:101
+#: includes/Controllers/Customer.php:103
 msgid "Gender distribution weight."
 msgstr ""
 
-#: includes/Controllers/Customer.php:127
+#: includes/Controllers/Customer.php:129
 msgid "Address generation preferences."
 msgstr ""
 
-#: includes/Controllers/Customer.php:131
+#: includes/Controllers/Customer.php:133
 msgid "Include billing addresses."
 msgstr ""
 
-#: includes/Controllers/Customer.php:136
+#: includes/Controllers/Customer.php:138
 msgid "Include shipping addresses."
 msgstr ""
 
-#: includes/Controllers/Customer.php:141
+#: includes/Controllers/Customer.php:143
 msgid "Percentage with different billing/shipping (0-100)."
 msgstr ""
 
-#: includes/Controllers/Customer.php:150
+#: includes/Controllers/Customer.php:152
 msgid "Purchase history simulation."
 msgstr ""
 
-#: includes/Controllers/Customer.php:154
+#: includes/Controllers/Customer.php:156
 msgid "Generate purchase history metadata."
 msgstr ""
 
-#: includes/Controllers/Customer.php:159
+#: includes/Controllers/Customer.php:161
 msgid "Include loyalty tier assignments."
 msgstr ""
 
-#: includes/Controllers/Customer.php:166
+#: includes/Controllers/Customer.php:168
 msgid "Contact and communication preferences."
 msgstr ""
 
-#: includes/Controllers/Customer.php:170
+#: includes/Controllers/Customer.php:172
 msgid "Include phone numbers."
 msgstr ""
 
-#: includes/Controllers/Customer.php:175
+#: includes/Controllers/Customer.php:177
 msgid "Percentage opted in for marketing (0-100)."
 msgstr ""
 
-#: includes/Controllers/Customer.php:196
+#: includes/Controllers/Customer.php:198
 msgid "Generated customers data."
 msgstr ""
 
-#: includes/Controllers/Location.php:42
+#: includes/Controllers/Location.php:44
+#: includes/Generators/Customer.php:276
 msgid "Location"
 msgstr ""
 
-#: includes/Controllers/Location.php:77
+#: includes/Controllers/Location.php:79
 msgid "Geographic regions to generate locations for."
 msgstr ""
 
-#: includes/Controllers/Location.php:104
+#: includes/Controllers/Location.php:106
 msgid "Specific countries to generate (ISO2, ISO3, or full names)."
 msgstr ""
 
-#: includes/Controllers/Location.php:112
+#: includes/Controllers/Location.php:114
 msgid "Maximum number of countries to generate."
 msgstr ""
 
-#: includes/Controllers/Location.php:120
+#: includes/Controllers/Location.php:122
 msgid "Include states/provinces for countries."
 msgstr ""
 
-#: includes/Controllers/Location.php:125
+#: includes/Controllers/Location.php:127
 msgid "Include cities for states/provinces."
 msgstr ""
 
-#: includes/Controllers/Location.php:130
+#: includes/Controllers/Location.php:132
 msgid "Maximum cities per state/province."
 msgstr ""
 
-#: includes/Controllers/Location.php:134
+#: includes/Controllers/Location.php:136
 msgid "Minimum cities per state."
 msgstr ""
 
-#: includes/Controllers/Location.php:140
+#: includes/Controllers/Location.php:142
 msgid "Maximum cities per state."
 msgstr ""
 
-#: includes/Controllers/Location.php:161
+#: includes/Controllers/Location.php:163
 msgid "Generated location hierarchy with countries, states, and cities."
 msgstr ""
 
-#: includes/Controllers/Order.php:42
+#: includes/Controllers/Log.php:44
+msgid "Log"
+msgstr ""
+
+#: includes/Controllers/Log.php:79
+msgid "Log severity types to generate."
+msgstr ""
+
+#: includes/Controllers/Log.php:89
+msgid "Object types to generate log entries for."
+msgstr ""
+
+#: includes/Controllers/Log.php:111
+msgid "Generated log entries data."
+msgstr ""
+
+#: includes/Controllers/Order.php:44
+#: includes/Generators/Order.php:338
 msgid "Order"
 msgstr ""
 
-#: includes/Controllers/Order.php:77
+#: includes/Controllers/Order.php:79
+msgid "Spread order dates over this many days back from today. 0 dates every order today."
+msgstr ""
+
+#: includes/Controllers/Order.php:87
 msgid "Order status distribution."
 msgstr ""
 
-#: includes/Controllers/Order.php:92
+#: includes/Controllers/Order.php:104
 msgid "Type of customers for orders."
 msgstr ""
 
-#: includes/Controllers/Order.php:99
+#: includes/Controllers/Order.php:111
 msgid "Specific customer ID to use for all orders (when customer_type is \"specific\")."
 msgstr ""
 
-#: includes/Controllers/Order.php:105
+#: includes/Controllers/Order.php:117
 msgid "Customer type distribution for mixed mode."
 msgstr ""
 
-#: includes/Controllers/Order.php:109
+#: includes/Controllers/Order.php:121
 msgid "Percentage of existing customers (0-100)."
 msgstr ""
 
-#: includes/Controllers/Order.php:116
+#: includes/Controllers/Order.php:128
 msgid "Percentage of new customers (0-100)."
 msgstr ""
 
-#: includes/Controllers/Order.php:125
+#: includes/Controllers/Order.php:137
 msgid "Order value configuration."
 msgstr ""
 
-#: includes/Controllers/Order.php:129
+#: includes/Controllers/Order.php:141
 msgid "Minimum order total."
 msgstr ""
 
-#: includes/Controllers/Order.php:135
+#: includes/Controllers/Order.php:147
 msgid "Maximum order total."
 msgstr ""
 
-#: includes/Controllers/Order.php:143
+#: includes/Controllers/Order.php:155
 msgid "Number of items per order."
 msgstr ""
 
-#: includes/Controllers/Order.php:147
+#: includes/Controllers/Order.php:159
 msgid "Minimum items per order."
 msgstr ""
 
-#: includes/Controllers/Order.php:153
+#: includes/Controllers/Order.php:165
 msgid "Maximum items per order."
 msgstr ""
 
-#: includes/Controllers/Order.php:162
+#: includes/Controllers/Order.php:174
 msgid "Payment methods to use."
 msgstr ""
 
-#: includes/Controllers/Order.php:172
+#: includes/Controllers/Order.php:184
 msgid "Geographic distribution of orders."
 msgstr ""
 
-#: includes/Controllers/Order.php:176
+#: includes/Controllers/Order.php:188
 msgid "Countries to generate orders from."
 msgstr ""
 
-#: includes/Controllers/Order.php:200
+#: includes/Controllers/Order.php:212
 msgid "Generated orders data."
 msgstr ""
 
-#: includes/Controllers/Product.php:57
+#: includes/Controllers/Product.php:59
 msgid "Product"
 msgstr ""
 
-#: includes/Controllers/Product.php:95
+#: includes/Controllers/Product.php:97
 msgid "Type of products to generate."
 msgstr ""
 
-#: includes/Controllers/Product.php:102
+#: includes/Controllers/Product.php:104
 msgid "Price range for generated products."
 msgstr ""
 
-#: includes/Controllers/Product.php:106
+#: includes/Controllers/Product.php:108
 msgid "Minimum price."
 msgstr ""
 
-#: includes/Controllers/Product.php:112
+#: includes/Controllers/Product.php:114
 msgid "Maximum price."
 msgstr ""
 
-#: includes/Controllers/Product.php:120
+#: includes/Controllers/Product.php:122
 msgid "Product categories configuration."
 msgstr ""
 
-#: includes/Controllers/Product.php:124
+#: includes/Controllers/Product.php:126
 msgid "Create new categories if needed."
 msgstr ""
 
-#: includes/Controllers/Product.php:129
+#: includes/Controllers/Product.php:131
 msgid "Maximum categories per product."
 msgstr ""
 
-#: includes/Controllers/Product.php:138
+#: includes/Controllers/Product.php:140
 msgid "Product attributes configuration."
 msgstr ""
 
-#: includes/Controllers/Product.php:142
+#: includes/Controllers/Product.php:144
 msgid "Include product attributes."
 msgstr ""
 
-#: includes/Controllers/Product.php:147
+#: includes/Controllers/Product.php:149
 msgid "Number of variations for variable products."
 msgstr ""
 
-#: includes/Controllers/Product.php:156
+#: includes/Controllers/Product.php:158
 msgid "Inventory settings for generated products."
 msgstr ""
 
-#: includes/Controllers/Product.php:160
+#: includes/Controllers/Product.php:162
 msgid "Enable stock management."
 msgstr ""
 
-#: includes/Controllers/Product.php:165
-#: includes/Controllers/Product_Variation.php:130
+#: includes/Controllers/Product.php:167
+#: includes/Controllers/Product_Variation.php:132
 msgid "Stock quantity range."
 msgstr ""
 
-#: includes/Controllers/Product.php:183
+#: includes/Controllers/Product.php:185
 msgid "Product content generation options."
 msgstr ""
 
-#: includes/Controllers/Product.php:187
+#: includes/Controllers/Product.php:189
 msgid "Generate product images."
 msgstr ""
 
-#: includes/Controllers/Product.php:192
+#: includes/Controllers/Product.php:194
 msgid "Product description length."
 msgstr ""
 
-#: includes/Controllers/Product.php:212
+#: includes/Controllers/Product.php:214
 msgid "Generated products data."
 msgstr ""
 
-#: includes/Controllers/Product_Review.php:46
+#: includes/Controllers/Product_Review.php:48
 msgid "Product Review"
 msgstr ""
 
-#: includes/Controllers/Product_Review.php:81
+#: includes/Controllers/Product_Review.php:83
 msgid "Number of product reviews to generate."
 msgstr ""
 
-#: includes/Controllers/Product_Review.php:101
+#: includes/Controllers/Product_Review.php:91
+msgid "Target a specific product ID. Leave empty to distribute across all products."
+msgstr ""
+
+#: includes/Controllers/Product_Review.php:98
+msgid "Product not found."
+msgstr ""
+
+#: includes/Controllers/Product_Review.php:116
 msgid "Generated product reviews data."
 msgstr ""
 
-#: includes/Controllers/Product_Review.php:152
+#: includes/Controllers/Product_Review.php:167
 msgid "No published products found. Please generate products before creating reviews."
 msgstr ""
 
-#: includes/Controllers/Product_Review.php:167
+#: includes/Controllers/Product_Review.php:182
 msgid "No customers found. Please generate customers before creating reviews."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:42
+#: includes/Controllers/Product_Variation.php:44
 msgid "Product Variation"
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:77
+#: includes/Controllers/Product_Variation.php:79
 msgid "Specific product ID to generate variations for."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:83
+#: includes/Controllers/Product_Variation.php:85
 msgid "Product types to consider for variation generation."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:93
+#: includes/Controllers/Product_Variation.php:95
 msgid "Product IDs to exclude from variation generation."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:101
+#: includes/Controllers/Product_Variation.php:103
 msgid "Price variance settings for variations."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:105
+#: includes/Controllers/Product_Variation.php:107
 msgid "Minimum price variance percentage from base product."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:112
+#: includes/Controllers/Product_Variation.php:114
 msgid "Maximum price variance percentage from base product."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:121
+#: includes/Controllers/Product_Variation.php:123
 msgid "Stock management settings for variations."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:125
+#: includes/Controllers/Product_Variation.php:127
 msgid "Enable stock management for variations."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:148
+#: includes/Controllers/Product_Variation.php:150
 msgid "Attribute generation settings."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:152
+#: includes/Controllers/Product_Variation.php:154
 msgid "Create missing attributes if needed."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:157
+#: includes/Controllers/Product_Variation.php:159
 msgid "Maximum attributes per variation."
 msgstr ""
 
-#: includes/Controllers/Product_Variation.php:178
+#: includes/Controllers/Product_Variation.php:180
 msgid "Generated product variations with attributes."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:42
+#: includes/Controllers/Refund.php:44
+msgid "Refund"
+msgstr ""
+
+#: includes/Controllers/Refund.php:79
+msgid "Order statuses eligible for refund generation"
+msgstr ""
+
+#: includes/Controllers/Refund.php:89
+msgid "Payment gateways to use for generated refunds"
+msgstr ""
+
+#: includes/Controllers/Refund.php:111
+msgid "Generated refunds data."
+msgstr ""
+
+#: includes/Controllers/Shipping_Plan.php:44
 msgid "Shipping Plan"
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:77
+#: includes/Controllers/Shipping_Plan.php:79
 msgid "Types of shipping methods to generate."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:95
+#: includes/Controllers/Shipping_Plan.php:97
 msgid "Shipping cost range."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:99
+#: includes/Controllers/Shipping_Plan.php:101
 msgid "Minimum shipping cost."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:105
+#: includes/Controllers/Shipping_Plan.php:107
 msgid "Maximum shipping cost."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:113
+#: includes/Controllers/Shipping_Plan.php:115
 msgid "Geographic coverage areas."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:123
+#: includes/Controllers/Shipping_Plan.php:125
 msgid "Shipping calculation methods."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:133
+#: includes/Controllers/Shipping_Plan.php:135
 msgid "Delivery time ranges."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:137
+#: includes/Controllers/Shipping_Plan.php:139
 msgid "Minimum delivery days."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:143
+#: includes/Controllers/Shipping_Plan.php:145
 msgid "Maximum delivery days."
 msgstr ""
 
-#: includes/Controllers/Shipping_Plan.php:163
+#: includes/Controllers/Shipping_Plan.php:165
 msgid "Generated shipping plans with methods and regions."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:42
+#: includes/Controllers/Tax_Class.php:44
 msgid "Tax Class"
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:77
+#: includes/Controllers/Tax_Class.php:79
 msgid "Types of tax classes to generate."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:87
+#: includes/Controllers/Tax_Class.php:89
 msgid "Tax jurisdictions to generate rates for."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:97
+#: includes/Controllers/Tax_Class.php:99
 msgid "Tax rate ranges by type."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:101
+#: includes/Controllers/Tax_Class.php:103
 msgid "Standard tax rate range."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:119
+#: includes/Controllers/Tax_Class.php:121
 msgid "Reduced tax rate range."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:139
+#: includes/Controllers/Tax_Class.php:141
 msgid "Geographic coverage for tax rates."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:143
+#: includes/Controllers/Tax_Class.php:145
 msgid "Countries to generate tax rates for."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:152
+#: includes/Controllers/Tax_Class.php:154
 msgid "Include compound tax rates."
 msgstr ""
 
-#: includes/Controllers/Tax_Class.php:171
+#: includes/Controllers/Tax_Class.php:173
 msgid "Generated tax classes with location-based rates."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:42
+#: includes/Controllers/Transaction.php:44
 msgid "Transaction"
 msgstr ""
 
-#: includes/Controllers/Transaction.php:77
+#: includes/Controllers/Transaction.php:79
 msgid "Type of customers for transactions."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:84
+#: includes/Controllers/Transaction.php:86
 msgid "Specific customer ID for transactions (when customer_type is \"specific\")."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:90
+#: includes/Controllers/Transaction.php:92
 msgid "Filter orders by status for transaction generation."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:99
+#: includes/Controllers/Transaction.php:101
 msgid "Types of transactions to generate."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:109
+#: includes/Controllers/Transaction.php:111
 msgid "Payment gateways to use for transactions."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:119
+#: includes/Controllers/Transaction.php:121
 msgid "Date range for transaction generation."
 msgstr ""
 
-#: includes/Controllers/Transaction.php:147
+#: includes/Controllers/Transaction.php:149
 msgid "Generated payment transactions with realistic data."
+msgstr ""
+
+#: includes/Generators/Attribute.php:110
+msgid "Product Attributes with Values"
+msgstr ""
+
+#: includes/Generators/Attribute.php:136
+msgid "EasyCommerce Attribute model not found. Please ensure EasyCommerce plugin is active."
+msgstr ""
+
+#: includes/Generators/Attribute.php:141
+msgid "EasyCommerce Attribute_Value model not found."
+msgstr ""
+
+#: includes/Generators/Attribute.php:161
+msgid "Failed to create attribute using EasyCommerce model."
 msgstr ""
 
 #: includes/Generators/Cart_Session.php:45
@@ -719,28 +844,28 @@ msgstr ""
 
 #: includes/Generators/Cart_Session.php:178
 #: includes/Generators/Cart_Session.php:213
-#: includes/Generators/Order.php:330
-#: includes/Generators/Order.php:359
+#: includes/Generators/Order.php:460
+#: includes/Generators/Order.php:489
 msgid "No customers found."
 msgstr ""
 
-#: includes/Generators/Cart_Session.php:625
+#: includes/Generators/Cart_Session.php:629
 msgid "There was an error creating the cart."
 msgstr ""
 
-#: includes/Generators/Coupon.php:43
+#: includes/Generators/Coupon.php:45
 msgid "Discount Coupons with Rules and Restrictions"
 msgstr ""
 
-#: includes/Generators/Coupon.php:53
-msgid "Generates realistic discount coupons with various discount types (percentage, fixed, buy-x-get-y), comprehensive rules, usage restrictions, validity periods, and relationship management for testing ecommerce promotional functionality."
+#: includes/Generators/Coupon.php:55
+msgid "Generates realistic discount coupons with various discount types (percentage, fixed, free_shipping, products), comprehensive rules, usage restrictions, validity periods, and relationship management for testing ecommerce promotional functionality."
 msgstr ""
 
-#: includes/Generators/Coupon.php:66
+#: includes/Generators/Coupon.php:68
 msgid "EasyCommerce Coupon model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Coupon.php:73
+#: includes/Generators/Coupon.php:75
 msgid "A coupon with this code already exists."
 msgstr ""
 
@@ -748,111 +873,202 @@ msgstr ""
 msgid "Failed to create coupon using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Coupon.php:339
+#: includes/Generators/Coupon.php:150
+msgid "Code"
+msgstr ""
+
+#: includes/Generators/Coupon.php:154
+#: includes/Generators/Customer.php:268
+#: includes/Generators/Product.php:312
+msgid "Type"
+msgstr ""
+
+#: includes/Generators/Coupon.php:162
+msgid "Min Spend"
+msgstr ""
+
+#: includes/Generators/Coupon.php:166
+msgid "Uses"
+msgstr ""
+
+#: includes/Generators/Coupon.php:187
+msgid "Free Shipping"
+msgstr ""
+
+#: includes/Generators/Coupon.php:420
 msgid "Unable to generate unique coupon code after 10 attempts."
 msgstr ""
 
-#: includes/Generators/Coupon.php:776
+#: includes/Generators/Coupon.php:829
 msgid "Coupon is active and configured"
 msgstr ""
 
-#: includes/Generators/Coupon.php:776
+#: includes/Generators/Coupon.php:829
 msgid "Coupon is inactive"
 msgstr ""
 
-#: includes/Generators/Customer.php:67
+#: includes/Generators/Customer.php:69
 msgid "Customer Profiles with Addresses and Metadata"
 msgstr ""
 
-#: includes/Generators/Customer.php:77
+#: includes/Generators/Customer.php:79
 msgid "Generates realistic customer profiles with comprehensive personal information, billing/shipping addresses, preferences, purchase history, loyalty tiers, and engagement metrics for testing ecommerce customer management systems."
 msgstr ""
 
-#: includes/Generators/Customer.php:90
+#: includes/Generators/Customer.php:92
 msgid "EasyCommerce Customer model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Customer.php:148
+#: includes/Generators/Customer.php:150
 msgid "A user with this email address already exists."
 msgstr ""
 
-#: includes/Generators/Customer.php:186
+#: includes/Generators/Customer.php:188
 msgid "Failed to create customer using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Customer.php:268
+#: includes/Generators/Customer.php:260
+#: includes/Generators/Product.php:308
+msgid "Name"
+msgstr ""
+
+#: includes/Generators/Customer.php:264
+msgid "Email"
+msgstr ""
+
+#: includes/Generators/Customer.php:272
+msgid "Age"
+msgstr ""
+
+#: includes/Generators/Customer.php:280
+msgid "Orders"
+msgstr ""
+
+#: includes/Generators/Customer.php:350
 msgid "Unable to generate unique username after 10 attempts."
 msgstr ""
 
-#: includes/Generators/Location.php:43
+#: includes/Generators/Location.php:45
 msgid "Geographic Location Hierarchy with Countries, States, and Cities"
 msgstr ""
 
-#: includes/Generators/Location.php:53
+#: includes/Generators/Location.php:55
 msgid "Generates comprehensive geographic location data with hierarchical structure (countries, states/provinces, cities) including coordinates, timezones, currencies, and administrative divisions for testing location-based ecommerce functionality."
 msgstr ""
 
-#: includes/Generators/Location.php:66
+#: includes/Generators/Location.php:68
 msgid "EasyCommerce Location model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Location.php:75
+#: includes/Generators/Location.php:77
 msgid "Failed to create location data using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Order.php:69
+#: includes/Generators/Log.php:82
+msgid "Info"
+msgstr ""
+
+#: includes/Generators/Log.php:83
+msgid "Warning"
+msgstr ""
+
+#: includes/Generators/Log.php:84
+msgid "Error"
+msgstr ""
+
+#: includes/Generators/Log.php:85
+msgid "Success"
+msgstr ""
+
+#: includes/Generators/Log.php:111
+msgid "EasyCommerce Log model not found. Please ensure EasyCommerce plugin is active."
+msgstr ""
+
+#: includes/Generators/Log.php:158
+msgid "Failed to create log entry."
+msgstr ""
+
+#: includes/Generators/Order.php:83
 msgid "Customer Orders with Items, Shipping, and Payment Details"
 msgstr ""
 
-#: includes/Generators/Order.php:79
+#: includes/Generators/Order.php:93
 msgid "Generates realistic customer orders with multiple items, comprehensive metadata (addresses, payment methods, shipping, taxes), status tracking, and relationship management for testing ecommerce order processing systems."
 msgstr ""
 
-#: includes/Generators/Order.php:92
+#: includes/Generators/Order.php:106
 msgid "EasyCommerce Order model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Order.php:99
+#: includes/Generators/Order.php:120
 msgid "No customers found for order generation. Please create customers first."
 msgstr ""
 
-#: includes/Generators/Order.php:103
+#: includes/Generators/Order.php:124
 msgid "No product variations found for order generation. Please create products with variations first."
 msgstr ""
 
-#: includes/Generators/Order.php:207
+#: includes/Generators/Order.php:252
 msgid "Failed to create order using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Order.php:411
+#: includes/Generators/Order.php:346
+msgid "Status"
+msgstr ""
+
+#: includes/Generators/Order.php:350
+msgid "Items"
+msgstr ""
+
+#: includes/Generators/Order.php:354
+msgid "Total"
+msgstr ""
+
+#: includes/Generators/Order.php:358
+msgid "Country"
+msgstr ""
+
+#: includes/Generators/Order.php:543
 msgid "No variations found."
 msgstr ""
 
-#: includes/Generators/Product.php:89
+#: includes/Generators/Product.php:91
 msgid "Products with Attributes, Variations, and Categories"
 msgstr ""
 
-#: includes/Generators/Product.php:104
+#: includes/Generators/Product.php:106
 msgid "Generates realistic product data with attributes, variations, pricing, inventory management, categories, brands, tags, and comprehensive meta data for testing ecommerce functionality."
 msgstr ""
 
-#: includes/Generators/Product.php:122
+#: includes/Generators/Product.php:124
 msgid "EasyCommerce Product model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Product.php:222
+#: includes/Generators/Product.php:238
 msgid "Failed to create product using EasyCommerce model."
 msgstr ""
 
-#: includes/Generators/Product_Review.php:63
+#: includes/Generators/Product.php:316
+msgid "Price"
+msgstr ""
+
+#: includes/Generators/Product.php:320
+msgid "Stock"
+msgstr ""
+
+#: includes/Generators/Product.php:324
+msgid "Category"
+msgstr ""
+
+#: includes/Generators/Product_Review.php:66
 msgid "No products found. Please generate products first."
 msgstr ""
 
-#: includes/Generators/Product_Review.php:70
+#: includes/Generators/Product_Review.php:73
 msgid "No customers found. Please generate customers first."
 msgstr ""
 
-#: includes/Generators/Product_Review.php:141
+#: includes/Generators/Product_Review.php:144
 msgid "Failed to create product review."
 msgstr ""
 
@@ -880,6 +1096,18 @@ msgstr ""
 msgid "Failed to create product variation."
 msgstr ""
 
+#: includes/Generators/Refund.php:104
+msgid "EasyCommerce Refund model not found. Please ensure EasyCommerce plugin is active."
+msgstr ""
+
+#: includes/Generators/Refund.php:156
+msgid "Failed to create refund using EasyCommerce model."
+msgstr ""
+
+#: includes/Generators/Refund.php:203
+msgid "No eligible orders found for refund generation. Please generate some completed or processing orders first."
+msgstr ""
+
 #: includes/Generators/Shipping_Plan.php:40
 msgid "Shipping Plans with Methods and Regions"
 msgstr ""
@@ -900,15 +1128,15 @@ msgstr ""
 msgid "Failed to create shipping plan."
 msgstr ""
 
-#: includes/Generators/Shipping_Plan.php:827
+#: includes/Generators/Shipping_Plan.php:849
 msgid "No regions found."
 msgstr ""
 
-#: includes/Generators/Shipping_Plan.php:863
+#: includes/Generators/Shipping_Plan.php:885
 msgid "Plan successfully found by location"
 msgstr ""
 
-#: includes/Generators/Shipping_Plan.php:863
+#: includes/Generators/Shipping_Plan.php:885
 msgid "Plan not found in location lookup"
 msgstr ""
 
@@ -920,18 +1148,458 @@ msgstr ""
 msgid "Tax class not found."
 msgstr ""
 
-#: includes/Generators/Transaction.php:64
+#: includes/Generators/Transaction.php:63
 msgid "EasyCommerce Transaction model not found. Please ensure EasyCommerce plugin is active."
 msgstr ""
 
-#: includes/Generators/Transaction.php:71
+#: includes/Generators/Transaction.php:70
 msgid "No orders found. Please generate orders first."
 msgstr ""
 
-#: includes/Generators/Transaction.php:80
+#: includes/Generators/Transaction.php:79
 msgid "Failed to create transaction."
 msgstr ""
 
-#: includes/Generators/Transaction.php:379
+#: includes/Generators/Transaction.php:372
 msgid "Order not found."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:88
+msgid "Generate realistic test data for EasyCommerce stores: products, customers, orders, coupons, reviews, variations, shipping plans, tax classes, transactions, cart sessions, and locations."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:141
+msgid "Generate realistic test data for EasyCommerce stores. Supports products, customers, orders, coupons, product reviews, product variations, shipping plans, tax classes, payment transactions, cart sessions, geographic locations, and product attributes."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:167
+msgid "Generate Products"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:168
+msgid "Generate realistic EasyCommerce products with attributes, variations, categories, pricing strategies, and inventory data. Returns an array of created product IDs and summaries."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:174
+msgid "Type of products to generate. Allowed: simple, variable, grouped, external, digital, mixed. Default: mixed."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:180
+msgid "Minimum product price (USD). Default: 10."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:185
+msgid "Maximum product price (USD). Default: 500."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:190
+msgid "Generate product attributes (size, colour, material). Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:195
+msgid "Number of variations per variable product (1–20). Default: 5."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:202
+msgid "Enable stock management and generate inventory levels. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:207
+msgid "Length of product descriptions. Allowed: short, medium, long. Default: medium."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:213
+msgid "Array of generated product objects with id, title, type, variations count, price_range, and stock_status."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:219
+msgid "Generate Customers"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:220
+msgid "Generate realistic WordPress customer accounts with billing/shipping addresses, demographic metadata, purchase history, and loyalty tier assignments."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:226
+msgid "Customer segment types to mix. Allowed values: regular, vip, wholesale, guest, returning. Default: [\"regular\",\"returning\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:232
+msgid "Generate billing addresses. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:237
+msgid "Generate shipping addresses. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:242
+msgid "Percentage of customers with a different shipping address (0–100). Default: 30."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:249
+msgid "Populate realistic purchase history metadata (order counts, spend totals, loyalty tier). Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:254
+msgid "Percentage of customers opted into marketing emails (0–100). Default: 65."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:261
+msgid "Array of generated customer objects with id, name, email, billing_country, loyalty_tier, total_orders, and total_spent."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:267
+msgid "Generate Orders"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:268
+msgid "Generate realistic EasyCommerce orders with line items, addresses, payment details, shipping calculations, tax breakdowns, and fulfilment status. Requires at least one product with variations and one customer to exist."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:274
+msgid "Status of generated orders. Allowed: pending, processing, completed, cancelled, on_hold, refunded, mixed. Default: mixed."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:280
+msgid "Whose customer accounts to attach. Allowed: existing, new, mixed, specific. Default: mixed."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:286
+msgid "WordPress user ID to attach all orders to. Only used when customer_type is \"specific\"."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:291
+msgid "Minimum order total (USD). Default: 10."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:296
+msgid "Maximum order total (USD). Default: 1000."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:301
+msgid "Minimum line items per order. Default: 1."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:307
+msgid "Maximum line items per order (1–20). Default: 5."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:314
+msgid "Payment methods to distribute across orders. Allowed: stripe, paypal, bank_transfer, cash_on_delivery, credit_card. Default: [\"stripe\",\"paypal\",\"bank_transfer\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:320
+msgid "Array of generated order objects with id, order_number, status, total, payment_method, and item count."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:326
+msgid "Generate Coupons"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:327
+msgid "Generate realistic EasyCommerce discount coupons with various discount types, usage limits, validity periods, and product or customer restrictions."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:333
+msgid "Discount types to include. Allowed: percentage, fixed, free_shipping, products. Default: [\"percentage\",\"fixed\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:339
+msgid "Minimum percentage discount (5–95). Default: 10."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:346
+msgid "Maximum percentage discount (5–95). Default: 50."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:353
+msgid "Minimum fixed discount amount (USD). Default: 5."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:358
+msgid "Maximum fixed discount amount (USD). Default: 100."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:363
+msgid "Add usage-limit rules to coupons. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:368
+msgid "Maximum total uses per coupon when set_usage_limits is true (1–1000). Default: 100."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:375
+msgid "Minimum coupon validity period in days. Default: 7."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:381
+msgid "Maximum coupon validity period in days (1–365). Default: 90."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:388
+msgid "Array of generated coupon objects with id, code, type, offer, status, usage_limit, and validity dates."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:394
+msgid "Generate Product Reviews"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:395
+msgid "Generate realistic product reviews linked to existing published products and customer accounts. Ratings use a weighted distribution (40% five-star, 30% four-star). Requires products and customers to exist."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:398
+msgid "Array of generated review objects with id, product_id, customer_id, rating, content, verified status, and created_at."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:404
+msgid "Generate Product Variations"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:405
+msgid "Generate product variations (size/colour/storage combinations) for existing products. Creates variation records with unique SKUs, individual pricing, stock levels, and dimension metadata. Requires products to exist."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:411
+msgid "Generate variations only for this product ID. Omit to pick a random eligible product."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:416
+msgid "Array of product IDs to skip during generation."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:422
+msgid "Enable inventory tracking for variations. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:427
+msgid "Minimum stock quantity per variation. Default: 0."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:433
+msgid "Maximum stock quantity per variation. Default: 100."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:439
+msgid "Array of generated variation objects with id, product_id, name, sku, price, stock_quantity, type, status, and attributes."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:445
+msgid "Generate Shipping Plans"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:446
+msgid "Generate realistic shipping plans with tiered pricing methods (price-based, weight-based, quantity-based), regional coverage, delivery timeframes, and taxability settings."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:452
+msgid "Shipping method types. Allowed: standard, express, overnight, pickup, free, weight_based, flat_rate. Default: [\"standard\",\"express\",\"free\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:458
+msgid "Minimum shipping cost (USD). Default: 0."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:464
+msgid "Maximum shipping cost (USD). Default: 50."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:470
+msgid "Geographic coverage. Allowed: domestic, international, regional, worldwide. Default: [\"domestic\",\"international\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:476
+msgid "Array of generated shipping plan objects with id, name, active status, calculation_base, methods count, and regions count."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:482
+msgid "Generate Tax Classes"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:483
+msgid "Generate tax classes with country/state/city-level rate tables, compound tax configurations, and priority settings for an EasyCommerce store."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:489
+msgid "Tax class types to generate. Allowed: standard, reduced, zero, exempt, digital. Default: [\"standard\",\"reduced\",\"zero\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:495
+msgid "ISO-2 country codes to generate tax rates for. Default: [\"US\",\"CA\",\"GB\",\"AU\",\"DE\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:501
+msgid "Include compound tax rate configurations. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:506
+msgid "Array of generated tax class objects with id, name, active status, rates array, and covered regions."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:512
+msgid "Generate Transactions"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:513
+msgid "Generate realistic payment transaction records linked to existing orders. Creates transactions with gateway-specific IDs, amounts, statuses, and currency assignments. Requires orders to exist."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:519
+msgid "Filter orders by customer type. Allowed: all, specific, existing_customers_only, new_customers_only. Default: all."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:525
+msgid "Only create transactions for orders belonging to this customer ID. Requires customer_type=\"specific\"."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:530
+msgid "Transaction types to generate. Allowed: payment, refund, adjustment, fee, commission. Default: [\"payment\",\"refund\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:536
+msgid "Payment gateways to use. Allowed: stripe, paypal, square, authorize_net, braintree, razorpay, mollie. Default: [\"stripe\",\"paypal\",\"square\"]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:542
+msgid "Array of generated transaction objects with id, order_id, transaction_id, payment_gateway, amount, currency, status, and type."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:548
+msgid "Generate Cart Sessions"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:549
+msgid "Generate realistic shopping cart sessions including pending, abandoned, completed, and cancelled states. Useful for testing abandoned-cart recovery workflows and marketing-automation integrations."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:555
+msgid "Cart owner type. Allowed: existing, new, mixed, specific, guest_only. Default: mixed."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:561
+msgid "Attach all carts to this customer ID. Requires customer_type=\"specific\"."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:566
+msgid "Percentage of guest (unauthenticated) carts when customer_type is \"mixed\" (0–100). Default: 40."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:573
+msgid "Percentage of carts with \"abandoned\" status (0–100). Default: 30."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:580
+msgid "Minimum cart value (USD). Default: 5."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:586
+msgid "Maximum cart value (USD). Default: 500."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:592
+msgid "Array of generated cart session objects with hash, user_id, status, items_count, total_amount, customer details, and timestamps."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:598
+msgid "Generate Locations"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:599
+msgid "Generate geographic location hierarchies (countries → states/provinces → cities) with coordinates, timezones, currencies, and ISO codes. Writes a locations.json file consumed by the EasyCommerce shipping and tax systems."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:605
+msgid "Geographic regions to include. Examples: Americas, Europe, Asia, Africa, Oceania. Omit to include all available regions."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:611
+msgid "Specific countries (ISO-2, ISO-3, or full names) to generate. Omit to use all countries in the selected regions."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:617
+msgid "Maximum number of countries to include (1–50). Default: 10."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:624
+msgid "Generate states/provinces for each country. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:629
+msgid "Generate cities for each state/province. Default: true."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:634
+msgid "Array of location-batch result objects with countries_created, total_states, total_cities, data_file_path, and created_date."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:640
+msgid "Generate Attributes"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:641
+msgid "Generate EasyCommerce product attributes (Color, Size, Material, etc.) with option values. Returns an array of created attribute IDs, names, types, and values."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:647
+msgid "Attribute types to generate. Allowed: Text, Color, Image. Default: [Text, Color]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:656
+msgid "Array of generated attribute objects with id, name, type, slug, and values array."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:662
+msgid "Generate Refunds"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:663
+msgid "Generate refund records against existing EasyCommerce orders. Requires completed or processing orders to exist. Returns refund IDs, amounts, statuses, and gateway transaction IDs."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:669
+msgid "Order statuses eligible for refunds. Default: [completed, processing]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:678
+msgid "Payment gateways for refund transaction IDs. Default: [stripe, paypal, square]."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:687
+msgid "Array of generated refund objects with id, order_id, amount, status, and payment_gateway."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:693
+msgid "Generate Logs"
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:694
+msgid "Generate activity log entries for orders, products, customers, coupons, refunds, carts, transactions, and system events. Returns log IDs, object types, actions, and severity levels."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:700
+msgid "Log severity types to generate. Default: all types."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:709
+msgid "Object types to log. Default: all objects."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:718
+msgid "Array of generated log objects with id, object, action, type, note, and is_public."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:739
+msgid "Number of items to generate (1–100). Required."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:745
+msgid "Faker locale for generated data (e.g. en_US, fr_FR, de_DE, ja_JP). Affects names, addresses, and phone numbers. Default: en_US."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:750
+msgid "Optional integer seed for reproducible data generation. Omit for random output."
+msgstr ""
+
+#: includes/MCP/MCP_Server.php:779
+msgid "Human-readable summary of the generation result."
 msgstr ""

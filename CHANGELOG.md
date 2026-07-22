@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 
 Release dates are taken from the release tags in this repository. The [`readme.txt`](readme.txt) changelog carries only the most recent releases, as WordPress.org recommends; this file is the complete history.
 
-## [Unreleased]
+## [2.4.0] - 2026-07-22
 
 ### Added
 
@@ -229,7 +229,8 @@ No release tag exists for this version, so it has no comparison link.
 - React 18 interface with real-time feedback.
 - PSR-4 architecture with native EasyCommerce model integration.
 
-[Unreleased]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/mralaminahamed/easycommerce-fakerpress/compare/v2.0.4...v2.1.0

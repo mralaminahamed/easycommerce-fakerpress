@@ -50,7 +50,7 @@ use EasyCommerceFakerPress\MCP\MCP_Server;
  * - Multi-locale support for international data generation
  *
  * @since 1.0.0
- * @version 2.3.0
+ * @version 2.4.0
  */
 class EasyCommerce_FakerPress {
 

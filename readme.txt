@@ -5,7 +5,7 @@ Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: easycommerce
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,6 +18,8 @@ EasyCommerce FakerPress generates realistic test data for EasyCommerce stores. I
 It is a developer tool for local, staging and demo sites. It is not meant for production stores.
 
 Point it at a generator, set how many records you want, and click Generate. A live preview shows exactly what the run will produce before anything is written to your database.
+
+**Sample data is optional and consent-based.** The plugin can download locale-specific reference data (product names, addresses and tags for 75+ locales) from GitHub to make generated content more realistic. This never happens automatically — it runs only after you accept a one-time consent prompt on the plugin's admin page, transmits no data about your site, and can be declined without losing any functionality (generators fall back to built-in defaults). You can change the decision at any time from Settings.
 
 **What it generates**
 
@@ -149,6 +151,11 @@ In your browser's localStorage, not your database. Clearing it has no effect on 
 
 The four most recent releases are listed below. For the complete version history, see the [full changelog on GitHub](https://github.com/mralaminahamed/easycommerce-fakerpress/blob/trunk/CHANGELOG.md).
 
+= 2.4.0 - July 22, 2026 =
+* Sample data now downloads automatically after a one-time consent prompt shown on the plugin admin page — it explains what is fetched, transmits no site data, and offers built-in defaults if declined; the decision is site-wide and changeable from Settings
+* Security: sample-data archives are validated before extraction, rejecting absolute paths and `..` traversal segments so a crafted archive cannot write outside the sample-data directory
+* Accent colours no longer drift towards pink in highlights, badges and hover states
+
 = 2.3.0 - July 20, 2026 =
 * Order generation no longer fails for customers whose address was saved at checkout — a stored address came back in a shape the generator rejected, and the whole batch stopped instead of skipping one item
 * Generated orders are now spread over a configurable date range instead of all landing on today, so the EasyCommerce date-range reports have data to show
@@ -176,13 +183,10 @@ The four most recent releases are listed below. For the complete version history
 * Playwright end-to-end suite — 131 tests across all generators and field types
 * Component architecture reworked; parameter config centralised in generators.ts
 
-= 2.0.4 - February 26, 2026 =
-* Shared TypeScript type definitions extracted into their own module
-* Webpack configuration updated with a TerserPlugin config for WordPress compatibility
-* Build output renamed from index to app, with the asset path updated to match
-* Dependencies updated, including PHPStan 2.1.40
-
 == Upgrade Notice ==
+
+= 2.4.0 =
+Sample data now downloads only after a one-time consent prompt on the plugin admin page — no external request is made without opt-in, and generators still work from built-in defaults if declined. Also hardens sample-data extraction against path traversal.
 
 = 2.3.0 =
 Fixes order generation failing for customers with a saved address, and spreads generated orders over a date range so the EasyCommerce reports show data. Generators realigned with the current EasyCommerce schema. Minimum WordPress is now 6.6.
@@ -192,9 +196,6 @@ Complete admin UI redesign with a new design-token system, dashboard, live previ
 
 = 2.1.0 =
 Major feature release. Complete admin UI redesign, 3 new generators, Settings page, sample data sync, Our Plugins page, and Playwright e2e suite. No database migrations required. REST API and custom hooks are unchanged.
-
-= 2.0.0 =
-Breaking change: parameter schemas updated for all generators. Review custom REST API integrations and hooks before upgrading. Test in staging first.
 
 == External services ==
 
