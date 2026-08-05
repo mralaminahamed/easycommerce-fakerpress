@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use EasyCommerceFakerPress\Controllers\Plugins;
 use EasyCommerceFakerPress\Controllers\Product;
 use EasyCommerceFakerPress\Controllers\Customer;
 use EasyCommerceFakerPress\Controllers\Order;
@@ -431,6 +432,13 @@ class EasyCommerce_FakerPress {
 		foreach ( $controllers as $controller ) {
 			$controller->register_routes();
 		}
+
+		/*
+		 * Not in the array above: that list is generators, and the Our Plugins
+		 * endpoint fabricates nothing. Registered separately for the same reason
+		 * `/download-sample` below is.
+		 */
+		( new Plugins() )->register_routes();
 
 		// Register download sample data endpoint.
 		register_rest_route(
