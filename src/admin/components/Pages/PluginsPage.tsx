@@ -1,4 +1,5 @@
 import React from "react";
+import apiFetch from "@wordpress/api-fetch";
 import { useEffect, useState } from "@wordpress/element";
 import { decodeEntities } from "@wordpress/html-entities";
 import { __, sprintf } from "@wordpress/i18n";
@@ -9,11 +10,16 @@ interface WPPlugin {
   name: string;
   slug: string;
   version: string;
-  short_description: string;
-  icons?: { "1x"?: string; "2x"?: string; svg?: string };
+  description: string;
+  icon: string;
+  /** Out of five; the server converts the directory's out-of-100 score. */
   rating: number;
   num_ratings: number;
   active_installs: number;
+  state: "active" | "inactive" | "missing";
+  /** Core's own install/activate URL, or "" when the user may not do it. */
+  action_url: string;
+  url: string;
 }
 
 export default function PluginsPage() {
@@ -21,28 +27,46 @@ export default function PluginsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  /*
+   * Asked of this plugin rather than of api.wordpress.org directly.
+   *
+   * The browser cannot know what the site already has installed, and calling
+   * the directory on every paint re-fetches a list that changes about as often
+   * as a release. The server caches it for twelve hours and answers with the
+   * state of each plugin here.
+   */
   useEffect(() => {
-    fetch(
-      "https://api.wordpress.org/plugins/info/1.2/?action=query_plugins&request[author]=mralaminahamed&request[per_page]=20",
-    )
-      .then((r) => r.json())
-      .then((data: { plugins?: WPPlugin[] }) => {
-        setPlugins(
-          (data.plugins ?? []).filter(
-            (p) => p.slug !== "easycommerce-fakerpress",
-          ),
-        );
-        setLoading(false);
+    let cancelled = false;
+
+    apiFetch<{ plugins?: WPPlugin[]; error?: string }>({
+      path: "/easycommerce-fakerpress/v1/plugins",
+    })
+      .then((data) => {
+        if (cancelled) return;
+        setPlugins(data.plugins ?? []);
+        if (data.error) {
+          setError(
+            __(
+              "The plugin directory could not be reached, so this list may be incomplete.",
+              "easycommerce-fakerpress",
+            ),
+          );
+        }
       })
       .catch(() => {
-        setError(
-          __(
-            "Could not load plugins. Check your internet connection.",
-            "easycommerce-fakerpress",
-          ),
-        );
-        setLoading(false);
+        if (!cancelled) {
+          setError(
+            __("Could not load plugins.", "easycommerce-fakerpress"),
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -125,9 +149,13 @@ function Rating({ r, rc }: { r: number; rc: number }) {
 }
 
 function PluginCard({ plugin }: { plugin: WPPlugin }) {
-  const icon =
-    plugin.icons?.svg ?? plugin.icons?.["2x"] ?? plugin.icons?.["1x"];
-  const stars = Math.round(plugin.rating / 20);
+  const icon = plugin.icon;
+  /*
+   * Already out of five. The directory scores out of a hundred and the server
+   * divides on the way out, so dividing again here flattens every rating to
+   * nought stars.
+   */
+  const stars = Math.round(plugin.rating);
 
   return (
     <div className="fp-card fp-plugin-card">
@@ -151,7 +179,7 @@ function PluginCard({ plugin }: { plugin: WPPlugin }) {
       </div>
 
       <p className="fp-plugin-desc">
-        {decodeEntities(plugin.short_description)}
+        {decodeEntities(plugin.description)}
       </p>
 
       <div className="fp-plugin-foot">
@@ -165,17 +193,51 @@ function PluginCard({ plugin }: { plugin: WPPlugin }) {
         </span>
       </div>
 
-      <a
-        href={`https://wordpress.org/plugins/${plugin.slug}/`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="full-w"
-        style={{ display: "block" }}
-      >
-        <Button variant="outline" size="sm" icon="external" className="full-w" type="button">
-          {__("View on WordPress.org", "easycommerce-fakerpress")}
+      {/*
+        Three states, not two. "Installed but switched off" is the one worth
+        telling apart: the site has the plugin and needs a click, not a
+        download.
+
+        The links are core's own update.php and plugins.php with core's own
+        nonces, built server-side — and empty for anybody without the
+        capability, so what renders is the plugin without a button rather than
+        a button that refuses.
+      */}
+      {plugin.state === "active" && (
+        <Button variant="outline" size="sm" className="full-w" type="button" disabled>
+          {__("Active", "easycommerce-fakerpress")}
         </Button>
-      </a>
+      )}
+
+      {plugin.state === "inactive" && plugin.action_url && (
+        <a href={plugin.action_url} className="full-w" style={{ display: "block" }}>
+          <Button variant="primary" size="sm" className="full-w" type="button">
+            {__("Activate", "easycommerce-fakerpress")}
+          </Button>
+        </a>
+      )}
+
+      {plugin.state === "missing" && plugin.action_url && (
+        <a href={plugin.action_url} className="full-w" style={{ display: "block" }}>
+          <Button variant="primary" size="sm" className="full-w" type="button">
+            {__("Install now", "easycommerce-fakerpress")}
+          </Button>
+        </a>
+      )}
+
+      {(plugin.state === "active" || !plugin.action_url) && (
+        <a
+          href={plugin.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="full-w"
+          style={{ display: "block" }}
+        >
+          <Button variant="outline" size="sm" icon="external" className="full-w" type="button">
+            {__("View on WordPress.org", "easycommerce-fakerpress")}
+          </Button>
+        </a>
+      )}
     </div>
   );
 }
