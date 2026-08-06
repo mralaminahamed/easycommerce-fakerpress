@@ -15,6 +15,9 @@ Generate realistic test data for EasyCommerce stores — 14 generators, live pre
 > [!WARNING]
 > This plugin writes large volumes of fake data directly into your store. Use it only on development or staging sites, and back up your database before generating large datasets.
 
+> This is the **contributor / technical** guide. For the public plugin listing — features,
+> screenshots, changelog, upgrade notices — see [`readme.txt`](readme.txt).
+
 ![EasyCommerce FakerPress dashboard showing stat cards with sparklines, a recent-activity feed, and a generator grid grouped by category](.wordpress-org/screenshot-1.png)
 
 ## Quick Start
