@@ -11,12 +11,15 @@ on:
         description: "Space-separated paths to delete (e.g. src docs README.md)"
         required: true
         default: "src docs"
+      # Defaults to a preview. This workflow deletes from the published SVN with credentials that can
+      # do it, and the dispatch form arrives pre-filled — so the button, pressed without reading, must
+      # not be the destructive one.
       dry_run:
         description: "Dry run — preview deletions without committing"
         required: false
-        default: "false"
+        default: "true"
         type: choice
-        options: ["false", "true"]
+        options: ["true", "false"]
 
 defaults:
   run:
