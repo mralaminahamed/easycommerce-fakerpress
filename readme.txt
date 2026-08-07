@@ -71,6 +71,24 @@ Key hooks:
 
 **Important:** this plugin writes large volumes of fake data into your store. Use it on development or staging sites only, and back up your database before generating large datasets.
 
+= More from us =
+
+Other free plugins by the same author, all on WordPress.org.
+
+**Seeding other platforms**
+
+* [StoreSeeder](https://wordpress.org/plugins/storeseeder/) - Realistic test data for WooCommerce and Fluent Cart — a whole shop from a recipe, with one-click cleanup.
+
+**For a store**
+
+* [StoreSheet](https://wordpress.org/plugins/storesheet/) - Sync WooCommerce products, orders and coupons to a Google spreadsheet, one way and in the background.
+* [Warranty Cart](https://wordpress.org/plugins/warranty-cart/) - Sell extended warranties on your products, then handle the claims and renewals that follow.
+
+**For any site**
+
+* [Swift Menu Duplicator](https://wordpress.org/plugins/swift-menu-duplicator/) - Duplicate menus in one click, snapshot revisions, export and import, WP-CLI and REST.
+* [Author Profile Blocks](https://wordpress.org/plugins/author-profile-blocks/) - Author and team profiles as Gutenberg blocks — grid, carousel, list and single.
+
 == Installation ==
 
 = Automatic =
@@ -146,24 +164,6 @@ In your browser's localStorage, not your database. Clearing it has no effect on 
 9. Our Plugins page: Live WordPress.org plugin cards with ratings, active-install counts, and direct links.
 10. Product Reviews Generator: Target a specific product by ID, configure count, locale, seed, and metadata options.
 11. Locations Generator: Region chip selects, max countries, state and city generation toggles, cities-per-state range, and coordinate generation.
-
-== More from us ==
-
-Other free plugins by the same author, all on WordPress.org.
-
-**Seeding other platforms**
-
-* [StoreSeeder](https://wordpress.org/plugins/storeseeder/) - Realistic test data for WooCommerce and Fluent Cart — a whole shop from a recipe, with one-click cleanup.
-
-**For a store**
-
-* [StoreSheet](https://wordpress.org/plugins/storesheet/) - Sync WooCommerce products, orders and coupons to a Google spreadsheet, one way and in the background.
-* [Warranty Cart](https://wordpress.org/plugins/warranty-cart/) - Sell extended warranties on your products, then handle the claims and renewals that follow.
-
-**For any site**
-
-* [Swift Menu Duplicator](https://wordpress.org/plugins/swift-menu-duplicator/) - Duplicate menus in one click, snapshot revisions, export and import, WP-CLI and REST.
-* [Author Profile Blocks](https://wordpress.org/plugins/author-profile-blocks/) - Author and team profiles as Gutenberg blocks — grid, carousel, list and single.
 
 == Changelog ==
 
