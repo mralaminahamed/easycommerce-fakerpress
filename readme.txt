@@ -1,6 +1,6 @@
-=== EasyCommerce FakerPress ===
+=== EasyCommerce FakerPress – Dummy & Test Data Generator for EasyCommerce ===
 Contributors: mralaminahamed
-Tags: test data, dummy data, sample data, demo content, faker
+Tags: easycommerce, test data, dummy data, demo content, faker
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
