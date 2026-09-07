@@ -35,6 +35,25 @@ define( 'EASYCOMMERCE_FAKERPRESS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) )
 
 // Load Composer autoloader.
 if ( ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	/*
+	 * Left silent, this plugin activated and then did nothing at all: no warning,
+	 * no notice, and everything it should register simply absent. Say what is wrong.
+	 */
+	add_action(
+		'admin_notices',
+		static function (): void {
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+				return;
+			}
+
+			printf(
+				'<div class="notice notice-error"><p><strong>%1$s</strong> %2$s</p></div>',
+				esc_html__( 'EasyCommerce FakerPress is not running.', 'easycommerce-fakerpress' ),
+				esc_html__( 'Its autoloader is missing. Run "composer install --no-dev" in the plugin directory, or install the packaged build from the release ZIP.', 'easycommerce-fakerpress' )
+			);
+		}
+	);
+
 	return;
 }
 
